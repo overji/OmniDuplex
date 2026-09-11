@@ -1,0 +1,21 @@
+{
+  "name": "omniduplex-gallery",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/make-portable.mjs",
+    "preview": "vite preview",
+    "start": "node scripts/serve.mjs",
+    "test": "node --test scripts/data-source.test.mjs"
+  },
+  "dependencies": {
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest"
+  }
+}

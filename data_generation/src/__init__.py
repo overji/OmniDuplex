@@ -1,0 +1,2 @@
+"""Shared data-generation package."""
+

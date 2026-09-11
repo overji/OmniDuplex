@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Generated prompt outputs
+data_generation/rendered_prompts/
+
+# Video and other large media
+data_generation/videos/
+*.mp4
+*.mov
+*.avi
+*.mkv
