@@ -93,7 +93,13 @@ def _render_system_prompt(context: GenerationContext) -> str:
     return prompt
 
 
-def build_request(path: Path, video_path: Path) -> GenerationRequest:
+def build_request(
+    path: Path,
+    video_path: Path,
+    *,
+    objects_path: Path | None = None,
+) -> GenerationRequest:
+    del objects_path
     evidence = _load_evidence(path)
     resolved_video_path = video_path.expanduser().resolve()
     duration_seconds = probe_video_duration(resolved_video_path)

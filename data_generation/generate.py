@@ -3,12 +3,12 @@
 
 Example:
     python data_generation/generate.py --task event_alert \
-        --video data_generation/videos/panorama.mp4 \
-        data_generation/example.json -o data_generation/event_alert.json
+        --video data_generation/videos/test.mp4 \
+        path/to/events.json -o data_generation/event_alert.json
 
-    python data_generation/generate.py --task state_monitoring \
-        --video data_generation/videos/panorama.mp4 \
-        data_generation/example.json -o data_generation/state_monitoring.json
+    python data_generation/generate.py --task target_grounding \
+        --video data_generation/videos/test.mp4 \
+        path/to/events.json --print-prompt
 
 Use ``--print-prompt`` to inspect the sampled prompts without calling an API.
 """

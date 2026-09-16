@@ -225,14 +225,35 @@ class ValidationTests(unittest.TestCase):
 
 class EntrypointTests(unittest.TestCase):
     def test_registry(self) -> None:
-        self.assertEqual(task_names(), ("event_alert", "state_monitoring"))
+        self.assertEqual(
+            task_names(),
+            (
+                "cumulative_counting",
+                "deduplicated_counting",
+                "event_alert",
+                "event_narration",
+                "meeting_understanding",
+                "semantic_condition_alert",
+                "snapshot_counting",
+                "state_monitoring",
+                "target_grounding",
+                "triggered_information_query",
+                "triggered_tool_action",
+            ),
+        )
         self.assertIs(get_task("event_alert"), event_alert)
         with self.assertRaisesRegex(ValueError, "unknown task"):
             get_task("missing")
 
     def test_print_prompt_entrypoint(self) -> None:
-        source = Path(__file__).resolve().parents[1] / "example.json"
-        video = Path(__file__).resolve().parents[1] / "videos" / "panorama.mp4"
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        source = Path(temporary.name) / "events.json"
+        source.write_text(
+            json.dumps({"audio_events": [], "visual_events": []}),
+            encoding="utf-8",
+        )
+        video = Path(__file__).resolve().parents[1] / "videos" / "test.mp4"
         output = io.StringIO()
         with redirect_stdout(output):
             status = main(
@@ -247,7 +268,7 @@ class EntrypointTests(unittest.TestCase):
             )
         self.assertEqual(status, 0)
         rendered = output.getvalue()
-        self.assertIn("The video duration is 04:33", rendered)
+        self.assertIn("The video duration is 02:00", rendered)
         self.assertIn(f"[video_url: {video.resolve()}]", rendered)
         self.assertIn('"audio_events"', rendered)
         self.assertIn('"visual_events"', rendered)

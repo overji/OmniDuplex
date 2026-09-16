@@ -66,6 +66,7 @@ speech content, or timestamp.
 Write one natural standing instruction at `question_time`. It must sound like a
 real person speaking to a smart assistant. It must not contain a timestamp,
 reveal when an occurrence happens, or state the outcome in advance.
+Write the question, responses, reasons, and descriptions in English.
 
 Divide every video-verified occurrence of the chosen target by its onset
 relative to `question_time`:

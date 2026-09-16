@@ -23,6 +23,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="local source video sent to the model",
     )
     parser.add_argument("input", type=Path, help="task input JSON")
+    parser.add_argument(
+        "--objects",
+        type=Path,
+        help="optional objects JSON whose items are merged into task evidence",
+    )
     parser.add_argument("-o", "--output", type=Path, help="output path (default: stdout)")
     parser.add_argument("--model", default=os.getenv("OPENAI_MODEL"), help="model name")
     parser.add_argument(
@@ -43,7 +48,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def run(args: argparse.Namespace) -> int:
     task = get_task(args.task)
-    request = task.build_request(args.input, args.video)
+    request = task.build_request(
+        args.input,
+        args.video,
+        objects_path=args.objects,
+    )
     if args.print_prompt:
         print(f"[video_url: {request.video_path}]")
         print("\n---\n")
@@ -67,6 +76,8 @@ def run(args: argparse.Namespace) -> int:
         retries=max(0, args.retries),
     )
     result = task.validate_result(extract_json(raw_response), request.context)
+    if result.get("status") == "ok":
+        result["video"] = request.video_path.name
     output_text = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

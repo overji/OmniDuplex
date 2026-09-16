@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import math
 import random
 
 
 AUDIO_PREFERENCE_PROBABILITY = 0.5
 START_INPUT_PROBABILITY = 0.5
+AGENT_DELAY_MIN_SECONDS = 15
+AGENT_DELAY_MAX_SECONDS = 45
 
 
 def validate_probability(name: str, value: float) -> float:
@@ -33,3 +36,17 @@ def choose_question_position(
         return "start"
     return "start" if random.random() < probability else "non_start"
 
+
+def choose_agent_delay(duration_seconds: float) -> int | None:
+    """Choose an in-video simulated backend delay, or None when impossible."""
+    if (
+        isinstance(duration_seconds, bool)
+        or not isinstance(duration_seconds, (int, float))
+        or not math.isfinite(duration_seconds)
+        or duration_seconds < 0
+    ):
+        raise ValueError(f"invalid video duration: {duration_seconds!r}")
+    upper = min(AGENT_DELAY_MAX_SECONDS, math.floor(duration_seconds))
+    if upper < AGENT_DELAY_MIN_SECONDS:
+        return None
+    return random.randint(AGENT_DELAY_MIN_SECONDS, upper)
