@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import snapshot from 'virtual:gallery-snapshot'
 
 const FALLBACK_DURATION = 273
-const videoUrl = `${import.meta.env.BASE_URL}panorama.mp4`
+function getVideoUrl(videoName) {
+  return videoName ? `${import.meta.env.BASE_URL}${encodeURIComponent(videoName)}` : ''
+}
 
 function Icon({ name, size = 18 }) {
   const paths = {
@@ -77,11 +79,13 @@ function EventCard({ event, index, isActive, onSelect, cardRef }) {
 }
 
 function SampleReview({ sampleData }) {
+  const videoName = typeof sampleData.video === 'string' && sampleData.video.trim() ? sampleData.video.trim() : ''
+  const videoUrl = getVideoUrl(videoName)
   const videoRef = useRef(null)
   const cardRefs = useRef(new Map())
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(FALLBACK_DURATION)
-  const [videoError, setVideoError] = useState(false)
+  const [videoError, setVideoError] = useState(!videoName)
   const [isPlaying, setIsPlaying] = useState(false)
 
   const events = useMemo(() => {
@@ -131,6 +135,10 @@ function SampleReview({ sampleData }) {
   }
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0
+  const questionSeconds = parseTime(sampleData.question_time)
+  const questionPosition = questionSeconds !== null && duration > 0
+    ? Math.min((questionSeconds / duration) * 100, 100)
+    : null
 
   return (
     <div className="app-shell">
@@ -174,12 +182,12 @@ function SampleReview({ sampleData }) {
       <section className="review-grid">
         <div className="player-column">
           <div className="section-heading">
-            <div><span className="section-heading__number">01</span><h2>panorama.mp4</h2></div>
+            <div><span className="section-heading__number">01</span><h2>{videoName || 'Video unavailable'}</h2></div>
             <span className={`play-state${isPlaying ? ' play-state--live' : ''}`}><i />{isPlaying ? 'PLAYING' : 'PAUSED'}</span>
           </div>
 
           <div className="video-frame">
-            <video
+            {videoUrl && <video
               ref={videoRef}
               src={videoUrl}
               controls
@@ -197,14 +205,14 @@ function SampleReview({ sampleData }) {
               onError={() => setVideoError(true)}
             >
               Your browser does not support HTML video.
-            </video>
+            </video>}
             <div className="video-frame__corner video-frame__corner--tl" />
             <div className="video-frame__corner video-frame__corner--br" />
             {videoError && (
               <div className="video-error" role="alert">
                 <Icon name="alert" size={26} />
                 <strong>Video unavailable</strong>
-                <span>Check that the packaged video asset is present beside this gallery.</span>
+                <span>{videoName ? `Check that ${videoName} is available beside this gallery.` : 'This sample does not specify a video file.'}</span>
               </div>
             )}
           </div>
@@ -217,6 +225,16 @@ function SampleReview({ sampleData }) {
             <div className="scrubber">
               <div className="scrubber__track" />
               <div className="scrubber__fill" style={{ width: `${progress}%` }} />
+              {questionPosition !== null && (
+                <div
+                  className="question-marker"
+                  style={{ left: `${questionPosition}%` }}
+                  title={`Question time: ${sampleData.question_time}`}
+                  aria-label={`Question time ${sampleData.question_time}`}
+                >
+                  <span>QUESTION</span>
+                </div>
+              )}
               {events.map((event, index) => event.seconds !== null && (
                 <button
                   key={`${event.trigger_time}-${index}`}

@@ -5,13 +5,29 @@ export const dataDir = path.resolve(import.meta.dirname, '../../data_generation/
 
 export async function listFiles(root = dataDir) {
   try {
-    return (await readdir(root, { withFileTypes: true }))
-      .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
-      .map(entry => entry.name).sort()
+    const files = []
+    for (const entry of await readdir(root, { withFileTypes: true })) {
+      if (!entry.isFile() || !entry.name.endsWith('.json')) continue
+      try {
+        const data = JSON.parse(await readFile(path.join(root, entry.name), 'utf8'))
+        if (isFinalTaskResult(data)) files.push(entry.name)
+      } catch {
+        // Invalid and intermediate JSON files are not gallery samples.
+      }
+    }
+    return files.sort()
   } catch (error) {
     if (error.code === 'ENOENT') return []
     throw error
   }
+}
+
+export function isFinalTaskResult(data) {
+  return Boolean(
+    data && typeof data === 'object' && !Array.isArray(data) &&
+    'status' in data && 'question' in data && Array.isArray(data.responses) &&
+    !('audio_events' in data) && !('visual_events' in data) && !('items' in data),
+  )
 }
 
 export async function readData(name, root = dataDir) {
