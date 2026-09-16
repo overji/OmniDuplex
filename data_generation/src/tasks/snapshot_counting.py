@@ -23,6 +23,15 @@ def validate_result(result: dict[str, Any], context: GenerationContext) -> dict[
     if result["vision_dependency"] != "required":
         raise ValueError("snapshot counting requires vision")
     for index, response in enumerate(result["responses"]):
+        locations = response.get("target_locations")
+        if not isinstance(locations, list):
+            raise ValueError("target_locations must be an array of coarse directions")
+        for location in locations:
+            _shared.require_text(location, "target_locations entry")
+            if len(location.split()) > 8 or any(c.isdigit() for c in location):
+                raise ValueError("target_locations must use short coarse directions")
+        if {"bounding_box", "bounding_boxes", "coordinates", "pixel_position"} & response.keys():
+            raise ValueError("snapshot counting must not contain numeric locations")
         _shared.require_count(response.get("count"), f"responses[{index}].count")
         _shared.require_text(
             response.get("counting_basis"), f"responses[{index}].counting_basis"

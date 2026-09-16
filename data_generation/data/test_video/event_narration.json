@@ -1,0 +1,80 @@
+{
+  "status": "ok",
+  "question": "Describe the driver's actions and narration as they happen during the immersive drive.",
+  "question_time": "00:00",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "responses": [
+    {
+      "trigger_time": "00:00:00",
+      "response": "The driver starts walking and gives an immersive first-person voiceover narration.",
+      "observed_facts": [
+        "First-person perspective walking on a sidewalk",
+        "Male voice speaking Chinese narration"
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Requires seeing the first-person walking view and hearing the opening narration.",
+      "event_description": "Opening walk and introduction"
+    },
+    {
+      "trigger_time": "00:00:13",
+      "response": "The driver opens the car door and places a black bag inside the vehicle.",
+      "observed_facts": [
+        "Hand opens the rear/front door of a white car",
+        "A black backpack is placed onto the seat area"
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Involves seeing the door open and bag placement, accompanied by mechanical door and rustling sounds.",
+      "event_description": "Placing bag in the car"
+    },
+    {
+      "trigger_time": "00:00:23",
+      "response": "The driver opens the driver's door and enters the car cabin.",
+      "observed_facts": [
+        "Hand pulls the driver door open",
+        "Camera shifts inside the vehicle showing seats and steering wheel"
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Combined visual entrance into the vehicle cabin and audible mechanical door latch sounds.",
+      "event_description": "Entering the driver's seat"
+    },
+    {
+      "trigger_time": "00:00:30",
+      "response": "The driver fastens the seatbelt across their chest.",
+      "observed_facts": [
+        "Hands pull the seatbelt strap and click it into place"
+      ],
+      "interpretation": null,
+      "trigger_type": "visual",
+      "trigger_type_reason": "Clearly visible hand action of pulling and buckling the seatbelt.",
+      "event_description": "Fastening seatbelt"
+    },
+    {
+      "trigger_time": "00:01:06",
+      "response": "The driver accelerates excitedly to catch a traffic light while narrating.",
+      "observed_facts": [
+        "Car is moving forward on city streets",
+        "Driver speaks excitedly about catching the light"
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Requires seeing the driving view and hearing the driver's spoken exclamation.",
+      "event_description": "Accelerating for traffic light"
+    },
+    {
+      "trigger_time": "00:01:12",
+      "response": "The driver celebrates clearing the light and starts playing music by Liang Bo.",
+      "observed_facts": [
+        "Driver expresses success verbally",
+        "Pop music begins playing in the background"
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Involves visual navigation through the intersection and audible music playback with speech.",
+      "event_description": "Clearing intersection and playing music"
+    }
+  ]
+}

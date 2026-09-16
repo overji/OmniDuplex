@@ -44,7 +44,10 @@ def _load_evidence(path: Path) -> dict[str, Any]:
         raise ValueError("input must contain a non-empty items array")
     if not all(isinstance(item, dict) for item in items):
         raise ValueError("every item must be an object")
-    return {"items": items}
+    evidence = {"items": items}
+    if "uncertainties" in source:
+        evidence["object_uncertainties"] = source["uncertainties"]
+    return evidence
 
 
 def _render_system_prompt(context: GenerationContext) -> str:

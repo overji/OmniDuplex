@@ -49,10 +49,13 @@ def _load_evidence(path: Path) -> dict[str, Any]:
     if not isinstance(audio_events, list) or not isinstance(visual_events, list):
         raise ValueError("input must contain audio_events and visual_events arrays")
 
-    return {
+    evidence = {
         "audio_events": audio_events,
         "visual_events": visual_events,
     }
+    if "uncertainties" in source:
+        evidence["event_uncertainties"] = source["uncertainties"]
+    return evidence
 
 
 def _render_system_prompt(context: GenerationContext) -> str:

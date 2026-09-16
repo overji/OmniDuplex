@@ -127,6 +127,19 @@ events.
 
 ### Accuracy Rules
 
+* Inspect the original video independently before choosing events. Completeness
+  means covering supported events, never guessing to fill gaps.
+* Separate visible_action, audible_sound, spoken_claim, and on_screen_text using
+  evidence_kind on every event. Include observation (a short raw observable cue)
+  and uncertainty (null or an explanation). Use an array of kinds if necessary.
+* A narrator saying "put on the seatbelt" proves only that the phrase was spoken;
+  it does not establish a visible fastening action. Screen text is likewise not
+  proof of an action. Report only actually audible words, legible text, and visible
+  details; leave unclear words, identities, brands, and hidden actions unresolved.
+* Recheck each candidate and boundary against the video before finalizing.
+  Remove unsupported claims and record unresolved details in uncertainties.
+  A high confidence score cannot substitute for observable evidence.
+
 * Only describe visible or audible evidence.
 * Review the full timeline for simultaneous events before finalizing the output;
   do not omit a supported event because another event is more salient.

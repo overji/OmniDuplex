@@ -165,6 +165,7 @@ def build_video_prompts(
         f"{{{{{field.upper()}}}}}": "{}" if field == "video_summary" else "[]"
         for field in required_fields
     }
+    event_replacements["{{EVENT_UNCERTAINTIES}}"] = "[]"
     if events_json is not None:
         metadata_path = events_json.expanduser()
         if not metadata_path.is_file():
@@ -186,6 +187,9 @@ def build_video_prompts(
             )
             for field in required_fields
         }
+        event_replacements["{{EVENT_UNCERTAINTIES}}"] = json.dumps(
+            metadata.get("uncertainties", []), ensure_ascii=False, indent=2
+        )
     return VideoPromptBundle(
         video_path=resolved_path,
         duration_seconds=duration_seconds,
@@ -212,6 +216,13 @@ def _write_prompts(bundle: VideoPromptBundle, output_dir: Path) -> None:
     )
     (output_dir / "objects.prompt.md").write_text(
         bundle.objects_prompt + "\n",
+        encoding="utf-8",
+    )
+    (output_dir / "video-input.md").write_text(
+        f"[video_url: {bundle.video_path}]\n\n"
+        "Attach this original video when using either caption prompt. "
+        "For objects, supply the video together with the rendered events references. "
+        "Rendering only substitutes text; it does not inspect or verify the video.\n",
         encoding="utf-8",
     )
 
@@ -251,7 +262,9 @@ def run(args: argparse.Namespace) -> int:
         print(f"video duration: {bundle.duration} ({bundle.duration_seconds:.3f}s)")
         print(f"events prompt: {args.output_dir / 'events.prompt.md'}")
         print(f"objects prompt: {args.output_dir / 'objects.prompt.md'}")
+        print(f"video attachment instructions: {args.output_dir / 'video-input.md'}")
     else:
+        print(f"[video_url: {bundle.video_path}]")
         print("--- events prompt ---")
         print(bundle.events_prompt)
         print("\n--- objects prompt ---")

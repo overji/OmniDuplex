@@ -20,6 +20,12 @@ def validate_result(result: dict[str, Any], context: GenerationContext) -> dict[
     )
     if question_seconds is None:
         return validated
+    _shared.require_text(result.get("semantic_condition"), "semantic_condition")
+    criteria = result.get("observable_criteria")
+    if not isinstance(criteria, list) or not criteria:
+        raise ValueError("observable_criteria must be a non-empty string array")
+    for criterion in criteria:
+        _shared.require_text(criterion, "observable_criteria entry")
     for index, response in enumerate(result["responses"]):
         _shared.require_text(
             response.get("condition_evidence"),

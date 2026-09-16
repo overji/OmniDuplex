@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "question": "Whenever the narrator exclaims '成功！' (Success!), tell me how many cars are visible ahead through the windshield.",
+  "question_time": "01:00",
+  "audio_dependency": "required",
+  "vision_dependency": "required",
+  "responses": [{
+    "trigger_time": "01:12",
+    "response": "There are 2 cars visible now.",
+    "count": 2,
+    "counting_basis": "Observable cars ahead through the windshield counted at the trigger frame.",
+    "target_locations": [
+      {"box_2d": [486, 735, 508, 779], "label": "blue car"},
+      {"box_2d": [515, 693, 542, 737], "label": "dark car"}
+    ],
+    "trigger_type": "speech",
+    "trigger_type_reason": "The trigger is the narrator speaking the word '成功！' (Success!).",
+    "event_description": "The narrator says '成功！成功！' at 01:12 after successfully navigating the traffic light."
+  }]
+}

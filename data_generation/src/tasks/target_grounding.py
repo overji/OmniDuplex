@@ -21,11 +21,15 @@ def validate_result(result: dict[str, Any], context: GenerationContext) -> dict[
     if question_seconds is None:
         return validated
     for index, response in enumerate(result["responses"]):
+        if {"bounding_box", "direction_degrees", "distance_estimate"} & response.keys():
+            raise ValueError("grounding must use coarse directions, not numeric locations")
         _shared.require_text(response.get("target"), f"responses[{index}].target")
         location_type = response.get("location_type")
         if location_type not in {"visual", "sound"}:
             raise ValueError("location_type must be visual or sound")
         _shared.require_text(response.get("location"), f"responses[{index}].location")
+        if any(character.isdigit() for character in response["location"]):
+            raise ValueError("location must describe a coarse direction")
         if location_type == "visual":
             region = response.get("frame_region")
             rows = {"top", "middle", "bottom"}

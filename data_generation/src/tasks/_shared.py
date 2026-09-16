@@ -49,12 +49,17 @@ def load_evidence(path: Path, objects_path: Path | None = None) -> dict[str, Any
             raise ValueError(f"input must contain an array of objects: {key}")
         evidence[key] = value
     if objects_path is not None:
-        objects = load_json_object(objects_path).get("items")
+        object_source = load_json_object(objects_path)
+        objects = object_source.get("items")
         if not isinstance(objects, list) or not all(
             isinstance(item, dict) for item in objects
         ):
             raise ValueError("objects input must contain an items array of objects")
         evidence["items"] = objects
+        if "uncertainties" in object_source:
+            evidence["object_uncertainties"] = object_source["uncertainties"]
+    if "uncertainties" in source:
+        evidence["event_uncertainties"] = source["uncertainties"]
     return evidence
 
 
@@ -344,7 +349,8 @@ def validate_agent_result(
     call = calls[0]
     if not isinstance(call, dict) or call.get("type") != "function":
         raise ValueError("tool call must use function type")
-    call_id = require_text(call.get("id"), "tool call id")
+    if "id" in call or "tool_call_id" in call:
+        raise ValueError("tool calls must not contain association IDs")
     function = call.get("function")
     if not isinstance(function, dict) or function.get("name") != "agent_call":
         raise ValueError("tool function must be agent_call")
@@ -377,8 +383,8 @@ def validate_agent_result(
         raise ValueError("agent result exceeds video duration")
     if tool_result.get("role") != "tool" or tool_result.get("name") != "agent_call":
         raise ValueError("second message must be the agent_call tool result")
-    if tool_result.get("tool_call_id") != call_id:
-        raise ValueError("tool result must reference the agent_call id")
+    if any("tool_call_id" in message or "id" in message for message in messages):
+        raise ValueError("agent messages must not contain association IDs")
     if checked_time(tool_result.get("timestamp"), context, "result timestamp") != result_seconds:
         raise ValueError("tool result timestamp does not match sampled delay")
     result_content = require_text(tool_result.get("content"), "simulated result")

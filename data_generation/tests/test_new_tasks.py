@@ -92,6 +92,18 @@ class RequestTests(unittest.TestCase):
                 self.events, Path("video.mp4"), objects_path=self.objects
             )
 
+    def test_uncertainties_survive_evidence_loading(self) -> None:
+        self.events.write_text(json.dumps({
+            "audio_events": [], "visual_events": [],
+            "uncertainties": ["Unclear spoken name"],
+        }), encoding="utf-8")
+        self.objects.write_text(json.dumps({
+            "items": [], "uncertainties": ["Possible sign"],
+        }), encoding="utf-8")
+        evidence = _shared.load_evidence(self.events, self.objects)
+        self.assertEqual(evidence["event_uncertainties"], ["Unclear spoken name"])
+        self.assertEqual(evidence["object_uncertainties"], ["Possible sign"])
+
     def test_agent_prompt_contains_catalog_and_exact_delay(self) -> None:
         with (
             patch.object(_shared, "probe_video_duration", return_value=90),
@@ -207,6 +219,11 @@ class DirectValidationTests(unittest.TestCase):
             }
         )
         target_grounding.validate_result(result, self.context)
+        for key in ("bounding_box", "direction_degrees", "distance_estimate"):
+            invalid = copy.deepcopy(result)
+            invalid["responses"][0][key] = None
+            with self.assertRaisesRegex(ValueError, "numeric locations"):
+                target_grounding.validate_result(invalid, self.context)
         result["responses"][0]["frame_region"] = "outside"
         with self.assertRaisesRegex(ValueError, "frame_region"):
             target_grounding.validate_result(result, self.context)
@@ -214,19 +231,32 @@ class DirectValidationTests(unittest.TestCase):
     def test_snapshot_counting(self) -> None:
         result = copy.deepcopy(self.base)
         result["responses"][0].update(
-            {"count": 3, "counting_basis": "Three visible players."}
+            {"count": 3, "counting_basis": "Three visible players.",
+             "target_locations": ["upper left", "center", "lower right"]}
         )
         snapshot_counting.validate_result(result, self.context)
+        for locations in ([[10, 20]], ["at 10, 20"], [{"box": [0, 0, 1, 1]}]):
+            invalid = copy.deepcopy(result)
+            invalid["responses"][0]["target_locations"] = locations
+            with self.assertRaises(ValueError):
+                snapshot_counting.validate_result(invalid, self.context)
         result["responses"][0]["count"] = -1
         with self.assertRaisesRegex(ValueError, "non-negative"):
             snapshot_counting.validate_result(result, self.context)
 
     def test_semantic_condition(self) -> None:
         result = copy.deepcopy(self.base)
+        result["semantic_condition"] = "The environment becomes chaotic"
+        result["observable_criteria"] = ["Conflicting flows", "Repeated obstructions"]
         result["responses"][0].update(
-            {"condition_evidence": "The same marked car returns.", "confidence": 0.8}
+            {"condition_evidence": "People moving against each other repeatedly obstruct the passage.", "confidence": 0.8}
         )
         semantic_condition_alert.validate_result(result, self.context)
+        for key in ("semantic_condition", "observable_criteria"):
+            invalid = copy.deepcopy(result)
+            del invalid[key]
+            with self.assertRaises(ValueError):
+                semantic_condition_alert.validate_result(invalid, self.context)
 
     def test_narration_requires_three_updates(self) -> None:
         result = copy.deepcopy(self.base)
@@ -270,6 +300,8 @@ class DirectValidationTests(unittest.TestCase):
         }
         cumulative_counting.validate_result(copy.deepcopy(result), context)
         dedup = copy.deepcopy(result)
+        dedup["target_category"] = "product names"
+        dedup["counting_unit"] = "name"
         dedup["responses"][0]["new_targets"] = [
             {"target_id": "a", "name": "Alpha", "evidence": "Spoken."},
             {"target_id": "b", "name": "Beta", "evidence": "Spoken."},
@@ -278,6 +310,11 @@ class DirectValidationTests(unittest.TestCase):
             {"target_id": "c", "name": "Gamma", "evidence": "Spoken."}
         ]
         deduplicated_counting.validate_result(dedup, context)
+        for key in ("target_category", "counting_unit"):
+            invalid = copy.deepcopy(dedup)
+            del invalid[key]
+            with self.assertRaises(ValueError):
+                deduplicated_counting.validate_result(invalid, context)
 
 
 class AgentValidationTests(unittest.TestCase):
@@ -319,7 +356,6 @@ class AgentValidationTests(unittest.TestCase):
                             "content": "I see it; I'm checking now.",
                             "tool_calls": [
                                 {
-                                    "id": "call_agent_1",
                                     "type": "function",
                                     "function": {
                                         "name": "agent_call",
@@ -331,7 +367,6 @@ class AgentValidationTests(unittest.TestCase):
                         {
                             "timestamp": "00:30",
                             "role": "tool",
-                            "tool_call_id": "call_agent_1",
                             "name": "agent_call",
                             "content": json.dumps(envelope),
                         },
@@ -345,8 +380,23 @@ class AgentValidationTests(unittest.TestCase):
             ],
         }
 
-    def test_valid_openai_style_trace(self) -> None:
+    def test_valid_id_free_trace(self) -> None:
         triggered_information_query.validate_result(self.result, self.context)
+
+    def test_ids_order_and_multiple_calls_are_rejected(self) -> None:
+        for mutation in ("call_id", "result_id", "order", "multiple"):
+            result = copy.deepcopy(self.result)
+            messages = result["responses"][0]["messages"]
+            if mutation == "call_id":
+                messages[0]["tool_calls"][0]["id"] = "old_id"
+            elif mutation == "result_id":
+                messages[1]["tool_call_id"] = "old_id"
+            elif mutation == "order":
+                messages[1], messages[2] = messages[2], messages[1]
+            else:
+                messages[0]["tool_calls"] *= 2
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                triggered_information_query.validate_result(result, self.context)
 
     def test_call_arguments_must_be_json(self) -> None:
         result = copy.deepcopy(self.result)

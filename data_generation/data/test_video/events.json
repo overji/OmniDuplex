@@ -1,0 +1,273 @@
+{
+  "video_summary": {
+    "primary_language": "Chinese",
+    "overall_scene_description": "First-person perspective (POV) video of a person walking on a sidewalk, entering a car parked on the roadside, and driving through urban streets lined with trees.",
+    "main_content_summary": "The video shows an immersive first-person POV commute, beginning with walking along a street, opening a car door, getting inside, putting on a seatbelt, starting the car, driving through traffic, navigating turns, and listening to music."
+  },
+  "audio_events": [
+    {
+      "event_id": "a01",
+      "start_time": "00:00:00.000",
+      "end_time": "00:00:02.500",
+      "timestamp": "00:00:00.000 - 00:00:02.500",
+      "start_seconds": 0.0,
+      "end_seconds": 2.5,
+      "event_type": "Human speech",
+      "event_name": "Narration / Voiceover",
+      "detailed description": "A male voice speaking Chinese narration: '沉浸式开车上班，第一视角' (Immersive driving to work, first-person perspective).",
+      "evidence for judgment": "Clear audible voiceover matching the on-screen text.",
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "a02",
+      "start_time": "00:00:04.000",
+      "end_time": "00:00:06.000",
+      "timestamp": "00:00:04.000 - 00:00:06.000",
+      "start_seconds": 4.0,
+      "end_seconds": 6.0,
+      "event_type": "Human speech",
+      "event_name": "Narration / Exclamation",
+      "detailed description": "A male voice saying: '我靠！死腿快跑！' (Damn it! Legs hurry up!).",
+      "evidence for judgment": "Audible exclaimed speech by the narrator.",
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "a03",
+      "start_time": "00:00:15.000",
+      "end_time": "00:00:18.000",
+      "timestamp": "00:00:15.000 - 00:00:18.000",
+      "start_seconds": 15.0,
+      "end_seconds": 18.0,
+      "event_type": "Environmental sounds",
+      "event_name": "Car door opening and closing",
+      "detailed description": "Sound of a car door being opened and a bag being placed inside.",
+      "evidence for judgment": "Audible mechanical door latch and rustling sounds.",
+      "confidence score": 0.9
+    },
+    {
+      "event_id": "a04",
+      "start_time": "00:00:23.000",
+      "end_time": "00:00:27.000",
+      "timestamp": "00:00:23.000 - 00:00:27.000",
+      "start_seconds": 23.0,
+      "end_seconds": 27.0,
+      "event_type": "Environmental sounds",
+      "event_name": "Car door opening and getting in",
+      "detailed description": "Sound of opening the car door again and getting into the driver's seat.",
+      "evidence for judgment": "Distinct mechanical door opening and seat adjustment sounds.",
+      "confidence score": 0.9
+    },
+    {
+      "event_id": "a05",
+      "start_time": "00:00:29.000",
+      "end_time": "00:00:34.000",
+      "timestamp": "00:00:29.000 - 00:00:34.000",
+      "start_seconds": 29.0,
+      "end_seconds": 34.0,
+      "event_type": "Human speech",
+      "event_name": "Voiceover / Narration",
+      "detailed description": "A male voice saying: '来，上车！' (Come on, get in the car!).",
+      "evidence for judgment": "Clear speech matching the action of entering the car.",
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "a06",
+      "start_time": "00:01:06.000",
+      "end_time": "00:01:10.000",
+      "timestamp": "00:01:06.000 - 00:01:10.000",
+      "start_seconds": 66.0,
+      "end_seconds": 70.0,
+      "event_type": "Human speech",
+      "event_name": "Narration / Exclamation",
+      "detailed description": "A male voice saying: '喘喘喘～快抢这个灯，我直接一脚韩寒先到，随后车出如龙！' (Pant pant pant~ Hurry up and catch this traffic light, I floor it and arrive first, then the car drives out like a dragon!).",
+      "evidence for judgment": "Audible excited speech from the narrator.",
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "a07",
+      "start_time": "00:01:12.000",
+      "end_time": "00:01:17.000",
+      "timestamp": "00:01:12.000 - 00:01:17.000",
+      "start_seconds": 72.0,
+      "end_seconds": 77.0,
+      "event_type": "Human speech",
+      "event_name": "Narration",
+      "detailed description": "A male voice saying: '成功！成功！开始放松，先来首梁博听听！' (Success! Success! Start relaxing, let's listen to a song by Liang Bo first!).",
+      "evidence for judgment": "Audible speech indicating successful maneuver and playing music.",
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "a08",
+      "start_time": "00:01:17.000",
+      "end_time": "00:01:25.000",
+      "timestamp": "00:01:17.000 - 00:01:25.000",
+      "start_seconds": 77.0,
+      "end_seconds": 85.0,
+      "event_type": "Music",
+      "event_name": "Background Music",
+      "detailed description": "Pop music playing in the car (specifically a song by Liang Bo).",
+      "evidence for judgment": "Clear musical audio playing in the background.",
+      "confidence score": 0.9
+    },
+    {
+      "event_id": "a09",
+      "start_time": "00:01:26.000",
+      "end_time": "00:01:30.000",
+      "timestamp": "00:01:26.000 - 00:01:30.000",
+      "start_seconds": 86.0,
+      "end_seconds": 90.0,
+      "event_type": "Human speech",
+      "event_name": "Narration / Complaint",
+      "detailed description": "A male voice saying: '你以为你是理想吗？？左边辣么大位置，你眼睛瞎吗？' (Do you think you are Li Xiang?? Such a huge space on the left, are your eyes blind?).",
+      "evidence for judgment": "Audible frustrated speech addressing another car or driver.",
+      "confidence score": 0.95
+    }
+  ],
+  "visual_events": [
+    {
+      "event_id": "v01",
+      "start_time": "00:00:00.000",
+      "end_time": "00:00:03.000",
+      "timestamp": "00:00:00.000 - 00:00:03.000",
+      "start_seconds": 0.0,
+      "end_seconds": 3.0,
+      "event_type": "Text appearance",
+      "event_name": "Title overlay",
+      "detailed description": "On-screen Chinese text overlay appears on the sidewalk view.",
+      "visual_details": "Text reads '沉浸式开车上班 第一视角' with car icons.",
+      "related_audio_event_ids": [
+        "a01"
+      ],
+      "confidence score": 0.98
+    },
+    {
+      "event_id": "v02",
+      "start_time": "00:00:00.000",
+      "end_time": "00:00:13.000",
+      "timestamp": "00:00:00.000 - 00:00:13.000",
+      "start_seconds": 0.0,
+      "end_seconds": 13.0,
+      "event_type": "Human actions",
+      "event_name": "Walking on sidewalk",
+      "detailed description": "First-person view of walking along a paved sidewalk beside parked cars and trees.",
+      "visual_details": "Shaking camera view looking down at feet/ground, walking past parked cars and a yellow shared bicycle.",
+      "related_audio_event_ids": [],
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "v03",
+      "start_time": "00:00:04.000",
+      "end_time": "00:00:06.000",
+      "timestamp": "00:00:04.000 - 00:00:06.000",
+      "start_seconds": 4.0,
+      "end_seconds": 6.0,
+      "event_type": "Text appearance",
+      "event_name": "Caption overlay",
+      "detailed description": "Yellow subtitle box appears on screen showing dialogue.",
+      "visual_details": "Text reads '我靠！死腿快跑！' in yellow font with black outline.",
+      "related_audio_event_ids": [
+        "a02"
+      ],
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "v04",
+      "start_time": "00:00:13.000",
+      "end_time": "00:00:18.000",
+      "timestamp": "00:00:013.000 - 00:00:18.000",
+      "start_seconds": 13.0,
+      "end_seconds": 18.0,
+      "event_type": "Human actions",
+      "event_name": "Placing bag in car",
+      "detailed description": "The person opens the rear door of a white car and places a black bag inside.",
+      "visual_details": "Hand reaches out, opens the white car's door, and puts a black backpack onto the front/rear seat area.",
+      "related_audio_event_ids": [
+        "a03"
+      ],
+      "confidence score": 0.92
+    },
+    {
+      "event_id": "v05",
+      "start_time": "00:00:23.000",
+      "end_time": "00:00:27.000",
+      "timestamp": "00:00:23.000 - 00:00:27.000",
+      "start_seconds": 23.0,
+      "end_seconds": 27.0,
+      "event_type": "Human actions",
+      "event_name": "Entering the driver's seat",
+      "detailed description": "The person opens the driver's door and gets into the car.",
+      "visual_details": "Hand pulls the driver door open, camera moves inside the vehicle cabin showing white leather seats and steering wheel.",
+      "related_audio_event_ids": [
+        "a04"
+      ],
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "v06",
+      "start_time": "00:00:30.000",
+      "end_time": "00:00:34.000",
+      "timestamp": "00:00:30.000 - 00:00:34.000",
+      "start_seconds": 30.0,
+      "end_seconds": 34.0,
+      "event_type": "Human actions",
+      "event_name": "Fastening seatbelt",
+      "detailed description": "The driver fastens the seatbelt across their chest.",
+      "visual_details": "Hands pull the seatbelt strap from the side and click it into the buckle.",
+      "related_audio_event_ids": [
+        "a05"
+      ],
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "v07",
+      "start_time": "00:00:35.000",
+      "end_time": "00:01:25.000",
+      "timestamp": "00:00:35.000 - 00:01:25.000",
+      "start_seconds": 35.0,
+      "end_seconds": 85.0,
+      "event_type": "Object movements",
+      "event_name": "Driving through city streets",
+      "detailed description": "First-person view from inside the car as it drives along city streets, navigating traffic, turns, and intersections.",
+      "visual_details": "Steering wheel, dashboard displays, side mirrors showing passing vehicles, tree-lined streets, and traffic lights.",
+      "related_audio_event_ids": [
+        "a06",
+        "a07",
+        "a08"
+      ],
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "v08",
+      "start_time": "00:01:06.000",
+      "end_time": "00:01:10.000",
+      "timestamp": "00:01:06.000 - 00:01:10.000",
+      "start_seconds": 66.0,
+      "end_seconds": 70.0,
+      "event_type": "Text appearance",
+      "event_name": "Caption overlay",
+      "detailed description": "Yellow subtitle box appears on screen showing dialogue while driving.",
+      "visual_details": "Text reads '喘喘喘～快抢这个灯...' in yellow font.",
+      "related_audio_event_ids": [
+        "a06"
+      ],
+      "confidence score": 0.95
+    },
+    {
+      "event_id": "v09",
+      "start_time": "00:01:26.000",
+      "end_time": "00:01:31.000",
+      "timestamp": "00:01:26.000 - 00:01:31.000",
+      "start_seconds": 86.0,
+      "end_seconds": 91.0,
+      "event_type": "Text appearance",
+      "event_name": "Caption overlay",
+      "detailed description": "Yellow subtitle box appears on screen showing driver's complaint.",
+      "visual_details": "Text reads '你以为你是理想吗？？左边辣么大位置，你眼睛瞎吗？' in yellow font.",
+      "related_audio_event_ids": [
+        "a09"
+      ],
+      "confidence score": 0.95
+    }
+  ],
+  "uncertainties": []
+}

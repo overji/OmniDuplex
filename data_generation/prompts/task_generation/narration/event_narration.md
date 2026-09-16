@@ -30,3 +30,18 @@ Return exactly one JSON object:
 }
 
 If 3-6 meaningful updates cannot be verified, return only {"status":"skip","reason":"..."}.
+
+## Independent video evidence audit
+
+First inspect the original video to choose candidates; then consult events and
+objects only as fallible navigation aids, and return to the video to verify each
+claim and onset. Reject false annotations, correct inaccurate times, and include
+verified omissions. Events and objects derived from those events are not independent
+corroboration. Confidence scores are not proof. Retain and examine supplied
+uncertainties; legacy metadata without evidence fields is unverified reference.
+Never copy a caption claim or timestamp without checking the original video.
+Distinguish visible actions, audible sounds, spoken claims, and on-screen text:
+a narrator mentioning an action does not prove that action is visible.
+Whole-video inspection is an annotation audit only. Each response and agent_call
+may use only evidence available by its own timestamp. Remain silent without a
+verified trigger; if the task cannot be grounded, return skip.

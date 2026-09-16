@@ -1,0 +1,18 @@
+{
+  "status":"ok",
+  "question":"When the driver mentions Liang Bo around 01:12, look up Liang Bo's most famous songs for me.",
+  "question_time":"01:10",
+  "audio_dependency":"required",
+  "vision_dependency":"helpful",
+  "responses":[{
+    "trigger_time":"01:12",
+    "trigger_type":"speech",
+    "trigger_type_reason":"The driver speaks about listening to Liang Bo, prompting an external information need about the artist.",
+    "event_description":"The driver says '先来首梁博听听！' (Let's listen to a song by Liang Bo first!) while driving.",
+    "messages":[
+      {"timestamp":"01:12","role":"assistant","content":"I found it; I'm checking now.","tool_calls":[{"id":"call_agent_1","type":"function","function":{"name":"agent_call","arguments":"{\"instruction\":\"Look up the most famous songs by the Chinese singer Liang Bo.\",\"observed_context\":\"At 01:12, the driver in a car commute video says they want to listen to Liang Bo.\",\"user_goal\":\"Find top representative songs of Liang Bo.\",\"constraints_and_authorization\":\"Use web search. Keep it concise.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"A list of famous songs by Liang Bo.\"}"}}]},
+      {"timestamp":"01:47","role":"tool","tool_call_id":"call_agent_1","name":"agent_call","content":"{\"simulated\":true,\"status\":\"success\",\"summary\":\"Top songs by Liang Bo found.\",\"details\":\"Liang Bo is a well-known Chinese singer-songwriter. His most famous songs include 'Huaji' (Blooming), 'Shanghai, Shanghai', 'The Eclipse', and 'Brother'.\",\"sources\":[{\"title\":\"Liang Bo - Wikipedia\",\"url_or_system\":\"https://en.wikipedia.org/wiki/Liang_Bo\",\"retrieved_at\":\"01:47\"}],\"actions\":[],\"artifacts\":[]}"},
+      {"timestamp":"01:47","role":"assistant","content":"Liang Bo's famous songs include 'Blooming', 'Shanghai, Shanghai', and 'The Eclipse'."}
+    ]
+  }]
+}

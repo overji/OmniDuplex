@@ -1,0 +1,18 @@
+{
+  "status":"ok",
+  "question":"When the driver gets into the car and fastens the seatbelt, use my tools to record a commute departure task.",
+  "question_time":"00:00",
+  "audio_dependency":"helpful",
+  "vision_dependency":"required",
+  "responses":[{
+    "trigger_time":"00:32",
+    "trigger_type":"visual+sound",
+    "trigger_type_reason":"The driver is visually seen and audibly heard fastening their seatbelt inside the car.",
+    "event_description":"The driver fastens their seatbelt after entering the driver's seat of the vehicle.",
+    "messages":[
+      {"timestamp":"00:32","role":"assistant","content":"Got it; I'm handling that now.","tool_calls":[{"id":"call_agent_1","type":"function","function":{"name":"agent_call","arguments":"{\"instruction\":\"Record a commute departure task for the user's morning drive.\",\"observed_context\":\"The user has entered the white Lynk & Co vehicle and is fastening their seatbelt at 00:32.\",\"user_goal\":\"Create a task logging the start of the commute.\",\"constraints_and_authorization\":\"Confirm before executing external work or sharing personal location data.\",\"suggested_capabilities\":[\"task_manage\"],\"expected_output\":\"A successfully created task confirmation with ID and status.\"}"}}]},
+      {"timestamp":"01:08","role":"tool","tool_call_id":"call_agent_1","name":"agent_call","content":"{\"simulated\":true,\"status\":\"success\",\"summary\":\"Commute departure task recorded successfully.\",\"details\":\"Task 'Morning Commute' created with due time matching departure.\",\"sources\":[],\"actions\":[{\"system\":\"task_manager\",\"operation\":\"create_task\",\"status\":\"completed\",\"verification\":\"Task ID T-8821 verified in system.\"}],\"artifacts\":[]}"},
+      {"timestamp":"01:10","role":"assistant","content":"I've recorded your commute departure task."}
+    ]
+  }]
+}

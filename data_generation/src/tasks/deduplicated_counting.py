@@ -17,4 +17,9 @@ def build_request(path: Path, video_path: Path, *, objects_path: Path | None = N
 
 
 def validate_result(result: dict[str, Any], context: GenerationContext) -> dict[str, Any]:
-    return _shared.validate_counting_history(result, context, deduplicated=True)
+    validated = _shared.validate_counting_history(result, context, deduplicated=True)
+    if validated["status"] == "ok":
+        _shared.require_text(validated.get("target_category"), "target_category")
+        if validated.get("counting_unit") not in {"instance", "category", "name"}:
+            raise ValueError("counting_unit must be instance, category, or name")
+    return validated

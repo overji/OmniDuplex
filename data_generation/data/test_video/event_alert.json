@@ -1,0 +1,30 @@
+{
+"status": "ok",
+"question": "Notify me whenever the driver opens a car door.",
+"question_time": "00:20",
+"audio_dependency": "helpful",
+"vision_dependency": "required",
+"responses": [
+{
+"trigger_time": "00:20",
+"event_times": [
+"00:13",
+"00:23"
+],
+"response": "The car doors were opened twice earlier, at 00:13 and 00:23.",
+"trigger_type": "visual+sound",
+"trigger_type_reason": "The car door opening is visible on screen and accompanied by a distinct mechanical sound.",
+"event_description": "The person opens the car doors to place a bag inside and get into the driver's seat."
+},
+{
+"trigger_time": "00:29",
+"event_times": [
+"00:29"
+],
+"response": "A car door is being opened.",
+"trigger_type": "visual+sound",
+"trigger_type_reason": "The driver's hand is visible opening the door from inside, accompanied by the door latch sound.",
+"event_description": "The driver opens the car door from the inside."
+}
+]
+}

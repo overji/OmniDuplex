@@ -30,11 +30,32 @@ At least one modality must be required and included in trigger_type. All natural
     "trigger_type_reason":"...",
     "event_description":"...",
     "messages":[
-      {"timestamp":"MM:SS","role":"assistant","content":"I found it; I'm checking now.","tool_calls":[{"id":"call_agent_1","type":"function","function":{"name":"agent_call","arguments":"{\"instruction\":\"...\",\"observed_context\":\"...\",\"user_goal\":\"...\",\"constraints_and_authorization\":\"...\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"...\"}"}}]},
-      {"timestamp":"MM:SS","role":"tool","tool_call_id":"call_agent_1","name":"agent_call","content":"{\"simulated\":true,\"status\":\"success\",\"summary\":\"...\",\"details\":\"...\",\"sources\":[{\"title\":\"...\",\"url_or_system\":\"...\",\"retrieved_at\":\"MM:SS\"}],\"actions\":[],\"artifacts\":[]}"},
+      {"timestamp":"MM:SS","role":"assistant","content":"I found it; I'm checking now.","tool_calls":[{"type":"function","function":{"name":"agent_call","arguments":"{\"instruction\":\"...\",\"observed_context\":\"...\",\"user_goal\":\"...\",\"constraints_and_authorization\":\"...\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"...\"}"}}]},
+      {"timestamp":"MM:SS","role":"tool","name":"agent_call","content":"{\"simulated\":true,\"status\":\"success\",\"summary\":\"...\",\"details\":\"...\",\"sources\":[{\"title\":\"...\",\"url_or_system\":\"...\",\"retrieved_at\":\"MM:SS\"}],\"actions\":[],\"artifacts\":[]}"},
       {"timestamp":"MM:SS","role":"assistant","content":"..."}
     ]
   }]
 }
 
 If no eligible trigger leaves enough return time, return only {"status":"skip","reason":"..."}.
+
+## Independent video evidence audit
+
+First inspect the original video to choose candidates; then consult events and
+objects only as fallible navigation aids, and return to the video to verify each
+claim and onset. Reject false annotations, correct inaccurate times, and include
+verified omissions. Events and objects derived from those events are not independent
+corroboration. Confidence scores are not proof. Retain and examine supplied
+uncertainties; legacy metadata without evidence fields is unverified reference.
+Never copy a caption claim or timestamp without checking the original video.
+Distinguish visible actions, audible sounds, spoken claims, and on-screen text:
+a narrator mentioning an action does not prove that action is visible.
+Whole-video inspection is an annotation audit only. Each response and agent_call
+may use only evidence available by its own timestamp. Remain silent without a
+verified trigger; if the task cannot be grounded, return skip.
+
+Associate the sole call and result by their fixed message order. Do not output
+id or tool_call_id on calls or messages. This is a simplified dataset trace,
+not a directly submit-ready tool protocol. The first assistant message contains
+acknowledgement and agent_call at trigger_time; the tool result arrives exactly
+the sampled delay later, followed by the final assistant reply at that same time.

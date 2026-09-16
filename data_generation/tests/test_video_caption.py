@@ -63,6 +63,26 @@ class DurationTests(unittest.TestCase):
 
 
 class PromptTests(unittest.TestCase):
+    def test_objects_requires_video_and_preserves_uncertainties(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            events = root / "events.json"
+            events.write_text(json.dumps({
+                "video_summary": {}, "audio_events": [], "visual_events": [],
+                "uncertainties": ["The brand is unreadable"],
+            }), encoding="utf-8")
+            with patch("src.video_caption.probe_video_duration", return_value=60):
+                bundle = video_caption.build_video_prompts(
+                    root / "video.mp4", events_json=events
+                )
+            self.assertIn("The brand is unreadable", bundle.objects_prompt)
+            self.assertIn("original video", bundle.objects_prompt)
+            self.assertNotIn("{{", bundle.objects_prompt)
+            video_caption._write_prompts(bundle, root / "rendered")
+            instructions = (root / "rendered" / "video-input.md").read_text()
+            self.assertIn(str(bundle.video_path), instructions)
+            self.assertIn("Attach this original video", instructions)
+
     def test_build_renders_duration_into_both_prompts(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".mp4") as handle:
             with patch(
