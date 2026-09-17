@@ -15,12 +15,15 @@ from data_generation.src.tasks import (
     deduplicated_counting,
     event_alert,
     event_narration,
-    meeting_understanding,
+    triggered_message_notification,
     semantic_condition_alert,
     snapshot_counting,
+    state_monitoring,
     target_grounding,
-    triggered_information_query,
-    triggered_tool_action,
+    triggered_realtime_query,
+    triggered_multi_source_synthesis,
+    triggered_knowledge_retrieval,
+    triggered_content_recording,
 )
 from data_generation.src.tasks.event_alert import GenerationContext as EventContext
 from data_generation.src.tasks.event_alert import GenerationRequest as EventRequest
@@ -56,9 +59,9 @@ class RequestTests(unittest.TestCase):
             event_narration,
             cumulative_counting,
             deduplicated_counting,
-            triggered_information_query,
-            triggered_tool_action,
-            meeting_understanding,
+            triggered_knowledge_retrieval,
+            triggered_content_recording,
+            triggered_message_notification,
         )
         for module in modules:
             with (
@@ -104,13 +107,95 @@ class RequestTests(unittest.TestCase):
         self.assertEqual(evidence["event_uncertainties"], ["Unclear spoken name"])
         self.assertEqual(evidence["object_uncertainties"], ["Possible sign"])
 
+    def test_all_response_prompts_enforce_temporal_contract(self) -> None:
+        context = _shared.GenerationContext(
+            90,
+            "audio",
+            "start",
+            agent_delay_seconds=20,
+            initial_response_delay_seconds=10,
+        )
+        agent_modules = (
+            triggered_knowledge_retrieval,
+            triggered_realtime_query,
+            triggered_multi_source_synthesis,
+            triggered_content_recording,
+            triggered_message_notification,
+        )
+        shared_modules = (
+            target_grounding,
+            snapshot_counting,
+            semantic_condition_alert,
+            event_narration,
+            cumulative_counting,
+            deduplicated_counting,
+            *agent_modules,
+        )
+        prompts = [
+            _shared.render_prompt(
+                module.PROMPT_PATH,
+                context,
+                agent=module in agent_modules,
+            )
+            for module in shared_modules
+        ]
+        prompts.extend(
+            (
+                event_alert._render_system_prompt(
+                    event_alert.GenerationContext(
+                        90,
+                        "audio",
+                        "start",
+                        initial_response_delay_seconds=10,
+                    )
+                ),
+                state_monitoring._render_system_prompt(
+                    state_monitoring.GenerationContext(
+                        90,
+                        "start",
+                        initial_response_delay_seconds=10,
+                    )
+                ),
+            )
+        )
+
+        self.assertEqual(len(prompts), 13)
+        for prompt in prompts:
+            normalized = " ".join(prompt.split())
+            with self.subTest(prompt=prompt.splitlines()[0]):
+                self.assertIn(
+                    "may use only evidence observable at or before its own "
+                    "trigger_time or message timestamp; never use later video evidence",
+                    normalized,
+                )
+                self.assertIn("must not include an MM:SS video timestamp", normalized)
+
+    def test_event_narration_waits_for_completed_updates(self) -> None:
+        prompt = _shared.render_prompt(
+            event_narration.PROMPT_PATH,
+            _shared.GenerationContext(
+                90,
+                "audio",
+                "start",
+                initial_response_delay_seconds=10,
+            ),
+        )
+        normalized = " ".join(prompt.split())
+
+        self.assertIn(
+            "earliest moment when the completed update is observable and confirmable",
+            normalized,
+        )
+        self.assertIn("For a sustained event, wait until it ends", normalized)
+        self.assertNotIn("Describe each update at its onset", normalized)
+
     def test_agent_prompt_contains_catalog_and_exact_delay(self) -> None:
         with (
             patch.object(_shared, "probe_video_duration", return_value=90),
             patch.object(_shared, "choose_agent_delay", return_value=31),
             patch.object(_shared, "choose_question_position", return_value="start"),
         ):
-            request = triggered_information_query.build_request(
+            request = triggered_knowledge_retrieval.build_request(
                 self.events, Path("video.mp4")
             )
         self.assertIn("web_search", request.system_prompt)
@@ -128,6 +213,18 @@ class DelayTests(unittest.TestCase):
         with patch.object(config.random, "randint", return_value=45) as draw:
             self.assertEqual(config.choose_agent_delay(100), 45)
             draw.assert_called_once_with(15, 45)
+
+    def test_initial_response_delay_uses_ten_seconds_and_half_duration_bounds(self) -> None:
+        self.assertIsNone(config.choose_initial_response_delay(19.99))
+        with patch.object(config.random, "randint", return_value=10) as draw:
+            self.assertEqual(config.choose_initial_response_delay(20), 10)
+            draw.assert_called_once_with(10, 10)
+        with patch.object(config.random, "randint", return_value=60) as draw:
+            self.assertEqual(config.choose_initial_response_delay(120), 60)
+            draw.assert_called_once_with(10, 60)
+        with patch.object(config.random, "randint", return_value=180) as draw:
+            self.assertEqual(config.choose_initial_response_delay(500), 180)
+            draw.assert_called_once_with(10, 180)
 
 
 class CliTests(unittest.TestCase):
@@ -230,6 +327,7 @@ class DirectValidationTests(unittest.TestCase):
 
     def test_snapshot_counting(self) -> None:
         result = copy.deepcopy(self.base)
+        result["trigger_times"] = ["00:10"]
         result["responses"][0].update(
             {"count": 3, "counting_basis": "Three visible players.",
              "target_locations": ["upper left", "center", "lower right"]}
@@ -257,6 +355,16 @@ class DirectValidationTests(unittest.TestCase):
             del invalid[key]
             with self.assertRaises(ValueError):
                 semantic_condition_alert.validate_result(invalid, self.context)
+
+    def test_snapshot_trigger_audit_must_match_every_response(self) -> None:
+        result = copy.deepcopy(self.base)
+        result["responses"][0].update(
+            count=1, counting_basis="One separated target.", target_locations=["center"]
+        )
+        for times in ([], ["00:10", "00:20"], ["00:10", "00:10"], ["00:20", "00:10"]):
+            result["trigger_times"] = times
+            with self.subTest(times=times), self.assertRaises(ValueError):
+                snapshot_counting.validate_result(result, self.context)
 
     def test_narration_requires_three_updates(self) -> None:
         result = copy.deepcopy(self.base)
@@ -327,13 +435,14 @@ class AgentValidationTests(unittest.TestCase):
             "constraints_and_authorization": "Read-only research is authorized.",
             "suggested_capabilities": ["web_search", "document_search"],
             "expected_output": "A sourced manual summary.",
+            "extracted_parameters": [{"name": "model", "value": "X", "evidence_time": "00:10", "evidence": "Model label visible."}],
         }
         envelope = {
             "simulated": True,
             "status": "success",
             "summary": "The manual was found.",
-            "details": "A matching manual is available.",
-            "sources": [{"title": "Manual"}],
+            "details": {"query_subject": "Model X", "knowledge": "A matching manual is available."},
+            "sources": [{"title": "Manual", "url_or_system": "manual-system"}],
             "actions": [],
             "artifacts": [],
         }
@@ -381,7 +490,82 @@ class AgentValidationTests(unittest.TestCase):
         }
 
     def test_valid_id_free_trace(self) -> None:
-        triggered_information_query.validate_result(self.result, self.context)
+        triggered_knowledge_retrieval.validate_result(self.result, self.context)
+
+    def test_parameters_must_have_non_future_evidence(self) -> None:
+        for parameters in ([], [{"name": "model", "value": "X",
+                                 "evidence_time": "00:11", "evidence": "Visible."}]):
+            result = copy.deepcopy(self.result)
+            function = result["responses"][0]["messages"][0]["tool_calls"][0]["function"]
+            arguments = json.loads(function["arguments"])
+            arguments["extracted_parameters"] = parameters
+            function["arguments"] = json.dumps(arguments)
+            with self.assertRaises(ValueError):
+                triggered_knowledge_retrieval.validate_result(result, self.context)
+
+    def test_workflow_success_contracts(self) -> None:
+        cases = (
+            (triggered_knowledge_retrieval,
+             {"query_subject": "X", "knowledge": "Documented specification."},
+             [{"title": "Manual", "url_or_system": "manual"}], [], "knowledge"),
+            (triggered_realtime_query,
+             {"query_subject": "X", "data_source": "live service",
+              "queried_at": "2026-09-16T12:00Z", "valid_at": "2026-09-16T12:00Z",
+              "information_type": "current", "result": "Available"},
+             [{"title": "Live source", "url_or_system": "service"}], [], "valid_at"),
+            (triggered_multi_source_synthesis,
+             {"decision_goal": "Compare", "conclusion": "Prefer X",
+              "basis": "Source comparison", "conflicts": [], "uncertainties": []},
+             [{"title": "A", "url_or_system": "source-a"},
+              {"title": "B", "url_or_system": "source-b"}], [], "basis"),
+            (triggered_content_recording,
+             {"fields": {"content": "Observed content"}, "destination": "notes",
+              "record_status": "written"},
+             [], [{"system": "notes", "operation": "write", "status": "completed",
+                   "verification": "Stored record"}], "destination"),
+            (triggered_message_notification,
+             {"recipient": "Team", "content": "Confirmed decision",
+              "send_time": "now", "message_status": "sent"},
+             [], [{"system": "mail", "operation": "send", "status": "completed",
+                   "verification": "Delivery receipt"}], "recipient"),
+        )
+        for module, details, sources, actions, required_key in cases:
+            with self.subTest(workflow=module.__name__):
+                result = copy.deepcopy(self.result)
+                tool = result["responses"][0]["messages"][1]
+                envelope = json.loads(tool["content"])
+                envelope.update(details=details, sources=sources, actions=actions)
+                tool["content"] = json.dumps(envelope)
+                module.validate_result(result, self.context)
+                del details[required_key]
+                tool["content"] = json.dumps(envelope)
+                with self.assertRaises(ValueError):
+                    module.validate_result(result, self.context)
+
+    def test_duplicate_sources_and_false_sent_status_are_rejected(self) -> None:
+        result = copy.deepcopy(self.result)
+        tool = result["responses"][0]["messages"][1]
+        envelope = json.loads(tool["content"])
+        envelope["sources"] *= 2
+        envelope["details"] = {
+            "decision_goal": "Compare", "conclusion": "Unclear", "basis": "Same source",
+            "conflicts": [], "uncertainties": [],
+        }
+        tool["content"] = json.dumps(envelope)
+        with self.assertRaises(ValueError):
+            triggered_multi_source_synthesis.validate_result(result, self.context)
+        envelope.update(status="needs_confirmation", actions=[], details={
+            "message_status": "sent",
+        })
+        tool["content"] = json.dumps(envelope)
+        with self.assertRaises(ValueError):
+            triggered_message_notification.validate_result(result, self.context)
+        envelope.update(status="success", details={
+            "message_status": "draft", "recipient": "Team", "content": "Draft",
+            "send_time": "after confirmation",
+        })
+        tool["content"] = json.dumps(envelope)
+        triggered_message_notification.validate_result(result, self.context)
 
     def test_ids_order_and_multiple_calls_are_rejected(self) -> None:
         for mutation in ("call_id", "result_id", "order", "multiple"):
@@ -396,7 +580,7 @@ class AgentValidationTests(unittest.TestCase):
             else:
                 messages[0]["tool_calls"] *= 2
             with self.subTest(mutation=mutation), self.assertRaises(ValueError):
-                triggered_information_query.validate_result(result, self.context)
+                triggered_knowledge_retrieval.validate_result(result, self.context)
 
     def test_call_arguments_must_be_json(self) -> None:
         result = copy.deepcopy(self.result)
@@ -404,19 +588,19 @@ class AgentValidationTests(unittest.TestCase):
             "arguments"
         ] = "not json"
         with self.assertRaisesRegex(ValueError, "valid JSON"):
-            triggered_information_query.validate_result(result, self.context)
+            triggered_knowledge_retrieval.validate_result(result, self.context)
 
     def test_result_time_must_match_delay_and_video(self) -> None:
         result = copy.deepcopy(self.result)
         result["responses"][0]["messages"][1]["timestamp"] = "00:31"
         with self.assertRaisesRegex(ValueError, "sampled delay"):
-            triggered_information_query.validate_result(result, self.context)
+            triggered_knowledge_retrieval.validate_result(result, self.context)
 
         short_context = _shared.GenerationContext(14, "vision", "start", None)
         with self.assertRaisesRegex(ValueError, "shorter"):
-            triggered_information_query.validate_result(result, short_context)
+            triggered_knowledge_retrieval.validate_result(result, short_context)
         self.assertEqual(
-            triggered_information_query.validate_result(
+            triggered_knowledge_retrieval.validate_result(
                 {"status": "skip", "reason": "Too short."}, short_context
             ),
             {"status": "skip", "reason": "Too short."},

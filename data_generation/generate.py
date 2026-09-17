@@ -11,6 +11,7 @@ Example:
         path/to/events.json --print-prompt
 
 Use ``--print-prompt`` to inspect the sampled prompts without calling an API.
+See data_generation/README.md for all thirteen tasks and the five backend workflows.
 """
 
 from src.cli import main

@@ -20,6 +20,14 @@ def validate_result(result: dict[str, Any], context: GenerationContext) -> dict[
     )
     if question_seconds is None:
         return validated
+    trigger_times = result.get("trigger_times")
+    if not isinstance(trigger_times, list) or not trigger_times:
+        raise ValueError("trigger_times must be a non-empty array")
+    seconds = [_shared.checked_time(t, context, "trigger_times") for t in trigger_times]
+    if seconds != sorted(set(seconds)):
+        raise ValueError("trigger_times must be sorted and unique")
+    if trigger_times != [response["trigger_time"] for response in result["responses"]]:
+        raise ValueError("trigger_times must match responses one-to-one")
     if result["vision_dependency"] != "required":
         raise ValueError("snapshot counting requires vision")
     for index, response in enumerate(result["responses"]):

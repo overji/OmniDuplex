@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from ..common import format_mmss, load_json_object, timestamp_seconds
-from ..config import choose_question_position
+from ..config import choose_initial_response_delay, choose_question_position
 from ..video_caption import probe_video_duration
 
 
@@ -17,7 +17,7 @@ PROMPT_PATH = (
     Path(__file__).resolve().parents[2]
     / "prompts"
     / "task_generation"
-    / "proactive_alert"
+    / "narration"
     / "state_monitoring.md"
 )
 PROMPT_TEMPLATE = PROMPT_PATH.read_text(encoding="utf-8").strip()
@@ -27,6 +27,7 @@ PROMPT_TEMPLATE = PROMPT_PATH.read_text(encoding="utf-8").strip()
 class GenerationContext:
     duration_seconds: float
     question_position: str
+    initial_response_delay_seconds: int | None = 0
 
 
 @dataclass(frozen=True)
@@ -61,6 +62,14 @@ def _render_system_prompt(context: GenerationContext) -> str:
         )
     else:
         raise ValueError(f"invalid question position: {context.question_position!r}")
+    if context.initial_response_delay_seconds is None:
+        question_policy += " The video is too short for the required silent interval; return skip."
+    else:
+        question_policy += (
+            f" Keep silent after question_time for at least {context.initial_response_delay_seconds} "
+            "seconds (you may wait longer); the first response must be no earlier than "
+            "question_time plus this interval. If no response fits, return skip."
+        )
 
     replacements = {
         "{{VIDEO_DURATION}}": format_mmss(context.duration_seconds),
@@ -91,6 +100,7 @@ def build_request(
     context = GenerationContext(
         duration_seconds=duration_seconds,
         question_position=choose_question_position(duration_seconds),
+        initial_response_delay_seconds=choose_initial_response_delay(duration_seconds),
     )
     return GenerationRequest(
         system_prompt=_render_system_prompt(context),
@@ -123,6 +133,8 @@ def validate_result(
         raise ValueError("question_time must be 00:00 for a start-position sample")
     if context.question_position == "non_start" and question_seconds == 0:
         raise ValueError("question_time must be after 00:00 for a non-start sample")
+    if context.initial_response_delay_seconds is None:
+        raise ValueError("video is too short for the required initial response delay")
 
     audio_dependency = result["audio_dependency"]
     if audio_dependency not in {"required", "helpful", "none"}:
@@ -157,6 +169,8 @@ def validate_result(
             raise ValueError(f"trigger_time exceeds video duration: {trigger_time}")
         if trigger_seconds <= question_seconds:
             raise ValueError("state transition must occur after question_time")
+        if index == 0 and trigger_seconds < question_seconds + context.initial_response_delay_seconds:
+            raise ValueError("first response occurs before the sampled silent interval")
         if trigger_seconds <= previous_trigger_seconds:
             raise ValueError("responses must be strictly chronological")
         if trigger_time in seen_trigger_times:

@@ -1,206 +1,144 @@
 {
-"items": [
-{
-"item_id": "item_001",
-"name": "Driver / Narrator",
-"category": "Person",
-"description": "The person walking, getting into the car, driving, and narrating the video.",
-"first_appearance_time": "00:00:00.000",
-"last_appearance_time": "00:01:31.000",
-"appearance_segments": [
-[
-"00:00:00.000",
-"00:01:31.000"
-]
-],
-"is_main_item": true,
-"importance_score": 1.0,
-"related_events": [
-{
-"event_id": "a01",
-"relationship_type": "mention",
-"relationship_description": "Driver provides voiceover narration.",
-"confidence": 0.95
-},
-{
-"event_id": "a02",
-"relationship_type": "mention",
-"relationship_description": "Driver exclaims in voiceover.",
-"confidence": 0.95
-},
-{
-"event_id": "a05",
-"relationship_type": "mention",
-"relationship_description": "Driver speaks in voiceover.",
-"confidence": 0.95
-},
-{
-"event_id": "a06",
-"relationship_type": "mention",
-"relationship_description": "Driver speaks and exclaims while driving.",
-"confidence": 0.95
-},
-{
-"event_id": "a07",
-"relationship_type": "mention",
-"relationship_description": "Driver speaks about relaxing and playing music.",
-"confidence": 0.95
-},
-{
-"event_id": "a09",
-"relationship_type": "mention",
-"relationship_description": "Driver complains about another driver.",
-"confidence": 0.95
-},
-{
-"event_id": "v02",
-"relationship_type": "appearance",
-"relationship_description": "Driver walks on the sidewalk from a first-person perspective.",
-"confidence": 0.95
-},
-{
-"event_id": "v04",
-"relationship_type": "interaction",
-"relationship_description": "Driver opens car door and places a bag inside.",
-"confidence": 0.92
-},
-{
-"event_id": "v05",
-"relationship_type": "interaction",
-"relationship_description": "Driver opens driver's door and enters the car.",
-"confidence": 0.95
-},
-{
-"event_id": "v06",
-"relationship_type": "interaction",
-"relationship_description": "Driver fastens seatbelt across the chest.",
-"confidence": 0.95
-},
-{
-"event_id": "v07",
-"relationship_type": "interaction",
-"relationship_description": "Driver operates the car and navigates city streets.",
-"confidence": 0.95
-}
-],
-"confidence": 0.95
-},
-{
-"item_id": "item_002",
-"name": "White Car (Lynk & Co)",
-"category": "Vehicle",
-"description": "The white car parked on the roadside and driven by the narrator during the commute.",
-"first_appearance_time": "00:00:13.000",
-"last_appearance_time": "00:01:25.000",
-"appearance_segments": [
-[
-"00:00:13.000",
-"00:01:25.000"
-]
-],
-"is_main_item": true,
-"importance_score": 0.95,
-"related_events": [
-{
-"event_id": "a03",
-"relationship_type": "interaction",
-"relationship_description": "Car door is opened and closed while placing a bag inside.",
-"confidence": 0.9
-},
-{
-"event_id": "a04",
-"relationship_type": "interaction",
-"relationship_description": "Car door is opened and driver gets into the driver's seat.",
-"confidence": 0.9
-},
-{
-"event_id": "v04",
-"relationship_type": "appearance",
-"relationship_description": "White car parked on the roadside where the bag is stored.",
-"confidence": 0.92
-},
-{
-"event_id": "v05",
-"relationship_type": "appearance",
-"relationship_description": "Driver enters the vehicle cabin.",
-"confidence": 0.95
-},
-{
-"event_id": "v06",
-"relationship_type": "appearance",
-"relationship_description": "Driver fastens seatbelt inside the car.",
-"confidence": 0.95
-},
-{
-"event_id": "v07",
-"relationship_type": "movement",
-"relationship_description": "Car drives through city streets, navigating traffic and turns.",
-"confidence": 0.95
-}
-],
-"confidence": 0.95
-},
-{
-"item_id": "item_003",
-"name": "Black Backpack",
-"category": "Object",
-"description": "A black bag placed into the car by the driver.",
-"first_appearance_time": "00:00:13.000",
-"last_appearance_time": "00:00:18.000",
-"appearance_segments": [
-[
-"00:00:13.000",
-"00:00:18.000"
-]
-],
-"is_main_item": false,
-"importance_score": 0.4,
-"related_events": [
-{
-"event_id": "a03",
-"relationship_type": "interaction",
-"relationship_description": "Sound of the bag being placed inside the vehicle.",
-"confidence": 0.9
-},
-{
-"event_id": "v04",
-"relationship_type": "interaction",
-"relationship_description": "Backpack is placed into the car by the driver.",
-"confidence": 0.92
-}
-],
-"confidence": 0.9
-},
-{
-"item_id": "item_004",
-"name": "Background Music (Liang Bo)",
-"category": "Audio",
-"description": "Pop music by singer Liang Bo playing in the car.",
-"first_appearance_time": "00:01:17.000",
-"last_appearance_time": "00:01:25.000",
-"appearance_segments": [
-[
-"00:01:17.000",
-"00:01:25.000"
-]
-],
-"is_main_item": false,
-"importance_score": 0.5,
-"related_events": [
-{
-"event_id": "a08",
-"relationship_type": "appearance",
-"relationship_description": "Pop music by Liang Bo plays in the background.",
-"confidence": 0.9
-},
-{
-"event_id": "v07",
-"relationship_type": "background_presence",
-"relationship_description": "Music plays while driving through city streets.",
-"confidence": 0.95
-}
-],
-"confidence": 0.9
-}
-]
+  "items": [
+    {
+      "item_id": "item_001",
+      "name": "Lynk & Co Car",
+      "category": "Vehicle",
+      "description": "A white Lynk & Co vehicle parked on the street and subsequently driven by the narrator through urban traffic.",
+      "evidence_kind": "visible_presence",
+      "observation": "White exterior body and white-trimmed interior cabin with Lynk & Co steering wheel logo visible.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00.000",
+      "last_appearance_time": "02:00.350",
+      "appearance_segments": [
+        ["00:00.000", "02:00.350"]
+      ],
+      "is_main_item": true,
+      "importance_score": 1.0,
+      "related_events": [
+        {
+          "event_id": "v3",
+          "relationship_type": "interaction",
+          "relationship_description": "Car door opened and bag placed inside.",
+          "evidence_kind": "visible_presence",
+          "observation": "White car door and interior seat visible.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v4",
+          "relationship_type": "interaction",
+          "relationship_description": "Driver enters and sits in the vehicle.",
+          "evidence_kind": "visible_presence",
+          "observation": "Interior cabin view with steering wheel and dashboard.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v5",
+          "relationship_type": "usage",
+          "relationship_description": "Vehicle operated and driven through city streets.",
+          "evidence_kind": "visible_presence",
+          "observation": "Steering and road view through windshield.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.99
+    },
+    {
+      "item_id": "item_002",
+      "name": "Narrator / Driver",
+      "category": "People",
+      "description": "The creator holding the camera, walking to the car, entering, and driving.",
+      "evidence_kind": "visible_presence",
+      "observation": "POV hands, arms, and clothing visible throughout the video.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00.000",
+      "last_appearance_time": "02:00.350",
+      "appearance_segments": [
+        ["00:00.000", "02:00.350"]
+      ],
+      "is_main_item": true,
+      "importance_score": 1.0,
+      "related_events": [
+        {
+          "event_id": "v2",
+          "relationship_type": "movement",
+          "relationship_description": "Walking forward along the sidewalk.",
+          "evidence_kind": "visible_presence",
+          "observation": "First-person walking motion.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v4",
+          "relationship_type": "interaction",
+          "relationship_description": "Entering driver's seat and fastening seatbelt.",
+          "evidence_kind": "visible_presence",
+          "observation": "Hands fastening seatbelt and operating cabin controls.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.99
+    },
+    {
+      "item_id": "item_003",
+      "name": "Black Bag",
+      "category": "Objects",
+      "description": "A black bag carried by the narrator and placed onto the car seat.",
+      "evidence_kind": "visible_presence",
+      "observation": "Black bag held in hand and placed inside the vehicle.",
+      "uncertainty": null,
+      "first_appearance_time": "00:13.500",
+      "last_appearance_time": "00:18.000",
+      "appearance_segments": [
+        ["00:13.500", "00:18.000"]
+      ],
+      "is_main_item": false,
+      "importance_score": 0.4,
+      "related_events": [
+        {
+          "event_id": "v3",
+          "relationship_type": "interaction",
+          "relationship_description": "Bag placed inside the car door.",
+          "evidence_kind": "visible_presence",
+          "observation": "Black bag placed on the white leather seat.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "item_id": "item_004",
+      "name": "Opening Title Text",
+      "category": "Text",
+      "description": "On-screen title text overlay.",
+      "evidence_kind": "on_screen_text",
+      "observation": "Yellow and white text reading '沉浸式开车上班 第一视角' with car icons.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00.000",
+      "last_appearance_time": "00:03.200",
+      "appearance_segments": [
+        ["00:00.000", "00:03.200"]
+      ],
+      "is_main_item": false,
+      "importance_score": 0.5,
+      "related_events": [
+        {
+          "event_id": "v1",
+          "relationship_type": "display",
+          "relationship_description": "Opening title text overlay displayed on the screen.",
+          "evidence_kind": "on_screen_text",
+          "observation": "Text overlay centered in the video frame.",
+          "uncertainty": null,
+          "confidence": 0.99
+        }
+      ],
+      "confidence": 0.99
+    }
+  ],
+  "uncertainties": []
 }

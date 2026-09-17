@@ -13,7 +13,11 @@ from ..common import (
     load_json_object,
     timestamp_seconds,
 )
-from ..config import choose_preferred_modality, choose_question_position
+from ..config import (
+    choose_initial_response_delay,
+    choose_preferred_modality,
+    choose_question_position,
+)
 from ..video_caption import probe_video_duration
 
 
@@ -32,6 +36,7 @@ class GenerationContext:
     duration_seconds: float
     preferred_modality: str
     question_position: str
+    initial_response_delay_seconds: int | None = 0
 
 
 @dataclass(frozen=True)
@@ -76,6 +81,14 @@ def _render_system_prompt(context: GenerationContext) -> str:
         )
     else:
         raise ValueError(f"invalid question position: {context.question_position!r}")
+    if context.initial_response_delay_seconds is None:
+        question_policy += " The video is too short for the required silent interval; return skip."
+    else:
+        question_policy += (
+            f" Keep silent after question_time for at least {context.initial_response_delay_seconds} "
+            "seconds (you may wait longer); the first response must be no earlier than "
+            "question_time plus this interval. If no response fits, return skip."
+        )
 
     replacements = {
         "{{VIDEO_DURATION}}": format_mmss(context.duration_seconds),
@@ -112,6 +125,7 @@ def build_request(
         duration_seconds=duration_seconds,
         preferred_modality=preferred_modality,
         question_position=question_position,
+        initial_response_delay_seconds=choose_initial_response_delay(duration_seconds),
     )
     return GenerationRequest(
         system_prompt=_render_system_prompt(context),
@@ -164,6 +178,8 @@ def validate_result(
         raise ValueError("question_time must be 00:00 for a start-position sample")
     if context.question_position == "non_start" and question_seconds == 0:
         raise ValueError("question_time must be after 00:00 for a non-start sample")
+    if context.initial_response_delay_seconds is None:
+        raise ValueError("video is too short for the required initial response delay")
 
     _validate_dependencies(result)
     responses = result.get("responses")
@@ -195,6 +211,8 @@ def validate_result(
             raise ValueError(f"trigger_time exceeds video duration: {trigger_time}")
         if trigger_seconds < question_seconds:
             raise ValueError(f"response precedes question_time: {trigger_time}")
+        if index == 0 and trigger_seconds < question_seconds + context.initial_response_delay_seconds:
+            raise ValueError("first response occurs before the sampled silent interval")
         if trigger_time in seen_trigger_times:
             raise ValueError(f"duplicate trigger_time: {trigger_time}")
         seen_trigger_times.add(trigger_time)
@@ -242,8 +260,8 @@ def validate_result(
             raise ValueError("a response cannot mix historical and future event_times")
         if has_past:
             historical_response_count += 1
-            if trigger_seconds != question_seconds:
-                raise ValueError("historical events must trigger an immediate response")
+            if trigger_seconds < question_seconds + context.initial_response_delay_seconds:
+                raise ValueError("historical events must trigger a delayed response")
         else:
             if len(event_seconds) != 1:
                 raise ValueError("each current or future event needs its own response")

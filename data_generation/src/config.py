@@ -10,6 +10,8 @@ AUDIO_PREFERENCE_PROBABILITY = 0.5
 START_INPUT_PROBABILITY = 0.5
 AGENT_DELAY_MIN_SECONDS = 15
 AGENT_DELAY_MAX_SECONDS = 45
+INITIAL_RESPONSE_DELAY_MIN_SECONDS = 10
+INITIAL_RESPONSE_DELAY_MAX_SECONDS = 180
 
 
 def validate_probability(name: str, value: float) -> float:
@@ -50,3 +52,21 @@ def choose_agent_delay(duration_seconds: float) -> int | None:
     if upper < AGENT_DELAY_MIN_SECONDS:
         return None
     return random.randint(AGENT_DELAY_MIN_SECONDS, upper)
+
+
+def choose_initial_response_delay(duration_seconds: float) -> int | None:
+    """Choose the minimum silent interval after question_time."""
+    if (
+        isinstance(duration_seconds, bool)
+        or not isinstance(duration_seconds, (int, float))
+        or not math.isfinite(duration_seconds)
+        or duration_seconds < 0
+    ):
+        raise ValueError(f"invalid video duration: {duration_seconds!r}")
+    upper = min(
+        INITIAL_RESPONSE_DELAY_MAX_SECONDS,
+        math.floor(duration_seconds * 0.5),
+    )
+    if upper < INITIAL_RESPONSE_DELAY_MIN_SECONDS:
+        return None
+    return random.randint(INITIAL_RESPONSE_DELAY_MIN_SECONDS, upper)

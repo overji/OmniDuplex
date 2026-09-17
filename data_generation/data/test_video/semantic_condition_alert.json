@@ -1,17 +1,24 @@
 {
   "status": "ok",
-  "question": "Let me know when the driver starts playing music while driving.",
+  "question": "Let me know when the driving environment becomes congested and frustrating due to other road users blocking the way.",
   "question_time": "00:00",
+  "semantic_condition": "The driving environment becomes congested and frustrating due to obstacle blockage",
+  "observable_criteria": [
+    "Traffic slowing down behind a blocking vehicle",
+    "Driver expressing verbal complaints about other road users"
+  ],
   "audio_dependency": "required",
-  "vision_dependency": "helpful",
-  "responses": [{
-    "trigger_time": "01:17",
-    "response": "The driver has started playing music by Liang Bo while driving.",
-    "condition_evidence": "The driver says '先来首梁博听听！' and background music by Liang Bo starts playing starting around 01:17.",
-    "confidence": 0.95,
-    "uncertainty": "none",
-    "trigger_type": "visual+speech",
-    "trigger_type_reason": "The trigger involves both the driver speaking about playing the music and the audio/visual context of driving while the music starts.",
-    "event_description": "Driver plays music by Liang Bo in the car."
-  }]
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "trigger_time": "01:26",
+      "response": "The driving environment has become frustrating as another vehicle blocks the path and the driver voices complaints about it.",
+      "condition_evidence": "The driver encounters a van blocking traffic and verbally expresses annoyance at 01:26 ('你以为你是理想吗？？左边辣么大位置，你眼睛瞎吗？'), fulfilling the criteria of congestion and verbal frustration.",
+      "confidence": 0.95,
+      "uncertainty": "none",
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Visual observation of the blocking van combined with speech complaining about the traffic situation.",
+      "event_description": "The driver complains about a blocking vehicle ahead."
+    }
+  ]
 }

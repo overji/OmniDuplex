@@ -6,9 +6,18 @@ The video duration is {{VIDEO_DURATION}} ({{VIDEO_DURATION_SECONDS}} seconds). U
 
 Write one natural English standing instruction asking to count every independent occurrence of a specific observable event. Prefer a target requiring {{PREFERRED_MODALITY}}, falling back to {{FALLBACK_MODALITY}} only when needed. Define a meaningful onset and end so a sustained event counts once, while a later event after a clear end counts again. Audit the whole video and do not omit unannotated occurrences or count duplicate annotations.
 
-Occurrences before question_time are historical: group all of them into one response at question_time with their sorted times and cumulative count. Each occurrence at or after question_time gets its own response at its onset and increases count by one. Never use future evidence to alter a count silently; choose an unambiguous target or skip. event_times across responses must be unique and chronological.
+Occurrences before question_time are historical: group all of them into one response after the required silent interval, with their sorted times and cumulative count. Each occurrence at or after question_time gets its own response at its onset when permitted by the response timing rule and increases count by one. Never use future evidence to alter a count silently; choose an unambiguous target or skip. event_times across responses must be unique and chronological.
 
 At least one modality dependency must be required and represented in every trigger_type. All natural-language content must be English.
+
+The requester is the video viewer, the people shown or heard are video
+participants, and the assistant answers the viewer. First-person wording in the
+question may express the viewer's needs, preferences, or wish to receive results;
+it must not attribute a participant's actions, speech, location, possessions, or
+experiences to the viewer. Describe those participants in the third person or
+by an observable role, even for POV footage. Keep quoted speech attributed to
+its original speaker. In assistant replies, "you/your" refers to the viewer,
+not a video participant.
 
 Return exactly one JSON object:
 
@@ -43,5 +52,8 @@ Never copy a caption claim or timestamp without checking the original video.
 Distinguish visible actions, audible sounds, spoken claims, and on-screen text:
 a narrator mentioning an action does not prove that action is visible.
 Whole-video inspection is an annotation audit only. Each response and agent_call
-may use only evidence available by its own timestamp. Remain silent without a
-verified trigger; if the task cannot be grounded, return skip.
+may use only evidence observable at or before its own trigger_time or message
+timestamp; never use later video evidence. User-visible response text must not
+include an MM:SS video timestamp; keep video timestamps only in structured time
+fields. Remain silent without a verified trigger; if the task cannot be grounded,
+return skip.

@@ -5,6 +5,7 @@ import io
 import json
 import tempfile
 import unittest
+from dataclasses import replace
 from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
@@ -175,11 +176,12 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "non-start"):
             event_alert.validate_result(result, self.context)
 
-    def test_historical_response_must_be_immediate(self) -> None:
+    def test_historical_response_must_observe_silent_interval(self) -> None:
         result = copy.deepcopy(self.result)
         result["responses"][0]["trigger_time"] = "00:16"
-        with self.assertRaisesRegex(ValueError, "immediate"):
-            event_alert.validate_result(result, self.context)
+        context = replace(self.context, initial_response_delay_seconds=10)
+        with self.assertRaisesRegex(ValueError, "silent interval"):
+            event_alert.validate_result(result, context)
 
     def test_future_trigger_must_equal_event_time(self) -> None:
         result = copy.deepcopy(self.result)
@@ -232,13 +234,16 @@ class EntrypointTests(unittest.TestCase):
                 "deduplicated_counting",
                 "event_alert",
                 "event_narration",
-                "meeting_understanding",
+                "route",
                 "semantic_condition_alert",
                 "snapshot_counting",
                 "state_monitoring",
                 "target_grounding",
-                "triggered_information_query",
-                "triggered_tool_action",
+                "triggered_content_recording",
+                "triggered_knowledge_retrieval",
+                "triggered_message_notification",
+                "triggered_multi_source_synthesis",
+                "triggered_realtime_query",
             ),
         )
         self.assertIs(get_task("event_alert"), event_alert)

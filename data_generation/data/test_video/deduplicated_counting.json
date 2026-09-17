@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "question": "Count the car brands mentioned or shown.",
+  "target_category": "car brands",
+  "counting_unit": "name",
+  "question_time": "01:20",
+  "audio_dependency": "required",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "trigger_time": "01:31",
+      "event_times": [
+        "00:12",
+        "01:26"
+      ],
+      "response": "The car brands identified so far are Lynk & Co and Li Auto, for a total of 2.",
+      "count": 2,
+      "new_targets": [
+        {
+          "target_id": "target_001",
+          "name": "Lynk & Co",
+          "evidence": "Visible on the car body ('SKYLAD 07') and steering wheel logo during the walk and drive.",
+          "uncertain": false
+        },
+        {
+          "target_id": "target_002",
+          "name": "Li Auto",
+          "evidence": "Spoken by the narrator complaining about another driver ('你以为你是理想吗？').",
+          "uncertain": false
+        }
+      ],
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "The response occurs after the required silent interval following 01:20 and summarizes the historical car brands identified through visual logos and spoken complaints.",
+      "event_description": "The narrator drives down the street after mentioning Li Auto and operating the Lynk & Co vehicle."
+    }
+  ]
+}

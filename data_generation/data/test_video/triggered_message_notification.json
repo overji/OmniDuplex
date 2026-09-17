@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "question": "When the driver starts driving the car, send an email to my work contact notifying them that I am on my way to the office.",
+  "question_time": "00:00",
+  "audio_dependency": "helpful",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "trigger_time": "00:35",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Visual observation of the driver starting to drive the car and audio of driving operations.",
+      "event_description": "The driver starts operating the vehicle and driving through the city streets.",
+      "messages": [
+        {
+          "timestamp": "00:35",
+          "role": "assistant",
+          "content": "Notifying office.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Send an email to the work contact notifying them that the user is on the way to the office.\",\"observed_context\":\"The driver has entered the white Lynk & Co car, fastened the seatbelt, and started driving through city streets at 00:35.\",\"user_goal\":\"Send a notification email upon starting the commute.\",\"constraints_and_authorization\":\"Authorized by the user's standing instruction to send notifications upon driving start.\",\"suggested_capabilities\":[\"email_send\"],\"expected_output\":\"A successfully sent email notification with message status set to sent.\",\"extracted_parameters\":[{\"name\":\"recipient\",\"value\":\"office@work.com\",\"evidence_time\":\"00:35\",\"evidence\":\"Driver starts driving the vehicle.\"},{\"name\":\"content\",\"value\":\"I am on my way to the office now.\",\"evidence_time\":\"00:35\",\"evidence\":\"Commute has begun.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "timestamp": "01:03",
+          "role": "tool",
+          "name": "agent_call",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Email successfully sent to the office contact.\",\"details\":{\"recipient\":\"office@work.com\",\"content\":\"I am on my way to the office now.\",\"send_time\":\"01:03\",\"message_status\":\"sent\"},\"sources\":[],\"actions\":[{\"system\":\"email_system\",\"operation\":\"send\",\"status\":\"completed\",\"verification\":\"Email delivered to recipient server.\"}],\"artifacts\":[]}"
+        },
+        {
+          "timestamp": "01:03",
+          "role": "assistant",
+          "content": "Your notification email has been sent successfully."
+        }
+      ]
+    }
+  ]
+}

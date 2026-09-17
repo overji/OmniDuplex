@@ -24,9 +24,23 @@ The frontend has this function definition:
         "user_goal": {"type":"string","description":"The result the user asked for."},
         "constraints_and_authorization": {"type":"string","description":"Scope, permissions, confirmation needs, and user constraints."},
         "suggested_capabilities": {"type":"array","items":{"type":"string"},"minItems":1},
-        "expected_output": {"type":"string","description":"Required result, evidence, sources, actions, and artifacts."}
+        "expected_output": {"type":"string","description":"Required result, evidence, sources, actions, and artifacts."},
+        "extracted_parameters": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type":"string"},
+              "value": {"type":"string"},
+              "evidence_time": {"type":"string","description":"MM:SS, no later than trigger_time"},
+              "evidence": {"type":"string","description":"Observable audiovisual evidence"}
+            },
+            "required": ["name","value","evidence_time","evidence"],
+            "additionalProperties": false
+          }
+        }
       },
-      "required": ["instruction","observed_context","user_goal","constraints_and_authorization","suggested_capabilities","expected_output"],
+      "required": ["instruction","observed_context","user_goal","constraints_and_authorization","suggested_capabilities","expected_output","extracted_parameters"],
       "additionalProperties": false
     }
   }

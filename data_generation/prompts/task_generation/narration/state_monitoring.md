@@ -58,6 +58,15 @@ Write one natural and unambiguous monitoring instruction at `question_time`.
 Do not include timestamps, reveal future changes, list possible state values,
 or otherwise spoil the answer.
 
+The requester is the video viewer, the people shown or heard are video
+participants, and the assistant answers the viewer. First-person wording in the
+question may express the viewer's needs, preferences, or wish to receive results;
+it must not attribute a participant's actions, speech, location, possessions, or
+experiences to the viewer. Describe those participants in the third person or
+by an observable role, even for POV footage. Keep quoted speech attributed to
+its original speaker. In assistant replies, "you/your" refers to the viewer,
+not a video participant.
+
 ## Transition responses
 
 Create one response at the exact onset of every verified transition after
@@ -122,5 +131,8 @@ Never copy a caption claim or timestamp without checking the original video.
 Distinguish visible actions, audible sounds, spoken claims, and on-screen text:
 a narrator mentioning an action does not prove that action is visible.
 Whole-video inspection is an annotation audit only. Each response and agent_call
-may use only evidence available by its own timestamp. Remain silent without a
-verified trigger; if the task cannot be grounded, return skip.
+may use only evidence observable at or before its own trigger_time or message
+timestamp; never use later video evidence. User-visible response text must not
+include an MM:SS video timestamp; keep video timestamps only in structured time
+fields. Remain silent without a verified trigger; if the task cannot be grounded,
+return skip.

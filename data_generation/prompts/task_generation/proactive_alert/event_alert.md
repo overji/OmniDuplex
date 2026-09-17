@@ -68,11 +68,20 @@ real person speaking to a smart assistant. It must not contain a timestamp,
 reveal when an occurrence happens, or state the outcome in advance.
 Write the question, responses, reasons, and descriptions in English.
 
+The requester is the video viewer, the people shown or heard are video
+participants, and the assistant answers the viewer. First-person wording in the
+question may express the viewer's needs, preferences, or wish to receive results;
+it must not attribute a participant's actions, speech, location, possessions, or
+experiences to the viewer. Describe those participants in the third person or
+by an observable role, even for POV footage. Keep quoted speech attributed to
+its original speaker. In assistant replies, "you/your" refers to the viewer,
+not a video participant.
+
 Divide every video-verified occurrence of the chosen target by its onset
 relative to `question_time`:
 
 - Historical occurrences have onset earlier than `question_time`. If one or
-  more exist, create exactly one immediate summary response. Set its
+  more exist, create exactly one summary response after the required silent interval. Set its
   `trigger_time` to `question_time` and put every historical onset, sorted, in
   its `event_times` array. Briefly summarize all of them in one natural reply.
 - Current or future occurrences have onset at or after `question_time`. Create
@@ -82,13 +91,13 @@ relative to `question_time`:
   times in one response, omit a video-verified occurrence, or invent a
   repetition.
 - Order responses by `trigger_time`. Each response must be brief and
-  conversational. After an immediate historical summary, continue producing
+  conversational. After the historical summary, continue producing
   responses for all later occurrences.
 
 The target's total occurrence count is the total number of timestamps across
 all `event_times` arrays, not the number of response objects. This total must
 exactly equal the number of independently verified occurrences in the video;
-historical occurrences remain grouped into one immediate response without being
+historical occurrences remain grouped into one response after the required silent interval without being
 collapsed into one occurrence.
 
 An event whose onset is before `question_time` counts as historical even if it
@@ -156,5 +165,8 @@ Never copy a caption claim or timestamp without checking the original video.
 Distinguish visible actions, audible sounds, spoken claims, and on-screen text:
 a narrator mentioning an action does not prove that action is visible.
 Whole-video inspection is an annotation audit only. Each response and agent_call
-may use only evidence available by its own timestamp. Remain silent without a
-verified trigger; if the task cannot be grounded, return skip.
+may use only evidence observable at or before its own trigger_time or message
+timestamp; never use later video evidence. User-visible response text must not
+include an MM:SS video timestamp; keep video timestamps only in structured time
+fields. Remain silent without a verified trigger; if the task cannot be grounded,
+return skip.

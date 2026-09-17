@@ -11,6 +11,7 @@ from typing import Any
 from ..common import format_mmss, load_json_object, timestamp_seconds
 from ..config import (
     choose_agent_delay,
+    choose_initial_response_delay,
     choose_preferred_modality,
     choose_question_position,
 )
@@ -28,6 +29,9 @@ class GenerationContext:
     preferred_modality: str
     question_position: str
     agent_delay_seconds: int | None = None
+    # Zero preserves compatibility for callers constructing test contexts directly;
+    # build_request always replaces it with the sampled value (or None if impossible).
+    initial_response_delay_seconds: int | None = 0
 
 
 @dataclass(frozen=True)
@@ -65,7 +69,8 @@ def load_evidence(path: Path, objects_path: Path | None = None) -> dict[str, Any
 
 def _question_policy(context: GenerationContext, *, historical: bool) -> str:
     if context.question_position == "start":
-        return "For this sample, question_time MUST be 00:00."
+        policy = "For this sample, question_time MUST be 00:00."
+        return _with_response_delay(policy, context)
     if context.question_position != "non_start":
         raise ValueError(f"invalid question position: {context.question_position!r}")
     policy = (
@@ -73,12 +78,25 @@ def _question_policy(context: GenerationContext, *, historical: bool) -> str:
         f"before {format_mmss(context.duration_seconds)}."
     )
     if historical:
-        return policy + (
+        policy = policy + (
             " Prefer a time between occurrences so historical and later evidence "
             "can both be represented; purely historical or future samples are allowed. "
             "question_time MUST NOT equal a counted event time or first appearance."
         )
-    return policy + " Only create task responses at or after question_time."
+    else:
+        policy += " Only create task responses at or after question_time."
+    return _with_response_delay(policy, context)
+
+
+def _with_response_delay(policy: str, context: GenerationContext) -> str:
+    if context.initial_response_delay_seconds is None:
+        return policy + " The video is too short for the required silent interval; return skip."
+    return policy + (
+        f" Keep silent after question_time for at least {context.initial_response_delay_seconds} "
+        "seconds (you may wait longer). The first response must be at or after "
+        "question_time plus this interval and all responses must remain within the video. "
+        "If no valid response can fit, return skip."
+    )
 
 
 def render_prompt(
@@ -111,6 +129,13 @@ def render_prompt(
                 f"The simulated backend delay is exactly "
                 f"{context.agent_delay_seconds} seconds. Select a trigger early enough "
                 "that trigger_time plus this delay does not exceed the video duration."
+            )
+        if context.initial_response_delay_seconds is None:
+            timing += " The video is too short for the required initial silent interval; return skip."
+        else:
+            timing += (
+                f" Do not send the acknowledgement before question_time plus at least "
+                f"{context.initial_response_delay_seconds} seconds; a longer wait is allowed."
             )
         replacements.update(
             {
@@ -147,6 +172,7 @@ def build_request(
         agent_delay_seconds=(
             choose_agent_delay(duration_seconds) if agent else None
         ),
+        initial_response_delay_seconds=choose_initial_response_delay(duration_seconds),
     )
     return GenerationRequest(
         system_prompt=render_prompt(
@@ -200,6 +226,8 @@ def validate_common(
         raise ValueError("question_time must be 00:00 for a start-position sample")
     if context.question_position == "non_start" and question_seconds == 0:
         raise ValueError("question_time must be after 00:00 for a non-start sample")
+    if context.initial_response_delay_seconds is None:
+        raise ValueError("video is too short for the required initial response delay")
 
     dependencies = []
     for key in ("audio_dependency", "vision_dependency"):
@@ -224,6 +252,8 @@ def validate_common(
         )
         if trigger_seconds < question_seconds or trigger_seconds < previous:
             raise ValueError("responses must be chronological and not precede question_time")
+        if index == 0 and trigger_seconds < question_seconds + context.initial_response_delay_seconds:
+            raise ValueError("first response occurs before the sampled silent interval")
         previous = trigger_seconds
         text = require_text(response.get("response"), f"responses[{index}].response")
         if max_words is not None and len(text.split()) > max_words:
@@ -275,8 +305,8 @@ def validate_counting_history(
         past = [value < question_seconds for value in parsed]
         if any(past):
             historical_groups += 1
-            if not all(past) or trigger_seconds != question_seconds:
-                raise ValueError("historical events require one immediate summary")
+            if not all(past) or trigger_seconds < question_seconds + context.initial_response_delay_seconds:
+                raise ValueError("historical events require one delayed summary")
         elif len(parsed) != 1 or trigger_seconds != parsed[0]:
             raise ValueError("each later event needs its own response at its event_time")
         elif context.question_position == "non_start" and parsed[0] == question_seconds:
@@ -377,6 +407,18 @@ def validate_agent_result(
                 raise ValueError("suggested_capabilities must be a non-empty string list")
         else:
             require_text(value, f"agent_call.{key}")
+
+    parameters = arguments.get("extracted_parameters")
+    if not isinstance(parameters, list) or not parameters:
+        raise ValueError("extracted_parameters must be a non-empty array")
+    for parameter in parameters:
+        if not isinstance(parameter, dict):
+            raise ValueError("extracted_parameters entries must be objects")
+        for key in ("name", "value", "evidence"):
+            require_text(parameter.get(key), f"extracted_parameters.{key}")
+        evidence_time = checked_time(parameter.get("evidence_time"), context, "evidence_time")
+        if evidence_time > trigger_seconds:
+            raise ValueError("parameter evidence cannot follow the call")
 
     result_seconds = trigger_seconds + context.agent_delay_seconds
     if result_seconds > context.duration_seconds + 0.5:
