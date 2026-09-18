@@ -85,12 +85,27 @@ def _question_policy(context: GenerationContext, *, historical: bool) -> str:
         )
     else:
         policy += " Only create task responses at or after question_time."
-    return _with_response_delay(policy, context)
+    return _with_response_delay(policy, context, historical=historical)
 
 
-def _with_response_delay(policy: str, context: GenerationContext) -> str:
+def _with_response_delay(
+    policy: str, context: GenerationContext, *, historical: bool = False
+) -> str:
     if context.initial_response_delay_seconds is None:
+        if historical:
+            return policy + (
+                " If historical evidence exists, emit its summary at question_time "
+                "without the sampled silent interval; otherwise return skip."
+            )
         return policy + " The video is too short for the required silent interval; return skip."
+    if historical:
+        return policy + (
+            " If historical evidence exists, emit exactly one historical summary at "
+            "question_time and do not apply the sampled initial silent interval to "
+            "that summary or to later responses. If no historical summary is needed, "
+            f"the first response must be at or after question_time plus {context.initial_response_delay_seconds} "
+            "seconds; if no valid response can fit, return skip."
+        )
     return policy + (
         f" Keep silent after question_time for at least {context.initial_response_delay_seconds} "
         "seconds (you may wait longer). The first response must be at or after "
@@ -130,6 +145,13 @@ def render_prompt(
                 f"{context.agent_delay_seconds} seconds. Select a trigger early enough "
                 "that trigger_time plus this delay does not exceed the video duration."
             )
+        timing += (
+            " The audiovisual trigger must have ended and be confirmed before "
+            "trigger_time. Do not send the acknowledgement or agent_call while the "
+            "trigger is ongoing, from onset evidence alone, or using future evidence. "
+            "Represent trigger_time in the containing whole-second bucket by discarding "
+            "fractional seconds; never round or carry it into a later bucket."
+        )
         if context.initial_response_delay_seconds is None:
             timing += " The video is too short for the required initial silent interval; return skip."
         else:
@@ -210,6 +232,7 @@ def validate_common(
     min_responses: int = 1,
     max_responses: int | None = None,
     max_words: int | None = None,
+    enforce_initial_response_delay: bool = True,
 ) -> tuple[dict[str, Any], int] | tuple[dict[str, str], None]:
     if not isinstance(result, dict):
         raise ValueError("result must be an object")
@@ -252,7 +275,11 @@ def validate_common(
         )
         if trigger_seconds < question_seconds or trigger_seconds < previous:
             raise ValueError("responses must be chronological and not precede question_time")
-        if index == 0 and trigger_seconds < question_seconds + context.initial_response_delay_seconds:
+        if (
+            enforce_initial_response_delay
+            and index == 0
+            and trigger_seconds < question_seconds + context.initial_response_delay_seconds
+        ):
             raise ValueError("first response occurs before the sampled silent interval")
         previous = trigger_seconds
         text = require_text(response.get("response"), f"responses[{index}].response")
@@ -285,7 +312,11 @@ def validate_counting_history(
     result: dict[str, Any], context: GenerationContext, *, deduplicated: bool
 ) -> dict[str, Any]:
     validated, question_seconds = validate_common(
-        result, context, min_responses=1, max_words=20
+        result,
+        context,
+        min_responses=1,
+        max_words=20,
+        enforce_initial_response_delay=False,
     )
     if question_seconds is None:
         return validated
@@ -305,12 +336,18 @@ def validate_counting_history(
         past = [value < question_seconds for value in parsed]
         if any(past):
             historical_groups += 1
-            if not all(past) or trigger_seconds < question_seconds + context.initial_response_delay_seconds:
-                raise ValueError("historical events require one delayed summary")
-        elif len(parsed) != 1 or trigger_seconds != parsed[0]:
-            raise ValueError("each later event needs its own response at its event_time")
-        elif context.question_position == "non_start" and parsed[0] == question_seconds:
-            raise ValueError("non-start question_time cannot equal a counted event time")
+            if not all(past) or trigger_seconds != question_seconds:
+                raise ValueError("historical events require one summary at question_time")
+        else:
+            if len(parsed) != 1 or trigger_seconds != parsed[0]:
+                raise ValueError("each later event needs its own response at its event_time")
+            if (
+                context.question_position == "non_start"
+                and parsed[0] == question_seconds
+            ):
+                raise ValueError("non-start question_time cannot equal a counted event time")
+            if historical_groups == 0 and index == 0 and trigger_seconds < question_seconds + context.initial_response_delay_seconds:
+                raise ValueError("first response occurs before the sampled silent interval")
 
         increment = len(parsed)
         if deduplicated:

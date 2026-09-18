@@ -121,6 +121,16 @@ Each required modality must appear in trigger_type.
 If no qualifying trigger leaves enough return time, return only
 {"status":"skip","reason":"..."}.
 
+## Completed-event timing and timestamp representation
+
+Before generating any acknowledgement, agent_call, or final reply, wait until
+the audiovisual trigger's observable boundary has ended and the trigger is
+confirmed. Never act while it is ongoing, from its onset alone, or by relying on
+future evidence. `trigger_time` represents the response after that completed
+boundary. Represent video times in whole-second buckets by discarding fractional
+seconds; never round or carry an event into a later bucket. If completion cannot
+be confirmed, remain silent or return `skip`.
+
 ## Independent video evidence audit
 
 First inspect the original video to choose candidates; then consult events and

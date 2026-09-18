@@ -16,7 +16,7 @@ def build_request(path: Path, video_path: Path, *, objects_path: Path | None = N
 
 def validate_result(result: dict[str, Any], context: GenerationContext) -> dict[str, Any]:
     validated, question_seconds = _shared.validate_common(
-        result, context, min_responses=1, max_responses=4, max_words=20
+        result, context, min_responses=1, max_words=20
     )
     if question_seconds is None:
         return validated

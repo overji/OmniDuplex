@@ -66,7 +66,9 @@ speech content, or timestamp.
 Write one natural standing instruction at `question_time`. It must sound like a
 real person speaking to a smart assistant. It must not contain a timestamp,
 reveal when an occurrence happens, or state the outcome in advance.
-Write the question, responses, reasons, and descriptions in English.
+Write the question, responses, reasons, and descriptions in English. The
+user-facing `response` must not contain any video timestamp such as `MM:SS`;
+put times only in structured fields.
 
 The requester is the video viewer, the people shown or heard are video
 participants, and the assistant answers the viewer. First-person wording in the
@@ -81,15 +83,18 @@ Divide every video-verified occurrence of the chosen target by its onset
 relative to `question_time`:
 
 - Historical occurrences have onset earlier than `question_time`. If one or
-  more exist, create exactly one summary response after the required silent interval. Set its
-  `trigger_time` to `question_time` and put every historical onset, sorted, in
-  its `event_times` array. Briefly summarize all of them in one natural reply.
+  more exist, create exactly one summary response at `question_time`; this
+  historical summary is exempt from the sampled silent interval. Put every
+  historical onset, sorted, in its `event_times` array. Briefly summarize all
+  of them in one natural reply.
 - Current or future occurrences have onset at or after `question_time`. Create
-  one separate response for each occurrence. Set `trigger_time` to that onset
-  and set `event_times` to an array containing only that onset.
-- Never create a response before `question_time`, mix historical and future
-  times in one response, omit a video-verified occurrence, or invent a
-  repetition.
+  one separate response for each occurrence. Put its onset in an
+  `event_times` array containing only that onset, and set `trigger_time` to the
+  completed-boundary response time, which must not precede that onset.
+- Except for the historical summary, if no historical summary exists, do not
+  create the first response until the required silent interval after
+  `question_time` has elapsed. Never mix historical and future times in one
+  response, omit a video-verified occurrence, or invent a repetition.
 - Order responses by `trigger_time`. Each response must be brief and
   conversational. After the historical summary, continue producing
   responses for all later occurrences.
@@ -97,11 +102,12 @@ relative to `question_time`:
 The target's total occurrence count is the total number of timestamps across
 all `event_times` arrays, not the number of response objects. This total must
 exactly equal the number of independently verified occurrences in the video;
-historical occurrences remain grouped into one response after the required silent interval without being
-collapsed into one occurrence.
+historical occurrences remain grouped into one response at `question_time`
+without being collapsed into one occurrence.
 
-An event whose onset is before `question_time` counts as historical even if it
-is still ongoing when the question is asked.
+An event counts as historical only when its observable boundary was completed
+and confirmed before `question_time`; an event still ongoing at that point is
+not eligible for the historical summary until completion is confirmed.
 
 ## Dependency and trigger labels
 
@@ -152,6 +158,17 @@ Return exactly one JSON object and no Markdown:
 If no suitable discrete event is supported, return only:
 
 {"status":"skip","reason":"..."}
+
+## Completed-event timing and timestamp representation
+
+Before generating any response, wait until the triggering event's observable
+boundary has ended and the event is confirmed. Never respond while the event is
+ongoing, from its onset alone, or by relying on future evidence. `trigger_time`
+and every event-time field represent the response after that completed boundary.
+Represent video times in whole-second buckets by discarding fractional seconds;
+never round or carry an event into a later bucket. Preserve chronological order
+and apply this task's existing deduplication when multiple observations share a
+bucket. If completion cannot be confirmed, remain silent or return `skip`.
 
 ## Independent video evidence audit
 

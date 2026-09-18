@@ -176,17 +176,37 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "non-start"):
             event_alert.validate_result(result, self.context)
 
-    def test_historical_response_must_observe_silent_interval(self) -> None:
+    def test_historical_summary_bypasses_silent_interval(self) -> None:
         result = copy.deepcopy(self.result)
         result["responses"][0]["trigger_time"] = "00:16"
         context = replace(self.context, initial_response_delay_seconds=10)
-        with self.assertRaisesRegex(ValueError, "silent interval"):
+        with self.assertRaisesRegex(ValueError, "question_time"):
             event_alert.validate_result(result, context)
 
-    def test_future_trigger_must_equal_event_time(self) -> None:
+        result["responses"][0]["trigger_time"] = "00:15"
+        event_alert.validate_result(result, context)
+
+    def test_future_trigger_must_not_precede_event_time(self) -> None:
         result = copy.deepcopy(self.result)
         result["responses"][1]["trigger_time"] = "00:21"
-        with self.assertRaisesRegex(ValueError, "must equal"):
+        event_alert.validate_result(result, self.context)
+
+        result["responses"][1]["trigger_time"] = "00:19"
+        with self.assertRaisesRegex(ValueError, "cannot precede"):
+            event_alert.validate_result(result, self.context)
+
+    def test_nonhistorical_response_still_observes_silent_interval(self) -> None:
+        result = copy.deepcopy(self.result)
+        result["responses"] = [result["responses"][1]]
+        result["responses"][0]["trigger_time"] = "00:24"
+        context = replace(self.context, initial_response_delay_seconds=10)
+        with self.assertRaisesRegex(ValueError, "sampled silent interval"):
+            event_alert.validate_result(result, context)
+
+    def test_response_must_not_contain_video_timestamp(self) -> None:
+        result = copy.deepcopy(self.result)
+        result["responses"][0]["response"] = "The event occurred at 00:12."
+        with self.assertRaisesRegex(ValueError, "video timestamp"):
             event_alert.validate_result(result, self.context)
 
     def test_response_cannot_mix_past_and_future(self) -> None:

@@ -6,9 +6,14 @@ The video duration is {{VIDEO_DURATION}} ({{VIDEO_DURATION_SECONDS}} seconds). A
 
 ## Target selection and localization
 
-Create a natural English standing instruction asking to be told when one specific visual target or identifiable sound appears and where it is. Prefer a target requiring {{PREFERRED_MODALITY}}; use {{FALLBACK_MODALITY}} only when the preferred modality has no reliable candidate. Inspect the whole relevant video and choose a target with 1-4 unambiguous onsets at or after question_time. Do not report semantic relatives that are absent.
+Create a natural English standing instruction asking to be told when one specific visual target or identifiable sound appears and where it is. Prefer a target requiring {{PREFERRED_MODALITY}}; use {{FALLBACK_MODALITY}} only when the preferred modality has no reliable candidate. Inspect the whole relevant video and cover every independent, unambiguous, directly verified occurrence at or after question_time. Do not report semantic relatives that are absent.
 
-At each onset, describe only a coarse direction using evidence available then.
+For each independently verified occurrence, create exactly one separate
+response, in chronological order. When the target appears multiple times,
+respond once for each completed occurrence and report that occurrence's own
+grounding position; never merge multiple occurrences into one response or omit
+verified occurrences merely because there are many. Describe only a coarse
+direction using evidence available at that occurrence's completed boundary.
 For visual targets use natural English such as "upper left" or "lower right",
 and one frame_region from top-left, top-center, top-right, middle-left,
 middle-center, middle-right, bottom-left, bottom-center, or bottom-right.
@@ -54,6 +59,17 @@ Return exactly one JSON object:
 }
 
 If no target can be fully verified and localized, return only {"status":"skip","reason":"..."}.
+
+## Completed-event timing and timestamp representation
+
+Before generating any response, wait until the triggering event's observable
+boundary has ended and the event is confirmed. Never respond while the event is
+ongoing, from its onset alone, or by relying on future evidence. `trigger_time`
+and every event-time field represent the response after that completed boundary.
+Represent video times in whole-second buckets by discarding fractional seconds;
+never round or carry an event into a later bucket. Preserve chronological order
+and apply this task's existing deduplication when multiple observations share a
+bucket. If completion cannot be confirmed, remain silent or return `skip`.
 
 ## Independent video evidence audit
 

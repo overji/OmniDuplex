@@ -6,7 +6,7 @@ The video duration is {{VIDEO_DURATION}} ({{VIDEO_DURATION_SECONDS}} seconds). U
 
 Write one natural English standing instruction asking to count every independent occurrence of a specific observable event. Prefer a target requiring {{PREFERRED_MODALITY}}, falling back to {{FALLBACK_MODALITY}} only when needed. Define a meaningful onset and end so a sustained event counts once, while a later event after a clear end counts again. Audit the whole video and do not omit unannotated occurrences or count duplicate annotations.
 
-Occurrences before question_time are historical: group all of them into one response after the required silent interval, with their sorted times and cumulative count. Each occurrence at or after question_time gets its own response at its onset when permitted by the response timing rule and increases count by one. Never use future evidence to alter a count silently; choose an unambiguous target or skip. event_times across responses must be unique and chronological.
+Occurrences before question_time are historical: group all of them into one response at question_time, without the sampled silent interval, with their sorted times and cumulative count. If no historical occurrence exists, the first response must observe the required silent interval. When a historical summary exists, later occurrences are not delayed by that initial interval; each gets its own response after its completed boundary when permitted by the response timing rule and increases count by one. Never use future evidence to alter a count silently; choose an unambiguous target or skip. event_times across responses must be unique and chronological.
 
 At least one modality dependency must be required and represented in every trigger_type. All natural-language content must be English.
 
@@ -39,6 +39,17 @@ Return exactly one JSON object:
 }
 
 If no reliably countable repeated event exists, return only {"status":"skip","reason":"..."}.
+
+## Completed-event timing and timestamp representation
+
+Before generating any response, wait until the triggering event's observable
+boundary has ended and the event is confirmed. Never respond while the event is
+ongoing, from its onset alone, or by relying on future evidence. `trigger_time`
+and every event-time field represent the response after that completed boundary.
+Represent video times in whole-second buckets by discarding fractional seconds;
+never round or carry an event into a later bucket. Preserve chronological order
+and apply this task's existing deduplication when multiple observations share a
+bucket. If completion cannot be confirmed, remain silent or return `skip`.
 
 ## Independent video evidence audit
 

@@ -169,6 +169,9 @@ class RequestTests(unittest.TestCase):
                     normalized,
                 )
                 self.assertIn("must not include an MM:SS video timestamp", normalized)
+                self.assertIn("observable boundary has ended", normalized)
+                self.assertIn("confirmed", normalized)
+                self.assertIn("discarding fractional seconds", normalized)
 
     def test_event_narration_waits_for_completed_updates(self) -> None:
         prompt = _shared.render_prompt(
@@ -188,6 +191,78 @@ class RequestTests(unittest.TestCase):
         )
         self.assertIn("For a sustained event, wait until it ends", normalized)
         self.assertNotIn("Describe each update at its onset", normalized)
+
+    def test_target_grounding_has_no_fixed_four_response_cap(self) -> None:
+        prompt = _shared.render_prompt(
+            target_grounding.PROMPT_PATH,
+            _shared.GenerationContext(90, "vision", "start"),
+        )
+        normalized = " ".join(prompt.split())
+        self.assertNotIn("1-4 unambiguous onsets", normalized)
+        self.assertIn("every independent, unambiguous, directly verified occurrence", normalized)
+        self.assertIn("each independently verified occurrence, create exactly one separate response", normalized)
+
+        context = _shared.GenerationContext(60, "vision", "start")
+        base_response = {
+            "trigger_time": "00:10",
+            "response": "The target is upper left.",
+            "target": "exit sign",
+            "location_type": "visual",
+            "location": "upper left",
+            "frame_region": "top-left",
+            "confidence": 0.9,
+            "trigger_type": "visual",
+            "trigger_type_reason": "The target is visible.",
+            "event_description": "The target appears.",
+        }
+        result = {
+            "status": "ok",
+            "question": "Tell me when the exit sign appears.",
+            "question_time": "00:00",
+            "audio_dependency": "none",
+            "vision_dependency": "required",
+            "responses": [base_response],
+        }
+        responses = []
+        regions = ("top-left", "top-center", "top-right", "middle-left", "middle-center")
+        for index, region in enumerate(regions, 10):
+            response = copy.deepcopy(base_response)
+            response.update(
+                trigger_time=f"00:{index:02d}",
+                target="exit sign",
+                location_type="visual",
+                location=region.replace("-", " "),
+                frame_region=region,
+                confidence=0.9,
+            )
+            responses.append(response)
+        result["responses"] = responses
+        target_grounding.validate_result(result, context)
+
+    def test_agent_timing_waits_for_completed_trigger(self) -> None:
+        context = _shared.GenerationContext(
+            90,
+            "audio",
+            "start",
+            agent_delay_seconds=20,
+            initial_response_delay_seconds=10,
+        )
+        for module in (
+            triggered_knowledge_retrieval,
+            triggered_realtime_query,
+            triggered_multi_source_synthesis,
+            triggered_content_recording,
+            triggered_message_notification,
+        ):
+            prompt = _shared.render_prompt(module.PROMPT_PATH, context, agent=True)
+            normalized = " ".join(prompt.split())
+            with self.subTest(task=module.__name__):
+                self.assertIn(
+                    "Before generating any acknowledgement, agent_call, or final reply",
+                    normalized,
+                )
+                self.assertIn("must have ended and be confirmed before trigger_time", normalized)
+                self.assertIn("never round or carry an event into a later bucket", normalized)
 
     def test_agent_prompt_contains_catalog_and_exact_delay(self) -> None:
         with (

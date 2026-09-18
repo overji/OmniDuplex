@@ -40,6 +40,17 @@ Return exactly one JSON object:
 
 If 3-6 meaningful updates cannot be verified, return only {"status":"skip","reason":"..."}.
 
+## Completed-event timing and timestamp representation
+
+Before generating any response, wait until the triggering event's observable
+boundary has ended and the event is confirmed. Never respond while the event is
+ongoing, from its onset alone, or by relying on future evidence. `trigger_time`
+and every event-time field represent the response after that completed boundary.
+Represent video times in whole-second buckets by discarding fractional seconds;
+never round or carry an event into a later bucket. Preserve chronological order
+and apply this task's existing deduplication when multiple observations share a
+bucket. If completion cannot be confirmed, remain silent or return `skip`.
+
 ## Independent video evidence audit
 
 First inspect the original video to choose candidates; then consult events and

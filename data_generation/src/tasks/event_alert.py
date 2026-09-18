@@ -82,12 +82,17 @@ def _render_system_prompt(context: GenerationContext) -> str:
     else:
         raise ValueError(f"invalid question position: {context.question_position!r}")
     if context.initial_response_delay_seconds is None:
-        question_policy += " The video is too short for the required silent interval; return skip."
+        question_policy += (
+            " If historical evidence exists, emit its summary at question_time "
+            "without the sampled silent interval; otherwise return skip."
+        )
     else:
         question_policy += (
-            f" Keep silent after question_time for at least {context.initial_response_delay_seconds} "
-            "seconds (you may wait longer); the first response must be no earlier than "
-            "question_time plus this interval. If no response fits, return skip."
+            " If historical evidence exists, emit its summary at question_time and "
+            "do not apply the sampled initial silent interval to that summary or to "
+            "later responses. If no historical summary is needed, the first response "
+            f"must be no earlier than question_time plus {context.initial_response_delay_seconds} "
+            "seconds; if no response fits, return skip."
         )
 
     replacements = {
@@ -194,9 +199,18 @@ def validate_result(
         "event_description",
     )
     trigger_pattern = re.compile(r"^(visual|sound|speech)(\+(visual|sound|speech))*$")
+    timestamp_pattern = re.compile(r"(?<!\d)\d{1,2}:\d{2}(?!\d)")
     seen_trigger_times: set[str] = set()
     seen_event_times: set[str] = set()
     historical_response_count = 0
+    has_historical_events = any(
+        any(
+            timestamp_seconds(event_time) < question_seconds
+            for event_time in response.get("event_times", [])
+        )
+        for response in responses
+        if isinstance(response, dict) and isinstance(response.get("event_times"), list)
+    )
 
     for index, response in enumerate(responses):
         if not isinstance(response, dict):
@@ -211,13 +225,13 @@ def validate_result(
             raise ValueError(f"trigger_time exceeds video duration: {trigger_time}")
         if trigger_seconds < question_seconds:
             raise ValueError(f"response precedes question_time: {trigger_time}")
-        if index == 0 and trigger_seconds < question_seconds + context.initial_response_delay_seconds:
-            raise ValueError("first response occurs before the sampled silent interval")
         if trigger_time in seen_trigger_times:
             raise ValueError(f"duplicate trigger_time: {trigger_time}")
         seen_trigger_times.add(trigger_time)
 
         trigger_type = response["trigger_type"]
+        if timestamp_pattern.search(response["response"]):
+            raise ValueError("response must not contain a video timestamp")
         if not trigger_pattern.fullmatch(trigger_type):
             raise ValueError(f"invalid trigger_type: {trigger_type!r}")
         trigger_modalities = set(trigger_type.split("+"))
@@ -260,8 +274,8 @@ def validate_result(
             raise ValueError("a response cannot mix historical and future event_times")
         if has_past:
             historical_response_count += 1
-            if trigger_seconds < question_seconds + context.initial_response_delay_seconds:
-                raise ValueError("historical events must trigger a delayed response")
+            if trigger_seconds != question_seconds:
+                raise ValueError("historical summary must trigger at question_time")
         else:
             if len(event_seconds) != 1:
                 raise ValueError("each current or future event needs its own response")
@@ -270,8 +284,14 @@ def validate_result(
                 and event_seconds[0] == question_seconds
             ):
                 raise ValueError("non-start question_time cannot equal an event onset")
-            if trigger_seconds != event_seconds[0]:
-                raise ValueError("future response trigger_time must equal its event_time")
+            if (
+                not has_historical_events
+                and index == 0
+                and trigger_seconds < question_seconds + context.initial_response_delay_seconds
+            ):
+                raise ValueError("response occurs before the sampled silent interval")
+            if trigger_seconds < event_seconds[0]:
+                raise ValueError("future response trigger_time cannot precede its event_time")
 
     if historical_response_count > 1:
         raise ValueError("all historical occurrences must use one summary response")

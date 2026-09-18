@@ -1,29 +1,19 @@
 {
 "status": "ok",
-"question": "Let me know every time the narrator opens a car door.",
-"question_time": "00:00",
+"question": "Let me know every time the driver fastens their seatbelt or puts on their seatbelt.",
+"question_time": "00:20",
 "audio_dependency": "helpful",
 "vision_dependency": "required",
 "responses": [
 {
-"trigger_time": "00:13",
+"trigger_time": "00:35",
 "event_times": [
-"00:13"
+"00:32"
 ],
-"response": "The narrator opens a car door to place a bag inside at 00:13.",
-"trigger_type": "visual+sound",
-"trigger_type_reason": "The car door handle is pulled and opened visually while a mechanical door sound is heard.",
-"event_description": "The narrator's hand opens the rear side car door of a white vehicle and places a bag inside."
-},
-{
-"trigger_time": "00:23",
-"event_times": [
-"00:23"
-],
-"response": "The narrator opens the driver's side car door to enter the vehicle at 00:23.",
-"trigger_type": "visual+sound",
-"trigger_type_reason": "The driver's door is seen being opened and closed visually accompanied by door operation sounds.",
-"event_description": "The narrator opens the driver's door and enters the vehicle."
+"response": "The driver has fastened the seatbelt.",
+"trigger_type": "visual+speech",
+"trigger_type_reason": "The driver is visible pulling and buckling the seatbelt inside the car cabin.",
+"event_description": "The driver pulls and fastens the seatbelt."
 }
 ]
 }
