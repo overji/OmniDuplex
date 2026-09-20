@@ -1,0 +1,74 @@
+{
+  "status": "ok",
+  "question": "Can you tell me when Blue Super Dog appears and which region of the frame he is in?",
+  "question_time": "00:00",
+  "audio_dependency": "helpful",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "trigger_time": "00:02",
+      "response": "The target is Blue Super Dog in the upper left of the frame.",
+      "target": "Blue Super Dog",
+      "location_type": "visual",
+      "location": "upper left",
+      "frame_region": "top-left",
+      "confidence": 0.95,
+      "uncertainty": "none",
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Blue Super Dog appears in a close-up pose while speaking.",
+      "event_description": "Blue Super Dog introduces himself close to the camera."
+    },
+    {
+      "trigger_time": "00:04",
+      "response": "The target is Blue Super Dog in the middle-left of the frame.",
+      "target": "Blue Super Dog",
+      "location_type": "visual",
+      "location": "middle-left",
+      "frame_region": "middle-left",
+      "confidence": 0.95,
+      "uncertainty": "none",
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Blue Super Dog stands in the playroom talking to Dodo.",
+      "event_description": "Blue Super Dog stands in the playroom ready to help."
+    },
+    {
+      "trigger_time": "00:14",
+      "response": "The target is Blue Super Dog in the middle-left of the frame.",
+      "target": "Blue Super Dog",
+      "location_type": "visual",
+      "location": "middle-left",
+      "frame_region": "middle-left",
+      "confidence": 0.95,
+      "uncertainty": "none",
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Blue Super Dog is kneeling next to the car.",
+      "event_description": "Blue Super Dog kneels by the car to inspect the loose screw."
+    },
+    {
+      "trigger_time": "00:31",
+      "response": "The target is Blue Super Dog in the middle-left of the frame.",
+      "target": "Blue Super Dog",
+      "location_type": "visual",
+      "location": "middle-left",
+      "frame_region": "middle-left",
+      "confidence": 0.95,
+      "uncertainty": "none",
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Blue Super Dog finishes tightening the wheel and stands up.",
+      "event_description": "Blue Super Dog finishes the repair and suggests trying the car."
+    },
+    {
+      "trigger_time": "00:38",
+      "response": "The target is Blue Super Dog in the middle-center of the frame.",
+      "target": "Blue Super Dog",
+      "location_type": "visual",
+      "location": "middle-center",
+      "frame_region": "middle-center",
+      "confidence": 0.95,
+      "uncertainty": "none",
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Blue Super Dog strikes a celebratory pose.",
+      "event_description": "Blue Super Dog celebrates mission complete."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "status": "ok",
+  "unsuitable_tasks": [
+    {
+      "task": "snapshot_counting",
+      "reason": "There is no requirement or meaningful scenario for counting distinguishable targets in the scene."
+    },
+    {
+      "task": "semantic_condition_alert",
+      "reason": "The scenario relies on direct physical events rather than abstract conditions."
+    },
+    {
+      "task": "event_narration",
+      "reason": "Continuous real-time narration of the character dialogue and minor actions adds little interactive value."
+    },
+    {
+      "task": "cumulative_counting",
+      "reason": "There are no repeated independent events occurring over time to accumulate."
+    },
+    {
+      "task": "deduplicated_counting",
+      "reason": "No distinct semantic targets require deduplicated counting."
+    },
+    {
+      "task": "triggered_knowledge_retrieval",
+      "reason": "The scene features an immediate physical mishap rather than a need for historical or static documentation retrieval."
+    },
+    {
+      "task": "triggered_multi_source_synthesis",
+      "reason": "There is no multi-source comparison or complex decision-making required by the event."
+    },
+    {
+      "task": "triggered_message_notification",
+      "reason": "No messaging or notification action is prompted by the characters' conversation or equipment damage."
+    }
+  ],
+  "ranked_tasks": [
+    {
+      "task": "triggered_realtime_query",
+      "rank": 1,
+      "rationale": "Triggered when the scope breaks and displays its cost at 00:00:42, prompting a query for current market prices or replacement costs."
+    },
+    {
+      "task": "state_monitoring",
+      "rank": 2,
+      "rationale": "Suitable for monitoring the operational state of Collei's equipment, transitioning from functional to broken."
+    },
+    {
+      "task": "triggered_content_recording",
+      "rank": 3,
+      "rationale": "Suitable for logging the broken equipment details and cost into inventory upon the damage event."
+    },
+    {
+      "task": "target_grounding",
+      "rank": 4,
+      "rationale": "Useful for locating the broken scope or specific characters within the medical station setting."
+    },
+    {
+      "task": "event_alert",
+      "rank": 5,
+      "rationale": "Applicable for alerting when the unexpected equipment breakage and damage event occurs."
+    }
+  ]
+}

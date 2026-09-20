@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "question": "Can you check online for product details and reviews on the toy cushion baby doll set seen in the video?",
+  "question_time": "00:03",
+  "audio_dependency": "helpful",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "trigger_time": "00:04",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The pink pig character is holding a white cushion/pillow accessory clearly visible on screen at 00:04.",
+      "event_description": "Peppa Pig holding a cushion.",
+      "messages": [
+        {
+          "timestamp": "00:04",
+          "role": "assistant",
+          "content": "Checking details for that cushion accessory.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Search for product details, toy name, and availability for the cushion toy accessory featured in the video.\",\"observed_context\":\"An animated pink pig character is holding a white cushion/pillow toy.\",\"user_goal\":\"Find online product information for the cushion accessory shown.\",\"constraints_and_authorization\":\"Use authorized product search capabilities only.\",\"suggested_capabilities\":[\"product_lookup\",\"web_search\"],\"expected_output\":\"Product name, description, and availability from online toy stores.\",\"extracted_parameters\":[{\"name\":\"object_name\",\"value\":\"cushion\",\"evidence_time\":\"00:04\",\"evidence\":\"An animated pink pig character holding a white cushion.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "timestamp": "00:13",
+          "role": "tool",
+          "name": "agent_call",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Found matching toy cushion items online.\",\"details\":{\"query_subject\":\"Peppa Pig toy cushion pillow\",\"data_source\":\"Toy Store Database\",\"queried_at\":\"2026-09-18\",\"valid_at\":\"2026-09-18\",\"information_type\":\"current\",\"result\":\"Peppa Pig plush cushion and pillow toys are widely available online as roleplay accessories.\"},\"sources\":[{\"title\":\"Toy Store Catalog\",\"url_or_system\":\"source_1\"}],\"actions\":[],\"artifacts\":[]}"
+        },
+        {
+          "timestamp": "00:13",
+          "role": "assistant",
+          "content": "Online retailers list Peppa Pig plush cushion toys available as roleplay accessories."
+        }
+      ]
+    }
+  ]
+}

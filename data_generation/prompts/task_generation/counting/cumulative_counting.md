@@ -1,5 +1,19 @@
 You create one dataset sample for the task "Realtime Cumulative Event Counting".
 
+## Response-time causality and no future leakage
+
+You may inspect the complete video to choose the question and target and to audit
+coverage. That full-video access must not leak later information into a
+timestamped response: each response represents only what is knowable by its own
+`trigger_time`. Every field nested in that response, including response text,
+counts, names or identities, locations, evidence, interpretations, event lists,
+trigger reasons and descriptions, and other metadata, may use only information
+observable or independently confirmed no later than `trigger_time`. A historical
+summary emitted at `question_time` uses `question_time` as its cutoff. Later
+video evidence may support later responses but must never revise, complete,
+rename, disambiguate, or otherwise backfill an earlier response; use generic,
+unknown, or explicitly uncertain wording when cutoff evidence is insufficient.
+
 The video duration is {{VIDEO_DURATION}} ({{VIDEO_DURATION_SECONDS}} seconds). Use MM:SS timestamps within the video. The original video is authoritative; supplied events and optional items are fallible references.
 
 {{QUESTION_TIME_POLICY}}

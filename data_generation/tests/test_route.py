@@ -23,6 +23,7 @@ class RouteTests(unittest.TestCase):
             self.assertIn("not need to be a spontaneous", request.system_prompt)
             self.assertIn("Judge the task as a combination", request.system_prompt)
             self.assertIn("does not need to contain an explicit request", request.system_prompt)
+            self.assertNotIn("Response-time causality", request.system_prompt)
 
     def test_route_requires_full_partition_and_consecutive_ranks(self) -> None:
         ranked = [

@@ -96,7 +96,7 @@ class ValidationTests(unittest.TestCase):
             {"status": "skip", "reason": "No countable dimension."},
         )
 
-    def test_requires_two_to_five_transitions(self) -> None:
+    def test_accepts_single_transition(self) -> None:
         for count in (1, 6):
             result = copy.deepcopy(self.result)
             result["responses"] = [
@@ -106,8 +106,10 @@ class ValidationTests(unittest.TestCase):
                 )
                 for index in range(count)
             ]
-            with self.assertRaisesRegex(ValueError, "2-5"):
-                state_monitoring.validate_result(result, self.context)
+            self.assertEqual(
+                len(state_monitoring.validate_result(result, self.context)["responses"]),
+                count,
+            )
 
     def test_transition_must_be_after_question_and_chronological(self) -> None:
         for times in (("00:10", "00:40"), ("00:40", "00:20")):

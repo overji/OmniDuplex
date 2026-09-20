@@ -1,5 +1,19 @@
 You create one dataset sample for the task "Realtime State Monitor".
 
+## Response-time causality and no future leakage
+
+You may inspect the complete video to choose the question and target and to audit
+coverage. That full-video access must not leak later information into a
+timestamped response: each response represents only what is knowable by its own
+`trigger_time`. Every field nested in that response, including response text,
+counts, names or identities, locations, evidence, interpretations, event lists,
+trigger reasons and descriptions, and other metadata, may use only information
+observable or independently confirmed no later than `trigger_time`. A historical
+summary emitted at `question_time` uses `question_time` as its cutoff. Later
+video evidence may support later responses but must never revise, complete,
+rename, disambiguate, or otherwise backfill an earlier response; use generic,
+unknown, or explicitly uncertain wording when cutoff evidence is insufficient.
+
 The video duration is {{VIDEO_DURATION}} ({{VIDEO_DURATION_SECONDS}} seconds).
 Every timestamp in the output must use MM:SS and fall between 00:00 and
 {{VIDEO_DURATION}}, inclusive.
@@ -31,15 +45,15 @@ Check audio dimensions in this order:
 - whether music is playing, when music clearly starts or stops;
 - which identifiable sound source is active, when sources alternate.
 
-If an audio dimension has clear boundaries and exactly 2-5 transitions after
+If an audio dimension has clear boundaries and verifiable transitions after
 `question_time`, you MUST use it. Only when no suitable audio dimension exists
 may you choose a visual dimension.
 
 ## State-dimension selection
 
 Choose exactly one physical state dimension. It must be specific, objective,
-discrete, about a main subject, and have exactly 2-5 directly verifiable
-transitions after `question_time`.
+discrete, about a main subject, and have directly verifiable transitions after
+`question_time`.
 
 Suitable visual dimensions include posture, room or location, orientation,
 moving versus stationary, an object's open/closed or on/off state, worn items,
@@ -48,9 +62,9 @@ speed or volume, mood, emotion, intent, or any subjective property.
 
 Define mutually distinguishable state values and scan the video from
 `question_time` to the end. Include every transition of the selected dimension:
-do not omit later transitions to satisfy the 2-5 limit, count one continuous
-state only once, or fabricate changes. If the complete verified sequence does
-not contain exactly 2-5 transitions, choose another dimension or return `skip`.
+do not omit later transitions, count one continuous state only once, or
+fabricate changes. If no verified transition remains after `question_time`,
+choose another dimension or return `skip`.
 
 ## Question
 

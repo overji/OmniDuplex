@@ -12,6 +12,9 @@ Files are recognized by their task-result shape (`status`, `question`, and
 `responses`); intermediate events and objects JSON files are hidden. Select a file,
 then use the sample buttons at the top of the main panel to select a complete
 sample. A JSON array contains one sample per entry; a JSON object is one sample.
+The generated `all_qa.json` bundle contains all recognized question-answer pairs
+from the data subdirectories and includes `task` and `video` metadata for each
+sample.
 The gallery shows all fields, raw JSON, and the video named by each sample's
 top-level `video` field.
 Timestamp buttons seek the video. The source files are never modified.

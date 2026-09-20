@@ -1,0 +1,1246 @@
+[
+  {
+    "status": "ok",
+    "question": "Count the car brands mentioned or shown.",
+    "target_category": "car brands",
+    "counting_unit": "name",
+    "question_time": "01:20",
+    "audio_dependency": "required",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "01:31",
+        "event_times": [
+          "00:12",
+          "01:26"
+        ],
+        "response": "The car brands identified so far are Lynk & Co and Li Auto, for a total of 2.",
+        "count": 2,
+        "new_targets": [
+          {
+            "target_id": "target_001",
+            "name": "Lynk & Co",
+            "evidence": "Visible on the car body ('SKYLAD 07') and steering wheel logo during the walk and drive.",
+            "uncertain": false
+          },
+          {
+            "target_id": "target_002",
+            "name": "Li Auto",
+            "evidence": "Spoken by the narrator complaining about another driver ('你以为你是理想吗？').",
+            "uncertain": false
+          }
+        ],
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "The response occurs after the required silent interval following 01:20 and summarizes the historical car brands identified through visual logos and spoken complaints.",
+        "event_description": "The narrator drives down the street after mentioning Li Auto and operating the Lynk & Co vehicle."
+      }
+    ],
+    "video": "test.mp4",
+    "task": "deduplicated_counting",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know every time the driver fastens their seatbelt or puts on their seatbelt.",
+    "question_time": "00:20",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:35",
+        "event_times": [
+          "00:32"
+        ],
+        "response": "The driver has fastened the seatbelt.",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "The driver is visible pulling and buckling the seatbelt inside the car cabin.",
+        "event_description": "The driver pulls and fastens the seatbelt."
+      }
+    ],
+    "video": "test.mp4",
+    "task": "event_alert",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Describe the driver's actions as he enters the car and starts driving through city streets.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:13",
+        "response": "The driver opens the car door and places a black bag onto the front seat.",
+        "observed_facts": [
+          "The driver's hand opens the white car door",
+          "A black bag is placed onto the white leather seat"
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual action of opening the door and placing the bag, accompanied by mechanical door unlocking sounds.",
+        "event_description": "Driver puts bag in car"
+      },
+      {
+        "trigger_time": "00:23",
+        "response": "The driver opens the driver's side door, enters the vehicle, sits down, and closes the door.",
+        "observed_facts": [
+          "The driver opens the driver-side door from the outside",
+          "The driver enters and sits in the driver's seat",
+          "The door closes"
+        ],
+        "interpretation": null,
+        "trigger_type": "visual",
+        "trigger_type_reason": "Visible action of entering the vehicle and closing the door.",
+        "event_description": "Driver enters vehicle"
+      },
+      {
+        "trigger_time": "00:31",
+        "response": "The driver pulls and fastens the seatbelt across their chest.",
+        "observed_facts": [
+          "The driver's hand pulls the seatbelt strap",
+          "The seatbelt is buckled into place"
+        ],
+        "interpretation": null,
+        "trigger_type": "visual",
+        "trigger_type_reason": "Visible action of pulling and buckling the seatbelt.",
+        "event_description": "Fastening seatbelt"
+      },
+      {
+        "trigger_time": "00:35",
+        "response": "The driver grips the steering wheel and begins driving forward through city traffic.",
+        "observed_facts": [
+          "Hands hold the steering wheel",
+          "The car moves forward along a tree-lined street"
+        ],
+        "interpretation": null,
+        "trigger_type": "visual",
+        "trigger_type_reason": "Visible steering and forward vehicle motion.",
+        "event_description": "Starting to drive"
+      }
+    ],
+    "video": "test.mp4",
+    "task": "event_narration",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know when the driving environment becomes congested and frustrating due to other road users blocking the way.",
+    "question_time": "00:00",
+    "semantic_condition": "The driving environment becomes congested and frustrating due to obstacle blockage",
+    "observable_criteria": [
+      "Traffic slowing down behind a blocking vehicle",
+      "Driver expressing verbal complaints about other road users"
+    ],
+    "audio_dependency": "required",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "01:26",
+        "response": "The driving environment has become frustrating as another vehicle blocks the path and the driver voices complaints about it.",
+        "condition_evidence": "The driver encounters a van blocking traffic and verbally expresses annoyance at 01:26 ('你以为你是理想吗？？左边辣么大位置，你眼睛瞎吗？'), fulfilling the criteria of congestion and verbal frustration.",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Visual observation of the blocking van combined with speech complaining about the traffic situation.",
+        "event_description": "The driver complains about a blocking vehicle ahead."
+      }
+    ],
+    "video": "test.mp4",
+    "task": "semantic_condition_alert",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever the white van appears in front, tell me how many people are visible outside.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "trigger_times": [
+      "01:25"
+    ],
+    "responses": [
+      {
+        "trigger_time": "01:25",
+        "response": "There are 2 people visible now.",
+        "count": 2,
+        "counting_basis": "Observable targets counted at the trigger frame.",
+        "target_locations": [
+          "upper right",
+          "right"
+        ],
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is the appearance of the white van in front through the windshield.",
+        "event_description": "A white van is driving ahead, and two people are visible outside near it."
+      }
+    ],
+    "video": "test.mp4",
+    "task": "snapshot_counting",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Tell me when the car door opens and which part of the video frame it is in.",
+    "question_time": "00:05",
+    "audio_dependency": "required",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:13",
+        "response": "The car door is opening in the middle-left region.",
+        "target": "car door",
+        "location_type": "visual",
+        "location": "middle-left",
+        "frame_region": "middle-left",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The car door unlocking and opening sound is heard simultaneously with the visual appearance of the door opening on the left side of the frame.",
+        "event_description": "The narrator approaches the white car and opens the side door."
+      }
+    ],
+    "video": "test.mp4",
+    "task": "target_grounding",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "When the driver mentions playing music by a specific artist, record this request and add it to my media preferences note.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "trigger_time": "01:18",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The driver explicitly requests to play music by Liang Bo ('来首梁博听听！').",
+        "event_description": "The driver requests a specific artist's music to be played while driving.",
+        "messages": [
+          {
+            "timestamp": "01:18",
+            "role": "assistant",
+            "content": "Recording your music preference for Liang Bo.",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "arguments": "{\"instruction\":\"Record the requested artist name into the media preferences note.\",\"observed_context\":\"At 01:18, the driver says '来首梁博听听！' and background music begins playing.\",\"user_goal\":\"Record the music artist requested by the driver into my media preferences note.\",\"constraints_and_authorization\":\"Standing authorization applies. Only record the explicitly requested artist without assuming additional preferences.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A note updated with the requested artist name and confirmation of the write action.\",\"extracted_parameters\":[{\"name\":\"artist_name\",\"value\":\"Liang Bo\",\"evidence_time\":\"01:18\",\"evidence\":\"The driver says '来首梁博听听！'\"}]}"
+                }
+              }
+            ]
+          },
+          {
+            "timestamp": "01:36",
+            "role": "tool",
+            "name": "agent_call",
+            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Successfully recorded Liang Bo to the media preferences note.\",\"details\":{\"fields\":{\"content\":\"Requested artist: Liang Bo\"},\"destination\":\"Media Preferences Note\",\"record_status\":\"written\"},\"sources\":[],\"actions\":[{\"system\":\"NotesApp\",\"operation\":\"note_write\",\"status\":\"completed\",\"verification\":\"Note updated with artist name Liang Bo.\"}],\"artifacts\":[]}"
+          },
+          {
+            "timestamp": "01:36",
+            "role": "assistant",
+            "content": "Added Liang Bo to your media preferences note."
+          }
+        ]
+      }
+    ],
+    "video": "test.mp4",
+    "task": "triggered_content_recording",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Please retrieve the specifications and background details of the Lynk & Co vehicle model shown in the video.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:13",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "The car model brand 'SKYLAD 天梯' and vehicle details are visible on the exterior alongside the audio context.",
+        "event_description": "The narrator opens the door of the white Lynk & Co car while walking on the street.",
+        "messages": [
+          {
+            "timestamp": "00:13",
+            "role": "assistant",
+            "content": "Retrieving vehicle specifications for you.",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "arguments": "{\"instruction\":\"Retrieve the background, specifications, and model details of the Lynk & Co vehicle identified in the video context.\",\"observed_context\":\"At 00:13, a white Lynk & Co vehicle with text 'SKYLAD 天梯' on the side is shown on the street as the driver approaches it.\",\"user_goal\":\"Get specifications and information about the vehicle model shown in the video.\",\"constraints_and_authorization\":\"Authorized by the viewer. Use knowledge retrieval capabilities to find verified vehicle specifications.\",\"suggested_capabilities\":[\"knowledge_base_search\",\"web_search\"],\"expected_output\":\"Detailed overview of the Lynk & Co vehicle model specifications and background.\",\"extracted_parameters\":[{\"name\":\"vehicle_brand_model\",\"value\":\"Lynk & Co\",\"evidence_time\":\"00:13\",\"evidence\":\"White Lynk & Co car with interior and exterior branding visible.\"}]}"
+                }
+              }
+            ]
+          },
+          {
+            "timestamp": "00:36",
+            "role": "tool",
+            "name": "agent_call",
+            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Retrieved specifications for Lynk & Co vehicles.\",\"details\":{\"query_subject\":\"Lynk & Co vehicle specifications\",\"knowledge\":\"Lynk & Co is a Chinese-Swedish automobile brand owned by Geely Holding Group, known for connected and premium vehicles featuring advanced digital cockpits and modern safety tech.\"},\"sources\":[{\"title\":\"Lynk & Co Brand Overview and Specifications\",\"url_or_system\":\"knowledge_base_search\"}],\"actions\":[],\"artifacts\":[]}"
+          },
+          {
+            "timestamp": "00:36",
+            "role": "assistant",
+            "content": "Lynk & Co is a brand owned by Geely, featuring advanced digital cockpits."
+          }
+        ]
+      }
+    ],
+    "video": "test.mp4",
+    "task": "triggered_knowledge_retrieval",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "When the driver starts driving the car, send an email to my work contact notifying them that I am on my way to the office.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:35",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual observation of the driver starting to drive the car and audio of driving operations.",
+        "event_description": "The driver starts operating the vehicle and driving through the city streets.",
+        "messages": [
+          {
+            "timestamp": "00:35",
+            "role": "assistant",
+            "content": "Notifying office.",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "arguments": "{\"instruction\":\"Send an email to the work contact notifying them that the user is on the way to the office.\",\"observed_context\":\"The driver has entered the white Lynk & Co car, fastened the seatbelt, and started driving through city streets at 00:35.\",\"user_goal\":\"Send a notification email upon starting the commute.\",\"constraints_and_authorization\":\"Authorized by the user's standing instruction to send notifications upon driving start.\",\"suggested_capabilities\":[\"email_send\"],\"expected_output\":\"A successfully sent email notification with message status set to sent.\",\"extracted_parameters\":[{\"name\":\"recipient\",\"value\":\"office@work.com\",\"evidence_time\":\"00:35\",\"evidence\":\"Driver starts driving the vehicle.\"},{\"name\":\"content\",\"value\":\"I am on my way to the office now.\",\"evidence_time\":\"00:35\",\"evidence\":\"Commute has begun.\"}]}"
+                }
+              }
+            ]
+          },
+          {
+            "timestamp": "01:03",
+            "role": "tool",
+            "name": "agent_call",
+            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Email successfully sent to the office contact.\",\"details\":{\"recipient\":\"office@work.com\",\"content\":\"I am on my way to the office now.\",\"send_time\":\"01:03\",\"message_status\":\"sent\"},\"sources\":[],\"actions\":[{\"system\":\"email_system\",\"operation\":\"send\",\"status\":\"completed\",\"verification\":\"Email delivered to recipient server.\"}],\"artifacts\":[]}"
+          },
+          {
+            "timestamp": "01:03",
+            "role": "assistant",
+            "content": "Your notification email has been sent successfully."
+          }
+        ]
+      }
+    ],
+    "video": "test.mp4",
+    "task": "triggered_message_notification",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Can you check the current traffic congestion and route updates for commuting to work via major city roads, comparing real-time mapping data with public transit schedules to recommend the optimal route?",
+    "question_time": "00:35",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:37",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "The driver looks at the digital center console showing navigation and speaks about starting the drive.",
+        "event_description": "The driver checks the center console display showing the vehicle's surrounding environment and begins driving through city streets.",
+        "messages": [
+          {
+            "timestamp": "00:37",
+            "role": "assistant",
+            "content": "Analyzing route traffic and transit data now.",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "arguments": "{\"instruction\":\"Compare real-time traffic congestion on urban commuting routes with current public transit schedules to determine the fastest morning commute option.\",\"observed_context\":\"At 00:37, the driver is operating a white Lynk & Co vehicle through urban streets, observing the digital dashboard and navigation screen showing surrounding traffic.\",\"user_goal\":\"Recommend the optimal commuting route based on live traffic and transit comparisons.\",\"constraints_and_authorization\":\"Use live mapping and transit lookup capabilities. Respect user preferences for driving.\",\"suggested_capabilities\":[\"route_planning\",\"traffic_lookup\",\"transit_lookup\"],\"expected_output\":\"A synthesized comparison of driving traffic versus transit times with a final route recommendation, supported by traffic and transit sources.\",\"extracted_parameters\":[{\"name\":\"vehicle_model\",\"value\":\"Lynk & Co\",\"evidence_time\":\"00:30\",\"evidence\":\"White steering wheel with LYNK&CO logo and digital center console screen visible inside the vehicle cabin.\"},{\"name\":\"commute_start_time\",\"value\":\"00:37\",\"evidence_time\":\"00:37\",\"evidence\":\"Driver begins navigating through urban street traffic while checking the center console map display.\"}]}"
+                }
+              }
+            ]
+          },
+          {
+            "timestamp": "00:55",
+            "role": "tool",
+            "name": "agent_call",
+            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Synthesized live traffic and transit data for the morning commute.\",\"details\":{\"decision_goal\":\"Determine optimal morning commute route\",\"conclusion\":\"Driving via urban arterial roads is currently 10 minutes faster than public transit despite moderate congestion.\",\"basis\":\"Live traffic lookup indicates flowing traffic ahead; transit lookup shows a delayed bus schedule.\",\"conflicts\":[],\"uncertainties\":[]},\"sources\":[{\"title\":\"City Live Traffic API\",\"url_or_system\":\"traffic_lookup\"},{\"title\":\"Public Transit Schedule Feed\",\"url_or_system\":\"transit_lookup\"}],\"actions\":[],\"artifacts\":[]}"
+          },
+          {
+            "timestamp": "00:55",
+            "role": "assistant",
+            "content": "Driving is currently 10 minutes faster than transit. Recommended to continue on the current road."
+          }
+        ]
+      }
+    ],
+    "video": "test.mp4",
+    "task": "triggered_multi_source_synthesis",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Can you check the current weather forecast for my driving route along this road?",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:02",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The video shows the street scene and sidewalk from a first-person driving/commuting perspective, allowing identification of the location for a weather lookup.",
+        "event_description": "The viewer observes the urban street environment outside the car.",
+        "messages": [
+          {
+            "timestamp": "00:02",
+            "role": "assistant",
+            "content": "Checking the weather forecast for your route now.",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "arguments": "{\"instruction\":\"Retrieve the current weather forecast for the urban commuting route shown in the video.\",\"observed_context\":\"First-person perspective walking along an urban tree-lined street with parked cars and buildings at 00:02.\",\"user_goal\":\"Get the weather forecast for the current driving route.\",\"constraints_and_authorization\":\"Use live weather lookup capability. Do not invent data.\",\"suggested_capabilities\":[\"weather_lookup\"],\"expected_output\":\"Current weather conditions and forecast with source and timestamps.\",\"extracted_parameters\":[{\"name\":\"environment\",\"value\":\"urban street\",\"evidence_time\":\"00:02\",\"evidence\":\"Tree-lined sidewalk and parked cars visible on the street.\"}]}"
+                }
+              }
+            ]
+          },
+          {
+            "timestamp": "00:18",
+            "role": "tool",
+            "name": "agent_call",
+            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Retrieved weather forecast successfully.\",\"details\":{\"query_subject\":\"Commuting Route Weather\",\"data_source\":\"Local Meteorological Service\",\"queried_at\":\"2026-09-16T04:28:00Z\",\"valid_at\":\"2026-09-16T05:00:00Z\",\"information_type\":\"forecast\",\"result\":\"Partly cloudy, 22°C, light breeze, excellent visibility for driving.\"-},\"sources\":[{\"title\":\"City Weather Forecast API\",\"url_or_system\":\"source_1\"}],\"actions\":[],\"artifacts\":[]}"
+          },
+          {
+            "timestamp": "00:18",
+            "role": "assistant",
+            "content": "The weather along your route is partly cloudy at 22°C with good visibility."
+          }
+        ]
+      }
+    ],
+    "video": "test.mp4",
+    "task": "triggered_realtime_query",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
+    "question": "Keep count whenever Mr. Gnome eats a blackberry.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:33",
+        "event_times": [
+          "00:32"
+        ],
+        "response": "The running count is 1.",
+        "count": 1,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The gnome makes a munching sound effect and speaks about eating the blackberry, confirmed by the visual action of eating.",
+        "event_description": "Mr. Gnome eats a blackberry."
+      }
+    ],
+    "video": "video_550.mp4",
+    "task": "cumulative_counting",
+    "video_folder": "video_550"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know every time the gnome munches on a blackberry.",
+    "question_time": "00:27",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:33",
+        "event_times": [
+          "00:32"
+        ],
+        "response": "The gnome just ate a blackberry.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The gnome is seen putting his hand near his mouth and making a munching sound.",
+        "event_description": "The gnome eats a blackberry and makes a munching sound."
+      }
+    ],
+    "video": "video_550.mp4",
+    "task": "event_alert",
+    "video_folder": "video_550"
+  },
+  {
+    "status": "ok",
+    "question": "Describe each important event involving the pie costume character and the gnome once it has happened.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:05",
+        "response": "The character in the pie costume finishes introducing himself and stands with arms outstretched.",
+        "observed_facts": [
+          "A character dressed as a pie stands with arms outstretched."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "The character speaks and is visually shown standing in the pie costume.",
+        "event_description": "Pie costume introduction completes."
+      },
+      {
+        "trigger_time": "00:07",
+        "response": "The scene cuts to show a group of elf and fairy characters looking on near a red vehicle.",
+        "observed_facts": [
+          "Several characters including elves and a princess appear standing together."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Visual cut to characters accompanied by dialogue.",
+        "event_description": "Camera cuts to observing characters."
+      },
+      {
+        "trigger_time": "00:22",
+        "response": "A female fairy character reacts with a worried expression and speaks.",
+        "observed_facts": [
+          "A close-up of a female fairy character looking concerned."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Close-up visual of the fairy reacting to previous statements.",
+        "event_description": "Fairy character expresses concern."
+      },
+      {
+        "trigger_time": "00:32",
+        "response": "The gnome eats a blackberry and reacts with surprise.",
+        "observed_facts": [
+          "The gnome holds a blackberry, a munching sound plays, and he reacts."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Munching sound effect and visual reaction of the gnome eating.",
+        "event_description": "Gnome eats a blackberry."
+      },
+      {
+        "trigger_time": "00:48",
+        "response": "The pie costume character dances and waves to catch the gnome's attention.",
+        "observed_facts": [
+          "The pie costume character moves side to side and raises arms in the forest."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Visual movement of the pie character combined with calling out.",
+        "event_description": "Pie character dances to distract the gnome."
+      },
+      {
+        "trigger_time": "00:52",
+        "response": "The gnome notices the pie costume while other characters carry a giant blackberry.",
+        "observed_facts": [
+          "The gnome looks happily at the pie character while elves carry a huge blackberry cluster."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Visual wide shot showing the gnome's reaction and characters with a giant blackberry, with shouting audio.",
+        "event_description": "Gnome spots the pie as a giant blackberry is handled."
+      }
+    ],
+    "video": "video_550.mp4",
+    "task": "event_narration",
+    "video_folder": "video_550"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know when Mr. Gnome succumbs to temptation and eats a blackberry despite his promise.",
+    "question_time": "00:00",
+    "semantic_condition": "Mr. Gnome fails to resist a blackberry and eats it",
+    "observable_criteria": [
+      "Mr. Gnome expresses excitement upon spotting a blackberry",
+      "An audible munching sound occurs",
+      "Mr. Gnome admits to eating the blackberry"
+    ],
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "trigger_time": "00:00:33",
+        "response": "Mr. Gnome just gave in to temptation and ate a blackberry, acknowledging his slip-up by saying he did it again.",
+        "condition_evidence": "At 00:32, Mr. Gnome says 'Ooh, look at that!' followed by a munching sound effect, and then at 00:33 he says 'Silly me, I did it again.'",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+sound+speech",
+        "trigger_type_reason": "The trigger combines visual reaction, sound effects (munching), and spoken dialogue admitting the action.",
+        "event_description": "Mr. Gnome eats a blackberry and reacts to his mistake."
+      }
+    ],
+    "video": "video_550.mp4",
+    "task": "semantic_condition_alert",
+    "video_folder": "video_550"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever the munching sound occurs, tell me how many blackberries are visible.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "required",
+    "trigger_times": [
+      "00:32"
+    ],
+    "responses": [
+      {
+        "trigger_time": "00:32",
+        "response": "There is 1 blackberry visible now.",
+        "count": 1,
+        "counting_basis": "Observable targets counted at the trigger frame.",
+        "target_locations": [
+          "upper left"
+        ],
+        "trigger_type": "sound",
+        "trigger_type_reason": "A munching sound effect is heard.",
+        "event_description": "A munching sound occurs as the gnome eats a blackberry."
+      }
+    ],
+    "video": "video_550.mp4",
+    "task": "snapshot_counting",
+    "video_folder": "video_550"
+  },
+  {
+    "status": "ok",
+    "audio_scan": "Checked speaker turns and dialogue between characters; music presence (background music starts at 00:00 and continues throughout); sound sources such as vocal expressions and sound effects. Speech and dialogue are present throughout, but since the task monitors the gnome's eating action/state based on visual and dialogue cues, visual state dimension is chosen.",
+    "question": "Can you let me know whenever Mr. Gnome eats a blackberry?",
+    "question_time": "00:26",
+    "audio_dependency": "helpful",
+    "responses": [
+      {
+        "trigger_time": "00:32",
+        "response": "The subject changes from not eating to eating.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Mr. Gnome brings the blackberry to his mouth and eats it with a munching sound.",
+        "event_description": "Mr. Gnome eats the blackberry he promised not to eat."
+      },
+      {
+        "trigger_time": "00:43",
+        "response": "The subject changes from eating to not eating.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Mr. Gnome stops eating as the pie character distracts him.",
+        "event_description": "Mr. Gnome stops eating and reacts to the pie character."
+      }
+    ],
+    "video": "video_550.mp4",
+    "task": "state_monitoring",
+    "video_folder": "video_550"
+  },
+  {
+    "status": "ok",
+    "question": "Could you tell me when the character in the pie costume appears and which region of the frame they are in?",
+    "question_time": "00:05",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:08",
+        "response": "The target is the character in the pie costume, and they are in the middle-center region of the frame.",
+        "target": "character in the pie costume",
+        "location_type": "visual",
+        "location": "middle-center",
+        "frame_region": "middle-center",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The character in the pie costume reappears in the video view.",
+        "event_description": "Camera cuts back to the character in the pie costume talking."
+      },
+      {
+        "trigger_time": "00:23",
+        "response": "The target is the character in the pie costume, and they are in the middle-center region of the frame.",
+        "target": "character in the pie costume",
+        "location_type": "visual",
+        "location": "middle-center",
+        "frame_region": "middle-center",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The character in the pie costume appears on screen again.",
+        "event_description": "Camera cuts back to the pie costume character responding."
+      },
+      {
+        "trigger_time": "00:43",
+        "response": "The target is the character in the pie costume, and they are in the middle-center region of the frame.",
+        "target": "character in the pie costume",
+        "location_type": "visual",
+        "location": "middle-center",
+        "frame_region": "middle-center",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The pie costume character is visible dancing and calling out.",
+        "event_description": "The pie costume character dances and waves to catch the gnome's attention."
+      }
+    ],
+    "video": "video_550.mp4",
+    "task": "target_grounding",
+    "video_folder": "video_550"
+  },
+  {
+    "status": "ok",
+    "question": "Describe each important step as Blue Super Dog and Dodo fix the toy car once it has happened.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:09",
+        "response": "Dodo discovers that a wheel has fallen off the red toy car and worries about how to fix it.",
+        "observed_facts": [
+          "Dodo stands next to the red toy car with a detached wheel on the floor.",
+          "Dodo looks worried and speaks about the wheel falling off."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Both visual appearance of the detached wheel/worried character and speech explaining the problem are observed.",
+        "event_description": "Dodo discovers the detached car wheel."
+      },
+      {
+        "trigger_time": "00:17",
+        "response": "Blue Super Dog opens a blue and white toolbox to get tools for the repair.",
+        "observed_facts": [
+          "A blue and white toolbox opens up, revealing tools inside.",
+          "A clicking or popping sound plays as the toolbox opens."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The opening of the toolbox is visually confirmed along with its audio cue.",
+        "event_description": "The toolbox opens to reveal tools."
+      },
+      {
+        "trigger_time": "00:31",
+        "response": "Blue Super Dog uses a wrench to tighten the screw and successfully reattach the wheel.",
+        "observed_facts": [
+          "Blue Super Dog uses a green wrench to tighten the screw on the car wheel while Dodo holds it steady.",
+          "Ratchet tightening sounds play as the task is completed."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual action of tightening the wheel with a wrench and audio of tightening sounds confirm completion.",
+        "event_description": "The car wheel is successfully reattached and tightened."
+      },
+      {
+        "trigger_time": "00:37",
+        "response": "Dodo test drives the repaired red toy car across the playroom floor and celebrates.",
+        "observed_facts": [
+          "Dodo sits inside the red toy car and drives it forward.",
+          "Dodo laughs and shouts that it is working while driving sounds play."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual movement of the car driven by Dodo combined with driving sounds and speech verify the test drive.",
+        "event_description": "Dodo test drives the fixed car."
+      }
+    ],
+    "video": "video_551.mp4",
+    "task": "event_narration",
+    "video_folder": "video_551"
+  },
+  {
+    "status": "ok",
+    "question": "Can you tell me when Blue Super Dog appears and which region of the frame he is in?",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:02",
+        "response": "The target is Blue Super Dog in the upper left of the frame.",
+        "target": "Blue Super Dog",
+        "location_type": "visual",
+        "location": "upper left",
+        "frame_region": "top-left",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Blue Super Dog appears in a close-up pose while speaking.",
+        "event_description": "Blue Super Dog introduces himself close to the camera."
+      },
+      {
+        "trigger_time": "00:04",
+        "response": "The target is Blue Super Dog in the middle-left of the frame.",
+        "target": "Blue Super Dog",
+        "location_type": "visual",
+        "location": "middle-left",
+        "frame_region": "middle-left",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Blue Super Dog stands in the playroom talking to Dodo.",
+        "event_description": "Blue Super Dog stands in the playroom ready to help."
+      },
+      {
+        "trigger_time": "00:14",
+        "response": "The target is Blue Super Dog in the middle-left of the frame.",
+        "target": "Blue Super Dog",
+        "location_type": "visual",
+        "location": "middle-left",
+        "frame_region": "middle-left",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Blue Super Dog is kneeling next to the car.",
+        "event_description": "Blue Super Dog kneels by the car to inspect the loose screw."
+      },
+      {
+        "trigger_time": "00:31",
+        "response": "The target is Blue Super Dog in the middle-left of the frame.",
+        "target": "Blue Super Dog",
+        "location_type": "visual",
+        "location": "middle-left",
+        "frame_region": "middle-left",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Blue Super Dog finishes tightening the wheel and stands up.",
+        "event_description": "Blue Super Dog finishes the repair and suggests trying the car."
+      },
+      {
+        "trigger_time": "00:38",
+        "response": "The target is Blue Super Dog in the middle-center of the frame.",
+        "target": "Blue Super Dog",
+        "location_type": "visual",
+        "location": "middle-center",
+        "frame_region": "middle-center",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Blue Super Dog strikes a celebratory pose.",
+        "event_description": "Blue Super Dog celebrates mission complete."
+      }
+    ],
+    "video": "video_551.mp4",
+    "task": "target_grounding",
+    "video_folder": "video_551"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know every time Keqing is shown laughing.",
+    "question_time": "00:15",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:23",
+        "event_times": [
+          "00:20"
+        ],
+        "response": "Keqing was previously seen laughing while watching security footage of Lumine and Wriothesley.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Keqing is visibly shaking with laughter and giggling sounds are heard.",
+        "event_description": "Keqing laughing mockingly while watching security footage."
+      }
+    ],
+    "video": "video_552.mp4",
+    "task": "event_alert",
+    "video_folder": "video_552"
+  },
+  {
+    "status": "ok",
+    "question": "Describe each important event involving the tactical exercise and monitoring once it has happened.",
+    "question_time": "00:03",
+    "audio_dependency": "required",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:09",
+        "response": "A male character joins the blonde character in the corridor, asking for cover to reload and receiving a confirmation.",
+        "observed_facts": [
+          "A male character enters the hallway holding a rifle near the blonde character.",
+          "The male character speaks asking for cover while reloading.",
+          "The male character acknowledges the response."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Both visual appearance/movement and audible dialogue are required to confirm the character joining and speaking.",
+        "event_description": "Male character enters and talks to the blonde character."
+      },
+      {
+        "trigger_time": "00:13",
+        "response": "The blonde character assists the male character by inserting a magazine into his rifle.",
+        "observed_facts": [
+          "The blonde character handles a magazine and puts it into the male character's rifle."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual",
+        "trigger_type_reason": "The action of reloading assistance is directly observable visually.",
+        "event_description": "Reload assistance given."
+      },
+      {
+        "trigger_time": "00:19",
+        "response": "The male character looks at the blonde character's arm patch and realizes they are on opposing teams.",
+        "observed_facts": [
+          "The male character inspects the other character's arm.",
+          "Dialogue occurs indicating they are on different teams."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Visual inspection of the arm patch combined with spoken dialogue confirms the realization.",
+        "event_description": "Team conflict realization."
+      },
+      {
+        "trigger_time": "00:29",
+        "response": "Characters gather in a control room watching security footage while another person laughs and reacts.",
+        "observed_facts": [
+          "Characters are shown in a control room watching a monitor displaying the hallway footage.",
+          "A character is heard laughing and speaking about the incident."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual shift to the control room monitor and audible laughter/reactions are both necessary.",
+        "event_description": "Control room scene and footage review."
+      }
+    ],
+    "video": "video_552.mp4",
+    "task": "event_narration",
+    "video_folder": "video_552"
+  },
+  {
+    "status": "ok",
+    "audio_scan": "Checked who is speaking and speaker turns: characters speak sequentially from 00:06 onwards, but this is dialogue rather than an ongoing audio-driven state dimension like music or a dedicated sound source. Checked music playing: no background music is playing throughout the video. Checked identifiable sound sources: gunfire occurs briefly around 00:00 to 00:05, but it is intermittent and short-lived rather than a continuous audio state stream. Therefore, no suitable audio dimension has clear, verifiable continuous boundaries and transitions after question_time, so a visual dimension is selected.",
+    "question": "Can you monitor whether Wriothesley is sitting or standing in the control room scene?",
+    "question_time": "00:20",
+    "audio_dependency": "none",
+    "responses": [
+      {
+        "trigger_time": "00:27",
+        "response": "The subject changes from sitting to standing.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Wriothesley stands up from his chair in the control room.",
+        "event_description": "Wriothesley rises to a standing position."
+      }
+    ],
+    "video": "video_552.mp4",
+    "task": "state_monitoring",
+    "video_folder": "video_552"
+  },
+  {
+    "status": "ok",
+    "question": "Notify me whenever a sniper scope drops and breaks.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:44",
+        "event_times": [
+          "00:41"
+        ],
+        "response": "A sniper scope has dropped and broken on the floor.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "A crash sound was heard and the sniper scope was visibly dropped and shattered on the floor.",
+        "event_description": "The sniper scope falls and breaks."
+      }
+    ],
+    "video": "video_553.mp4",
+    "task": "event_alert",
+    "video_folder": "video_553"
+  },
+  {
+    "status": "ok",
+    "question": "Describe each important event involving the characters and their equipment in the medical room once it has happened.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:23",
+        "response": "Collei holds a tactical rifle inside the medical room while conversing with Yaoyao and Dehya.",
+        "observed_facts": [
+          "Collei holds a tactical rifle.",
+          "Yaoyao and Dehya are present in the medical room."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual observation of Collei holding the rifle combined with audio of the conversation.",
+        "event_description": "Collei holding her sniper rifle."
+      },
+      {
+        "trigger_time": "00:44",
+        "response": "The sniper rifle scope accidentally drops, shatters on the floor, and parts scatter while characters react.",
+        "observed_facts": [
+          "The sniper scope falls and breaks on the floor.",
+          "An on-screen text displays scope cost information."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual confirmation of the falling scope and breaking parts alongside the crashing sound effect.",
+        "event_description": "Sniper scope drops and breaks."
+      },
+      {
+        "trigger_time": "00:52",
+        "response": "Dehya and Yelan rush over and kneel next to Collei, who sits with a shocked expression following the accident.",
+        "observed_facts": [
+          "Dehya kneels next to Collei.",
+          "Yelan stands nearby checking on Collei."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual observation of characters reacting and moving to comfort Collei, supported by dialogue.",
+        "event_description": "Characters react in panic and check on Collei."
+      },
+      {
+        "trigger_time": "01:05",
+        "response": "The video transitions to a credits screen displaying character model details, background music information, and environment asset credits.",
+        "observed_facts": [
+          "Credits screen appears with text overlays.",
+          "Background music plays."
+        ],
+        "interpretation": null,
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Visual display of credit text overlays combined with background music.",
+        "event_description": "Credits screen display."
+      }
+    ],
+    "video": "video_553.mp4",
+    "task": "event_narration",
+    "video_folder": "video_553"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know when an unexpected accident causes expensive equipment damage leading to distress.",
+    "question_time": "00:00",
+    "semantic_condition": "An accidental equipment breakage causing financial distress",
+    "observable_criteria": [
+      "An object falls or breaks unexpectedly",
+      "A cost or price tag overlay appears",
+      "Characters display shocked reactions and discuss financial concerns"
+    ],
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:45",
+        "response": "The sniper scope has accidentally broken, prompting shocked reactions and immediate concern over replacement costs from the group.",
+        "condition_evidence": "At 00:41 to 00:44, the rifle scope falls and shatters on the floor with a cost overlay. By 00:45, characters react with shock, and subsequent dialogue involves comforting the distressed character and discussing loan options to replace the expensive item.",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Visual observation of the broken scope combined with spoken dialogue and reactions regarding the damage and costs.",
+        "event_description": "Sniper scope breaks, triggering shock and discussion about replacement costs."
+      }
+    ],
+    "video": "video_553.mp4",
+    "task": "semantic_condition_alert",
+    "video_folder": "video_553"
+  },
+  {
+    "status": "ok",
+    "audio_scan": "Checked speaker turns, background music, and sound sources. Dialogue and sound effects such as the scope dropping and breaking occur, but no discrete audio dimension with verifiable periodic transitions after question_time is suitable for monitoring. Therefore, a visual dimension is chosen.",
+    "question": "Can you track when the sniper scope changes from attached to detached or broken?",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "responses": [
+      {
+        "trigger_time": "00:43",
+        "response": "The subject changes from attached to detached.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The scope falls off and hits the floor as heard and seen on screen.",
+        "event_description": "The sniper scope detaches and drops onto the floor."
+      },
+      {
+        "trigger_time": "00:53",
+        "response": "The subject changes from detached to broken.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Close-up view shows electrical crackles and damage on the fallen scope lens.",
+        "event_description": "The fallen sniper scope is shown cracked and damaged with electrical sparks."
+      }
+    ],
+    "video": "video_553.mp4",
+    "task": "state_monitoring",
+    "video_folder": "video_553"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know whenever a character starts crying in the video.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "trigger_time": "00:09",
+        "event_times": [
+          "00:07"
+        ],
+        "response": "A character started crying.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "A crying sound is heard and a character is seen crying with tears.",
+        "event_description": "Character crying with open mouth and tears."
+      },
+      {
+        "trigger_time": "00:12",
+        "event_times": [
+          "00:09"
+        ],
+        "response": "Multiple characters started crying.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "Loud group crying sounds are heard while characters are shown crying.",
+        "event_description": "Multiple characters crying together."
+      }
+    ],
+    "video": "video_554.mp4",
+    "task": "event_alert",
+    "video_folder": "video_554"
+  },
+  {
+    "status": "ok",
+    "audio_scan": "Checked who is speaking and character turns: characters take turns talking (Peppa and Mummy Pig/Grandfather Pig). Checked music: no background music plays throughout the clip. Checked sound sources: crying and vocalizations are active during specific segments, but speech turnover and character dialogue provide clear, verifiable narrative boundaries rather than a continuous sound source dimension.",
+    "question": "Can you monitor when the main character starts or stops crying?",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "responses": [
+      {
+        "trigger_time": "00:07",
+        "response": "The subject changes from not crying to crying.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Peppa starts crying with visible tears and crying sound at 00:07.",
+        "event_description": "Peppa begins crying loudly."
+      },
+      {
+        "trigger_time": "00:13",
+        "response": "The subject changes from crying to not crying.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Peppa stops crying and looks surprised with her mouth open at 00:13.",
+        "event_description": "Peppa stops crying and listens."
+      },
+      {
+        "trigger_time": "00:15",
+        "response": "The subject changes from not crying to crying.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Peppa starts whimpering and crying again with a sad expression at 00:15.",
+        "event_description": "Peppa resumes crying or whimpering."
+      },
+      {
+        "trigger_time": "00:17",
+        "response": "The subject changes from crying to not crying.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Peppa stops crying, smiles, and speaks happily about keeping her cushion at 00:17.",
+        "event_description": "Peppa stops crying and smiles."
+      }
+    ],
+    "video": "video_554.mp4",
+    "task": "state_monitoring",
+    "video_folder": "video_554"
+  },
+  {
+    "status": "ok",
+    "question": "Can you tell me when the cushion appears and which part of the video frame it is in?",
+    "question_time": "00:01",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:03",
+        "response": "The cushion appears in the lower right of the frame.",
+        "target": "cushion",
+        "location_type": "visual",
+        "location": "lower right",
+        "frame_region": "bottom-right",
+        "confidence": 0.95,
+        "uncertainty": "none",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The cushion is visibly held by the character in the scene.",
+        "event_description": "A character holds up a white cushion."
+      }
+    ],
+    "video": "video_554.mp4",
+    "task": "target_grounding",
+    "video_folder": "video_554"
+  },
+  {
+    "status": "ok",
+    "question": "Record what Peppa Pig decides to keep instead of a real baby into my notes.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "trigger_time": "00:20",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Peppa finishes her dialogue saying 'So I think I'll keep my cushion instead' while holding a cushion to her tummy.",
+        "event_description": "Peppa Pig decides to keep her cushion instead of a real baby.",
+        "messages": [
+          {
+            "timestamp": "00:10",
+            "role": "assistant",
+            "content": "Understood.",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "arguments": "{\"instruction\":\"Record Peppa Pig's decision to keep her cushion instead of a real baby into the notes.\",\"observed_context\":\"Peppa Pig says 'So I think I'll keep my cushion instead' and places a cushion under her dress.\",\"user_goal\":\"Record what Peppa Pig decides to keep instead of a real baby into my notes.\",\"constraints_and_authorization\":\"Standing user authorization to record notes. Use reliable note writing capabilities.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A confirmation that Peppa's decision to keep her cushion has been successfully written to notes.\",\"extracted_parameters\":[{\"name\":\"item_kept\",\"value\":\"cushion\",\"evidence_time\":\"00:19\",\"evidence\":\"Peppa holding a cushion under her dress and stating she will keep her cushion instead.\"}]}"
+                }
+              }
+            ]
+          },
+          {
+            "timestamp": "00:15",
+            "role": "tool",
+            "name": "agent_call",
+            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Successfully recorded Peppa Pig's decision to keep her cushion in notes.\",\"details\":{\"fields\":{\"content\":\"Peppa Pig decided to keep her cushion instead of a real baby.\"},\"destination\":\"Notes\",\"record_status\":\"written\"},\"sources\":[],\"actions\":[{\"system\":\"NotesApp\",\"operation\":\"note_write\",\"status\":\"completed\",\"verification\":\"Note successfully created with Peppa's decision.\"}],\"artifacts\":[]}"
+          },
+          {
+            "timestamp": "00:15",
+            "role": "assistant",
+            "content": "I have recorded that Peppa Pig decides to keep her cushion instead."
+          }
+        ]
+      }
+    ],
+    "video": "video_554.mp4",
+    "task": "triggered_content_recording",
+    "video_folder": "video_554"
+  },
+  {
+    "status": "ok",
+    "question": "Can you check online for product details and reviews on the toy cushion baby doll set seen in the video?",
+    "question_time": "00:03",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:04",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The pink pig character is holding a white cushion/pillow accessory clearly visible on screen at 00:04.",
+        "event_description": "Peppa Pig holding a cushion.",
+        "messages": [
+          {
+            "timestamp": "00:04",
+            "role": "assistant",
+            "content": "Checking details for that cushion accessory.",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "arguments": "{\"instruction\":\"Search for product details, toy name, and availability for the cushion toy accessory featured in the video.\",\"observed_context\":\"An animated pink pig character is holding a white cushion/pillow toy.\",\"user_goal\":\"Find online product information for the cushion accessory shown.\",\"constraints_and_authorization\":\"Use authorized product search capabilities only.\",\"suggested_capabilities\":[\"product_lookup\",\"web_search\"],\"expected_output\":\"Product name, description, and availability from online toy stores.\",\"extracted_parameters\":[{\"name\":\"object_name\",\"value\":\"cushion\",\"evidence_time\":\"00:04\",\"evidence\":\"An animated pink pig character holding a white cushion.\"}]}"
+                }
+              }
+            ]
+          },
+          {
+            "timestamp": "00:13",
+            "role": "tool",
+            "name": "agent_call",
+            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Found matching toy cushion items online.\",\"details\":{\"query_subject\":\"Peppa Pig toy cushion pillow\",\"data_source\":\"Toy Store Database\",\"queried_at\":\"2026-09-18\",\"valid_at\":\"2026-09-18\",\"information_type\":\"current\",\"result\":\"Peppa Pig plush cushion and pillow toys are widely available online as roleplay accessories.\"},\"sources\":[{\"title\":\"Toy Store Catalog\",\"url_or_system\":\"source_1\"}],\"actions\":[],\"artifacts\":[]}"
+          },
+          {
+            "timestamp": "00:13",
+            "role": "assistant",
+            "content": "Online retailers list Peppa Pig plush cushion toys available as roleplay accessories."
+          }
+        ]
+      }
+    ],
+    "video": "video_554.mp4",
+    "task": "triggered_realtime_query",
+    "video_folder": "video_554"
+  }
+]

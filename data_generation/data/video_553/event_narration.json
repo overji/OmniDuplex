@@ -1,0 +1,57 @@
+{
+  "status": "ok",
+  "question": "Describe each important event involving the characters and their equipment in the medical room once it has happened.",
+  "question_time": "00:00",
+  "audio_dependency": "helpful",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "trigger_time": "00:23",
+      "response": "Collei holds a tactical rifle inside the medical room while conversing with Yaoyao and Dehya.",
+      "observed_facts": [
+        "Collei holds a tactical rifle.",
+        "Yaoyao and Dehya are present in the medical room."
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Visual observation of Collei holding the rifle combined with audio of the conversation.",
+      "event_description": "Collei holding her sniper rifle."
+    },
+    {
+      "trigger_time": "00:44",
+      "response": "The sniper rifle scope accidentally drops, shatters on the floor, and parts scatter while characters react.",
+      "observed_facts": [
+        "The sniper scope falls and breaks on the floor.",
+        "An on-screen text displays scope cost information."
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Visual confirmation of the falling scope and breaking parts alongside the crashing sound effect.",
+      "event_description": "Sniper scope drops and breaks."
+    },
+    {
+      "trigger_time": "00:52",
+      "response": "Dehya and Yelan rush over and kneel next to Collei, who sits with a shocked expression following the accident.",
+      "observed_facts": [
+        "Dehya kneels next to Collei.",
+        "Yelan stands nearby checking on Collei."
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Visual observation of characters reacting and moving to comfort Collei, supported by dialogue.",
+      "event_description": "Characters react in panic and check on Collei."
+    },
+    {
+      "trigger_time": "01:05",
+      "response": "The video transitions to a credits screen displaying character model details, background music information, and environment asset credits.",
+      "observed_facts": [
+        "Credits screen appears with text overlays.",
+        "Background music plays."
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Visual display of credit text overlays combined with background music.",
+      "event_description": "Credits screen display."
+    }
+  ]
+}

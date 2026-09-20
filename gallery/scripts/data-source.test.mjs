@@ -28,7 +28,14 @@ test('live API discovers changes, isolates invalid files and rejects traversal',
     await writeFile(path.join(root, 'b.json'), '{unfinished')
     assert.equal((await get('/api/data?file=b.json')).status, 422)
     assert.equal((await get('/api/data?file=a.json')).status, 200)
+    await writeFile(path.join(root, 'bundle.json'), JSON.stringify([
+      { status: 'ok', question: 'first', responses: [], video: 'video_550.mp4', task: 'event_alert' },
+      { status: 'skip', reason: 'not applicable', question: 'second', responses: [], video: 'video_551.mp4', task: 'event_narration' },
+    ]))
+    assert.deepEqual((await (await get('/api/files')).json()).files, ['bundle.json'])
+    assert.equal((await (await get('/api/data?file=bundle.json')).json()).data.length, 2)
     await rm(path.join(root, 'b.json'))
+    await rm(path.join(root, 'bundle.json'))
     assert.deepEqual((await (await get('/api/files')).json()).files, [])
     assert.equal((await get('/api/data?file=b.json')).status, 404)
     for (const name of ['../secret.json', '/etc/private.json', '..\\secret.json']) {

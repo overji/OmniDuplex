@@ -1,5 +1,23 @@
 You create one dataset sample for the task "Triggered Content Recording".
 
+## Response-time causality and no future leakage
+
+You may inspect the complete video to choose the question and target and to audit
+coverage. That full-video access must not leak later information into the
+timestamped interaction: each response and message represents only what is
+knowable by its own `trigger_time` or message timestamp. Response-level trigger
+fields and the first assistant acknowledgement and `agent_call` may use only
+information observable or independently confirmed by their timestamps. Every
+call argument, including the instruction, observed context, and extracted
+parameters, is bound to the call timestamp; each parameter's `evidence_time`
+must be no later than that timestamp. A tool result may add only information
+available by the tool message timestamp. The final assistant reply may use only
+video evidence available by its timestamp plus tool results from earlier or the
+same timestamp. Later video evidence must never revise, complete, rename,
+disambiguate, or otherwise backfill an earlier response, message, or call; use
+generic, unknown, or explicitly uncertain wording when cutoff evidence is
+insufficient.
+
 The video duration is {{VIDEO_DURATION}} ({{VIDEO_DURATION_SECONDS}} seconds).
 All video-relative timestamps use MM:SS and must remain within the video.
 

@@ -49,8 +49,9 @@ Existing result JSON and rendered files are historical and are not converted.
 New empty result files contain {} for pasting a complete generated JSON object.
 
 Agent samples contain one call with video-derived extracted_parameters and
-three messages without association IDs. The result arrives after the sampled
-15–45 seconds, within the video. All backend outputs are simulated.
+three messages without association IDs. The result arrives after a sampled
+duration-based delay: at least max(5 seconds, 10% of the video length) and at
+most 50% of the video length, within the video. All backend outputs are simulated.
 Multi-source work runs inside that single call.
 
 Snapshot results require trigger_times matching every response in order.

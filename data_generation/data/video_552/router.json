@@ -1,0 +1,62 @@
+{
+  "status": "ok",
+  "unsuitable_tasks": [
+    {
+      "task": "target_grounding",
+      "reason": "The video does not feature a continuous tracking task where a specified target's location needs to be pinpointed spatially over a stream."
+    },
+    {
+      "task": "snapshot_counting",
+      "reason": "There are no specific trigger moments requiring a count of clearly distinguishable targets in a snapshot."
+    },
+    {
+      "task": "semantic_condition_alert",
+      "reason": "There is no ongoing abstract condition to monitor for alerts beyond standard scene events."
+    },
+    {
+      "task": "cumulative_counting",
+      "reason": "There are no repeated independent events to accumulate and count over time."
+    },
+    {
+      "task": "deduplicated_counting",
+      "reason": "There are no multiple distinct semantic targets appearing repeatedly to be merged and counted."
+    },
+    {
+      "task": "triggered_knowledge_retrieval",
+      "reason": "The content does not require external documents or historical information retrieval based on a trigger."
+    },
+    {
+      "task": "triggered_realtime_query",
+      "reason": "There is no need to query changing external information during the video playback."
+    },
+    {
+      "task": "triggered_multi_source_synthesis",
+      "reason": "There are no multiple external data sources to combine for a comparison or decision."
+    },
+    {
+      "task": "triggered_content_recording",
+      "reason": "There is no specified stream content or structured storage extraction triggered by an event."
+    },
+    {
+      "task": "triggered_message_notification",
+      "reason": "There is no context requiring an automated message or notification to be prepared or sent."
+    }
+  ],
+  "ranked_tasks": [
+    {
+      "task": "event_narration",
+      "rank": 1,
+      "rationale": "Realtime updates and narration can effectively describe important character actions and scene transitions, such as Wriothesley appearing, the reload assistance, and the control room reveal."
+    },
+    {
+      "task": "state_monitoring",
+      "rank": 2,
+      "rationale": "The video clearly transitions between observable states, such as tactical combat simulation in the hallway and review in the control room."
+    },
+    {
+      "task": "event_alert",
+      "rank": 3,
+      "rationale": "Discrete verified events like gunshots and dialogue exchanges can be flagged with alerts."
+    }
+  ]
+}

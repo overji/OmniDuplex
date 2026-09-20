@@ -1,0 +1,213 @@
+{
+  "items": [
+    {
+      "item_id": "item_001",
+      "name": "Lumine",
+      "category": "People",
+      "description": "Blonde female character wearing tactical gear, a headset, and a floral accessory, participating in a tactical exercise.",
+      "evidence_kind": "visible_presence",
+      "observation": "Seen running, aiming a rifle, reloading Wriothesley's weapon, and later watching security footage in embarrassment.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:00.000",
+      "last_appearance_time": "00:00:34.575",
+      "appearance_segments": [
+        "00:00:00.000 - 00:00:03.000",
+        "00:00:06.000 - 00:00:19.000",
+        "00:00:20.000 - 00:00:29.000",
+        "00:00:29.000 - 00:00:34.575"
+      ],
+      "is_main_item": true,
+      "importance_score": 1.0,
+      "related_events": [
+        {
+          "event_id": "v001",
+          "relationship_type": "appearance",
+          "relationship_description": "Lumine appears aiming a rifle in a hallway corridor.",
+          "evidence_kind": "visible_presence",
+          "observation": "Lumine holding and aiming an assault rifle.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v002",
+          "relationship_type": "interaction",
+          "relationship_description": "Lumine interacts and converses with Wriothesley.",
+          "evidence_kind": "visible_presence",
+          "observation": "Lumine talks and coordinates with Wriothesley.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v003",
+          "relationship_type": "usage",
+          "relationship_description": "Lumine assists Wriothesley by inserting a magazine into his rifle.",
+          "evidence_kind": "visible_presence",
+          "observation": "Lumine handling magazine reload for Wriothesley.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v004",
+          "relationship_type": "interaction",
+          "relationship_description": "Lumine looks surprised upon realizing they are on opposing teams.",
+          "evidence_kind": "visible_presence",
+          "observation": "Facial reaction to Wriothesley discovering team conflict.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v005",
+          "relationship_type": "appearance",
+          "relationship_description": "Lumine sits in the control room watching security footage.",
+          "evidence_kind": "visible_presence",
+          "observation": "Lumine sitting and covering face in embarrassment.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "item_id": "item_002",
+      "name": "Wriothesley",
+      "category": "People",
+      "description": "Dark-haired male character with tactical gear and a red armband.",
+      "evidence_kind": "visible_presence",
+      "observation": "Appears in the hallway, receives reloading help from Lumine, realizes they are enemies, and watches footage in the control room.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:06.000",
+      "last_appearance_time": "00:00:34.575",
+      "appearance_segments": [
+        "00:00:06.000 - 00:00:19.000",
+        "00:00:20.000 - 00:00:29.000",
+        "00:00:29.000 - 00:00:34.575"
+      ],
+      "is_main_item": true,
+      "importance_score": 1.0,
+      "related_events": [
+        {
+          "event_id": "v002",
+          "relationship_type": "appearance",
+          "relationship_description": "Wriothesley steps into the hallway next to Lumine.",
+          "evidence_kind": "visible_presence",
+          "observation": "Wriothesley enters with a firearm.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v003",
+          "relationship_type": "interaction",
+          "relationship_description": "Wriothesley receives reload assistance from Lumine.",
+          "evidence_kind": "visible_presence",
+          "observation": "Lumine inserts a magazine into Wriothesley's rifle.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v004",
+          "relationship_type": "interaction",
+          "relationship_description": "Wriothesley checks Lumine's arm patch and realizes they are on opposing teams.",
+          "evidence_kind": "visible_presence",
+          "observation": "Wriothesley stops and inspects Lumine's patch.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v005",
+          "relationship_type": "appearance",
+          "relationship_description": "Wriothesley sits in the control room watching the security footage.",
+          "evidence_kind": "visible_presence",
+          "observation": "Wriothesley reacts embarrassedly while watching monitor.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "item_id": "item_003",
+      "name": "Keqing",
+      "category": "People",
+      "description": "Purple-haired female character stationed in the control room.",
+      "evidence_kind": "visible_presence",
+      "observation": "Standing in the control room holding a communication device and laughing mockingly at the security footage.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:20.000",
+      "last_appearance_time": "00:00:29.000",
+      "appearance_segments": [
+        "00:00:20.000 - 00:00:29.000"
+      ],
+      "is_main_item": false,
+      "importance_score": 0.7,
+      "related_events": [
+        {
+          "event_id": "v005",
+          "relationship_type": "appearance",
+          "relationship_description": "Keqing stands in the control room watching the monitor and laughing.",
+          "evidence_kind": "visible_presence",
+          "observation": "Keqing laughing near the control screen.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "item_id": "item_004",
+      "name": "Yoimiya",
+      "category": "People",
+      "description": "Character sitting in the background during the control room scene.",
+      "evidence_kind": "visible_presence",
+      "observation": "Visible sitting in the background of the control room/armory setting.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:23.000",
+      "last_appearance_time": "00:00:28.000",
+      "appearance_segments": [
+        "00:00:23.000 - 00:00:28.000"
+      ],
+      "is_main_item": false,
+      "importance_score": 0.4,
+      "related_events": [
+        {
+          "event_id": "v005",
+          "relationship_type": "background_presence",
+          "relationship_description": "Yoimiya is present in the background of the control room scene.",
+          "evidence_kind": "visible_presence",
+          "observation": "Yoimiya seated in the background area.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "item_id": "item_005",
+      "name": "Security Monitor",
+      "category": "Objects",
+      "description": "A large display screen showing recorded tactical simulation footage.",
+      "evidence_kind": "visible_presence",
+      "observation": "Displays the recorded interaction between Lumine and Wriothesley in the control room.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:20.000",
+      "last_appearance_time": "00:00:29.000",
+      "appearance_segments": [
+        "00:00:20.000 - 00:00:29.000"
+      ],
+      "is_main_item": false,
+      "importance_score": 0.8,
+      "related_events": [
+        {
+          "event_id": "v005",
+          "relationship_type": "display",
+          "relationship_description": "Monitor displays security footage of the characters' tactical mistake.",
+          "evidence_kind": "visible_presence",
+          "observation": "Screen showing playback of the hallway scene.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.95
+    }
+  ],
+  "uncertainties": []
+}

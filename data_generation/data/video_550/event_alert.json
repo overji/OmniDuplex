@@ -1,0 +1,19 @@
+{
+"status": "ok",
+"question": "Let me know every time the gnome munches on a blackberry.",
+"question_time": "00:27",
+"audio_dependency": "helpful",
+"vision_dependency": "required",
+"responses": [
+{
+"trigger_time": "00:33",
+"event_times": [
+"00:32"
+],
+"response": "The gnome just ate a blackberry.",
+"trigger_type": "visual+sound",
+"trigger_type_reason": "The gnome is seen putting his hand near his mouth and making a munching sound.",
+"event_description": "The gnome eats a blackberry and makes a munching sound."
+}
+]
+}

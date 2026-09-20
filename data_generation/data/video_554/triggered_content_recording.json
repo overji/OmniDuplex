@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "question": "Record what Peppa Pig decides to keep instead of a real baby into my notes.",
+  "question_time": "00:00",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "responses": [
+    {
+      "trigger_time": "00:20",
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Peppa finishes her dialogue saying 'So I think I'll keep my cushion instead' while holding a cushion to her tummy.",
+      "event_description": "Peppa Pig decides to keep her cushion instead of a real baby.",
+      "messages": [
+        {
+          "timestamp": "00:10",
+          "role": "assistant",
+          "content": "Understood.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Record Peppa Pig's decision to keep her cushion instead of a real baby into the notes.\",\"observed_context\":\"Peppa Pig says 'So I think I'll keep my cushion instead' and places a cushion under her dress.\",\"user_goal\":\"Record what Peppa Pig decides to keep instead of a real baby into my notes.\",\"constraints_and_authorization\":\"Standing user authorization to record notes. Use reliable note writing capabilities.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A confirmation that Peppa's decision to keep her cushion has been successfully written to notes.\",\"extracted_parameters\":[{\"name\":\"item_kept\",\"value\":\"cushion\",\"evidence_time\":\"00:19\",\"evidence\":\"Peppa holding a cushion under her dress and stating she will keep her cushion instead.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "timestamp": "00:15",
+          "role": "tool",
+          "name": "agent_call",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Successfully recorded Peppa Pig's decision to keep her cushion in notes.\",\"details\":{\"fields\":{\"content\":\"Peppa Pig decided to keep her cushion instead of a real baby.\"},\"destination\":\"Notes\",\"record_status\":\"written\"},\"sources\":[],\"actions\":[{\"system\":\"NotesApp\",\"operation\":\"note_write\",\"status\":\"completed\",\"verification\":\"Note successfully created with Peppa's decision.\"}],\"artifacts\":[]}"
+        },
+        {
+          "timestamp": "00:15",
+          "role": "assistant",
+          "content": "I have recorded that Peppa Pig decides to keep her cushion instead."
+        }
+      ]
+    }
+  ]
+}

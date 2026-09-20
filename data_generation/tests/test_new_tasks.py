@@ -82,6 +82,35 @@ class RequestTests(unittest.TestCase):
                 )
                 self.assertNotIn("video_summary", evidence)
 
+    def test_all_task_prompt_templates_contain_response_causality_rule(self) -> None:
+        prompt_root = Path(__file__).parents[1] / "prompts"
+        prompt_paths = sorted((prompt_root / "task_generation").rglob("*.md"))
+        prompt_paths = [path for path in prompt_paths if path.name != "capabilities.md"]
+        self.assertEqual(len(prompt_paths), 13)
+        for path in prompt_paths:
+            with self.subTest(prompt=path):
+                prompt = path.read_text(encoding="utf-8")
+                normalized = " ".join(prompt.split())
+                self.assertIn(
+                    "Response-time causality and no future leakage",
+                    normalized,
+                )
+                self.assertIn(
+                    "inspect the complete video to choose the question",
+                    normalized,
+                )
+                self.assertIn("must never revise, complete, rename", normalized)
+                if path.parent.name == "agent":
+                    self.assertIn("Every call argument", normalized)
+                    self.assertIn("tool message timestamp", normalized)
+                    self.assertIn("The final assistant reply", normalized)
+                else:
+                    self.assertIn("Every field nested in that response", normalized)
+                    self.assertIn(
+                        "historical summary emitted at `question_time`",
+                        normalized,
+                    )
+
         with patch.object(_shared, "probe_video_duration", return_value=90):
             request = target_grounding.build_request(
                 self.events, Path("video.mp4")
@@ -281,13 +310,13 @@ class RequestTests(unittest.TestCase):
 
 class DelayTests(unittest.TestCase):
     def test_delay_boundaries(self) -> None:
-        self.assertIsNone(config.choose_agent_delay(14.99))
+        self.assertIsNone(config.choose_agent_delay(9.99))
         with patch.object(config.random, "randint", return_value=15) as draw:
-            self.assertEqual(config.choose_agent_delay(15), 15)
-            draw.assert_called_once_with(15, 15)
-        with patch.object(config.random, "randint", return_value=45) as draw:
-            self.assertEqual(config.choose_agent_delay(100), 45)
-            draw.assert_called_once_with(15, 45)
+            self.assertEqual(config.choose_agent_delay(30), 15)
+            draw.assert_called_once_with(5, 15)
+        with patch.object(config.random, "randint", return_value=25) as draw:
+            self.assertEqual(config.choose_agent_delay(100), 25)
+            draw.assert_called_once_with(10, 50)
 
     def test_initial_response_delay_uses_ten_seconds_and_half_duration_bounds(self) -> None:
         self.assertIsNone(config.choose_initial_response_delay(19.99))
@@ -672,7 +701,7 @@ class AgentValidationTests(unittest.TestCase):
             triggered_knowledge_retrieval.validate_result(result, self.context)
 
         short_context = _shared.GenerationContext(14, "vision", "start", None)
-        with self.assertRaisesRegex(ValueError, "shorter"):
+        with self.assertRaisesRegex(ValueError, "no legal duration-based backend delay"):
             triggered_knowledge_retrieval.validate_result(result, short_context)
         self.assertEqual(
             triggered_knowledge_retrieval.validate_result(

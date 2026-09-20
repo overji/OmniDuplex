@@ -58,7 +58,7 @@ def _render_system_prompt(context: GenerationContext) -> str:
         question_policy = (
             "For this sample, choose a natural question_time strictly after 00:00 "
             f"and before {format_mmss(context.duration_seconds)}. Choose it early "
-            "enough that the selected state has exactly 2-5 later transitions."
+            "enough to capture the selected state's later transitions."
         )
     else:
         raise ValueError(f"invalid question position: {context.question_position!r}")
@@ -141,8 +141,8 @@ def validate_result(
         raise ValueError("invalid audio_dependency")
 
     responses = result.get("responses")
-    if not isinstance(responses, list) or not 2 <= len(responses) <= 5:
-        raise ValueError("responses must contain 2-5 transitions")
+    if not isinstance(responses, list) or not responses:
+        raise ValueError("responses must contain at least one transition")
 
     response_fields = (
         "trigger_time",

@@ -1,0 +1,24 @@
+{
+  "status": "ok",
+  "question": "Whenever the munching sound occurs, tell me how many blackberries are visible.",
+  "question_time": "00:00",
+  "audio_dependency": "required",
+  "vision_dependency": "required",
+  "trigger_times": [
+    "00:32"
+  ],
+  "responses": [
+    {
+      "trigger_time": "00:32",
+      "response": "There is 1 blackberry visible now.",
+      "count": 1,
+      "counting_basis": "Observable targets counted at the trigger frame.",
+      "target_locations": [
+        "upper left"
+      ],
+      "trigger_type": "sound",
+      "trigger_type_reason": "A munching sound effect is heard.",
+      "event_description": "A munching sound occurs as the gnome eats a blackberry."
+    }
+  ]
+}

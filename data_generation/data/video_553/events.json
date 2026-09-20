@@ -1,0 +1,320 @@
+{
+"video_summary": {
+"primary_language": "English",
+"overall_scene_description": "An indoor medical station room featuring four anime characters (Collei, Yaoyao, Dehya, and Yelan) conversing about past events, followed by an accidental breakage of a sniper scope and subsequent comedic panic over repair costs.",
+"main_content_summary": "Collei recounts a dangerous encounter while Yaoyao tends to her injuries. Dehya and Yelan chime in on the conversation. Suddenly, Collei accidentally drops and breaks her sniper rifle scope, leading to distress over the high replacement cost and a credits roll featuring model credits and background music."
+},
+"audio_events": [
+{
+"event_id": "a1",
+"start_time": "00:00:00.000",
+"end_time": "00:00:05.200",
+"timestamp": "00:00:00.000 - 00:00:05.200",
+"start_seconds": 0.0,
+"end_seconds": 5.2,
+"event_type": "Human Speech",
+"event_name": "Collei Narration/Dialogue",
+"detailed description": "Collei speaks in English, narrating her past experience: 'And suddenly I heard those deafening rotors! I turned around and that mech thing was steering right down at me!'",
+"evidence for judgment": "Audible voice speaking dialogue matching the subtitles and lip movements.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a2",
+"start_time": "00:00:05.200",
+"end_time": "00:00:08.000",
+"timestamp": "00:00:05.200 - 00:00:08.000",
+"start_seconds": 5.2,
+"end_seconds": 8.0,
+"event_type": "Human Speech",
+"event_name": "Dehya Dialogue",
+"detailed description": "Dehya speaks in English with a teasing tone: 'Must have scared you pretty good, huh?'",
+"evidence for judgment": "Audible voice speaking dialogue matching the scene.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a3",
+"start_time": "00:00:08.000",
+"end_time": "00:00:13.500",
+"timestamp": "00:00:08.000 - 00:00:13.500",
+"start_seconds": 8.0,
+"end_seconds": 13.5,
+"event_type": "Human Speech",
+"event_name": "Collei Dialogue",
+"detailed description": "Collei speaks in English: 'Oh, yeah... I deployed Collei Amber the last second, otherwise I thought I was done for.'",
+"evidence for judgment": "Audible voice speaking matching lip movements.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a4",
+"start_time": "00:00:13.500",
+"end_time": "00:00:20.000",
+"timestamp": "00:00:13.500 - 00:00:20.000",
+"start_seconds": 13.5,
+"end_seconds": 20.0,
+"event_type": "Human Speech",
+"event_name": "Yaoyao Dialogue",
+"detailed description": "Yaoyao speaks in English: 'Please stop moving! You're still pretty messed up. You're lucky your shield took most of the explosion. Also, no weapons in a medical area! I bring her wherever I go...'",
+"evidence for judgment": "Audible voice speaking matching character actions.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a5",
+"start_time": "00:00:20.000",
+"end_time": "00:00:23.000",
+"timestamp": "00:00:20.000 - 00:00:23.000",
+"start_seconds": 20.0,
+"end_seconds": 23.0,
+"event_type": "Human Speech",
+"event_name": "Collei Dialogue",
+"detailed description": "Collei speaks in English: 'I bring her wherever I go...'",
+"evidence for judgment": "Audible voice speaking matching visual cue.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a6",
+"start_time": "00:00:23.000",
+"end_time": "00:00:30.000",
+"timestamp": "00:00:23.000 - 00:00:30.000",
+"start_seconds": 23.0,
+"end_seconds": 30.0,
+"event_type": "Human Speech",
+"event_name": "Dehya Dialogue",
+"detailed description": "Dehya speaks in English: 'Yeah, we'd have a lot more trouble if you weren't there at the end. You locked either down good.'",
+"evidence for judgment": "Audible voice speaking dialogue.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a7",
+"start_time": "00:00:30.000",
+"end_time": "00:00:41.000",
+"timestamp": "00:00:30.000 - 00:00:41.000",
+"start_seconds": 30.0,
+"end_seconds": 41.0,
+"event_type": "Human Speech",
+"event_name": "Collei and Yaoyao Dialogue",
+"detailed description": "Collei and Yaoyao converse about shrapnel and Amber visiting soon.",
+"evidence for judgment": "Audible dialogue spoken by the characters.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a8",
+"start_time": "00:00:41.000",
+"end_time": "00:00:45.000",
+"timestamp": "00:00:41.000 - 00:00:45.000",
+"start_seconds": 41.0,
+"end_seconds": 45.0,
+"event_type": "Environmental Sound",
+"event_name": "Crash / Breaking Sound",
+"detailed description": "A sudden mechanical crash and shattering sound as the sniper scope drops and breaks.",
+"evidence for judgment": "Audible impact and cracking noise.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a9",
+"start_time": "00:00:45.000",
+"end_time": "00:01:05.000",
+"timestamp": "00:00:45.000 - 01:01:05.000",
+"start_seconds": 45.0,
+"end_seconds": 65.0,
+"event_type": "Human Speech",
+"event_name": "Group Dialogue on Broken Scope",
+"detailed description": "Characters panic and discuss the broken scope, costs, and loans.",
+"evidence for judgment": "Audible spoken dialogue between Dehya, Collei, and Yelan.",
+"confidence_score": 0.95
+},
+{
+"event_id": "a10",
+"start_time": "00:01:05.000",
+"end_time": "00:01:10.705",
+"timestamp": "00:01:05.000 - 00:01:10.705",
+"start_seconds": 65.0,
+"end_seconds": 70.705,
+"event_type": "Music",
+"event_name": "Credits Background Music and Whimpering",
+"detailed description": "Instrumental music plays while credits are shown, accompanied by whimpering/crying sound effects in the background.",
+"evidence for judgment": "Audible background music and crying noises during the credits scene.",
+"confidence_score": 0.95
+}
+],
+"visual_events": [
+{
+"event_id": "v1",
+"start_time": "00:00:00.000",
+"end_time": "00:00:03.000",
+"timestamp": "00:00:00.000 - 00:00:03.000",
+"start_seconds": 0.0,
+"end_seconds": 3.0,
+"event_type": "Scene display",
+"event_name": "Medical Station Room Overview",
+"detailed description": "Four characters (Collei, Yaoyao, Dehya, Yelan) are inside a medical station room.",
+"visual_details": "Yelan stands near the door, Yaoyao and Collei sit on chairs, Dehya sits on a table.",
+"related_audio_event_ids": [
+"a1"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v2",
+"start_time": "00:00:03.000",
+"end_time": "00:00:05.000",
+"timestamp": "00:00:03.000 - 00:00:05.000",
+"start_seconds": 3.0,
+"end_seconds": 5.0,
+"event_type": "Character Interaction",
+"event_name": "Close-up on Collei and Yaoyao",
+"detailed description": "Yaoyao holds a medical tool near Collei's face while Collei speaks.",
+"visual_details": "Collei has green hair and face markings; Yaoyao has braided hair with golden bells.",
+"related_audio_event_ids": [
+"a1"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v3",
+"start_time": "00:00:05.000",
+"end_time": "00:00:08.000",
+"timestamp": "00:00:05.000 - 00:00:08.000",
+"start_seconds": 5.0,
+"end_seconds": 8.0,
+"event_type": "Character Interaction",
+"event_name": "Dehya Responding",
+"detailed description": "Dehya with arms crossed responds to Collei.",
+"visual_details": "Dehya leaning against a table with a poster behind her.",
+"related_audio_event_ids": [
+"a2"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v4",
+"start_time": "00:00:08.000",
+"end_time": "00:00:20.000",
+"timestamp": "00:00:08.000 - 00:00:20.000",
+"start_seconds": 8.0,
+"end_seconds": 20.0,
+"event_type": "Character Interaction",
+"event_name": "Medical Treatment Conversation",
+"detailed description": "Yaoyao continues applying medical care while talking to Collei.",
+"visual_details": "Close-ups of Collei and Yaoyao talking back and forth.",
+"related_audio_event_ids": [
+"a3",
+"a4"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v5",
+"start_time": "00:00:20.000",
+"end_time": "00:00:23.000",
+"timestamp": "00:00:20.000 - 00:00:23.000",
+"start_seconds": 20.0,
+"end_seconds": 23.0,
+"event_type": "Object Interaction",
+"event_name": "Collei Holding Sniper Rifle",
+"detailed description": "Collei holds her sniper rifle.",
+"visual_details": "Collei holding a tactical sniper rifle.",
+"related_audio_event_ids": [
+"a5"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v6",
+"start_time": "00:00:23.000",
+"end_time": "00:00:30.000",
+"timestamp": "00:00:23.000 - 00:00:30.000",
+"start_seconds": 23.0,
+"end_seconds": 30.0,
+"event_type": "Character Action",
+"event_name": "Dehya Pointing at Poster",
+"detailed description": "Dehya points at a poster on the wall titled 'Slime Safety Guide'.",
+"visual_details": "Dehya gesturing toward the wall poster.",
+"related_audio_event_ids": [
+"a6"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v7",
+"start_time": "00:00:30.000",
+"end_time": "00:00:41.000",
+"timestamp": "00:00:30.000 - 00:00:41.000",
+"start_seconds": 30.0,
+"end_seconds": 41.0,
+"event_type": "Character Interaction",
+"event_name": "Continued Conversation",
+"detailed description": "Collei and Yaoyao talk about Amber visiting soon.",
+"visual_details": "Camera shots focusing on Collei and Yaoyao.",
+"related_audio_event_ids": [
+"a7"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v8",
+"start_time": "00:00:41.000",
+"end_time": "00:00:44.000",
+"timestamp": "00:00:41.000 - 00:00:44.000",
+"start_seconds": 41.0,
+"end_seconds": 44.0,
+"event_type": "Object Movement / Accident",
+"event_name": "Sniper Scope Breaks and Falls",
+"detailed description": "The sniper scope drops, breaks, and parts scatter on the floor.",
+"visual_details": "An on-text overlay 'SCOPE Cost: [Censored] Mora' appears as the scope breaks.",
+"related_audio_event_ids": [
+"a8"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v9",
+"start_time": "00:00:44.000",
+"end_time": "00:00:52.000",
+"timestamp": "00:00:44.000 - 00:00:52.000",
+"start_seconds": 44.0,
+"end_seconds": 52.0,
+"event_type": "Character Reaction",
+"end_time": "00:00:52.000",
+"event_name": "Panic and Reaction",
+"detailed description": "Collei reacts with blank eyes and shock while Dehya and Yelan rush to check on her.",
+"visual_details": "Collei sitting shocked, Dehya kneeling down next to her.",
+"related_audio_event_ids": [
+"a9"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v10",
+"start_time": "00:00:52.000",
+"end_time": "00:01:05.000",
+"timestamp": "00:00:52.000 - 00:01:05.000",
+"start_seconds": 52.0,
+"end_seconds": 65.0,
+"event_type": "Character Interaction",
+"event_name": "Financial Discussion on Thermals",
+"detailed description": "The characters discuss thermals and getting a loan to replace the broken part.",
+"visual_details": "Close-ups of Collei, Dehya, and Yelan interacting in the medical room.",
+"related_audio_event_ids": [
+"a9"
+],
+"confidence_score": 0.95
+},
+{
+"event_id": "v11",
+"start_time": "00:01:05.000",
+"end_time": "00:01:10.705",
+"timestamp": "00:01:05.000 - 00:01:10.705",
+"start_seconds": 65.0,
+"end_seconds": 70.705,
+"event_type": "Screen Change / Credits",
+"event_name": "Credits Display",
+"detailed description": "Credits screen displaying model creators, background music info, and environment assets.",
+"visual_details": "Text overlays listing character models, music title ('Weekend in Tattooine'), and assets.",
+"related_audio_event_ids": [
+"a10"
+],
+"confidence_score": 0.95
+}
+],
+"uncertainties": []
+}

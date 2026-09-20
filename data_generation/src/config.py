@@ -8,8 +8,9 @@ import random
 
 AUDIO_PREFERENCE_PROBABILITY = 0.5
 START_INPUT_PROBABILITY = 0.5
-AGENT_DELAY_MIN_SECONDS = 15
-AGENT_DELAY_MAX_SECONDS = 45
+AGENT_DELAY_MIN_SECONDS = 5
+AGENT_DELAY_MIN_FRACTION = 0.1
+AGENT_DELAY_MAX_FRACTION = 0.5
 INITIAL_RESPONSE_DELAY_MIN_SECONDS = 10
 INITIAL_RESPONSE_DELAY_MAX_SECONDS = 180
 
@@ -48,10 +49,14 @@ def choose_agent_delay(duration_seconds: float) -> int | None:
         or duration_seconds < 0
     ):
         raise ValueError(f"invalid video duration: {duration_seconds!r}")
-    upper = min(AGENT_DELAY_MAX_SECONDS, math.floor(duration_seconds))
-    if upper < AGENT_DELAY_MIN_SECONDS:
+    lower = max(
+        AGENT_DELAY_MIN_SECONDS,
+        math.ceil(duration_seconds * AGENT_DELAY_MIN_FRACTION),
+    )
+    upper = math.floor(duration_seconds * AGENT_DELAY_MAX_FRACTION)
+    if upper < lower:
         return None
-    return random.randint(AGENT_DELAY_MIN_SECONDS, upper)
+    return random.randint(lower, upper)
 
 
 def choose_initial_response_delay(duration_seconds: float) -> int | None:

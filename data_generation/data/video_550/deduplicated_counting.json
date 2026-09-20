@@ -1,0 +1,4 @@
+{
+  "status": "skip",
+  "reason": "The video is an animated clip containing characters and items from a fictional story (such as a pie-costume character, a gnome, elves, a fairy princess, blackberries, and a red vehicle), none of which belong to any valid, quantifiable category of real-world deduplicated semantic objects like car brands, bird species, or product names. Therefore, no valid target category can be chosen for this task."
+}

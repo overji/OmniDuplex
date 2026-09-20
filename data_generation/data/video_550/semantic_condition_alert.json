@@ -1,0 +1,25 @@
+{
+  "status": "ok",
+  "question": "Let me know when Mr. Gnome succumbs to temptation and eats a blackberry despite his promise.",
+  "question_time": "00:00",
+  "semantic_condition": "Mr. Gnome fails to resist a blackberry and eats it",
+  "observable_criteria": [
+    "Mr. Gnome expresses excitement upon spotting a blackberry",
+    "An audible munching sound occurs",
+    "Mr. Gnome admits to eating the blackberry"
+  ],
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "responses": [
+    {
+      "trigger_time": "00:00:33",
+      "response": "Mr. Gnome just gave in to temptation and ate a blackberry, acknowledging his slip-up by saying he did it again.",
+      "condition_evidence": "At 00:32, Mr. Gnome says 'Ooh, look at that!' followed by a munching sound effect, and then at 00:33 he says 'Silly me, I did it again.'",
+      "confidence": 0.95,
+      "uncertainty": "none",
+      "trigger_type": "visual+sound+speech",
+      "trigger_type_reason": "The trigger combines visual reaction, sound effects (munching), and spoken dialogue admitting the action.",
+      "event_description": "Mr. Gnome eats a blackberry and reacts to his mistake."
+    }
+  ]
+}

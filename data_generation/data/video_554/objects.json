@@ -1,0 +1,174 @@
+{
+  "items": [
+    {
+      "item_id": "item_001",
+      "name": "Peppa Pig",
+      "category": "People / Characters",
+      "description": "An animated pink pig character wearing a red dress, who is the main character in the video.",
+      "evidence_kind": "visible_presence",
+      "observation": "Peppa Pig appears throughout the video speaking, holding a cushion, and crying.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:00.000",
+      "last_appearance_time": "00:00:20.039",
+      "appearance_segments": [
+        "00:00:00.000 - 00:00:20.039"
+      ],
+      "is_main_item": true,
+      "importance_score": 1.0,
+      "related_events": [
+        {
+          "event_id": "v1",
+          "relationship_type": "appearance",
+          "relationship_description": "Peppa appears holding a cushion/doll.",
+          "evidence_kind": "visible_presence",
+          "observation": "Peppa is shown on screen.",
+          "uncertainty": null,
+          "confidence": 0.98
+        },
+        {
+          "event_id": "v3",
+          "relationship_type": "interaction",
+          "relationship_description": "Peppa cries close-up.",
+          "evidence_kind": "visible_presence",
+          "observation": "Peppa's crying facial expression.",
+          "uncertainty": null,
+          "confidence": 0.98
+        },
+        {
+          "event_id": "v7",
+          "relationship_type": "usage",
+          "relationship_description": "Peppa puts a cushion under her red dress.",
+          "evidence_kind": "visible_presence",
+          "observation": "Peppa places a cushion against her stomach.",
+          "uncertainty": null,
+          "confidence": 0.98
+        }
+      ],
+      "confidence": 0.99
+    },
+    {
+      "item_id": "item_002",
+      "name": "Mummy Pig",
+      "category": "People / Characters",
+      "description": "An adult pink pig character wearing a red dress with white polka dots.",
+      "evidence_kind": "visible_presence",
+      "observation": "Mummy Pig holding a baby doll in the living room.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:02.100",
+      "last_appearance_time": "00:00:12.800",
+      "appearance_segments": [
+        "00:00:02.100 - 00:00:06.500",
+        "00:00:08.800 - 00:00:12.800"
+      ],
+      "is_main_item": false,
+      "importance_score": 0.7,
+      "related_events": [
+        {
+          "event_id": "v2",
+          "relationship_type": "appearance",
+          "relationship_description": "Mummy Pig appears holding a baby.",
+          "evidence_kind": "visible_presence",
+          "observation": "Mummy Pig holding baby item.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "item_id": "item_003",
+      "name": "Grandfather Pig",
+      "category": "People / Characters",
+      "description": "An adult male pig character wearing glasses and teal clothing.",
+      "evidence_kind": "visible_presence",
+      "observation": "Grandfather Pig enters and cries with the group.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:08.800",
+      "last_appearance_time": "00:00:12.800",
+      "appearance_segments": [
+        "00:00:08.800 - 00:00:12.800"
+      ],
+      "is_main_item": false,
+      "importance_score": 0.6,
+      "related_events": [
+        {
+          "event_id": "v4",
+          "relationship_type": "appearance",
+          "relationship_description": "Grandfather Pig enters the room.",
+          "evidence_kind": "visible_presence",
+          "observation": "Grandfather Pig stands next to crying characters.",
+          "uncertainty": null,
+          "confidence": 0.95
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "item_id": "item_004",
+      "name": "Cushion / Pillow",
+      "category": "Objects",
+      "description": "A white/cream cushion used by Peppa and other characters to pretend to have a baby.",
+      "evidence_kind": "visible_presence",
+      "observation": "Cushions handled by characters and tucked into dresses.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:02.100",
+      "last_appearance_time": "00:00:20.039",
+      "appearance_segments": [
+        "00:00:02.100 - 00:00:03.500",
+        "00:00:17.000 - 00:00:20.039"
+      ],
+      "is_main_item": true,
+      "importance_score": 0.9,
+      "related_events": [
+        {
+          "event_id": "v2",
+          "relationship_type": "appearance",
+          "relationship_description": "A cushion is held by a character.",
+          "evidence_kind": "visible_presence",
+          "observation": "Cushion shown on screen.",
+          "uncertainty": null,
+          "confidence": 0.95
+        },
+        {
+          "event_id": "v7",
+          "relationship_type": "usage",
+          "relationship_description": "Peppa tucks the cushion under her dress as a tummy.",
+          "evidence_kind": "visible_presence",
+          "observation": "Cushion placed under Peppa's dress.",
+          "uncertainty": null,
+          "confidence": 0.96
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "item_id": "item_005",
+      "name": "Television",
+      "category": "Objects",
+      "description": "A television set displaying a scene from the animation.",
+      "evidence_kind": "visible_presence",
+      "observation": "TV screen showing Grandfather Pig and the crying baby.",
+      "uncertainty": null,
+      "first_appearance_time": "00:00:11.800",
+      "last_appearance_time": "00:00:13.200",
+      "appearance_segments": [
+        "00:00:11.800 - 00:00:13.200"
+      ],
+      "is_main_item": false,
+      "importance_score": 0.5,
+      "related_events": [
+        {
+          "event_id": "v5",
+          "relationship_type": "display",
+          "relationship_description": "Television displays the ongoing characters.",
+          "evidence_kind": "visible_presence",
+          "observation": "TV frame shown.",
+          "uncertainty": null,
+          "confidence": 0.94
+        }
+      ],
+      "confidence": 0.94
+    }
+  ],
+  "uncertainties": []
+}

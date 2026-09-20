@@ -1,0 +1,61 @@
+{
+  "status": "ok",
+  "unsuitable_tasks": [
+    {
+      "task": "event_alert",
+      "reason": "There are no recurring or high-risk events that require monitoring alerts."
+    },
+    {
+      "task": "snapshot_counting",
+      "reason": "There is no requirement to count distinct targets at specific trigger moments."
+    },
+    {
+      "task": "semantic_condition_alert",
+      "reason": "No abstract or complex long-term condition needs to be monitored."
+    },
+    {
+      "task": "cumulative_counting",
+      "reason": "No repetitive events occur multiple times to be accumulated."
+    },
+    {
+      "task": "deduplicated_counting",
+      "reason": "There are no multiple instances of moving targets to count while merging repeat appearances."
+    },
+    {
+      "task": "state_monitoring",
+      "reason": "There is no continuous process or multi-phase state transition needing tracking beyond the simple repair."
+    },
+    {
+      "task": "triggered_knowledge_retrieval",
+      "reason": "No external reference materials or historical document lookups are needed."
+    },
+    {
+      "task": "triggered_realtime_query",
+      "reason": "No external real-time data needs to be queried."
+    },
+    {
+      "task": "triggered_multi_source_synthesis",
+      "reason": "There are no multiple external information sources to combine."
+    },
+    {
+      "task": "triggered_content_recording",
+      "reason": "There is no structured data logging or archival task required by the video context."
+    },
+    {
+      "task": "triggered_message_notification",
+      "reason": "No messaging or notification action is triggered or requested."
+    }
+  ],
+  "ranked_tasks": [
+    {
+      "task": "event_narration",
+      "rank": 1,
+      "rationale": "The video depicts a clear narrative sequence involving a broken toy car wheel, intervention by Blue Super Dog, and a collaborative repair with Dodo, making it well-suited for real-time progress narration."
+    },
+    {
+      "task": "target_grounding",
+      "rank": 2,
+      "rationale": "Specific key objects such as the detached car wheel, the toolbox, and the wrench can be spatially localized and tracked during the repair process."
+    }
+  ]
+}

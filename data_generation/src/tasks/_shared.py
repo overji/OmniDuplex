@@ -136,8 +136,8 @@ def render_prompt(
         capabilities = AGENT_CAPABILITIES_PATH.read_text(encoding="utf-8").strip()
         if context.agent_delay_seconds is None:
             timing = (
-                "The video is shorter than 15 seconds, so no legal backend delay "
-                "exists. Return skip."
+                "The video is too short for a legal backend delay under the "
+                "duration-based timing rule. Return skip."
             )
         else:
             timing = (
@@ -378,7 +378,7 @@ def validate_agent_result(
         reason = require_text(result.get("reason"), "reason")
         return {"status": "skip", "reason": reason}
     if context.agent_delay_seconds is None:
-        raise ValueError("videos shorter than 15 seconds must return skip")
+        raise ValueError("video has no legal duration-based backend delay; return skip")
     # Agent responses use messages instead of the direct-response field.
     shadow = dict(result)
     responses = result.get("responses")

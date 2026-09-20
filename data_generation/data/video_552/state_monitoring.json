@@ -1,0 +1,16 @@
+{
+"status": "ok",
+"audio_scan": "Checked who is speaking and speaker turns: characters speak sequentially from 00:06 onwards, but this is dialogue rather than an ongoing audio-driven state dimension like music or a dedicated sound source. Checked music playing: no background music is playing throughout the video. Checked identifiable sound sources: gunfire occurs briefly around 00:00 to 00:05, but it is intermittent and short-lived rather than a continuous audio state stream. Therefore, no suitable audio dimension has clear, verifiable continuous boundaries and transitions after question_time, so a visual dimension is selected.",
+"question": "Can you monitor whether Wriothesley is sitting or standing in the control room scene?",
+"question_time": "00:20",
+"audio_dependency": "none",
+"responses": [
+{
+"trigger_time": "00:27",
+"response": "The subject changes from sitting to standing.",
+"trigger_type": "visual",
+"trigger_type_reason": "Wriothesley stands up from his chair in the control room.",
+"event_description": "Wriothesley rises to a standing position."
+}
+]
+}

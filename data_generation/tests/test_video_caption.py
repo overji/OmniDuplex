@@ -96,6 +96,32 @@ class PromptTests(unittest.TestCase):
             self.assertIn("00:01:05.125", prompt)
             self.assertIn("65.125 seconds", prompt)
             self.assertNotIn("{{VIDEO_DURATION", prompt)
+            self.assertIn("Temporal record causality and no future leakage", prompt)
+
+        self.assertIn(
+            "record that becomes knowable at its\n`end_time`",
+            bundle.events_prompt,
+        )
+        self.assertIn(
+            "`start_time` marks only when the event began",
+            bundle.events_prompt,
+        )
+        self.assertIn(
+            "The untimed `video_summary` may use the\ncomplete video",
+            bundle.events_prompt,
+        )
+        self.assertIn(
+            "timestamped appearance segment",
+            bundle.objects_prompt,
+        )
+        self.assertIn(
+            "linked event's `end_time` as the cutoff",
+            bundle.objects_prompt,
+        )
+        self.assertIn(
+            "Untimed whole-video metadata, including the global item name",
+            bundle.objects_prompt,
+        )
 
     def test_cli_writes_both_prompt_files(self) -> None:
         with tempfile.NamedTemporaryFile(suffix=".mp4") as video_handle:

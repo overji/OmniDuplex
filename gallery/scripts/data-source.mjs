@@ -23,6 +23,9 @@ export async function listFiles(root = dataDir) {
 }
 
 export function isFinalTaskResult(data) {
+  if (Array.isArray(data)) {
+    return data.length > 0 && data.every((entry) => isFinalTaskResult(entry))
+  }
   return Boolean(
     data && typeof data === 'object' && !Array.isArray(data) &&
     'status' in data && 'question' in data && Array.isArray(data.responses) &&

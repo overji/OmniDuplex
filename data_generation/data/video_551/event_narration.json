@@ -1,0 +1,57 @@
+{
+  "status": "ok",
+  "question": "Describe each important step as Blue Super Dog and Dodo fix the toy car once it has happened.",
+  "question_time": "00:00",
+  "audio_dependency": "required",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "trigger_time": "00:09",
+      "response": "Dodo discovers that a wheel has fallen off the red toy car and worries about how to fix it.",
+      "observed_facts": [
+        "Dodo stands next to the red toy car with a detached wheel on the floor.",
+        "Dodo looks worried and speaks about the wheel falling off."
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "Both visual appearance of the detached wheel/worried character and speech explaining the problem are observed.",
+      "event_description": "Dodo discovers the detached car wheel."
+    },
+    {
+      "trigger_time": "00:17",
+      "response": "Blue Super Dog opens a blue and white toolbox to get tools for the repair.",
+      "observed_facts": [
+        "A blue and white toolbox opens up, revealing tools inside.",
+        "A clicking or popping sound plays as the toolbox opens."
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The opening of the toolbox is visually confirmed along with its audio cue.",
+      "event_description": "The toolbox opens to reveal tools."
+    },
+    {
+      "trigger_time": "00:31",
+      "response": "Blue Super Dog uses a wrench to tighten the screw and successfully reattach the wheel.",
+      "observed_facts": [
+        "Blue Super Dog uses a green wrench to tighten the screw on the car wheel while Dodo holds it steady.",
+        "Ratchet tightening sounds play as the task is completed."
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Visual action of tightening the wheel with a wrench and audio of tightening sounds confirm completion.",
+      "event_description": "The car wheel is successfully reattached and tightened."
+    },
+    {
+      "trigger_time": "00:37",
+      "response": "Dodo test drives the repaired red toy car across the playroom floor and celebrates.",
+      "observed_facts": [
+        "Dodo sits inside the red toy car and drives it forward.",
+        "Dodo laughs and shouts that it is working while driving sounds play."
+      ],
+      "interpretation": null,
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "Visual movement of the car driven by Dodo combined with driving sounds and speech verify the test drive.",
+      "event_description": "Dodo test drives the fixed car."
+    }
+  ]
+}
