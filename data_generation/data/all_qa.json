@@ -211,36 +211,32 @@
     "responses": [
       {
         "trigger_time": "01:18",
+        "source_trigger_time": "01:18",
         "trigger_type": "speech",
         "trigger_type_reason": "The driver explicitly requests to play music by Liang Bo ('来首梁博听听！').",
         "event_description": "The driver requests a specific artist's music to be played while driving.",
-        "messages": [
+        "response": "Recording your music preference for Liang Bo.",
+        "role": "assistant",
+        "tool_calls": [
           {
-            "timestamp": "01:18",
-            "role": "assistant",
-            "content": "Recording your music preference for Liang Bo.",
-            "tool_calls": [
-              {
-                "type": "function",
-                "function": {
-                  "name": "agent_call",
-                  "arguments": "{\"instruction\":\"Record the requested artist name into the media preferences note.\",\"observed_context\":\"At 01:18, the driver says '来首梁博听听！' and background music begins playing.\",\"user_goal\":\"Record the music artist requested by the driver into my media preferences note.\",\"constraints_and_authorization\":\"Standing authorization applies. Only record the explicitly requested artist without assuming additional preferences.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A note updated with the requested artist name and confirmation of the write action.\",\"extracted_parameters\":[{\"name\":\"artist_name\",\"value\":\"Liang Bo\",\"evidence_time\":\"01:18\",\"evidence\":\"The driver says '来首梁博听听！'\"}]}"
-                }
-              }
-            ]
-          },
-          {
-            "timestamp": "01:36",
-            "role": "tool",
-            "name": "agent_call",
-            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Successfully recorded Liang Bo to the media preferences note.\",\"details\":{\"fields\":{\"content\":\"Requested artist: Liang Bo\"},\"destination\":\"Media Preferences Note\",\"record_status\":\"written\"},\"sources\":[],\"actions\":[{\"system\":\"NotesApp\",\"operation\":\"note_write\",\"status\":\"completed\",\"verification\":\"Note updated with artist name Liang Bo.\"}],\"artifacts\":[]}"
-          },
-          {
-            "timestamp": "01:36",
-            "role": "assistant",
-            "content": "Added Liang Bo to your media preferences note."
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Record the requested artist name into the media preferences note.\",\"observed_context\":\"At 01:18, the driver says '来首梁博听听！' and background music begins playing.\",\"user_goal\":\"Record the music artist requested by the driver into my media preferences note.\",\"constraints_and_authorization\":\"Standing authorization applies. Only record the explicitly requested artist without assuming additional preferences.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A note updated with the requested artist name and confirmation of the write action.\",\"extracted_parameters\":[{\"name\":\"artist_name\",\"value\":\"Liang Bo\",\"evidence_time\":\"01:18\",\"evidence\":\"The driver says '来首梁博听听！'\"}]}"
+            }
           }
         ]
+      },
+      {
+        "trigger_time": "01:36",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Successfully recorded Liang Bo to the media preferences note.\",\"details\":{\"fields\":{\"content\":\"Requested artist: Liang Bo\"},\"destination\":\"Media Preferences Note\",\"record_status\":\"written\"},\"sources\":[],\"actions\":[{\"system\":\"NotesApp\",\"operation\":\"note_write\",\"status\":\"completed\",\"verification\":\"Note updated with artist name Liang Bo.\"}],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "01:36",
+        "response": "Added Liang Bo to your media preferences note.",
+        "role": "assistant"
       }
     ],
     "video": "test.mp4",
@@ -256,36 +252,32 @@
     "responses": [
       {
         "trigger_time": "00:13",
+        "source_trigger_time": "00:13",
         "trigger_type": "visual+speech",
         "trigger_type_reason": "The car model brand 'SKYLAD 天梯' and vehicle details are visible on the exterior alongside the audio context.",
         "event_description": "The narrator opens the door of the white Lynk & Co car while walking on the street.",
-        "messages": [
+        "response": "Retrieving vehicle specifications for you.",
+        "role": "assistant",
+        "tool_calls": [
           {
-            "timestamp": "00:13",
-            "role": "assistant",
-            "content": "Retrieving vehicle specifications for you.",
-            "tool_calls": [
-              {
-                "type": "function",
-                "function": {
-                  "name": "agent_call",
-                  "arguments": "{\"instruction\":\"Retrieve the background, specifications, and model details of the Lynk & Co vehicle identified in the video context.\",\"observed_context\":\"At 00:13, a white Lynk & Co vehicle with text 'SKYLAD 天梯' on the side is shown on the street as the driver approaches it.\",\"user_goal\":\"Get specifications and information about the vehicle model shown in the video.\",\"constraints_and_authorization\":\"Authorized by the viewer. Use knowledge retrieval capabilities to find verified vehicle specifications.\",\"suggested_capabilities\":[\"knowledge_base_search\",\"web_search\"],\"expected_output\":\"Detailed overview of the Lynk & Co vehicle model specifications and background.\",\"extracted_parameters\":[{\"name\":\"vehicle_brand_model\",\"value\":\"Lynk & Co\",\"evidence_time\":\"00:13\",\"evidence\":\"White Lynk & Co car with interior and exterior branding visible.\"}]}"
-                }
-              }
-            ]
-          },
-          {
-            "timestamp": "00:36",
-            "role": "tool",
-            "name": "agent_call",
-            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Retrieved specifications for Lynk & Co vehicles.\",\"details\":{\"query_subject\":\"Lynk & Co vehicle specifications\",\"knowledge\":\"Lynk & Co is a Chinese-Swedish automobile brand owned by Geely Holding Group, known for connected and premium vehicles featuring advanced digital cockpits and modern safety tech.\"},\"sources\":[{\"title\":\"Lynk & Co Brand Overview and Specifications\",\"url_or_system\":\"knowledge_base_search\"}],\"actions\":[],\"artifacts\":[]}"
-          },
-          {
-            "timestamp": "00:36",
-            "role": "assistant",
-            "content": "Lynk & Co is a brand owned by Geely, featuring advanced digital cockpits."
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Retrieve the background, specifications, and model details of the Lynk & Co vehicle identified in the video context.\",\"observed_context\":\"At 00:13, a white Lynk & Co vehicle with text 'SKYLAD 天梯' on the side is shown on the street as the driver approaches it.\",\"user_goal\":\"Get specifications and information about the vehicle model shown in the video.\",\"constraints_and_authorization\":\"Authorized by the viewer. Use knowledge retrieval capabilities to find verified vehicle specifications.\",\"suggested_capabilities\":[\"knowledge_base_search\",\"web_search\"],\"expected_output\":\"Detailed overview of the Lynk & Co vehicle model specifications and background.\",\"extracted_parameters\":[{\"name\":\"vehicle_brand_model\",\"value\":\"Lynk & Co\",\"evidence_time\":\"00:13\",\"evidence\":\"White Lynk & Co car with interior and exterior branding visible.\"}]}"
+            }
           }
         ]
+      },
+      {
+        "trigger_time": "00:36",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Retrieved specifications for Lynk & Co vehicles.\",\"details\":{\"query_subject\":\"Lynk & Co vehicle specifications\",\"knowledge\":\"Lynk & Co is a Chinese-Swedish automobile brand owned by Geely Holding Group, known for connected and premium vehicles featuring advanced digital cockpits and modern safety tech.\"},\"sources\":[{\"title\":\"Lynk & Co Brand Overview and Specifications\",\"url_or_system\":\"knowledge_base_search\"}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:36",
+        "response": "Lynk & Co is a brand owned by Geely, featuring advanced digital cockpits.",
+        "role": "assistant"
       }
     ],
     "video": "test.mp4",
@@ -301,36 +293,32 @@
     "responses": [
       {
         "trigger_time": "00:35",
+        "source_trigger_time": "00:35",
         "trigger_type": "visual+sound",
         "trigger_type_reason": "Visual observation of the driver starting to drive the car and audio of driving operations.",
         "event_description": "The driver starts operating the vehicle and driving through the city streets.",
-        "messages": [
+        "response": "Notifying office.",
+        "role": "assistant",
+        "tool_calls": [
           {
-            "timestamp": "00:35",
-            "role": "assistant",
-            "content": "Notifying office.",
-            "tool_calls": [
-              {
-                "type": "function",
-                "function": {
-                  "name": "agent_call",
-                  "arguments": "{\"instruction\":\"Send an email to the work contact notifying them that the user is on the way to the office.\",\"observed_context\":\"The driver has entered the white Lynk & Co car, fastened the seatbelt, and started driving through city streets at 00:35.\",\"user_goal\":\"Send a notification email upon starting the commute.\",\"constraints_and_authorization\":\"Authorized by the user's standing instruction to send notifications upon driving start.\",\"suggested_capabilities\":[\"email_send\"],\"expected_output\":\"A successfully sent email notification with message status set to sent.\",\"extracted_parameters\":[{\"name\":\"recipient\",\"value\":\"office@work.com\",\"evidence_time\":\"00:35\",\"evidence\":\"Driver starts driving the vehicle.\"},{\"name\":\"content\",\"value\":\"I am on my way to the office now.\",\"evidence_time\":\"00:35\",\"evidence\":\"Commute has begun.\"}]}"
-                }
-              }
-            ]
-          },
-          {
-            "timestamp": "01:03",
-            "role": "tool",
-            "name": "agent_call",
-            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Email successfully sent to the office contact.\",\"details\":{\"recipient\":\"office@work.com\",\"content\":\"I am on my way to the office now.\",\"send_time\":\"01:03\",\"message_status\":\"sent\"},\"sources\":[],\"actions\":[{\"system\":\"email_system\",\"operation\":\"send\",\"status\":\"completed\",\"verification\":\"Email delivered to recipient server.\"}],\"artifacts\":[]}"
-          },
-          {
-            "timestamp": "01:03",
-            "role": "assistant",
-            "content": "Your notification email has been sent successfully."
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Send an email to the work contact notifying them that the user is on the way to the office.\",\"observed_context\":\"The driver has entered the white Lynk & Co car, fastened the seatbelt, and started driving through city streets at 00:35.\",\"user_goal\":\"Send a notification email upon starting the commute.\",\"constraints_and_authorization\":\"Authorized by the user's standing instruction to send notifications upon driving start.\",\"suggested_capabilities\":[\"email_send\"],\"expected_output\":\"A successfully sent email notification with message status set to sent.\",\"extracted_parameters\":[{\"name\":\"recipient\",\"value\":\"office@work.com\",\"evidence_time\":\"00:35\",\"evidence\":\"Driver starts driving the vehicle.\"},{\"name\":\"content\",\"value\":\"I am on my way to the office now.\",\"evidence_time\":\"00:35\",\"evidence\":\"Commute has begun.\"}]}"
+            }
           }
         ]
+      },
+      {
+        "trigger_time": "01:03",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Email successfully sent to the office contact.\",\"details\":{\"recipient\":\"office@work.com\",\"content\":\"I am on my way to the office now.\",\"send_time\":\"01:03\",\"message_status\":\"sent\"},\"sources\":[],\"actions\":[{\"system\":\"email_system\",\"operation\":\"send\",\"status\":\"completed\",\"verification\":\"Email delivered to recipient server.\"}],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "01:03",
+        "response": "Your notification email has been sent successfully.",
+        "role": "assistant"
       }
     ],
     "video": "test.mp4",
@@ -346,36 +334,32 @@
     "responses": [
       {
         "trigger_time": "00:37",
+        "source_trigger_time": "00:37",
         "trigger_type": "visual+speech",
         "trigger_type_reason": "The driver looks at the digital center console showing navigation and speaks about starting the drive.",
         "event_description": "The driver checks the center console display showing the vehicle's surrounding environment and begins driving through city streets.",
-        "messages": [
+        "response": "Analyzing route traffic and transit data now.",
+        "role": "assistant",
+        "tool_calls": [
           {
-            "timestamp": "00:37",
-            "role": "assistant",
-            "content": "Analyzing route traffic and transit data now.",
-            "tool_calls": [
-              {
-                "type": "function",
-                "function": {
-                  "name": "agent_call",
-                  "arguments": "{\"instruction\":\"Compare real-time traffic congestion on urban commuting routes with current public transit schedules to determine the fastest morning commute option.\",\"observed_context\":\"At 00:37, the driver is operating a white Lynk & Co vehicle through urban streets, observing the digital dashboard and navigation screen showing surrounding traffic.\",\"user_goal\":\"Recommend the optimal commuting route based on live traffic and transit comparisons.\",\"constraints_and_authorization\":\"Use live mapping and transit lookup capabilities. Respect user preferences for driving.\",\"suggested_capabilities\":[\"route_planning\",\"traffic_lookup\",\"transit_lookup\"],\"expected_output\":\"A synthesized comparison of driving traffic versus transit times with a final route recommendation, supported by traffic and transit sources.\",\"extracted_parameters\":[{\"name\":\"vehicle_model\",\"value\":\"Lynk & Co\",\"evidence_time\":\"00:30\",\"evidence\":\"White steering wheel with LYNK&CO logo and digital center console screen visible inside the vehicle cabin.\"},{\"name\":\"commute_start_time\",\"value\":\"00:37\",\"evidence_time\":\"00:37\",\"evidence\":\"Driver begins navigating through urban street traffic while checking the center console map display.\"}]}"
-                }
-              }
-            ]
-          },
-          {
-            "timestamp": "00:55",
-            "role": "tool",
-            "name": "agent_call",
-            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Synthesized live traffic and transit data for the morning commute.\",\"details\":{\"decision_goal\":\"Determine optimal morning commute route\",\"conclusion\":\"Driving via urban arterial roads is currently 10 minutes faster than public transit despite moderate congestion.\",\"basis\":\"Live traffic lookup indicates flowing traffic ahead; transit lookup shows a delayed bus schedule.\",\"conflicts\":[],\"uncertainties\":[]},\"sources\":[{\"title\":\"City Live Traffic API\",\"url_or_system\":\"traffic_lookup\"},{\"title\":\"Public Transit Schedule Feed\",\"url_or_system\":\"transit_lookup\"}],\"actions\":[],\"artifacts\":[]}"
-          },
-          {
-            "timestamp": "00:55",
-            "role": "assistant",
-            "content": "Driving is currently 10 minutes faster than transit. Recommended to continue on the current road."
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Compare real-time traffic congestion on urban commuting routes with current public transit schedules to determine the fastest morning commute option.\",\"observed_context\":\"At 00:37, the driver is operating a white Lynk & Co vehicle through urban streets, observing the digital dashboard and navigation screen showing surrounding traffic.\",\"user_goal\":\"Recommend the optimal commuting route based on live traffic and transit comparisons.\",\"constraints_and_authorization\":\"Use live mapping and transit lookup capabilities. Respect user preferences for driving.\",\"suggested_capabilities\":[\"route_planning\",\"traffic_lookup\",\"transit_lookup\"],\"expected_output\":\"A synthesized comparison of driving traffic versus transit times with a final route recommendation, supported by traffic and transit sources.\",\"extracted_parameters\":[{\"name\":\"vehicle_model\",\"value\":\"Lynk & Co\",\"evidence_time\":\"00:30\",\"evidence\":\"White steering wheel with LYNK&CO logo and digital center console screen visible inside the vehicle cabin.\"},{\"name\":\"commute_start_time\",\"value\":\"00:37\",\"evidence_time\":\"00:37\",\"evidence\":\"Driver begins navigating through urban street traffic while checking the center console map display.\"}]}"
+            }
           }
         ]
+      },
+      {
+        "trigger_time": "00:55",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Synthesized live traffic and transit data for the morning commute.\",\"details\":{\"decision_goal\":\"Determine optimal morning commute route\",\"conclusion\":\"Driving via urban arterial roads is currently 10 minutes faster than public transit despite moderate congestion.\",\"basis\":\"Live traffic lookup indicates flowing traffic ahead; transit lookup shows a delayed bus schedule.\",\"conflicts\":[],\"uncertainties\":[]},\"sources\":[{\"title\":\"City Live Traffic API\",\"url_or_system\":\"traffic_lookup\"},{\"title\":\"Public Transit Schedule Feed\",\"url_or_system\":\"transit_lookup\"}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:55",
+        "response": "Driving is currently 10 minutes faster than transit. Recommended to continue on the current road.",
+        "role": "assistant"
       }
     ],
     "video": "test.mp4",
@@ -391,36 +375,32 @@
     "responses": [
       {
         "trigger_time": "00:02",
+        "source_trigger_time": "00:02",
         "trigger_type": "visual",
         "trigger_type_reason": "The video shows the street scene and sidewalk from a first-person driving/commuting perspective, allowing identification of the location for a weather lookup.",
         "event_description": "The viewer observes the urban street environment outside the car.",
-        "messages": [
+        "response": "Checking the weather forecast for your route now.",
+        "role": "assistant",
+        "tool_calls": [
           {
-            "timestamp": "00:02",
-            "role": "assistant",
-            "content": "Checking the weather forecast for your route now.",
-            "tool_calls": [
-              {
-                "type": "function",
-                "function": {
-                  "name": "agent_call",
-                  "arguments": "{\"instruction\":\"Retrieve the current weather forecast for the urban commuting route shown in the video.\",\"observed_context\":\"First-person perspective walking along an urban tree-lined street with parked cars and buildings at 00:02.\",\"user_goal\":\"Get the weather forecast for the current driving route.\",\"constraints_and_authorization\":\"Use live weather lookup capability. Do not invent data.\",\"suggested_capabilities\":[\"weather_lookup\"],\"expected_output\":\"Current weather conditions and forecast with source and timestamps.\",\"extracted_parameters\":[{\"name\":\"environment\",\"value\":\"urban street\",\"evidence_time\":\"00:02\",\"evidence\":\"Tree-lined sidewalk and parked cars visible on the street.\"}]}"
-                }
-              }
-            ]
-          },
-          {
-            "timestamp": "00:18",
-            "role": "tool",
-            "name": "agent_call",
-            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Retrieved weather forecast successfully.\",\"details\":{\"query_subject\":\"Commuting Route Weather\",\"data_source\":\"Local Meteorological Service\",\"queried_at\":\"2026-09-16T04:28:00Z\",\"valid_at\":\"2026-09-16T05:00:00Z\",\"information_type\":\"forecast\",\"result\":\"Partly cloudy, 22°C, light breeze, excellent visibility for driving.\"-},\"sources\":[{\"title\":\"City Weather Forecast API\",\"url_or_system\":\"source_1\"}],\"actions\":[],\"artifacts\":[]}"
-          },
-          {
-            "timestamp": "00:18",
-            "role": "assistant",
-            "content": "The weather along your route is partly cloudy at 22°C with good visibility."
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Retrieve the current weather forecast for the urban commuting route shown in the video.\",\"observed_context\":\"First-person perspective walking along an urban tree-lined street with parked cars and buildings at 00:02.\",\"user_goal\":\"Get the weather forecast for the current driving route.\",\"constraints_and_authorization\":\"Use live weather lookup capability. Do not invent data.\",\"suggested_capabilities\":[\"weather_lookup\"],\"expected_output\":\"Current weather conditions and forecast with source and timestamps.\",\"extracted_parameters\":[{\"name\":\"environment\",\"value\":\"urban street\",\"evidence_time\":\"00:02\",\"evidence\":\"Tree-lined sidewalk and parked cars visible on the street.\"}]}"
+            }
           }
         ]
+      },
+      {
+        "trigger_time": "00:18",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Retrieved weather forecast successfully.\",\"details\":{\"query_subject\":\"Commuting Route Weather\",\"data_source\":\"Local Meteorological Service\",\"queried_at\":\"2026-09-16T04:28:00Z\",\"valid_at\":\"2026-09-16T05:00:00Z\",\"information_type\":\"forecast\",\"result\":\"Partly cloudy, 22°C, light breeze, excellent visibility for driving.\"-},\"sources\":[{\"title\":\"City Weather Forecast API\",\"url_or_system\":\"source_1\"}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:18",
+        "response": "The weather along your route is partly cloudy at 22°C with good visibility.",
+        "role": "assistant"
       }
     ],
     "video": "test.mp4",
@@ -1161,37 +1141,33 @@
     "vision_dependency": "helpful",
     "responses": [
       {
-        "trigger_time": "00:20",
+        "trigger_time": "00:10",
+        "source_trigger_time": "00:20",
         "trigger_type": "visual+speech",
         "trigger_type_reason": "Peppa finishes her dialogue saying 'So I think I'll keep my cushion instead' while holding a cushion to her tummy.",
         "event_description": "Peppa Pig decides to keep her cushion instead of a real baby.",
-        "messages": [
+        "response": "Understood.",
+        "role": "assistant",
+        "tool_calls": [
           {
-            "timestamp": "00:10",
-            "role": "assistant",
-            "content": "Understood.",
-            "tool_calls": [
-              {
-                "type": "function",
-                "function": {
-                  "name": "agent_call",
-                  "arguments": "{\"instruction\":\"Record Peppa Pig's decision to keep her cushion instead of a real baby into the notes.\",\"observed_context\":\"Peppa Pig says 'So I think I'll keep my cushion instead' and places a cushion under her dress.\",\"user_goal\":\"Record what Peppa Pig decides to keep instead of a real baby into my notes.\",\"constraints_and_authorization\":\"Standing user authorization to record notes. Use reliable note writing capabilities.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A confirmation that Peppa's decision to keep her cushion has been successfully written to notes.\",\"extracted_parameters\":[{\"name\":\"item_kept\",\"value\":\"cushion\",\"evidence_time\":\"00:19\",\"evidence\":\"Peppa holding a cushion under her dress and stating she will keep her cushion instead.\"}]}"
-                }
-              }
-            ]
-          },
-          {
-            "timestamp": "00:15",
-            "role": "tool",
-            "name": "agent_call",
-            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Successfully recorded Peppa Pig's decision to keep her cushion in notes.\",\"details\":{\"fields\":{\"content\":\"Peppa Pig decided to keep her cushion instead of a real baby.\"},\"destination\":\"Notes\",\"record_status\":\"written\"},\"sources\":[],\"actions\":[{\"system\":\"NotesApp\",\"operation\":\"note_write\",\"status\":\"completed\",\"verification\":\"Note successfully created with Peppa's decision.\"}],\"artifacts\":[]}"
-          },
-          {
-            "timestamp": "00:15",
-            "role": "assistant",
-            "content": "I have recorded that Peppa Pig decides to keep her cushion instead."
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Record Peppa Pig's decision to keep her cushion instead of a real baby into the notes.\",\"observed_context\":\"Peppa Pig says 'So I think I'll keep my cushion instead' and places a cushion under her dress.\",\"user_goal\":\"Record what Peppa Pig decides to keep instead of a real baby into my notes.\",\"constraints_and_authorization\":\"Standing user authorization to record notes. Use reliable note writing capabilities.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A confirmation that Peppa's decision to keep her cushion has been successfully written to notes.\",\"extracted_parameters\":[{\"name\":\"item_kept\",\"value\":\"cushion\",\"evidence_time\":\"00:19\",\"evidence\":\"Peppa holding a cushion under her dress and stating she will keep her cushion instead.\"}]}"
+            }
           }
         ]
+      },
+      {
+        "trigger_time": "00:15",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Successfully recorded Peppa Pig's decision to keep her cushion in notes.\",\"details\":{\"fields\":{\"content\":\"Peppa Pig decided to keep her cushion instead of a real baby.\"},\"destination\":\"Notes\",\"record_status\":\"written\"},\"sources\":[],\"actions\":[{\"system\":\"NotesApp\",\"operation\":\"note_write\",\"status\":\"completed\",\"verification\":\"Note successfully created with Peppa's decision.\"}],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:15",
+        "response": "I have recorded that Peppa Pig decides to keep her cushion instead.",
+        "role": "assistant"
       }
     ],
     "video": "video_554.mp4",
@@ -1207,36 +1183,32 @@
     "responses": [
       {
         "trigger_time": "00:04",
+        "source_trigger_time": "00:04",
         "trigger_type": "visual",
         "trigger_type_reason": "The pink pig character is holding a white cushion/pillow accessory clearly visible on screen at 00:04.",
         "event_description": "Peppa Pig holding a cushion.",
-        "messages": [
+        "response": "Checking details for that cushion accessory.",
+        "role": "assistant",
+        "tool_calls": [
           {
-            "timestamp": "00:04",
-            "role": "assistant",
-            "content": "Checking details for that cushion accessory.",
-            "tool_calls": [
-              {
-                "type": "function",
-                "function": {
-                  "name": "agent_call",
-                  "arguments": "{\"instruction\":\"Search for product details, toy name, and availability for the cushion toy accessory featured in the video.\",\"observed_context\":\"An animated pink pig character is holding a white cushion/pillow toy.\",\"user_goal\":\"Find online product information for the cushion accessory shown.\",\"constraints_and_authorization\":\"Use authorized product search capabilities only.\",\"suggested_capabilities\":[\"product_lookup\",\"web_search\"],\"expected_output\":\"Product name, description, and availability from online toy stores.\",\"extracted_parameters\":[{\"name\":\"object_name\",\"value\":\"cushion\",\"evidence_time\":\"00:04\",\"evidence\":\"An animated pink pig character holding a white cushion.\"}]}"
-                }
-              }
-            ]
-          },
-          {
-            "timestamp": "00:13",
-            "role": "tool",
-            "name": "agent_call",
-            "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Found matching toy cushion items online.\",\"details\":{\"query_subject\":\"Peppa Pig toy cushion pillow\",\"data_source\":\"Toy Store Database\",\"queried_at\":\"2026-09-18\",\"valid_at\":\"2026-09-18\",\"information_type\":\"current\",\"result\":\"Peppa Pig plush cushion and pillow toys are widely available online as roleplay accessories.\"},\"sources\":[{\"title\":\"Toy Store Catalog\",\"url_or_system\":\"source_1\"}],\"actions\":[],\"artifacts\":[]}"
-          },
-          {
-            "timestamp": "00:13",
-            "role": "assistant",
-            "content": "Online retailers list Peppa Pig plush cushion toys available as roleplay accessories."
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Search for product details, toy name, and availability for the cushion toy accessory featured in the video.\",\"observed_context\":\"An animated pink pig character is holding a white cushion/pillow toy.\",\"user_goal\":\"Find online product information for the cushion accessory shown.\",\"constraints_and_authorization\":\"Use authorized product search capabilities only.\",\"suggested_capabilities\":[\"product_lookup\",\"web_search\"],\"expected_output\":\"Product name, description, and availability from online toy stores.\",\"extracted_parameters\":[{\"name\":\"object_name\",\"value\":\"cushion\",\"evidence_time\":\"00:04\",\"evidence\":\"An animated pink pig character holding a white cushion.\"}]}"
+            }
           }
         ]
+      },
+      {
+        "trigger_time": "00:13",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Found matching toy cushion items online.\",\"details\":{\"query_subject\":\"Peppa Pig toy cushion pillow\",\"data_source\":\"Toy Store Database\",\"queried_at\":\"2026-09-18\",\"valid_at\":\"2026-09-18\",\"information_type\":\"current\",\"result\":\"Peppa Pig plush cushion and pillow toys are widely available online as roleplay accessories.\"},\"sources\":[{\"title\":\"Toy Store Catalog\",\"url_or_system\":\"source_1\"}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:13",
+        "response": "Online retailers list Peppa Pig plush cushion toys available as roleplay accessories.",
+        "role": "assistant"
       }
     ],
     "video": "video_554.mp4",

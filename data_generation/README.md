@@ -64,3 +64,18 @@ Checks:
 PYTHONPATH=.:data_generation python -m unittest discover -s data_generation/tests -v
 ruff check data_generation/src data_generation/tests
 ```
+
+To rebuild the combined QA file from the per-video task results:
+
+```bash
+python data_generation/merge_qa.py
+```
+
+The command writes `data_generation/data/all_qa.json`. Use `--data-dir`,
+`--videos-dir`, and `--output` to select other locations. It includes only
+successful QA results. In the combined file, agent messages become individual
+`responses`: each message timestamp becomes `trigger_time`, its `content`
+becomes `response`, and its role and tool fields are retained. The original
+outer trigger and event fields remain on the first response as
+`source_trigger_time` and the original event fields. Source task files are not
+modified.
