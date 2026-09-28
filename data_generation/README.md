@@ -15,7 +15,7 @@ references; rendered prompts do not themselves verify audiovisual evidence.
 | state_monitoring | state_monitoring.json |
 | triggered_knowledge_retrieval | triggered_knowledge_retrieval.json |
 | triggered_realtime_query | triggered_realtime_query.json |
-| triggered_multi_source_synthesis | triggered_multi_source_synthesis.json |
+| triggered_complex_reasoning | triggered_complex_reasoning.json |
 | triggered_content_recording | triggered_content_recording.json |
 | triggered_message_notification | triggered_message_notification.json |
 | route | routing recommendation (no result file required) |

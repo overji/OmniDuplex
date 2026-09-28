@@ -21,7 +21,7 @@ from data_generation.src.tasks import (
     state_monitoring,
     target_grounding,
     triggered_realtime_query,
-    triggered_multi_source_synthesis,
+    triggered_complex_reasoning,
     triggered_knowledge_retrieval,
     triggered_content_recording,
 )
@@ -147,7 +147,7 @@ class RequestTests(unittest.TestCase):
         agent_modules = (
             triggered_knowledge_retrieval,
             triggered_realtime_query,
-            triggered_multi_source_synthesis,
+            triggered_complex_reasoning,
             triggered_content_recording,
             triggered_message_notification,
         )
@@ -279,7 +279,7 @@ class RequestTests(unittest.TestCase):
         for module in (
             triggered_knowledge_retrieval,
             triggered_realtime_query,
-            triggered_multi_source_synthesis,
+            triggered_complex_reasoning,
             triggered_content_recording,
             triggered_message_notification,
         ):
@@ -617,11 +617,10 @@ class AgentValidationTests(unittest.TestCase):
               "queried_at": "2026-09-16T12:00Z", "valid_at": "2026-09-16T12:00Z",
               "information_type": "current", "result": "Available"},
              [{"title": "Live source", "url_or_system": "service"}], [], "valid_at"),
-            (triggered_multi_source_synthesis,
-             {"decision_goal": "Compare", "conclusion": "Prefer X",
-              "basis": "Source comparison", "conflicts": [], "uncertainties": []},
-             [{"title": "A", "url_or_system": "source-a"},
-              {"title": "B", "url_or_system": "source-b"}], [], "basis"),
+            (triggered_complex_reasoning,
+             {"reasoning_goal": "Explain the driver's intent", "conclusion": "The driver is preparing to depart",
+              "basis": "The driver enters the car and fastens the seatbelt.", "uncertainties": []},
+             [], [], "basis"),
             (triggered_content_recording,
              {"fields": {"content": "Observed content"}, "destination": "notes",
               "record_status": "written"},
@@ -646,18 +645,23 @@ class AgentValidationTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     module.validate_result(result, self.context)
 
-    def test_duplicate_sources_and_false_sent_status_are_rejected(self) -> None:
+    def test_complex_reasoning_external_data_and_false_sent_status_are_rejected(self) -> None:
         result = copy.deepcopy(self.result)
         tool = result["responses"][0]["messages"][1]
         envelope = json.loads(tool["content"])
-        envelope["sources"] *= 2
+        envelope["sources"] = [{"title": "External", "url_or_system": "external"}]
         envelope["details"] = {
-            "decision_goal": "Compare", "conclusion": "Unclear", "basis": "Same source",
-            "conflicts": [], "uncertainties": [],
+            "reasoning_goal": "Explain the action", "conclusion": "Unclear", "basis": "Scene evidence",
+            "uncertainties": [],
         }
         tool["content"] = json.dumps(envelope)
         with self.assertRaises(ValueError):
-            triggered_multi_source_synthesis.validate_result(result, self.context)
+            triggered_complex_reasoning.validate_result(result, self.context)
+        envelope["sources"] = []
+        envelope["actions"] = [{"system": "external", "operation": "write", "status": "completed", "verification": "done"}]
+        tool["content"] = json.dumps(envelope)
+        with self.assertRaises(ValueError):
+            triggered_complex_reasoning.validate_result(result, self.context)
         envelope.update(status="needs_confirmation", actions=[], details={
             "message_status": "sent",
         })

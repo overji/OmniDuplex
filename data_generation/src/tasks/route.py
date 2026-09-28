@@ -23,7 +23,7 @@ TASK_CATALOG: dict[str, str] = {
     "state_monitoring": "Report transitions of one observable state.",
     "triggered_knowledge_retrieval": "Retrieve knowledge, documents, or historical information.",
     "triggered_realtime_query": "Query changing external information at a trigger.",
-    "triggered_multi_source_synthesis": "Combine multiple sources for a comparison or decision.",
+    "triggered_complex_reasoning": "Reason from multiple confirmed audiovisual clues about cause, intent, or context.",
     "triggered_content_recording": "Extract triggered content into structured storage.",
     "triggered_message_notification": "Prepare or send a triggered message or notification.",
 }

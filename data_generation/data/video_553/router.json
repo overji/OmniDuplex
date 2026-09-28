@@ -26,8 +26,8 @@
       "reason": "There is no requirement to query changing external information or live data feeds."
     },
     {
-      "task": "triggered_multi_source_synthesis",
-      "reason": "No multiple external or internal data sources are synthesized for a decision or comparison."
+      "task": "triggered_complex_reasoning",
+      "reason": "The scene does not contain enough independent, confirmed evidence for a causal or participant-intent conclusion."
     },
     {
       "task": "triggered_content_recording",

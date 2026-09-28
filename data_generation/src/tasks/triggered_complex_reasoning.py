@@ -1,11 +1,11 @@
-"""Triggered multi source synthesis construction and validation."""
+"""Triggered audiovisual complex-reasoning construction and validation."""
 
 from pathlib import Path
 from typing import Any
 
 from . import _agent, _shared
 
-PROMPT_PATH = _shared.PROMPT_ROOT / "agent" / "triggered_multi_source_synthesis.md"
+PROMPT_PATH = _shared.PROMPT_ROOT / "agent" / "triggered_complex_reasoning.md"
 GenerationContext = _shared.GenerationContext
 GenerationRequest = _shared.GenerationRequest
 
@@ -17,4 +17,4 @@ def build_request(path: Path, video_path: Path, *, objects_path: Path | None = N
 
 
 def validate_result(result: dict[str, Any], context: GenerationContext) -> dict[str, Any]:
-    return _agent.validate_result(result, context, "multi_source_synthesis")
+    return _agent.validate_result(result, context, "complex_reasoning")

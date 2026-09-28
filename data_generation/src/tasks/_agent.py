@@ -21,7 +21,19 @@ def validate_result(
         for key in keys:
             _shared.require_text(details.get(key), f"details.{key}")
 
-    if workflow in {"knowledge_retrieval", "realtime_query", "multi_source_synthesis"}:
+    if workflow == "complex_reasoning":
+        if not success:
+            return validated
+        if envelope["sources"]:
+            raise ValueError("complex reasoning must not use external sources")
+        if envelope["actions"]:
+            raise ValueError("complex reasoning must not execute actions")
+        texts("reasoning_goal", "conclusion", "basis")
+        if not isinstance(details.get("uncertainties"), list):
+            raise ValueError("details.uncertainties must be an array")
+        return validated
+
+    if workflow in {"knowledge_retrieval", "realtime_query"}:
         if not success:
             return validated
         sources = envelope["sources"]
@@ -38,14 +50,6 @@ def validate_result(
             texts("query_subject", "data_source", "queried_at", "valid_at", "result")
             if details.get("information_type") not in {"current", "forecast", "historical"}:
                 raise ValueError("invalid realtime information_type")
-        else:
-            identities = {source["url_or_system"] for source in sources}
-            if len(identities) < 2:
-                raise ValueError("synthesis requires at least two distinct sources")
-            texts("decision_goal", "conclusion", "basis")
-            for key in ("conflicts", "uncertainties"):
-                if not isinstance(details.get(key), list):
-                    raise ValueError(f"details.{key} must be an array")
         return validated
 
     if workflow == "content_recording":

@@ -34,8 +34,8 @@
       "reason": "No external real-time data needs to be queried."
     },
     {
-      "task": "triggered_multi_source_synthesis",
-      "reason": "There are no multiple external information sources to combine."
+      "task": "triggered_complex_reasoning",
+      "reason": "The footage lacks two independent, confirmed scene clues that support a causal or intent conclusion."
     },
     {
       "task": "triggered_content_recording",

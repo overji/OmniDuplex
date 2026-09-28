@@ -204,6 +204,47 @@
   },
   {
     "status": "ok",
+    "video": "test.mp4",
+    "question": "When the view returns forward after a look toward surrounding traffic, explain what the driver is likely trying to accomplish and how the traffic helps explain the preceding pause. Distinguish observed clues from inferred intent.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "trigger_time": "00:54",
+        "source_trigger_time": "00:54",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The view toward passing traffic on the left has returned toward the road ahead, completing the observable look-and-return sequence.",
+        "event_description": "A white vehicle remains close ahead while a bus and cars pass on the left. The viewpoint turns toward the left window and mirror, then returns forward as the driver handles the steering wheel.",
+        "response": "I will compare the traffic sequence with the driver's movements.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Infer the purpose of the completed leftward look and preceding pause. Compare preparing to move into left-side traffic with waiting behind the white vehicle.\",\"observed_context\":\"A white vehicle remains close ahead during the pause. A bus passes on the left and is ahead by 00:45. The viewpoint turns toward the left window and mirror; cars pass beside the vehicle during 00:52-00:53. Within the 00:54 bucket the viewpoint returns forward while the driver handles the steering wheel.\",\"user_goal\":\"Explain likely driving intent and how surrounding traffic helps explain the pause.\",\"constraints_and_authorization\":\"Use only verified visual evidence through the completed look-and-return boundary in the 00:54 bucket. No later video evidence, audio claims, external lookup, actions, or driving advice. Camera direction does not prove gaze or intent.\",\"suggested_capabilities\":[\"result_fusion\"],\"expected_output\":\"reasoning_goal, conclusion, basis connecting independent clues, and uncertainties including alternatives; empty sources and actions.\",\"extracted_parameters\":[{\"name\":\"forward_constraint\",\"value\":\"A white vehicle remains close ahead during the pause.\",\"evidence_time\":\"00:43\",\"evidence\":\"Successive forward cabin frames show the nearby white vehicle with little change in relative position.\"},{\"name\":\"left_traffic\",\"value\":\"A bus and then cars pass on the left.\",\"evidence_time\":\"00:53\",\"evidence\":\"The bus moves from beside the car to ahead; later left-facing frames show cars passing beside the window.\"},{\"name\":\"completed_view_sequence\",\"value\":\"The leftward view returns forward while the driver handles the steering wheel.\",\"evidence_time\":\"00:54\",\"evidence\":\"The side window and mirror dominate the earlier view; within the 00:54 bucket the viewpoint returns toward the windshield and road ahead.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "01:15",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"The driver appears to be assessing left-side traffic before moving out from behind the white vehicle.\",\"details\":{\"reasoning_goal\":\"Explain the likely purpose of the leftward look and preceding pause\",\"conclusion\":\"The driver likely checks for an opportunity to move left from behind the white vehicle. Passing traffic plausibly explains the pause, but intent and a completed maneuver are not established.\",\"basis\":\"The nearby white vehicle limits the apparent forward path. Independently, a bus and then cars pass along the left side. The viewpoint turns toward that traffic and returns forward while the driver handles the steering wheel. These spatial and temporal relationships support assessing a gap before moving out; steering movement alone would not establish this explanation.\",\"uncertainties\":[\"Camera orientation does not prove the driver's exact gaze or intention.\",\"The driver could instead be monitoring passing traffic while waiting to follow the white vehicle.\",\"The evidence does not establish a safe gap, a turn signal, or a completed lane change.\"]},\"sources\":[],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "01:15",
+        "response": "The driver likely checks for a gap to move left around the white vehicle. Passing traffic plausibly explains the pause, though routine traffic monitoring is also possible; the view alone cannot establish intent.",
+        "role": "assistant"
+      }
+    ],
+    "task": "triggered_complex_reasoning",
+    "video_folder": "test_video"
+  },
+  {
+    "status": "ok",
     "question": "When the driver mentions playing music by a specific artist, record this request and add it to my media preferences note.",
     "question_time": "00:00",
     "audio_dependency": "required",
@@ -323,47 +364,6 @@
     ],
     "video": "test.mp4",
     "task": "triggered_message_notification",
-    "video_folder": "test_video"
-  },
-  {
-    "status": "ok",
-    "question": "Can you check the current traffic congestion and route updates for commuting to work via major city roads, comparing real-time mapping data with public transit schedules to recommend the optimal route?",
-    "question_time": "00:35",
-    "audio_dependency": "helpful",
-    "vision_dependency": "required",
-    "responses": [
-      {
-        "trigger_time": "00:37",
-        "source_trigger_time": "00:37",
-        "trigger_type": "visual+speech",
-        "trigger_type_reason": "The driver looks at the digital center console showing navigation and speaks about starting the drive.",
-        "event_description": "The driver checks the center console display showing the vehicle's surrounding environment and begins driving through city streets.",
-        "response": "Analyzing route traffic and transit data now.",
-        "role": "assistant",
-        "tool_calls": [
-          {
-            "type": "function",
-            "function": {
-              "name": "agent_call",
-              "arguments": "{\"instruction\":\"Compare real-time traffic congestion on urban commuting routes with current public transit schedules to determine the fastest morning commute option.\",\"observed_context\":\"At 00:37, the driver is operating a white Lynk & Co vehicle through urban streets, observing the digital dashboard and navigation screen showing surrounding traffic.\",\"user_goal\":\"Recommend the optimal commuting route based on live traffic and transit comparisons.\",\"constraints_and_authorization\":\"Use live mapping and transit lookup capabilities. Respect user preferences for driving.\",\"suggested_capabilities\":[\"route_planning\",\"traffic_lookup\",\"transit_lookup\"],\"expected_output\":\"A synthesized comparison of driving traffic versus transit times with a final route recommendation, supported by traffic and transit sources.\",\"extracted_parameters\":[{\"name\":\"vehicle_model\",\"value\":\"Lynk & Co\",\"evidence_time\":\"00:30\",\"evidence\":\"White steering wheel with LYNK&CO logo and digital center console screen visible inside the vehicle cabin.\"},{\"name\":\"commute_start_time\",\"value\":\"00:37\",\"evidence_time\":\"00:37\",\"evidence\":\"Driver begins navigating through urban street traffic while checking the center console map display.\"}]}"
-            }
-          }
-        ]
-      },
-      {
-        "trigger_time": "00:55",
-        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Synthesized live traffic and transit data for the morning commute.\",\"details\":{\"decision_goal\":\"Determine optimal morning commute route\",\"conclusion\":\"Driving via urban arterial roads is currently 10 minutes faster than public transit despite moderate congestion.\",\"basis\":\"Live traffic lookup indicates flowing traffic ahead; transit lookup shows a delayed bus schedule.\",\"conflicts\":[],\"uncertainties\":[]},\"sources\":[{\"title\":\"City Live Traffic API\",\"url_or_system\":\"traffic_lookup\"},{\"title\":\"Public Transit Schedule Feed\",\"url_or_system\":\"transit_lookup\"}],\"actions\":[],\"artifacts\":[]}",
-        "role": "tool",
-        "name": "agent_call"
-      },
-      {
-        "trigger_time": "00:55",
-        "response": "Driving is currently 10 minutes faster than transit. Recommended to continue on the current road.",
-        "role": "assistant"
-      }
-    ],
-    "video": "test.mp4",
-    "task": "triggered_multi_source_synthesis",
     "video_folder": "test_video"
   },
   {

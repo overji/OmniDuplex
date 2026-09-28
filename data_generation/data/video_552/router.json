@@ -30,8 +30,8 @@
       "reason": "There is no need to query changing external information during the video playback."
     },
     {
-      "task": "triggered_multi_source_synthesis",
-      "reason": "There are no multiple external data sources to combine for a comparison or decision."
+      "task": "triggered_complex_reasoning",
+      "reason": "No completed combination of audiovisual clues supports a reliable causal or intent inference in this scene."
     },
     {
       "task": "triggered_content_recording",

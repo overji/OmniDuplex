@@ -10,8 +10,8 @@
       "reason": "There are no changing external data sources or live information queries needed for this animated fiction."
     },
     {
-      "task": "triggered_multi_source_synthesis",
-      "reason": "Only a single animated video source is present with no multiple external sources to compare or synthesize."
+      "task": "triggered_complex_reasoning",
+      "reason": "The animated scene does not provide sufficiently unambiguous completed audiovisual clues for a reliable cause or intent inference."
     },
     {
       "task": "triggered_content_recording",

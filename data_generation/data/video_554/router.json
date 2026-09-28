@@ -26,8 +26,8 @@
       "reason": "The scene features an immediate physical mishap rather than a need for historical or static documentation retrieval."
     },
     {
-      "task": "triggered_multi_source_synthesis",
-      "reason": "There is no multi-source comparison or complex decision-making required by the event."
+      "task": "triggered_complex_reasoning",
+      "reason": "The immediate mishap is observable, but the available scene evidence does not establish a sufficiently supported cause or intent inference."
     },
     {
       "task": "triggered_message_notification",

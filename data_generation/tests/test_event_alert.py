@@ -259,10 +259,10 @@ class EntrypointTests(unittest.TestCase):
                 "snapshot_counting",
                 "state_monitoring",
                 "target_grounding",
+                "triggered_complex_reasoning",
                 "triggered_content_recording",
                 "triggered_knowledge_retrieval",
                 "triggered_message_notification",
-                "triggered_multi_source_synthesis",
                 "triggered_realtime_query",
             ),
         )
