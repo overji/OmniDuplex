@@ -7,7 +7,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .common import timestamp_seconds
+from .common import SAMPLE_SCHEMA, timestamp_seconds
+from .registry import TASKS, get_task
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,16 +64,30 @@ def build_bundle(data_dir: Path, videos_dir: Path) -> list[dict[str, Any]]:
     for folder in sorted(path for path in data_dir.iterdir() if path.is_dir()):
         for source in sorted(folder.glob("*.json")):
             data = json.loads(source.read_text(encoding="utf-8"))
-            if not isinstance(data, dict) or data.get("status") != "ok":
+            if source.stem in {"caption", "route"}:
                 continue
-            if not isinstance(data.get("question"), str) or not isinstance(
-                data.get("responses"), list
-            ):
+            if not isinstance(data, dict) or data.get("schema") != SAMPLE_SCHEMA:
+                raise ValueError(f"unsupported sample schema: {source}")
+            name = data.get("task")
+            if name == "route":
                 continue
+            if name not in TASKS:
+                raise ValueError(f"unsupported task: {source}")
+            if data.get("status") == "skip":
+                continue
+            task = get_task(name)
+            raw_context = data.get("generation_context")
+            if not isinstance(raw_context, dict):
+                raise ValueError(f"missing generation_context: {source}")
+            try:
+                context = task.GenerationContext(**raw_context)
+            except TypeError as exc:
+                raise ValueError(f"invalid generation_context: {source}") from exc
+            data = task.validate_result(data, context)
             result = dict(data)
             result["responses"] = adapt_responses(data["responses"])
             result["video"] = data.get("video") or video_name(folder, videos_dir)
-            result["task"] = source.stem
+            result["task"] = name
             result["video_folder"] = folder.name
             bundle.append(result)
     return bundle

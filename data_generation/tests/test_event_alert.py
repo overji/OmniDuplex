@@ -10,6 +10,7 @@ from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
+from data_generation.tests.fixtures import caption
 from data_generation.src import config
 from data_generation.src.cli import main
 from data_generation.src.common import parse_duration
@@ -57,22 +58,10 @@ class ConfigTests(unittest.TestCase):
 
 
 class PromptTests(unittest.TestCase):
-    def _source_file(self, duration: str = "00:01:00.000"):
+    def _source_file(self):
         temporary = tempfile.TemporaryDirectory()
-        path = Path(temporary.name) / "input.json"
-        path.write_text(
-            json.dumps(
-                {
-                    "video_summary": {
-                        "total_duration": duration,
-                        "main_content_summary": "must not enter the user prompt",
-                    },
-                    "audio_events": [{"event_id": "A1", "start_seconds": 5}],
-                    "visual_events": [{"event_id": "V1", "start_seconds": 10}],
-                }
-            ),
-            encoding="utf-8",
-        )
+        path = Path(temporary.name) / "caption.json"
+        path.write_text(json.dumps(caption(60)), encoding="utf-8")
         return temporary, path
 
     def test_dynamic_controls_are_in_system_prompt_only(self) -> None:
@@ -90,7 +79,7 @@ class PromptTests(unittest.TestCase):
         self.assertIn("strictly after 00:00", request.system_prompt)
         self.assertNotIn("{{", request.system_prompt)
         user_evidence = json.loads(request.user_prompt)
-        self.assertEqual(set(user_evidence), {"audio_events", "visual_events"})
+        self.assertEqual(set(user_evidence), {"caption"})
         self.assertNotIn("Generation", request.user_prompt)
         self.assertNotIn("main_content_summary", request.user_prompt)
 
@@ -250,20 +239,19 @@ class EntrypointTests(unittest.TestCase):
         self.assertEqual(
             task_names(),
             (
+                "condition_agent",
+                "count_agent",
                 "cumulative_counting",
                 "deduplicated_counting",
+                "event_agent",
                 "event_alert",
                 "event_narration",
                 "route",
                 "semantic_condition_alert",
                 "snapshot_counting",
                 "state_monitoring",
+                "target_agent",
                 "target_grounding",
-                "triggered_complex_reasoning",
-                "triggered_content_recording",
-                "triggered_knowledge_retrieval",
-                "triggered_message_notification",
-                "triggered_realtime_query",
             ),
         )
         self.assertIs(get_task("event_alert"), event_alert)
@@ -273,14 +261,14 @@ class EntrypointTests(unittest.TestCase):
     def test_print_prompt_entrypoint(self) -> None:
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
-        source = Path(temporary.name) / "events.json"
+        source = Path(temporary.name) / "caption.json"
         source.write_text(
-            json.dumps({"audio_events": [], "visual_events": []}),
+            json.dumps(caption(120)),
             encoding="utf-8",
         )
         video = Path(__file__).resolve().parents[1] / "videos" / "test.mp4"
         output = io.StringIO()
-        with redirect_stdout(output):
+        with redirect_stdout(output), patch.object(event_alert, "probe_video_duration", return_value=120):
             status = main(
                 [
                     "--task",
@@ -295,8 +283,7 @@ class EntrypointTests(unittest.TestCase):
         rendered = output.getvalue()
         self.assertIn("The video duration is 02:00", rendered)
         self.assertIn(f"[video_url: {video.resolve()}]", rendered)
-        self.assertIn('"audio_events"', rendered)
-        self.assertIn('"visual_events"', rendered)
+        self.assertIn('"caption"', rendered)
         self.assertNotIn('"video_metadata"', rendered)
 
 

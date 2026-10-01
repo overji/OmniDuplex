@@ -10,7 +10,6 @@ from typing import Any
 
 from ..common import (
     format_mmss,
-    load_json_object,
     timestamp_seconds,
 )
 from ..config import (
@@ -18,7 +17,7 @@ from ..config import (
     choose_preferred_modality,
     choose_question_position,
 )
-from ..video_caption import probe_video_duration
+from ..video_caption import load_caption, probe_video_duration
 
 
 PROMPT_PATH = (
@@ -45,22 +44,6 @@ class GenerationRequest:
     user_prompt: str
     context: GenerationContext
     video_path: Path
-
-
-def _load_evidence(path: Path) -> dict[str, Any]:
-    source = load_json_object(path)
-    audio_events = source.get("audio_events")
-    visual_events = source.get("visual_events")
-    if not isinstance(audio_events, list) or not isinstance(visual_events, list):
-        raise ValueError("input must contain audio_events and visual_events arrays")
-
-    evidence = {
-        "audio_events": audio_events,
-        "visual_events": visual_events,
-    }
-    if "uncertainties" in source:
-        evidence["event_uncertainties"] = source["uncertainties"]
-    return evidence
 
 
 def _render_system_prompt(context: GenerationContext) -> str:
@@ -117,13 +100,10 @@ def _render_system_prompt(context: GenerationContext) -> str:
 def build_request(
     path: Path,
     video_path: Path,
-    *,
-    objects_path: Path | None = None,
 ) -> GenerationRequest:
-    del objects_path
-    evidence = _load_evidence(path)
     resolved_video_path = video_path.expanduser().resolve()
     duration_seconds = probe_video_duration(resolved_video_path)
+    evidence = {"caption": load_caption(path, duration_seconds)}
     preferred_modality = choose_preferred_modality()
     question_position = choose_question_position(duration_seconds)
     context = GenerationContext(

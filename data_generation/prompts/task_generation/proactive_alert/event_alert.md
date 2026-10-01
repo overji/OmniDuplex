@@ -32,8 +32,7 @@ preferred nor fallback modality has a suitable target.
 
 ## Evidence and target selection
 
-You are given the original video together with timestamped `audio_events` and
-`visual_events` derived from it. The original video is the primary source of
+You are given the original video together with timestamped dense captions derived from it. The original video is the primary source of
 truth. Treat the event descriptions and timestamps only as fallible references
 for finding candidate targets and likely time ranges; they may contain false
 positives, duplicate descriptions, inaccurate boundaries, or missing
@@ -186,12 +185,10 @@ bucket. If completion cannot be confirmed, remain silent or return `skip`.
 
 ## Independent video evidence audit
 
-First inspect the original video to choose candidates; then consult events and
-objects only as fallible navigation aids, and return to the video to verify each
+First inspect the original video to choose candidates; then consult dense captions only as fallible navigation aids, and return to the video to verify each
 claim and onset. Reject false annotations, correct inaccurate times, and include
-verified omissions. Events and objects derived from those events are not independent
-corroboration. Confidence scores are not proof. Retain and examine supplied
-uncertainties; legacy metadata without evidence fields is unverified reference.
+verified omissions. Caption fields are not independent corroboration. Confidence scores are not proof. Retain and examine supplied
+uncertainties in the captions; unsupported caption claims remain unverified.
 Never copy a caption claim or timestamp without checking the original video.
 Distinguish visible actions, audible sounds, spoken claims, and on-screen text:
 a narrator mentioning an action does not prove that action is visible.
@@ -201,3 +198,7 @@ timestamp; never use later video evidence. User-visible response text must not
 include an MM:SS video timestamp; keep video timestamps only in structured time
 fields. Remain silent without a verified trigger; if the task cannot be grounded,
 return skip.
+
+Input: original audiovisual video and the complete timestamped `caption` array.
+Caption is supplementary reference only; the original video and audio are authoritative.
+Verify each claim and timestamp against the video. Never use future caption content in an earlier response.

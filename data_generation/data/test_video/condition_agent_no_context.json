@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "question": "If the driver approaches an intersection while commenting about the light, search my driving notes before advising me.",
+  "question_time": "00:00",
+  "work_type": "tools",
+  "required_tools": [
+    "document_search"
+  ],
+  "responses": [
+    {
+      "trigger_time": "00:00",
+      "response": "I can't complete this request because I don't have access to document_search.",
+      "refusal_reason": "The requested task requires document_search, which is unavailable in this context.",
+      "missing_tools": [
+        "document_search"
+      ]
+    }
+  ],
+  "sample_type": "no_context",
+  "available_tools": [],
+  "frontend_context": {
+    "system_prompt": "You are an audiovisual assistant. State capability limitations honestly.",
+    "tools": []
+  },
+  "schema": "dense-caption-v1",
+  "task": "condition_agent",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": null,
+    "sample_type": "no_context",
+    "available_tools": [],
+    "required_missing_tool": "document_search"
+  }
+}

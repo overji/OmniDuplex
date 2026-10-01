@@ -10,8 +10,8 @@ GenerationContext = _shared.GenerationContext
 GenerationRequest = _shared.GenerationRequest
 
 
-def build_request(path: Path, video_path: Path, *, objects_path: Path | None = None) -> GenerationRequest:
-    return _shared.build_request(path, video_path, PROMPT_PATH, objects_path=objects_path)
+def build_request(path: Path, video_path: Path) -> GenerationRequest:
+    return _shared.build_request(path, video_path, PROMPT_PATH)
 
 
 def validate_result(result: dict[str, Any], context: GenerationContext) -> dict[str, Any]:

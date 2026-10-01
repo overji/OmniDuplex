@@ -47,6 +47,13 @@ def build_sample(source_json: Path, video: Path, output_dir: Path) -> None:
     if not isinstance(responses, list) or not responses:
         raise ValueError("source JSON must contain a non-empty responses array")
 
+    if source.get("sample_type") in {"no_context", "missing_tool"}:
+        raise ValueError("capability refusals are not audiovisual evidence samples")
+    if any(isinstance(response, dict) and (
+        "messages" in response or "role" in response or "tool_calls" in response
+    ) for response in responses):
+        raise ValueError("agent messages and simulated results are not audiovisual evidence samples")
+
     template = PROMPT_PATH.read_text(encoding="utf-8")
     output_dir.mkdir(parents=True, exist_ok=True)
     manifest_responses = []

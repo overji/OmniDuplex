@@ -1,25 +1,14 @@
 {
-  "status": "ok",
-  "question": "Whenever the white van appears in front, tell me how many people are visible outside.",
-  "question_time": "00:00",
-  "audio_dependency": "none",
-  "vision_dependency": "required",
-  "trigger_times": [
-    "01:25"
-  ],
-  "responses": [
-    {
-      "trigger_time": "01:25",
-      "response": "There are 2 people visible now.",
-      "count": 2,
-      "counting_basis": "Observable targets counted at the trigger frame.",
-      "target_locations": [
-        "upper right",
-        "right"
-      ],
-      "trigger_type": "visual",
-      "trigger_type_reason": "The trigger is the appearance of the white van in front through the windshield.",
-      "event_description": "A white van is driving ahead, and two people are visible outside near it."
-    }
-  ]
+  "status": "skip",
+  "reason": "The intersection contains overlapping traffic, and no precise trigger frame supports a reliable target count.",
+  "schema": "dense-caption-v1",
+  "task": "snapshot_counting",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 10
+  }
 }

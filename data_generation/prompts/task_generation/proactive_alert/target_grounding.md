@@ -14,7 +14,7 @@ video evidence may support later responses but must never revise, complete,
 rename, disambiguate, or otherwise backfill an earlier response; use generic,
 unknown, or explicitly uncertain wording when cutoff evidence is insufficient.
 
-The video duration is {{VIDEO_DURATION}} ({{VIDEO_DURATION_SECONDS}} seconds). All timestamps must use MM:SS and remain within the video. The original video is the primary source of truth. The supplied event timeline and optional items are fallible search aids, never proof.
+The video duration is {{VIDEO_DURATION}} ({{VIDEO_DURATION_SECONDS}} seconds). All timestamps must use MM:SS and remain within the video. The original video is the primary source of truth. The supplied dense captions are fallible search aids, never proof.
 
 {{QUESTION_TIME_POLICY}}
 
@@ -87,12 +87,10 @@ bucket. If completion cannot be confirmed, remain silent or return `skip`.
 
 ## Independent video evidence audit
 
-First inspect the original video to choose candidates; then consult events and
-objects only as fallible navigation aids, and return to the video to verify each
+First inspect the original video to choose candidates; then consult dense captions only as fallible navigation aids, and return to the video to verify each
 claim and onset. Reject false annotations, correct inaccurate times, and include
-verified omissions. Events and objects derived from those events are not independent
-corroboration. Confidence scores are not proof. Retain and examine supplied
-uncertainties; legacy metadata without evidence fields is unverified reference.
+verified omissions. Caption fields are not independent corroboration. Confidence scores are not proof. Retain and examine supplied
+uncertainties in the captions; unsupported caption claims remain unverified.
 Never copy a caption claim or timestamp without checking the original video.
 Distinguish visible actions, audible sounds, spoken claims, and on-screen text:
 a narrator mentioning an action does not prove that action is visible.
@@ -109,3 +107,7 @@ For visual grounding, the question must explicitly ask which part or region of
 the video frame contains the target. An unqualified "where it is" is insufficient.
 The response should briefly name the target and its coarse frame position.
 For audio grounding, ask for the sound source's approximate direction instead.
+
+Input: original audiovisual video and the complete timestamped `caption` array.
+Caption is supplementary reference only; the original video and audio are authoritative.
+Verify each claim and timestamp against the video. Never use future caption content in an earlier response.

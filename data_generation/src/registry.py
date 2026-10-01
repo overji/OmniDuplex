@@ -13,11 +13,10 @@ from .tasks import (
     snapshot_counting,
     state_monitoring,
     target_grounding,
-    triggered_knowledge_retrieval,
-    triggered_realtime_query,
-    triggered_complex_reasoning,
-    triggered_content_recording,
-    triggered_message_notification,
+    event_agent,
+    condition_agent,
+    count_agent,
+    target_agent,
     route,
 )
 
@@ -31,11 +30,10 @@ TASKS: dict[str, ModuleType] = {
     "snapshot_counting": snapshot_counting,
     "state_monitoring": state_monitoring,
     "target_grounding": target_grounding,
-    "triggered_knowledge_retrieval": triggered_knowledge_retrieval,
-    "triggered_realtime_query": triggered_realtime_query,
-    "triggered_complex_reasoning": triggered_complex_reasoning,
-    "triggered_content_recording": triggered_content_recording,
-    "triggered_message_notification": triggered_message_notification,
+    "event_agent": event_agent,
+    "condition_agent": condition_agent,
+    "count_agent": count_agent,
+    "target_agent": target_agent,
     "route": route,
 }
 

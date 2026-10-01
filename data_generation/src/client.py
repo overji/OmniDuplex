@@ -32,6 +32,7 @@ def chat_completion(
     model: str,
     timeout: float,
     retries: int,
+    json_array: bool = False,
 ) -> str:
     url = base_url.rstrip("/") + "/chat/completions"
     payload = {
@@ -44,8 +45,9 @@ def chat_completion(
             },
         ],
         "temperature": 0.1,
-        "response_format": {"type": "json_object"},
     }
+    if not json_array:
+        payload["response_format"] = {"type": "json_object"}
     request = urllib.request.Request(
         url,
         data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),

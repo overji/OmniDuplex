@@ -1,24 +1,33 @@
 {
   "status": "ok",
-  "question": "Let me know when the driving environment becomes congested and frustrating due to other road users blocking the way.",
+  "question": "Tell me when the driver celebrates a maneuver immediately after discussing the traffic light.",
   "question_time": "00:00",
-  "semantic_condition": "The driving environment becomes congested and frustrating due to obstacle blockage",
-  "observable_criteria": [
-    "Traffic slowing down behind a blocking vehicle",
-    "Driver expressing verbal complaints about other road users"
-  ],
   "audio_dependency": "required",
-  "vision_dependency": "required",
+  "vision_dependency": "helpful",
   "responses": [
     {
-      "trigger_time": "01:26",
-      "response": "The driving environment has become frustrating as another vehicle blocks the path and the driver voices complaints about it.",
-      "condition_evidence": "The driver encounters a van blocking traffic and verbally expresses annoyance at 01:26 ('你以为你是理想吗？？左边辣么大位置，你眼睛瞎吗？'), fulfilling the criteria of congestion and verbal frustration.",
-      "confidence": 0.95,
-      "uncertainty": "none",
-      "trigger_type": "visual+speech",
-      "trigger_type_reason": "Visual observation of the blocking van combined with speech complaining about the traffic situation.",
-      "event_description": "The driver complains about a blocking vehicle ahead."
+      "trigger_time": "01:12",
+      "response": "The driver celebrates with ‘成功’ after discussing the intersection light.",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The sequence of spoken phrases is audible.",
+      "event_description": "The driver comments about catching the light, then says ‘成功’ twice.",
+      "condition_evidence": "The celebratory phrase follows the light-related comment in the same driving sequence.",
+      "confidence": 0.83
     }
-  ]
+  ],
+  "semantic_condition": "A celebratory statement follows a light-related driving comment.",
+  "observable_criteria": [
+    "A light-related driving comment is audible.",
+    "A celebratory statement follows it in the same sequence."
+  ],
+  "schema": "dense-caption-v1",
+  "task": "semantic_condition_alert",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 10
+  }
 }

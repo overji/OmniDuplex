@@ -89,3 +89,18 @@ def extract_json(text: str) -> dict[str, Any]:
     if not isinstance(result, dict):
         raise ValueError("model response must be a JSON object")
     return result
+
+
+SAMPLE_SCHEMA = "dense-caption-v1"
+
+
+def extract_json_array(text: str) -> list:
+    """Caption responses use an array, never the task object's extraction fallback."""
+    candidate = text.strip()
+    if candidate.startswith("```"):
+        candidate = re.sub(r"^```(?:json)?\s*", "", candidate, flags=re.IGNORECASE)
+        candidate = re.sub(r"\s*```$", "", candidate)
+    value = json.loads(candidate)
+    if not isinstance(value, list):
+        raise ValueError("caption response must be a JSON array")
+    return value

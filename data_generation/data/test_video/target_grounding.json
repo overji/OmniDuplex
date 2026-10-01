@@ -1,22 +1,14 @@
 {
-  "status": "ok",
-  "question": "Tell me when the car door opens and which part of the video frame it is in.",
-  "question_time": "00:05",
-  "audio_dependency": "required",
-  "vision_dependency": "required",
-  "responses": [
-    {
-      "trigger_time": "00:13",
-      "response": "The car door is opening in the middle-left region.",
-      "target": "car door",
-      "location_type": "visual",
-      "location": "middle-left",
-      "frame_region": "middle-left",
-      "confidence": 0.95,
-      "uncertainty": "none",
-      "trigger_type": "visual+sound",
-      "trigger_type_reason": "The car door unlocking and opening sound is heard simultaneously with the visual appearance of the door opening on the left side of the frame.",
-      "event_description": "The narrator approaches the white car and opens the side door."
-    }
-  ]
+  "status": "skip",
+  "reason": "The distant traffic signals cannot be located to one unambiguous grid cell at a synchronized trigger frame.",
+  "schema": "dense-caption-v1",
+  "task": "target_grounding",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 10
+  }
 }

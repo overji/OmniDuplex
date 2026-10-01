@@ -75,3 +75,17 @@ def choose_initial_response_delay(duration_seconds: float) -> int | None:
     if upper < INITIAL_RESPONSE_DELAY_MIN_SECONDS:
         return None
     return random.randint(INITIAL_RESPONSE_DELAY_MIN_SECONDS, upper)
+
+
+AGENT_POSITIVE_PROBABILITY = 0.5
+AGENT_NO_CONTEXT_NEGATIVE_PROBABILITY = 0.5
+
+
+def choose_agent_sample_type() -> str:
+    positive = validate_probability("AGENT_POSITIVE_PROBABILITY", AGENT_POSITIVE_PROBABILITY)
+    no_context = validate_probability(
+        "AGENT_NO_CONTEXT_NEGATIVE_PROBABILITY", AGENT_NO_CONTEXT_NEGATIVE_PROBABILITY
+    )
+    if random.random() < positive:
+        return "positive"
+    return "no_context" if random.random() < no_context else "missing_tool"

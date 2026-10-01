@@ -8,9 +8,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ..common import format_mmss, load_json_object, timestamp_seconds
+from ..common import format_mmss, timestamp_seconds
 from ..config import choose_initial_response_delay, choose_question_position
-from ..video_caption import probe_video_duration
+from ..video_caption import load_caption, probe_video_duration
 
 
 PROMPT_PATH = (
@@ -36,19 +36,6 @@ class GenerationRequest:
     user_prompt: str
     context: GenerationContext
     video_path: Path
-
-
-def _load_evidence(path: Path) -> dict[str, Any]:
-    source = load_json_object(path)
-    items = source.get("items")
-    if not isinstance(items, list) or not items:
-        raise ValueError("input must contain a non-empty items array")
-    if not all(isinstance(item, dict) for item in items):
-        raise ValueError("every item must be an object")
-    evidence = {"items": items}
-    if "uncertainties" in source:
-        evidence["object_uncertainties"] = source["uncertainties"]
-    return evidence
 
 
 def _render_system_prompt(context: GenerationContext) -> str:
@@ -90,13 +77,10 @@ def _render_system_prompt(context: GenerationContext) -> str:
 def build_request(
     path: Path,
     video_path: Path,
-    *,
-    objects_path: Path | None = None,
 ) -> GenerationRequest:
-    del objects_path
-    evidence = _load_evidence(path)
     resolved_video_path = video_path.expanduser().resolve()
     duration_seconds = probe_video_duration(resolved_video_path)
+    evidence = {"caption": load_caption(path, duration_seconds)}
     context = GenerationContext(
         duration_seconds=duration_seconds,
         question_position=choose_question_position(duration_seconds),

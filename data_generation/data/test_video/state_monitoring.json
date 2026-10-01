@@ -1,1 +1,12 @@
-{"status": "skip", "reason": "No suitable audio dimension with 2-5 clear transitions exists, and visual dimensions do not fit the criteria with exact transition counts after question time."}
+{
+  "status": "skip",
+  "reason": "No discrete state dimension has at least two clearly verifiable transitions after the instruction.",
+  "schema": "dense-caption-v1",
+  "task": "state_monitoring",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "question_position": "start",
+    "initial_response_delay_seconds": 10
+  }
+}

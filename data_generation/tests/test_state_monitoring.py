@@ -8,18 +8,19 @@ from pathlib import Path
 from unittest.mock import patch
 
 from src.tasks import state_monitoring
+from data_generation.tests.fixtures import caption
 
 
 class PromptTests(unittest.TestCase):
-    def _input_file(self, items: object) -> tuple[tempfile.TemporaryDirectory, Path]:
+    def _input_file(self, value: object) -> tuple[tempfile.TemporaryDirectory, Path]:
         temporary = tempfile.TemporaryDirectory()
-        path = Path(temporary.name) / "objects.json"
-        path.write_text(json.dumps({"items": items}), encoding="utf-8")
+        path = Path(temporary.name) / "caption.json"
+        path.write_text(json.dumps(value), encoding="utf-8")
         return temporary, path
 
-    def test_request_uses_only_items_and_measured_video_duration(self) -> None:
+    def test_request_uses_caption_and_measured_video_duration(self) -> None:
         temporary, path = self._input_file(
-            [{"item_id": "item_001", "name": "Main subject", "is_main_item": True}]
+            caption(65)
         )
         self.addCleanup(temporary.cleanup)
         with (
@@ -32,19 +33,19 @@ class PromptTests(unittest.TestCase):
         ):
             request = state_monitoring.build_request(path, Path("video.mp4"))
 
-        self.assertEqual(set(json.loads(request.user_prompt)), {"items"})
+        self.assertEqual(set(json.loads(request.user_prompt)), {"caption"})
         self.assertIn("video duration is 01:05 (65 seconds)", request.system_prompt)
         self.assertIn("strictly after 00:00", request.system_prompt)
         self.assertIn("Only monitor transitions strictly after", request.system_prompt)
         self.assertNotIn("{{", request.system_prompt)
 
-    def test_invalid_items_are_rejected(self) -> None:
+    def test_invalid_caption_is_rejected(self) -> None:
         for items in (None, [], ["not-an-object"]):
             with self.subTest(items=items):
                 temporary, path = self._input_file(items)
                 try:
                     with self.assertRaises(ValueError):
-                        state_monitoring._load_evidence(path)
+                        state_monitoring.load_caption(path, 65)
                 finally:
                     temporary.cleanup()
 

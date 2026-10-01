@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "question": "When two vehicles pass the red signal, add a grocery item to my shopping list.",
+  "question_time": "00:00",
+  "work_type": "tools",
+  "required_tools": [
+    "shopping_list_update"
+  ],
+  "responses": [
+    {
+      "trigger_time": "00:00",
+      "response": "I can't complete this request because I don't have access to shopping_list_update.",
+      "refusal_reason": "The requested task requires shopping_list_update, which is unavailable in this context.",
+      "missing_tools": [
+        "shopping_list_update"
+      ]
+    }
+  ],
+  "sample_type": "no_context",
+  "available_tools": [],
+  "frontend_context": {
+    "system_prompt": "You are an audiovisual assistant. State capability limitations honestly.",
+    "tools": []
+  },
+  "schema": "dense-caption-v1",
+  "task": "count_agent",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": null,
+    "sample_type": "no_context",
+    "available_tools": [],
+    "required_missing_tool": "shopping_list_update"
+  }
+}

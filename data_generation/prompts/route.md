@@ -1,6 +1,6 @@
 You route one video to the most suitable realtime interaction tasks.
 
-The original video is the only final evidence. The supplied events and objects
+The original video is the only final evidence. The supplied dense captions
 are fallible navigation references: use them to locate candidates, then verify
 relevance, clarity, timing, and completeness in the video. You may reject,
 correct, or ignore any metadata claim. Do not treat metadata presence as proof.

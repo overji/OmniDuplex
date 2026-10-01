@@ -1,0 +1,170 @@
+{
+  "status": "ok",
+  "question": "When the driver asks the voice assistant to play a song, note the requested title and assess whether the request occurs during the drive.",
+  "question_time": "00:00",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "work_type": "tools_and_reasoning",
+  "required_tools": [
+    "note_write"
+  ],
+  "responses": [
+    {
+      "trigger_time": "01:17",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The stated speech and/or visual condition is directly observable by this time.",
+      "event_description": "The driver requests the song ‘凉薄’.",
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "description": "The driver requests the song ‘凉薄’.",
+        "evidence": [
+          {
+            "time": "01:17",
+            "fact": "The driver says ‘播放《凉薄》的歌’ after addressing the assistant."
+          }
+        ]
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "01:17",
+          "content": "I’ll take care of that now.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\": \"Complete the requested triggered work using only the supplied evidence and authorized capabilities.\", \"observed_context\": \"At 01:17, the video shows/hears: Audible request: 播放《凉薄》的歌.\", \"user_goal\": \"When the driver asks the voice assistant to play a song, note the requested title and assess whether the request occurs during the drive.\", \"constraints_and_authorization\": \"This user-requested work is authorized. Do not infer uncertain identities or details.\", \"suggested_capabilities\": [\"note_write\"], \"expected_output\": \"Return verified work, supporting evidence, reasoning, and uncertainties.\", \"extracted_parameters\": [{\"name\": \"requested_song\", \"value\": \"凉薄\", \"evidence_time\": \"01:17\", \"evidence\": \"Audible request: 播放《凉薄》的歌.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "01:37",
+          "content": "{\"simulated\": true, \"status\": \"success\", \"summary\": \"A note was drafted for the song request.\", \"observed_facts\": [\"The driver requested ‘凉薄’ while in the car.\"], \"tool_information\": [], \"reasoning\": [\"The request occurs during the driving sequence; the video alone does not establish whether interacting with the assistant distracted the driver.\"], \"uncertainties\": [\"The recording does not establish whether the driver selected the song manually or whether the request itself affected driving.\"], \"sources\": [], \"actions\": [{\"tool\": \"note_write\", \"operation\": \"Write a note recording the requested song.\", \"status\": \"completed\", \"evidence\": \"A simulated note draft records the spoken song title.\"}], \"artifacts\": [{\"type\": \"note_draft\", \"title\": \"Song requested during drive\"}]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "01:37",
+          "content": "The requested work is complete; the simulated result is recorded."
+        }
+      ]
+    }
+  ],
+  "sample_type": "positive",
+  "available_tools": [
+    "todo_create",
+    "todo_query",
+    "calendar_query",
+    "note_write",
+    "order_query",
+    "order_update"
+  ],
+  "frontend_context": {
+    "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nThe backend may perform complex reasoning, use the available daily application tools, or both.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline.\n- todo_query: Query existing todos and their status.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar.\n- note_write: Write user-authorized notes.\n- order_query: Query orders and packages awaiting delivery.\n- order_update: Update existing order or package records; cannot place purchases.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "agent_call",
+          "description": "Delegate one complex, asynchronous objective to the backend agent.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "instruction": {
+                "type": "string",
+                "description": "Complete, self-contained backend work request."
+              },
+              "observed_context": {
+                "type": "string",
+                "description": "Timestamped audiovisual facts available at the trigger."
+              },
+              "user_goal": {
+                "type": "string",
+                "description": "The result the user asked for."
+              },
+              "constraints_and_authorization": {
+                "type": "string",
+                "description": "Scope, permissions, confirmation needs, and user constraints."
+              },
+              "suggested_capabilities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Only available daily application tool names; empty for pure complex reasoning."
+              },
+              "expected_output": {
+                "type": "string",
+                "description": "Required result, evidence, sources, actions, and artifacts."
+              },
+              "extracted_parameters": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "evidence_time": {
+                      "type": "string",
+                      "description": "MM:SS, no later than trigger_time"
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "description": "Observable audiovisual evidence"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value",
+                    "evidence_time",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "instruction",
+              "observed_context",
+              "user_goal",
+              "constraints_and_authorization",
+              "suggested_capabilities",
+              "expected_output",
+              "extracted_parameters"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "schema": "dense-caption-v1",
+  "task": "event_agent",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": 20,
+    "initial_response_delay_seconds": 10,
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update"
+    ],
+    "required_missing_tool": null
+  }
+}

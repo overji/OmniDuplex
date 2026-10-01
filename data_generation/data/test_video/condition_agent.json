@@ -1,0 +1,184 @@
+{
+  "status": "ok",
+  "question": "If the car is approaching an intersection while the driver says they are trying to catch the light, search my driving notes for a relevant guideline and reason from the video cues.",
+  "question_time": "00:00",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "work_type": "tools_and_reasoning",
+  "required_tools": [
+    "note_search"
+  ],
+  "responses": [
+    {
+      "trigger_time": "01:08",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The stated speech and/or visual condition is directly observable by this time.",
+      "event_description": "The car is at a signalized intersection and the driver comments about catching the light.",
+      "trigger": {
+        "kind": "condition",
+        "satisfied": true,
+        "description": "The car is at a signalized intersection and the driver comments about catching the light.",
+        "evidence": [
+          {
+            "time": "01:08",
+            "fact": "Traffic signals and cross traffic are visible while the driver speaks."
+          }
+        ],
+        "conditions": [
+          {
+            "condition": "The vehicle is approaching a signalized intersection.",
+            "satisfied": true,
+            "time": "01:08",
+            "evidence": "A broad signalized intersection with cross traffic is visible through the windshield."
+          },
+          {
+            "condition": "The driver comments about catching the light.",
+            "satisfied": true,
+            "time": "01:08",
+            "evidence": "The driver says ‘快抢这个灯’."
+          }
+        ]
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "01:08",
+          "content": "I’ll take care of that now.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\": \"Complete the requested triggered work using only the supplied evidence and authorized capabilities.\", \"observed_context\": \"At 01:08, the video shows/hears: Audible speech during the intersection approach.\", \"user_goal\": \"If the car is approaching an intersection while the driver says they are trying to catch the light, search my driving notes for a relevant guideline and reason from the video cues.\", \"constraints_and_authorization\": \"This user-requested work is authorized. Do not infer uncertain identities or details.\", \"suggested_capabilities\": [\"note_search\"], \"expected_output\": \"Return verified work, supporting evidence, reasoning, and uncertainties.\", \"extracted_parameters\": [{\"name\": \"driver_statement\", \"value\": \"快抢这个灯\", \"evidence_time\": \"01:08\", \"evidence\": \"Audible speech during the intersection approach.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "01:28",
+          "content": "{\"simulated\": true, \"status\": \"success\", \"summary\": \"A relevant note was found and the scene was analyzed.\", \"observed_facts\": [\"The car approaches an intersection with cross traffic.\"], \"tool_information\": [\"A simulated note search returned a general reminder to obey signals.\"], \"reasoning\": [\"The driver's phrase suggests urgency, but the footage does not establish the signal color or whether a violation occurred.\"], \"uncertainties\": [\"The note search result is simulated; the exact signal state is not legible.\"], \"sources\": [{\"tool\": \"note_search\", \"evidence\": \"Simulated driving note: obey traffic signals and avoid rushing an intersection.\"}], \"actions\": [], \"artifacts\": []}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "01:28",
+          "content": "The requested work is complete; the simulated result is recorded."
+        }
+      ]
+    }
+  ],
+  "sample_type": "positive",
+  "available_tools": [
+    "note_search",
+    "document_search",
+    "calendar_query",
+    "weather_query",
+    "route_query",
+    "meeting_draft"
+  ],
+  "frontend_context": {
+    "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nThe backend may perform complex reasoning, use the available daily application tools, or both.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- note_search: Search personal notes.\n- document_search: Search available personal documents.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar.\n- weather_query: Query weather for a specified place and time.\n- route_query: Query maps and routes, including station exits and walking routes.\n- meeting_draft: Prepare a meeting-record draft; cannot send it.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "agent_call",
+          "description": "Delegate one complex, asynchronous objective to the backend agent.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "instruction": {
+                "type": "string",
+                "description": "Complete, self-contained backend work request."
+              },
+              "observed_context": {
+                "type": "string",
+                "description": "Timestamped audiovisual facts available at the trigger."
+              },
+              "user_goal": {
+                "type": "string",
+                "description": "The result the user asked for."
+              },
+              "constraints_and_authorization": {
+                "type": "string",
+                "description": "Scope, permissions, confirmation needs, and user constraints."
+              },
+              "suggested_capabilities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Only available daily application tool names; empty for pure complex reasoning."
+              },
+              "expected_output": {
+                "type": "string",
+                "description": "Required result, evidence, sources, actions, and artifacts."
+              },
+              "extracted_parameters": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "evidence_time": {
+                      "type": "string",
+                      "description": "MM:SS, no later than trigger_time"
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "description": "Observable audiovisual evidence"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value",
+                    "evidence_time",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "instruction",
+              "observed_context",
+              "user_goal",
+              "constraints_and_authorization",
+              "suggested_capabilities",
+              "expected_output",
+              "extracted_parameters"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "schema": "dense-caption-v1",
+  "task": "condition_agent",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": 20,
+    "initial_response_delay_seconds": 10,
+    "sample_type": "positive",
+    "available_tools": [
+      "note_search",
+      "document_search",
+      "calendar_query",
+      "weather_query",
+      "route_query",
+      "meeting_draft"
+    ],
+    "required_missing_tool": null
+  }
+}

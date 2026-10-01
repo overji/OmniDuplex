@@ -1,4 +1,14 @@
 {
   "status": "skip",
-  "reason": "There are no repeated countable events suitable for cumulative event counting in this video that satisfy all criteria and timing constraints."
+  "reason": "Only two clear ‘成功’ repetitions are audible; the task requires at least three separable occurrences.",
+  "schema": "dense-caption-v1",
+  "task": "cumulative_counting",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 10
+  }
 }

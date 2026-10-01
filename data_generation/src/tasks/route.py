@@ -7,9 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ..common import load_json_object
-from ..video_caption import probe_video_duration
-from . import _shared
+from ..video_caption import load_caption, probe_video_duration
 
 PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "route.md"
 TASK_CATALOG: dict[str, str] = {
@@ -21,11 +19,10 @@ TASK_CATALOG: dict[str, str] = {
     "cumulative_counting": "Count independent occurrences of a specified event over time.",
     "deduplicated_counting": "Count distinct semantic targets while merging repeat appearances.",
     "state_monitoring": "Report transitions of one observable state.",
-    "triggered_knowledge_retrieval": "Retrieve knowledge, documents, or historical information.",
-    "triggered_realtime_query": "Query changing external information at a trigger.",
-    "triggered_complex_reasoning": "Reason from multiple confirmed audiovisual clues about cause, intent, or context.",
-    "triggered_content_recording": "Extract triggered content into structured storage.",
-    "triggered_message_notification": "Prepare or send a triggered message or notification.",
+    "event_agent": "Handle transactions or complex reasoning after a specified event.",
+    "condition_agent": "Prepare information, transactions or advice when all semantic conditions hold.",
+    "count_agent": "Organize or adjust plans when a specified count crosses a threshold.",
+    "target_agent": "Handle a related transaction or complex reasoning when a matching target appears.",
 }
 
 
@@ -42,11 +39,9 @@ class GenerationRequest:
     video_path: Path
 
 
-def build_request(path: Path, video_path: Path, *, objects_path: Path | None = None) -> GenerationRequest:
-    if objects_path is None:
-        raise ValueError("route requires --objects reference JSON")
-    evidence = _shared.load_evidence(path, objects_path)
+def build_request(path: Path, video_path: Path) -> GenerationRequest:
     duration = probe_video_duration(video_path.expanduser().resolve())
+    evidence = {"caption": load_caption(path, duration)}
     catalog = "\n".join(f"- {name}: {description}" for name, description in TASK_CATALOG.items())
     prompt = PROMPT_PATH.read_text(encoding="utf-8").strip()
     prompt = prompt.replace("{{VIDEO_DURATION}}", f"{duration:.0f} seconds")

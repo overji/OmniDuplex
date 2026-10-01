@@ -8,18 +8,16 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ..common import format_mmss, load_json_object, timestamp_seconds
+from ..common import format_mmss, timestamp_seconds
 from ..config import (
-    choose_agent_delay,
     choose_initial_response_delay,
     choose_preferred_modality,
     choose_question_position,
 )
-from ..video_caption import probe_video_duration
+from ..video_caption import load_caption, probe_video_duration
 
 
 PROMPT_ROOT = Path(__file__).resolve().parents[2] / "prompts" / "task_generation"
-AGENT_CAPABILITIES_PATH = PROMPT_ROOT / "agent" / "capabilities.md"
 _TRIGGER_PATTERN = re.compile(r"^(visual|sound|speech)(\+(visual|sound|speech))*$")
 
 
@@ -29,8 +27,6 @@ class GenerationContext:
     preferred_modality: str
     question_position: str
     agent_delay_seconds: int | None = None
-    # Zero preserves compatibility for callers constructing test contexts directly;
-    # build_request always replaces it with the sampled value (or None if impossible).
     initial_response_delay_seconds: int | None = 0
 
 
@@ -40,31 +36,6 @@ class GenerationRequest:
     user_prompt: str
     context: GenerationContext
     video_path: Path
-
-
-def load_evidence(path: Path, objects_path: Path | None = None) -> dict[str, Any]:
-    source = load_json_object(path)
-    evidence: dict[str, Any] = {}
-    for key in ("audio_events", "visual_events"):
-        value = source.get(key)
-        if not isinstance(value, list) or not all(
-            isinstance(item, dict) for item in value
-        ):
-            raise ValueError(f"input must contain an array of objects: {key}")
-        evidence[key] = value
-    if objects_path is not None:
-        object_source = load_json_object(objects_path)
-        objects = object_source.get("items")
-        if not isinstance(objects, list) or not all(
-            isinstance(item, dict) for item in objects
-        ):
-            raise ValueError("objects input must contain an items array of objects")
-        evidence["items"] = objects
-        if "uncertainties" in object_source:
-            evidence["object_uncertainties"] = object_source["uncertainties"]
-    if "uncertainties" in source:
-        evidence["event_uncertainties"] = source["uncertainties"]
-    return evidence
 
 
 def _question_policy(context: GenerationContext, *, historical: bool) -> str:
@@ -119,7 +90,6 @@ def render_prompt(
     context: GenerationContext,
     *,
     historical: bool = False,
-    agent: bool = False,
 ) -> str:
     prompt = prompt_path.read_text(encoding="utf-8").strip()
     fallback = "vision" if context.preferred_modality == "audio" else "audio"
@@ -132,39 +102,6 @@ def render_prompt(
             context, historical=historical
         ),
     }
-    if agent:
-        capabilities = AGENT_CAPABILITIES_PATH.read_text(encoding="utf-8").strip()
-        if context.agent_delay_seconds is None:
-            timing = (
-                "The video is too short for a legal backend delay under the "
-                "duration-based timing rule. Return skip."
-            )
-        else:
-            timing = (
-                f"The simulated backend delay is exactly "
-                f"{context.agent_delay_seconds} seconds. Select a trigger early enough "
-                "that trigger_time plus this delay does not exceed the video duration."
-            )
-        timing += (
-            " The audiovisual trigger must have ended and be confirmed before "
-            "trigger_time. Do not send the acknowledgement or agent_call while the "
-            "trigger is ongoing, from onset evidence alone, or using future evidence. "
-            "Represent trigger_time in the containing whole-second bucket by discarding "
-            "fractional seconds; never round or carry it into a later bucket."
-        )
-        if context.initial_response_delay_seconds is None:
-            timing += " The video is too short for the required initial silent interval; return skip."
-        else:
-            timing += (
-                f" Do not send the acknowledgement before question_time plus at least "
-                f"{context.initial_response_delay_seconds} seconds; a longer wait is allowed."
-            )
-        replacements.update(
-            {
-                "{{AGENT_CAPABILITIES}}": capabilities,
-                "{{AGENT_TIMING_POLICY}}": timing,
-            }
-        )
     for placeholder, value in replacements.items():
         if placeholder not in prompt:
             raise ValueError(f"missing prompt placeholder: {placeholder}")
@@ -180,25 +117,20 @@ def build_request(
     video_path: Path,
     prompt_path: Path,
     *,
-    objects_path: Path | None = None,
     historical: bool = False,
-    agent: bool = False,
 ) -> GenerationRequest:
-    evidence = load_evidence(path, objects_path)
     resolved_video_path = video_path.expanduser().resolve()
     duration_seconds = probe_video_duration(resolved_video_path)
+    evidence = {"caption": load_caption(path, duration_seconds)}
     context = GenerationContext(
         duration_seconds=duration_seconds,
         preferred_modality=choose_preferred_modality(),
         question_position=choose_question_position(duration_seconds),
-        agent_delay_seconds=(
-            choose_agent_delay(duration_seconds) if agent else None
-        ),
         initial_response_delay_seconds=choose_initial_response_delay(duration_seconds),
     )
     return GenerationRequest(
         system_prompt=render_prompt(
-            prompt_path, context, historical=historical, agent=agent
+            prompt_path, context, historical=historical
         ),
         user_prompt=json.dumps(evidence, ensure_ascii=False, indent=2),
         context=context,
@@ -438,10 +370,10 @@ def validate_agent_result(
     ):
         value = arguments.get(key)
         if key == "suggested_capabilities":
-            if not isinstance(value, list) or not value or not all(
+            if not isinstance(value, list) or not all(
                 isinstance(item, str) and item.strip() for item in value
             ):
-                raise ValueError("suggested_capabilities must be a non-empty string list")
+                raise ValueError("suggested_capabilities must be a string list")
         else:
             require_text(value, f"agent_call.{key}")
 

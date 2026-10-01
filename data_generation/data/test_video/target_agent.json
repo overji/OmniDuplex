@@ -1,0 +1,168 @@
+{
+  "status": "ok",
+  "question": "When the traffic signal at the intersection becomes visible while the driver is discussing catching it, reason from the scene about whether the footage proves the driver rushed a red light.",
+  "question_time": "00:00",
+  "audio_dependency": "required",
+  "vision_dependency": "required",
+  "work_type": "reasoning",
+  "required_tools": [],
+  "responses": [
+    {
+      "trigger_time": "01:08",
+      "trigger_type": "visual+speech",
+      "trigger_type_reason": "The stated speech and/or visual condition is directly observable by this time.",
+      "event_description": "The intersection signal is visible as the driver comments about catching the light.",
+      "trigger": {
+        "kind": "target",
+        "satisfied": true,
+        "description": "The intersection signal is visible as the driver comments about catching the light.",
+        "evidence": [
+          {
+            "time": "01:08",
+            "fact": "A traffic signal and cross traffic are visible while the driver says ‘快抢这个灯’."
+          }
+        ],
+        "target": "The traffic signal at the intersection",
+        "attributes_match": true
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "01:08",
+          "content": "I’ll take care of that now.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\": \"Complete the requested triggered work using only the supplied evidence and authorized capabilities.\", \"observed_context\": \"At 01:08, the video shows/hears: The signal is visible in the forward intersection view.\", \"user_goal\": \"When the traffic signal at the intersection becomes visible while the driver is discussing catching it, reason from the scene about whether the footage proves the driver rushed a red light.\", \"constraints_and_authorization\": \"This user-requested work is authorized. Do not infer uncertain identities or details.\", \"suggested_capabilities\": [], \"expected_output\": \"Return verified work, supporting evidence, reasoning, and uncertainties.\", \"extracted_parameters\": [{\"name\": \"target\", \"value\": \"Signal at the intersection\", \"evidence_time\": \"01:08\", \"evidence\": \"The signal is visible in the forward intersection view.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "01:28",
+          "content": "{\"simulated\": true, \"status\": \"success\", \"summary\": \"The footage does not prove that the driver ran a red light.\", \"observed_facts\": [\"The driver says ‘快抢这个灯’ near an intersection.\"], \"tool_information\": [], \"reasoning\": [\"The phrase indicates urgency, but the exact signal color and vehicle crossing relative to the signal are not established clearly enough to conclude a red-light violation.\"], \"uncertainties\": [\"Signal state is not legible at the relevant instant.\"], \"sources\": [], \"actions\": [], \"artifacts\": []}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "01:28",
+          "content": "The requested work is complete; the simulated result is recorded."
+        }
+      ]
+    }
+  ],
+  "sample_type": "positive",
+  "available_tools": [
+    "itinerary_query",
+    "route_query",
+    "shopping_list_query",
+    "product_search",
+    "calculator"
+  ],
+  "frontend_context": {
+    "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nThe backend may perform complex reasoning, use the available daily application tools, or both.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- itinerary_query: Read the user's itinerary.\n- route_query: Query maps and routes, including station exits and walking routes.\n- shopping_list_query: Read the user's shopping list.\n- product_search: Search product specifications, prices, and available offers.\n- calculator: Calculate values from provided numbers.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "agent_call",
+          "description": "Delegate one complex, asynchronous objective to the backend agent.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "instruction": {
+                "type": "string",
+                "description": "Complete, self-contained backend work request."
+              },
+              "observed_context": {
+                "type": "string",
+                "description": "Timestamped audiovisual facts available at the trigger."
+              },
+              "user_goal": {
+                "type": "string",
+                "description": "The result the user asked for."
+              },
+              "constraints_and_authorization": {
+                "type": "string",
+                "description": "Scope, permissions, confirmation needs, and user constraints."
+              },
+              "suggested_capabilities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Only available daily application tool names; empty for pure complex reasoning."
+              },
+              "expected_output": {
+                "type": "string",
+                "description": "Required result, evidence, sources, actions, and artifacts."
+              },
+              "extracted_parameters": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "evidence_time": {
+                      "type": "string",
+                      "description": "MM:SS, no later than trigger_time"
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "description": "Observable audiovisual evidence"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value",
+                    "evidence_time",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "instruction",
+              "observed_context",
+              "user_goal",
+              "constraints_and_authorization",
+              "suggested_capabilities",
+              "expected_output",
+              "extracted_parameters"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "schema": "dense-caption-v1",
+  "task": "target_agent",
+  "video": "test.mp4",
+  "generation_context": {
+    "duration_seconds": 120.35,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": 20,
+    "initial_response_delay_seconds": 10,
+    "sample_type": "positive",
+    "available_tools": [
+      "itinerary_query",
+      "route_query",
+      "shopping_list_query",
+      "product_search",
+      "calculator"
+    ],
+    "required_missing_tool": null
+  }
+}
