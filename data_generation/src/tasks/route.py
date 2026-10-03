@@ -7,25 +7,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from ..catalog import TASK_CATALOG
 from ..video_caption import load_caption, probe_video_duration
 
 PROMPT_PATH = Path(__file__).resolve().parents[2] / "prompts" / "route.md"
-TASK_CATALOG: dict[str, str] = {
-    "event_alert": "Alert on repeated or discrete verified events.",
-    "target_grounding": "Report where a specified visual target or sound is located.",
-    "snapshot_counting": "Count clearly distinguishable targets at trigger moments.",
-    "semantic_condition_alert": "Alert on an abstract condition supported by context.",
-    "event_narration": "Provide concise realtime updates about important changes.",
-    "cumulative_counting": "Count independent occurrences of a specified event over time.",
-    "deduplicated_counting": "Count distinct semantic targets while merging repeat appearances.",
-    "state_monitoring": "Report transitions of one observable state.",
-    "event_agent": "Handle transactions or complex reasoning after a specified event.",
-    "condition_agent": "Prepare information, transactions or advice when all semantic conditions hold.",
-    "count_agent": "Organize or adjust plans when a specified count crosses a threshold.",
-    "target_agent": "Handle a related transaction or complex reasoning when a matching target appears.",
-}
-
-
 @dataclass(frozen=True)
 class GenerationContext:
     duration_seconds: float

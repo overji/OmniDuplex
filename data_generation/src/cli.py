@@ -48,13 +48,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return args
 
 
-def run(args: argparse.Namespace) -> int:
+def prepare_request(args):
     if args.task == "caption":
-        bundle = build_video_prompts(args.video)
+        return build_video_prompts(args.video)
+    return get_task(args.task).build_request(args.input, args.video)
+
+
+def generate(args: argparse.Namespace, request=None):
+    request = request if request is not None else prepare_request(args)
+    if args.task == "caption":
+        bundle = request
         system_prompt, user_prompt, video_path = bundle.caption_prompt, "Annotate the attached video.", bundle.video_path
     else:
         task = get_task(args.task)
-        request = task.build_request(args.input, args.video)
         system_prompt, user_prompt, video_path = request.system_prompt, request.user_prompt, request.video_path
     if args.print_prompt:
         print(f"[video_url: {video_path}]")
@@ -62,7 +68,7 @@ def run(args: argparse.Namespace) -> int:
         print(system_prompt)
         print("\n---\n")
         print(user_prompt)
-        return 0
+        return None
     if not args.api_key:
         raise ValueError("missing API key: pass --api-key or set OPENAI_API_KEY")
     if not args.model:
@@ -89,6 +95,13 @@ def run(args: argparse.Namespace) -> int:
             "video": video_path.name,
             "generation_context": asdict(request.context),
         })
+    return result
+
+
+def run(args: argparse.Namespace) -> int:
+    result = generate(args)
+    if result is None:
+        return 0
     output_text = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

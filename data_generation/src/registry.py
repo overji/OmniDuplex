@@ -1,50 +1,18 @@
-"""Registry of supported data-generation tasks."""
+"""Registry derived from the complete interaction matrix; route is auxiliary."""
+from .catalog import TASK_CATALOG
+from .tasks import route
+from .tasks.interaction import InteractionTask
 
-from __future__ import annotations
-
-from types import ModuleType
-
-from .tasks import (
-    cumulative_counting,
-    deduplicated_counting,
-    event_alert,
-    event_narration,
-    semantic_condition_alert,
-    snapshot_counting,
-    state_monitoring,
-    target_grounding,
-    event_agent,
-    condition_agent,
-    count_agent,
-    target_agent,
-    route,
-)
-
-
-TASKS: dict[str, ModuleType] = {
-    "cumulative_counting": cumulative_counting,
-    "deduplicated_counting": deduplicated_counting,
-    "event_alert": event_alert,
-    "event_narration": event_narration,
-    "semantic_condition_alert": semantic_condition_alert,
-    "snapshot_counting": snapshot_counting,
-    "state_monitoring": state_monitoring,
-    "target_grounding": target_grounding,
-    "event_agent": event_agent,
-    "condition_agent": condition_agent,
-    "count_agent": count_agent,
-    "target_agent": target_agent,
-    "route": route,
-}
+TASKS = {name: InteractionTask(name) for name in TASK_CATALOG}
+TASKS["route"] = route
 
 
 def task_names() -> tuple[str, ...]:
     return tuple(sorted(TASKS))
 
 
-def get_task(name: str) -> ModuleType:
+def get_task(name: str):
     try:
         return TASKS[name]
     except KeyError as exc:
-        choices = ", ".join(task_names())
-        raise ValueError(f"unknown task {name!r}; available tasks: {choices}") from exc
+        raise ValueError(f"unknown task {name!r}; available tasks: {', '.join(task_names())}") from exc

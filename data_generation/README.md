@@ -1,134 +1,191 @@
-# Dataset generation
+# 36-task audiovisual interaction generation
 
-The pipeline is **one dense audiovisual caption → routing/task generation → QA
-merge**. Every task receives the original video (including its audio) and the
-complete caption. Captions are fallible references, never ground truth; generated
-responses must use only evidence available at their own timestamps.
+The pipeline is **original video → dense caption → 36-task routing → task generation
+and validation → QA merge and coverage report**. It replaces the former twelve
+tasks; old task names have no aliases. Source videos, task definitions and existing
+JSON files are retained, but old task samples are rejected by the new merger.
 
-## Caption
+## Task matrix
 
-The prompt follows the dense-caption template in the local paper
-`tmp/arXiv-2605.18577v1.zip`, appendix `data_details.tex`. One model request produces
-a JSON array with `start`, `end`, `caption`, `visual`, `audio`, and `speech` for each
-segment. Segments usually span 5–30 seconds, never exceed 45 seconds, and cover the
-whole video without gaps or overlaps. Suggested segment count is `ceil(duration/15)`;
-it is guidance, not an enforced count. Timestamps are `MM:SS` (minutes may exceed
-59); coverage ends at the video duration rounded to the nearest second, with halves
-rounded up. Videos rounding to zero seconds cannot be captioned with this format.
+Every ability below supports three task suffixes: `_rtd` (real-time description),
+`_pr` (proactive reminder), and `_agent` (triggered delegation).
+
+| Ability ID | Focus |
+| --- | --- |
+| `attribute_perception` | Attributes and changes |
+| `grounding` | Event moments and completed time spans |
+| `action_perception` | Actions and phase boundaries |
+| `object_perception` | Objects, identities and categories |
+| `emotion_recognition` | Emotion inference from voice, expression and context |
+| `event_understanding` | Events, participants and relations |
+| `text_rich_understanding` | Visible text and its meaning |
+| `object_counting` | Current objects, with identity deduplication |
+| `action_counting` | Cumulative independent action/speech/sound occurrences |
+| `spatial_understanding` | Relative positions and spatial relations |
+| `prospective_reasoning` | Uncertain predictions from current evidence |
+| `causal_reasoning` | Candidate causes and their supporting evidence |
+
+`src/catalog.py` is the shared directory for registration, routing and prompt
+composition. `route` and `caption` are auxiliary stages, not dataset tasks.
+Definitions follow [the v2 task document](<Agentic Omni Interaction 主动交互任务定义 v2 (1).md>).
+Prompts combine common rules, an ability specification and a mode template. They
+reuse the local paper `tmp/arXiv-2605.18577v1.zip`, appendix `data_details.tex`, and
+the previous pipeline's video-first, dense-caption and modality-labeling design.
+Examples do not restrict Agent work to particular applications or operations.
+
+## Single-task CLI
+
+Set `OPENAI_MODEL`, `OPENAI_API_KEY` and optionally `OPENAI_BASE_URL`, or pass
+`--model`, `--api-key`, `--base-url`. The model endpoint must accept the existing
+`video_url` payload, including audio. Existing temperature (0.1), timeout (120 s),
+retry count (2), video preprocessing and caption segmentation remain unchanged.
+`ffprobe` is needed to determine video duration.
 
 ```bash
-python data_generation/generate_video_prompts.py data_generation/videos/test.mp4 \
-  --output-dir /tmp/caption-prompt
-
 python data_generation/generate.py --task caption \
   --video data_generation/videos/test.mp4 \
-  --output data_generation/data/test_video/caption.json
+  --output /tmp/omni-v2/test/caption.json
+
+python data_generation/generate.py --task route \
+  --video data_generation/videos/test.mp4 /tmp/omni-v2/test/caption.json \
+  --output /tmp/omni-v2/test/route.json
+
+python data_generation/generate.py --task object_perception_agent \
+  --video data_generation/videos/test.mp4 /tmp/omni-v2/test/caption.json \
+  --output /tmp/omni-v2/test/object_perception_agent.json
 ```
 
-The first command only renders `caption.prompt.md` and video attachment instructions.
-The second generates and validates `caption.json`. Set `OPENAI_MODEL`,
-`OPENAI_API_KEY`, and optionally `OPENAI_BASE_URL`, or supply the corresponding
-`--model`, `--api-key`, and `--base-url` arguments. Existing temperature (0.1),
-timeout (120 seconds), and retry count (2) are unchanged. Caption requests allow a
-JSON array; task requests continue to request a JSON object.
+Any task accepts `--print-prompt` to render its sampled request without an API
+call. `generate_video_prompts.py` still renders the standalone caption prompt.
+Captions retain the array format with `start`, `end`, `caption`, `visual`, `audio`,
+`speech`, covering the rounded video duration without gaps or overlaps. The 5–30 s
+segment guidance and 45 s maximum remain unchanged. Caption boundaries are not
+precise event timestamps; every task also receives the original video.
 
-## Twelve tasks
-
-| Trigger family | Non-agent tasks | Agent task |
-| --- | --- | --- |
-| Event | `event_alert`, `event_narration` | `event_agent` |
-| Condition | `semantic_condition_alert` | `condition_agent` |
-| Count | `cumulative_counting`, `snapshot_counting`, `deduplicated_counting` | `count_agent` |
-| Target | `target_grounding`, `state_monitoring` | `target_agent` |
-
-Task definitions are in [DEFINITION.md](DEFINITION.md). `route` ranks these twelve
-tasks; it is an auxiliary stage, not a thirteenth dataset task.
+## Batch generation and resume
 
 ```bash
-python data_generation/generate.py --task route \
-  --video data_generation/videos/test.mp4 \
-  data_generation/data/test_video/caption.json \
-  --output data_generation/data/test_video/route.json
+python data_generation/generate_batch.py \
+  --videos-dir data_generation/videos --output-dir /tmp/omni-v2-batch \
+  --samples-per-task 1 --seed 42
 
-python data_generation/generate.py --task event_agent \
-  --video data_generation/videos/test.mp4 \
-  data_generation/data/test_video/caption.json \
-  --output data_generation/data/test_video/event_agent.json
+# Use identical configuration to reuse validated artifacts.
+python data_generation/generate_batch.py \
+  --videos-dir data_generation/videos --output-dir /tmp/omni-v2-batch \
+  --samples-per-task 1 --seed 42 --resume
+
+# Restrict generation; routing still evaluates all 36 combinations.
+python data_generation/generate_batch.py \
+  --videos-dir data_generation/videos --output-dir /tmp/omni-v2-selected \
+  --tasks grounding_pr prospective_reasoning_agent --seed 42
 ```
 
-Use `--print-prompt` to inspect a sampled request without calling the API. The
-caption input is mandatory for every task and route, including state monitoring.
-Task outputs include `schema: "dense-caption-v1"`, `task`, `video`, and
-`generation_context`, allowing merge-time validation of the sampled constraints.
-Use distinct output filenames to retain multiple samples of a task.
+Execution is sequential and in the foreground. Videos are discovered recursively
+(`mp4`, `mov`, `mkv`, `webm`, `avi`). Each gets a collision-resistant folder, a caption,
+a complete route and uniquely numbered task files. By default every suitable task
+is attempted once; unsupported combinations are not forced onto a video.
+`--samples-per-task` counts attempts, not guaranteed accepted samples. There is no
+unbounded retry-to-fill loop. Individual failures are recorded and other work
+continues; upstream failures mark dependent attempts blocked. Exit status is 1 if
+any stage failed, while `skip` and unsuitable routes are normal outcomes.
 
-## Agent capabilities and negatives
+Outputs include:
 
-The frontend's only callable function is `agent_call`. It delegates daily tool
-work, complex reasoning, or both to the backend. Per-family application tools and
-operation scopes are defined in `src/agent_tools.py`; perception and reasoning are
-not tool names. Each sample stores:
+- `all_qa.json`: only accepted samples from the current invocation, revalidated and merged.
+- `coverage.json`: all 36 tasks, accepted/skip/failed/unsuitable/blocked counts,
+  Agent branch counts, errors and artifact reuse information.
+- `manifest.json`: fingerprints and content hashes for resumable stage artifacts.
 
-- `frontend_context`: the actual frontend system prompt and callable function definitions;
-- `available_tools`: daily backend tools exposed by that context;
-- `required_tools`: tools genuinely required by the requested work;
-- `work_type`: `tools`, `reasoning`, or `tools_and_reasoning`;
-- `sample_type`: `positive`, `no_context`, or `missing_tool`.
+Resume checks source video content, source path, model/API settings, seed/task
+selection, implementation and prompt fingerprints, upstream artifacts, output
+hashes, sampled context and schema validation. API keys are never stored. Changing
+configuration invalidates reuse; regenerating an artifact replaces that batch
+output. Use a new output directory to keep multiple runs. Stable per-stage seeds
+make sampling reproducible across resume, but do not make remote model output
+deterministic. Batch samples store video paths relative to `--videos-dir`.
 
-The program selects the branch and available capabilities before generation. A
-model cannot add missing tools to the context. The generator sees the task-family
-catalog as annotation guidance, but that catalog is not part of the evaluated
-frontend's capability context. Use `frontend_context`, not the generator's prompt,
-as the capability context when consuming the dataset. Captions remain annotation
-references; do not expose future caption segments to a streaming evaluation model.
+## Temporal and capability contracts
 
-Defaults in `src/config.py` select 50% positive samples, 25% negatives with no Agent
-capability context, and 25% with a partial catalog missing a necessary tool. The
-second negative split is conditional on selecting a negative. These are sampling
-probabilities, not guaranteed proportions of accepted samples; unsuitable positive
-videos may return `skip`. Pure complex-reasoning tasks occur only in the positive
-branch and delegate through `agent_call` with empty required/suggested tool lists.
+New task samples use `schema: "omni-interaction-v2"`, `task`, `ability`, `mode`,
+`video`, `generation_context`, `question`, `question_time` and `responses`.
+`trigger_type` retains its audiovisual meaning (`visual`, `sound`, `speech`, or
+combinations); `trigger.kind` separately denotes `event`, `condition`, `count`, or
+`target`. Time strings remain `MM:SS`.
 
-Positive samples contain exactly one trigger episode and three messages:
-acknowledgement/delegation, simulated backend result, and final reply. Questions
-scope the work to the next matching episode. Counts fire on crossing a threshold
-from below; conditions require all necessary conditions; targets require matching
-attributes. Backend delay retains the existing range from
-`max(5 seconds, ceil(10% of duration))` to `floor(50% of duration)`. Existing question
-position, modality, and initial response-delay sampling are preserved.
+- RTD requires at least two meaningful updates. Each has a non-overlapping
+  `window_start`/`window_end`, with the end equal to response time.
+- PR responds to every independent matching episode after the instruction.
+  Persistent conditions require a reset before retriggering. Count predicates
+  must transition from false to true; all compound conditions must hold.
+- Agent questions scope work to the next matching episode and produce exactly
+  three messages: acknowledgement plus `agent_call`, simulated backend result,
+  final reply with an `outcome` matching the result.
 
-Negative samples immediately refuse at `question_time`, explain the missing
-capability, and contain no tool calls or simulated results. They remain valid
-`status: "ok"` samples, not `skip`. No initial silence or backend delay applies.
-They cannot rely on future video evidence or use pure reasoning as a pretext for
-refusal. Backend results in positive samples always have `simulated: true`; this
-pipeline does not execute external application tools.
+The former 10–180 s initial silent interval is removed for these new tasks.
+`initial_response_delay_seconds` is persisted as zero. Existing start/non-start
+question sampling and audio/vision preference remain 50/50; a preference never
+overrides an ability's required visual evidence. Backend delay remains sampled
+between `max(5 s, ceil(10% duration))` and `floor(50% duration)`; positive samples
+skip when no legal trigger and backend completion fit within the video.
+
+Each observation has timestamped `evidence` with `time <= available_time <=
+trigger_time`, plus ability-specific `details`. Complete grounding spans cannot
+end after the response. Object counts equal unique current target IDs; action
+counts preserve a cumulative occurrence history and counting origin. Predictions,
+emotions and causal explanations are labeled as inference rather than observed
+facts. Semantic accuracy still requires checking the original video.
+
+### Agent tools and negative samples
+
+`src/agent_tools.py` defines the shared application tools, required named string
+parameters, read/write scope and limitations. It includes todo, calendar, notes,
+notifications, shopping, budget, routes, weather, public/knowledge/history search,
+observed-video segment retrieval, statistics and reports. OCR, ASR, perception and
+reasoning are not tool names. The frontend can only call `agent_call`; the backend
+can perform `tools`, `reasoning`, or `tools_and_reasoning`. All execution is simulated.
+
+The program samples capabilities before generation using existing probabilities:
+50% `positive`, 25% `no_context`, 25% `missing_tool`. Positive exposes the shared
+catalog; `no_context` exposes no Agent function; `missing_tool` exposes Agent with
+one required tool removed. Pure reasoning is valid only in the positive branch
+and has empty tool lists. Accepted proportions may differ because of skips.
+
+Capability negatives immediately refuse at `question_time`, based only on the
+instruction and actual `frontend_context`. They contain no calls or backend
+results. A separate root `annotation` records a real suitable trigger, including
+its ability-specific evidence. This annotation is for dataset validation only;
+**never expose it, the complete caption, or the generator's full catalog as the
+streaming frontend's input**. Without any suitable real trigger, all branches
+return `skip`; the pipeline does not create all-video no-trigger silence examples.
+
+Tool results keep `simulated: true`, separate observed facts/tool information/
+reasoning, and record read evidence in `sources`, writes in `actions`, with typed
+operation scopes and arguments. Claimed success requires evidence for every
+required tool. Video retrieval cannot access footage after delegation. Failure
+and confirmation-needed results must be reflected in the final `outcome`.
 
 ## Merge and verification
 
+Batch mode merges automatically. To merge an explicitly selected directory of
+single-task results (one subdirectory per video):
+
 ```bash
-python data_generation/merge_qa.py
+python data_generation/merge_qa.py --data-dir /tmp/omni-v2 \
+  --videos-dir data_generation/videos --output /tmp/omni-v2/all_qa.json
+
 PYTHONPATH=.:data_generation python -m unittest discover -s data_generation/tests -v
 ruff check data_generation/src data_generation/tests data_generation/scripts
 ```
 
-Merge writes `data_generation/data/all_qa.json`. Options `--data-dir`,
-`--videos-dir`, and `--output` select other locations. It validates new task
-contracts and flattens positive Agent messages into timestamped `responses`, while
-preserving capability metadata and negative refusals. It leaves input files intact.
-Caption and routing artifacts are not QA entries.
+Merge revalidates samples, preserves capabilities and annotations, and flattens
+Agent messages into timestamped `responses`. It rejects old sample schemas rather
+than migrating or deleting them. Caption and route files are not QA entries.
+`build_evidence_samples.py` excludes capability refusals, Agent traces and
+prediction/inference samples before creating video clips.
 
-`build_evidence_samples.py` evaluates factual audiovisual responses only. It rejects
-capability refusals and Agent message chains (including flattened simulated tool
-results) before creating video clips, because these are not video-only claims.
-
-The old events/objects caption format, `--objects`, `--events-json`, and the five
-`triggered_*` Agent tasks have been removed. Old generated JSON files are deleted;
-source videos and DEFINITION.md are retained. Old samples are rejected, not migrated.
-Regenerate captions and task samples before merging a new dataset.
-
-Structural checks catch malformed captions, unavailable-tool calls, inconsistent
-trigger/count metadata, and timestamp violations. They cannot prove perceptual
-accuracy, completeness of semantic conditions, or truthfulness of free-text claims;
-those require reviewing generated samples against the original video. Unit tests
-use mocked API results and do not establish real-model generation quality.
+Tests use mocked API responses. They establish routing, schema, temporal/capability
+contracts, merge and resume behavior, not real-model perception quality. Structural
+validation cannot prove free-text truth, completeness of every occurrence, genuine
+tool necessity, or absence of future information hidden in prose. These require
+review against video prefixes. Multi-model difficulty filtering and a full judging
+system are outside this pipeline.

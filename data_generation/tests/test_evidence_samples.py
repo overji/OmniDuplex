@@ -44,3 +44,14 @@ class EvidenceSampleTests(unittest.TestCase):
                     build_sample(source, root / "video.mp4", root / "out")
             run.assert_not_called()
             self.assertFalse((root / "out").exists())
+
+    def test_predictions_and_inferences_excluded_before_ffmpeg(self):
+        with tempfile.TemporaryDirectory() as directory, patch("scripts.build_evidence_samples.subprocess.run") as run:
+            root = Path(directory)
+            for ability in ("prospective_reasoning", "causal_reasoning", "emotion_recognition"):
+                source = root / "sample.json"
+                source.write_text(json.dumps({"ability": ability, "question": "Monitor changes.",
+                                             "responses": [{"trigger_time": "00:01", "response": "An inference."}]}))
+                with self.assertRaisesRegex(ValueError, "not observed"):
+                    build_sample(source, root / "video.mp4", root / "out")
+            run.assert_not_called()

@@ -57,3 +57,10 @@ Rules:
 - Timestamps in MM:SS format.
 - Be maximally specific — names, colors, counts, positions.
 - Return raw JSON only, no markdown.
+
+Also preserve target attributes, action onset/continuation/end, verbatim visible
+text, current object counts and reappearing identities, independent action
+occurrences, relative spatial relations, emotion cues and audiovisual alignment.
+Distinguish observable cues from uncertain causal explanations or predictions.
+Do not invent details to populate these dimensions. Downstream tasks will verify
+precise moments in the original video rather than using segment boundaries.

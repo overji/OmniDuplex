@@ -54,6 +54,13 @@ def build_sample(source_json: Path, video: Path, output_dir: Path) -> None:
     ) for response in responses):
         raise ValueError("agent messages and simulated results are not audiovisual evidence samples")
 
+    if source.get("ability") in {"prospective_reasoning", "causal_reasoning", "emotion_recognition"} or any(
+        isinstance(response, dict) and isinstance(response.get("details"), dict)
+        and response["details"].get("claim_type") in {"prediction", "inference"}
+        for response in responses
+    ):
+        raise ValueError("predictions and inferences are not observed audiovisual facts")
+
     template = PROMPT_PATH.read_text(encoding="utf-8")
     output_dir.mkdir(parents=True, exist_ok=True)
     manifest_responses = []

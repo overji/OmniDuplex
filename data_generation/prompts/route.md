@@ -51,3 +51,12 @@ actions. All prose must be concise English.
 
 Every catalog task must appear exactly once across the two arrays. Ranks must be
 consecutive starting at 1. If no task is suitable, return {"status":"skip", "reason":"<reason>"}.
+
+This catalog is the complete 12-ability × 3-mode matrix. Judge each combination
+independently. RTD requires at least two meaningful time-aligned updates; PR requires
+at least one real future trigger relative to a feasible instruction time. Agent
+requires a real trigger and a video-derived parameter but follow-up work is NOT
+restricted by ability-specific examples. Text-rich understanding requires visible
+text. Object counting concerns current objects; action counting concerns cumulative
+independent occurrences. Prediction and causal explanation require supporting cues,
+not omniscient hindsight. All-video absent-trigger samples are unsuitable.

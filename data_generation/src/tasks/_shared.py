@@ -8,13 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ..common import format_mmss, timestamp_seconds
-from ..config import (
-    choose_initial_response_delay,
-    choose_preferred_modality,
-    choose_question_position,
-)
-from ..video_caption import load_caption, probe_video_duration
+from ..common import timestamp_seconds
 
 
 PROMPT_ROOT = Path(__file__).resolve().parents[2] / "prompts" / "task_generation"
@@ -36,106 +30,6 @@ class GenerationRequest:
     user_prompt: str
     context: GenerationContext
     video_path: Path
-
-
-def _question_policy(context: GenerationContext, *, historical: bool) -> str:
-    if context.question_position == "start":
-        policy = "For this sample, question_time MUST be 00:00."
-        return _with_response_delay(policy, context)
-    if context.question_position != "non_start":
-        raise ValueError(f"invalid question position: {context.question_position!r}")
-    policy = (
-        "For this sample, choose a natural question_time strictly after 00:00 and "
-        f"before {format_mmss(context.duration_seconds)}."
-    )
-    if historical:
-        policy = policy + (
-            " Prefer a time between occurrences so historical and later evidence "
-            "can both be represented; purely historical or future samples are allowed. "
-            "question_time MUST NOT equal a counted event time or first appearance."
-        )
-    else:
-        policy += " Only create task responses at or after question_time."
-    return _with_response_delay(policy, context, historical=historical)
-
-
-def _with_response_delay(
-    policy: str, context: GenerationContext, *, historical: bool = False
-) -> str:
-    if context.initial_response_delay_seconds is None:
-        if historical:
-            return policy + (
-                " If historical evidence exists, emit its summary at question_time "
-                "without the sampled silent interval; otherwise return skip."
-            )
-        return policy + " The video is too short for the required silent interval; return skip."
-    if historical:
-        return policy + (
-            " If historical evidence exists, emit exactly one historical summary at "
-            "question_time and do not apply the sampled initial silent interval to "
-            "that summary or to later responses. If no historical summary is needed, "
-            f"the first response must be at or after question_time plus {context.initial_response_delay_seconds} "
-            "seconds; if no valid response can fit, return skip."
-        )
-    return policy + (
-        f" Keep silent after question_time for at least {context.initial_response_delay_seconds} "
-        "seconds (you may wait longer). The first response must be at or after "
-        "question_time plus this interval and all responses must remain within the video. "
-        "If no valid response can fit, return skip."
-    )
-
-
-def render_prompt(
-    prompt_path: Path,
-    context: GenerationContext,
-    *,
-    historical: bool = False,
-) -> str:
-    prompt = prompt_path.read_text(encoding="utf-8").strip()
-    fallback = "vision" if context.preferred_modality == "audio" else "audio"
-    replacements = {
-        "{{VIDEO_DURATION}}": format_mmss(context.duration_seconds),
-        "{{VIDEO_DURATION_SECONDS}}": f"{context.duration_seconds:.0f}",
-        "{{PREFERRED_MODALITY}}": context.preferred_modality,
-        "{{FALLBACK_MODALITY}}": fallback,
-        "{{QUESTION_TIME_POLICY}}": _question_policy(
-            context, historical=historical
-        ),
-    }
-    for placeholder, value in replacements.items():
-        if placeholder not in prompt:
-            raise ValueError(f"missing prompt placeholder: {placeholder}")
-        prompt = prompt.replace(placeholder, value)
-    unresolved = re.findall(r"\{\{[A-Z_]+\}\}", prompt)
-    if unresolved:
-        raise ValueError(f"unresolved prompt placeholders: {unresolved}")
-    return prompt
-
-
-def build_request(
-    path: Path,
-    video_path: Path,
-    prompt_path: Path,
-    *,
-    historical: bool = False,
-) -> GenerationRequest:
-    resolved_video_path = video_path.expanduser().resolve()
-    duration_seconds = probe_video_duration(resolved_video_path)
-    evidence = {"caption": load_caption(path, duration_seconds)}
-    context = GenerationContext(
-        duration_seconds=duration_seconds,
-        preferred_modality=choose_preferred_modality(),
-        question_position=choose_question_position(duration_seconds),
-        initial_response_delay_seconds=choose_initial_response_delay(duration_seconds),
-    )
-    return GenerationRequest(
-        system_prompt=render_prompt(
-            prompt_path, context, historical=historical
-        ),
-        user_prompt=json.dumps(evidence, ensure_ascii=False, indent=2),
-        context=context,
-        video_path=resolved_video_path,
-    )
 
 
 def require_text(value: Any, name: str) -> str:
@@ -164,7 +58,6 @@ def validate_common(
     min_responses: int = 1,
     max_responses: int | None = None,
     max_words: int | None = None,
-    enforce_initial_response_delay: bool = True,
 ) -> tuple[dict[str, Any], int] | tuple[dict[str, str], None]:
     if not isinstance(result, dict):
         raise ValueError("result must be an object")
@@ -179,10 +72,10 @@ def validate_common(
     )
     if context.question_position == "start" and question_seconds != 0:
         raise ValueError("question_time must be 00:00 for a start-position sample")
-    if context.question_position == "non_start" and question_seconds == 0:
+    if context.question_position == "non_start" and not 0 < question_seconds < context.duration_seconds:
         raise ValueError("question_time must be after 00:00 for a non-start sample")
-    if context.initial_response_delay_seconds is None:
-        raise ValueError("video is too short for the required initial response delay")
+    if context.initial_response_delay_seconds != 0:
+        raise ValueError("v2 does not apply an initial silent interval")
 
     dependencies = []
     for key in ("audio_dependency", "vision_dependency"):
@@ -207,12 +100,6 @@ def validate_common(
         )
         if trigger_seconds < question_seconds or trigger_seconds < previous:
             raise ValueError("responses must be chronological and not precede question_time")
-        if (
-            enforce_initial_response_delay
-            and index == 0
-            and trigger_seconds < question_seconds + context.initial_response_delay_seconds
-        ):
-            raise ValueError("first response occurs before the sampled silent interval")
         previous = trigger_seconds
         text = require_text(response.get("response"), f"responses[{index}].response")
         if max_words is not None and len(text.split()) > max_words:
@@ -238,69 +125,6 @@ def validate_common(
             f"responses[{index}].event_description",
         )
     return result, question_seconds
-
-
-def validate_counting_history(
-    result: dict[str, Any], context: GenerationContext, *, deduplicated: bool
-) -> dict[str, Any]:
-    validated, question_seconds = validate_common(
-        result,
-        context,
-        min_responses=1,
-        max_words=20,
-        enforce_initial_response_delay=False,
-    )
-    if question_seconds is None:
-        return validated
-    seen_times: set[str] = set()
-    seen_ids: set[str] = set()
-    running_count = 0
-    historical_groups = 0
-    for index, response in enumerate(result["responses"]):
-        trigger_seconds = timestamp_seconds(response["trigger_time"])
-        event_times = response.get("event_times")
-        if not isinstance(event_times, list) or not event_times:
-            raise ValueError(f"responses[{index}].event_times must be non-empty")
-        parsed = [checked_time(value, context, "event_time") for value in event_times]
-        if parsed != sorted(parsed) or any(value in seen_times for value in event_times):
-            raise ValueError("event_times must be globally chronological and unique")
-        seen_times.update(event_times)
-        past = [value < question_seconds for value in parsed]
-        if any(past):
-            historical_groups += 1
-            if not all(past) or trigger_seconds != question_seconds:
-                raise ValueError("historical events require one summary at question_time")
-        else:
-            if len(parsed) != 1 or trigger_seconds != parsed[0]:
-                raise ValueError("each later event needs its own response at its event_time")
-            if (
-                context.question_position == "non_start"
-                and parsed[0] == question_seconds
-            ):
-                raise ValueError("non-start question_time cannot equal a counted event time")
-            if historical_groups == 0 and index == 0 and trigger_seconds < question_seconds + context.initial_response_delay_seconds:
-                raise ValueError("first response occurs before the sampled silent interval")
-
-        increment = len(parsed)
-        if deduplicated:
-            targets = response.get("new_targets")
-            if not isinstance(targets, list) or len(targets) != len(parsed):
-                raise ValueError("new_targets must correspond one-to-one with event_times")
-            for target in targets:
-                if not isinstance(target, dict):
-                    raise ValueError("new_targets entries must be objects")
-                target_id = require_text(target.get("target_id"), "target_id")
-                require_text(target.get("name"), "target name")
-                require_text(target.get("evidence"), "target evidence")
-                if target_id in seen_ids:
-                    raise ValueError("duplicate target ID must not increase count")
-                seen_ids.add(target_id)
-        running_count += increment
-        if require_count(response.get("count"), f"responses[{index}].count") != running_count:
-            raise ValueError("count must equal cumulative event_times")
-    if historical_groups > 1:
-        raise ValueError("all historical events must share one response")
-    return result
 
 
 def validate_agent_result(
@@ -333,6 +157,13 @@ def validate_agent_result(
     assistant_call, tool_result, assistant_final = messages
     if not all(isinstance(message, dict) for message in messages):
         raise ValueError("agent messages must be objects")
+    for message, allowed in zip(messages, (
+        {"role", "timestamp", "content", "tool_calls"},
+        {"role", "name", "timestamp", "content"},
+        {"role", "timestamp", "content", "outcome"},
+    )):
+        if set(message) != allowed:
+            raise ValueError("agent message fields must match its role")
     if assistant_call.get("role") != "assistant":
         raise ValueError("first agent message must be assistant")
     if checked_time(assistant_call.get("timestamp"), context, "call timestamp") != trigger_seconds:
@@ -360,6 +191,12 @@ def validate_agent_result(
         raise ValueError("agent_call arguments must be valid JSON") from exc
     if not isinstance(arguments, dict):
         raise ValueError("agent_call arguments must decode to an object")
+    required_arguments = {
+        "instruction", "observed_context", "user_goal", "constraints_and_authorization",
+        "suggested_capabilities", "expected_output", "extracted_parameters",
+    }
+    if set(arguments) != required_arguments:
+        raise ValueError("agent_call arguments must match the function schema")
     for key in (
         "instruction",
         "observed_context",
@@ -381,7 +218,7 @@ def validate_agent_result(
     if not isinstance(parameters, list) or not parameters:
         raise ValueError("extracted_parameters must be a non-empty array")
     for parameter in parameters:
-        if not isinstance(parameter, dict):
+        if not isinstance(parameter, dict) or set(parameter) != {"name", "value", "evidence_time", "evidence"}:
             raise ValueError("extracted_parameters entries must be objects")
         for key in ("name", "value", "evidence"):
             require_text(parameter.get(key), f"extracted_parameters.{key}")

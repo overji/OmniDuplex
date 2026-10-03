@@ -32,8 +32,7 @@ Generate one trigger episode per sample. Choose a single occurrence in the quest
 required calls. A sustained event/condition/target must not execute repeatedly.
 Call only when the trigger is established from evidence at that time. Do not wait
 for a persistent state to end: count thresholds fire at the crossing and targets
-fire when their attributes can be verified. Honor the sampled silent interval by
-selecting an appropriate question and trigger; do not postpone an already due call.
+fire when their attributes can be verified. There is no forced initial silent interval; do not postpone an already due call.
 If no suitable evidence or legal timing exists, return {"status":"skip","reason":"..."}.
 
 Return one JSON object with:
@@ -42,7 +41,7 @@ Return one JSON object with:
   at least one required), work_type, required_tools (unique daily tool names)
 - responses: exactly one object containing trigger_time, trigger_type
   (visual/sound/speech or '+' combination), trigger_type_reason, event_description,
-  trigger (defined by the task below), and messages.
+  evidence, details, trigger (defined by the common annotation contract), and messages.
 - messages: exactly three chronological objects, with no association IDs:
   1. role="assistant", timestamp=trigger_time, content=brief acknowledgement (<=15
      words), tool_calls=[{"type":"function","function":{"name":"agent_call",
@@ -74,12 +73,30 @@ Immediately refuse at question_time, before waiting for any trigger. Explain the
 specific missing capability and which requested transaction cannot be completed.
 Use only the user's instruction and frontend capabilities at that moment. Do not
 cite future video, fabricate completion, invoke agent_call, or emit a backend result.
-No silent interval, backend delay, or trigger requirement applies to the refusal.
-Return exactly:
+No silent interval or backend delay applies to the refusal itself.
+The refusal response has exactly the following shape; also provide root modality
+dependencies and the separate annotation described below:
 {"status":"ok","question":"...","question_time":"MM:SS",
  "work_type":"tools|tools_and_reasoning","required_tools":["..."],
  "responses":[{"trigger_time":"<equal to question_time>","response":"<refusal>",
  "refusal_reason":"<capability limitation>","missing_tools":["<all required but unavailable tools>"]}]}.
-Do not emit skip for a capability limitation. Do not include positive trigger fields.
+Capability limitations alone are NOT grounds for skip. However, if the video has
+no suitable real trigger, return skip in any branch. Every negative must add a
+root annotation object containing the full audiovisual response annotation
+(trigger_time, trigger_type, trigger_type_reason, event_description, evidence,
+details and trigger; omit response and messages). Its trigger is at or after the
+question. This is annotation-only future metadata: NEVER include it in the refusal
+or frontend_context. The refusal must depend only on the question and capabilities.
 Program-controlled sample_type, available_tools and frontend_context are attached
 by the program; do not generate or modify these fields.
+
+All available tools are shared across cognitive abilities. The ability constrains
+what is perceived or inferred to trigger work, NOT which follow-up action is allowed.
+Examples are suggestions, not a whitelist. Choose any relevant feasible daily work,
+complex reasoning, or combination; do not invent backend tool names.
+Every sources/actions entry additionally includes arguments matching that tool's
+required named string parameters exactly. Missing real-world parameters must not be
+fabricated: use needs_confirmation rather than claiming success. video_segment_query
+start/end must be within the video prefix available at the delegation time.
+The final assistant message also includes outcome equal to the backend status;
+its wording must honestly reflect success, failed, or needs_confirmation.

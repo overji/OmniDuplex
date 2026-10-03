@@ -19,7 +19,7 @@ class RouteTests(unittest.TestCase):
                 request = route.build_request(path, Path("video.mp4"))
             self.assertEqual(json.loads(request.user_prompt), {"caption": caption(120)})
             self.assertIn("fallible navigation references", request.system_prompt)
-            self.assertEqual(len(route.TASK_CATALOG), 12)
+            self.assertEqual(len(route.TASK_CATALOG), 36)
             self.assertFalse(any(name.startswith("triggered_") for name in route.TASK_CATALOG))
 
     def test_route_requires_full_partition_and_consecutive_ranks(self) -> None:
@@ -37,7 +37,7 @@ class RouteTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cover every"):
             route.validate_result(
                 {"status": "ok", "unsuitable_tasks": [], "ranked_tasks": [
-                    {"task": "event_alert", "rank": 1, "rationale": "clear"}
+                    {"task": "event_understanding_pr", "rank": 1, "rationale": "clear"}
                 ]},
                 route.GenerationContext(120),
             )

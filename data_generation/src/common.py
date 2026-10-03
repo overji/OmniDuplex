@@ -91,7 +91,7 @@ def extract_json(text: str) -> dict[str, Any]:
     return result
 
 
-SAMPLE_SCHEMA = "dense-caption-v1"
+SAMPLE_SCHEMA = "omni-interaction-v2"
 
 
 def extract_json_array(text: str) -> list:
