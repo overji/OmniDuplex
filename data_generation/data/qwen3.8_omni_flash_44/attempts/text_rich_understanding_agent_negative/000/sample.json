@@ -1,0 +1,186 @@
+{
+  "status": "ok",
+  "question": "Whenever the wording of an on-screen title or web address changes, put the new exact wording into a report for me.",
+  "question_time": "00:00",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "work_type": "tools",
+  "required_tools": [
+    "report_create"
+  ],
+  "responses": [
+    {
+      "window_start": "00:00",
+      "trigger_time": "00:00",
+      "window_end": "00:00",
+      "response": "I don't have the ability to create a report from on-screen wording changes.",
+      "refusal_reason": "The requested follow-up requires creating a report artifact with report_create, which is not available in the frontend tool context.",
+      "missing_tools": [
+        "report_create"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "window_start": "00:21",
+      "trigger_time": "00:21",
+      "window_end": "00:22",
+      "response": "On-screen title wording changes to 'DUDUK'.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is a visible change in on-screen text; audio is not needed.",
+      "evidence": [
+        {
+          "time": "00:21",
+          "available_time": "00:21",
+          "fact": "White outlined text 'DUDUK' is visible over the duduk close-up."
+        }
+      ],
+      "details": {
+        "text": "DUDUK",
+        "text_source": "screen",
+        "interpretation": "The series title word appears as the first visible text state.",
+        "uncertainty": "The exact fade-in occurs between 00:20 and 00:21; the sampled frame at 00:21 confirms the wording."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "text_change_00_21",
+        "confirmed_time": "00:21",
+        "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+      }
+    },
+    {
+      "window_start": "00:23",
+      "trigger_time": "00:23",
+      "window_end": "00:25",
+      "response": "On-screen title wording changes to 'DUDUK' above 'LESSONS FOR BEGINNERS'.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is a visible change in on-screen text; audio is not needed.",
+      "evidence": [
+        {
+          "time": "00:23",
+          "available_time": "00:23",
+          "fact": "Two lines of white outlined text are visible: 'DUDUK' and 'LESSONS FOR BEGINNERS'."
+        }
+      ],
+      "details": {
+        "text": "DUDUK\nLESSONS FOR BEGINNERS",
+        "text_source": "screen",
+        "interpretation": "The full series title is displayed.",
+        "uncertainty": "The added subtitle becomes visible between 00:22 and 00:23; the sampled frame at 00:23 confirms the full wording."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "text_change_00_23",
+        "confirmed_time": "00:23",
+        "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+      }
+    },
+    {
+      "window_start": "00:26",
+      "trigger_time": "00:26",
+      "window_end": "00:28",
+      "response": "On-screen title wording changes to 'LESSONS FOR BEGINNERS'.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is a visible change in on-screen text; audio is not needed.",
+      "evidence": [
+        {
+          "time": "00:26",
+          "available_time": "00:26",
+          "fact": "Only the line 'LESSONS FOR BEGINNERS' remains visible after 'DUDUK' fades."
+        }
+      ],
+      "details": {
+        "text": "LESSONS FOR BEGINNERS",
+        "text_source": "screen",
+        "interpretation": "The series subtitle remains as the visible wording after the main title disappears.",
+        "uncertainty": "The fade of 'DUDUK' occurs between 00:25 and 00:26; the sampled frame at 00:26 confirms the new wording."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "text_change_00_26",
+        "confirmed_time": "00:26",
+        "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+      }
+    },
+    {
+      "window_start": "00:29",
+      "trigger_time": "00:29",
+      "window_end": "00:32",
+      "response": "Lesson title card reads 'LESSON 1: THE BODY & REED'.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is a visible change to a new on-screen title card; audio is not needed.",
+      "evidence": [
+        {
+          "time": "00:29",
+          "available_time": "00:29",
+          "fact": "Centered white outlined text on a dark background reads 'LESSON 1: THE BODY & REED'."
+        }
+      ],
+      "details": {
+        "text": "LESSON 1: THE BODY & REED",
+        "text_source": "screen",
+        "interpretation": "This is the title card for the first lesson.",
+        "uncertainty": "The card is gone by the sampled frame at 00:33; its exact fade-out is between 00:32 and 00:33."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "text_change_00_29",
+        "confirmed_time": "00:29",
+        "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+      }
+    },
+    {
+      "window_start": "03:45",
+      "trigger_time": "03:45",
+      "window_end": "03:48",
+      "response": "Website address card reads 'WWW.DUDUKLESSONS.COM'.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is a visible on-screen web address; audio is not needed.",
+      "evidence": [
+        {
+          "time": "03:45",
+          "available_time": "03:45",
+          "fact": "Centered white outlined text on a black background reads 'WWW.DUDUKLESSONS.COM'."
+        }
+      ],
+      "details": {
+        "text": "WWW.DUDUKLESSONS.COM",
+        "text_source": "screen",
+        "interpretation": "This is the closing website address card.",
+        "uncertainty": "The text is no longer visible in the sampled frame at 03:49; its exact fade-out is between 03:48 and 03:49."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "text_change_03_45",
+        "confirmed_time": "03:45",
+        "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+      }
+    }
+  ],
+  "sample_type": "no_context",
+  "available_tools": [],
+  "frontend_context": {
+    "system_prompt": "You are an audiovisual assistant. State capability limitations honestly.",
+    "tools": []
+  },
+  "ability": "text_rich_understanding",
+  "mode": "agent",
+  "schema": "omni-interaction-v2",
+  "task": "text_rich_understanding_agent",
+  "video": "video_101.mp4",
+  "generation_context": {
+    "duration_seconds": 233.484,
+    "preferred_modality": "vision",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "no_context",
+    "available_tools": [],
+    "required_missing_tool": "report_create"
+  }
+}

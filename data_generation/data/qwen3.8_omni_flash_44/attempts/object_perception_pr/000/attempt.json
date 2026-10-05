@@ -1,0 +1,19 @@
+{
+  "index": 0,
+  "seed": "81185792644140147382749761233917466611683157831259958476008736381054373617969",
+  "candidate": 0,
+  "context_index": 0,
+  "correction": 0,
+  "context": {
+    "duration_seconds": 208.05,
+    "preferred_modality": "vision",
+    "question_position": "non_start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "positive",
+    "available_tools": [],
+    "required_missing_tool": null
+  },
+  "status": "ok",
+  "elapsed_seconds": 65.43023657798767
+}

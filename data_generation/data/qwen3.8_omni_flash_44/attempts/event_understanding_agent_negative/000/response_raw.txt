@@ -1,0 +1,87 @@
+{
+  "status": "ok",
+  "question": "Now that the chase is quiet, whenever the runner is hidden and the pursuer is searching nearby, explain the standoff and save a short note in my notes.",
+  "question_time": "03:05",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "work_type": "tools_and_reasoning",
+  "required_tools": [
+    "note_write"
+  ],
+  "responses": [
+    {
+      "window_start": "03:05",
+      "trigger_time": "03:05",
+      "window_end": "03:05",
+      "response": "I don't have the ability to save that standoff explanation to your notes.",
+      "refusal_reason": "The request explicitly asks for the explanation to be saved as a user note. That requires note_write, which is not available in the frontend tool set; report_create or meeting_draft would not satisfy a note-saving request.",
+      "missing_tools": [
+        "note_write"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "window_start": "03:13",
+      "trigger_time": "03:15",
+      "window_end": "03:19",
+      "response": "The runner is hidden above a restroom stall while the pursuer searches the stalls nearby.",
+      "trigger_type": "sound+visual",
+      "trigger_type_reason": "Quiet room tone and echoing footsteps establish the audio condition; the concealed runner and searching pursuer are confirmed visually.",
+      "evidence": [
+        {
+          "time": "02:58",
+          "available_time": "03:01",
+          "fact": "The runner slips into a restroom stall and pulls the blue door shut."
+        },
+        {
+          "time": "03:01",
+          "available_time": "03:04",
+          "fact": "The chase music drops out, leaving echoing room tone and hushed breathing."
+        },
+        {
+          "time": "03:08",
+          "available_time": "03:11",
+          "fact": "The runner climbs up to hide above the stall."
+        },
+        {
+          "time": "03:12",
+          "available_time": "03:13",
+          "fact": "Slow echoing footsteps enter the restroom and move from stall to stall."
+        }
+      ],
+      "details": {
+        "event": "A quiet restroom standoff: the runner conceals themselves above a stall while the pursuer searches the nearby stalls.",
+        "participants": "The first-person runner and the black-robed, white-masked pursuer.",
+        "relations": "The pursuer is hunting the runner; the runner is evading and hiding from the pursuer."
+      },
+      "trigger": {
+        "kind": "condition",
+        "satisfied": true,
+        "episode_id": "quiet-restroom-search-01",
+        "confirmed_time": "03:13",
+        "definition": "The chase audio is quiet, the runner is hidden in the restroom, and the pursuer is searching nearby.",
+        "conditions": [
+          {
+            "condition": "The chase audio has dropped to quiet room tone with hushed breathing.",
+            "satisfied": true,
+            "time": "03:04",
+            "evidence": "Music is gone by 03:04, leaving echoing restroom ambience and breathing."
+          },
+          {
+            "condition": "The runner is hidden in the restroom stall area.",
+            "satisfied": true,
+            "time": "03:11",
+            "evidence": "By 03:11 the runner has climbed up to hide above the stall."
+          },
+          {
+            "condition": "The pursuer is searching nearby.",
+            "satisfied": true,
+            "time": "03:13",
+            "evidence": "At 03:13 slow echoing footsteps are moving between stalls in the restroom."
+          }
+        ]
+      }
+    }
+  ]
+}

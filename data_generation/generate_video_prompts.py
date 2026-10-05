@@ -6,7 +6,7 @@ Example:
         data_generation/videos/panorama.mp4 -o data_generation/rendered_prompts
 """
 
-from src.video_caption import main
+from src.cli.video_caption import main
 
 
 if __name__ == "__main__":

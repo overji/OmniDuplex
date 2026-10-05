@@ -1,0 +1,229 @@
+{
+  "status": "ok",
+  "question": "Whenever a lesson title card appears, tell me what it says and save the lesson title in my study notes.",
+  "question_time": "00:00",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "work_type": "tools",
+  "required_tools": [
+    "note_write"
+  ],
+  "responses": [
+    {
+      "window_start": "00:29",
+      "trigger_time": "00:29",
+      "window_end": "00:32",
+      "response": "Lesson title card appears; I’ll save “LESSON 1: THE BODY & REED” to your notes.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is the legible lesson title text on the card; audio is not needed to confirm it.",
+      "evidence": [
+        {
+          "time": "00:29",
+          "available_time": "00:29",
+          "fact": "A dark title card displays the text LESSON 1: THE BODY & REED."
+        }
+      ],
+      "details": {
+        "text": "LESSON 1: THE BODY & REED",
+        "text_source": "screen",
+        "interpretation": "This card announces the first numbered lesson and its topic, the body and reed.",
+        "uncertainty": "None material; the text is legible on the card."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "lesson-title-card-001",
+        "confirmed_time": "00:29",
+        "definition": "An on-screen card states a lesson number and topic."
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "00:29",
+          "content": "Lesson title card appears; I’ll save “LESSON 1: THE BODY & REED” to your notes.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Create a study note containing the observed lesson title.\",\"observed_context\":\"At 00:29, a lesson title card displays LESSON 1: THE BODY & REED.\",\"user_goal\":\"Save the lesson title from the title card in the user's study notes.\",\"constraints_and_authorization\":\"The user authorized saving lesson title cards to notes. Use only the text visible by 00:29; do not add later video facts.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with an artifact containing the lesson title and content.\",\"extracted_parameters\":[{\"name\":\"title\",\"value\":\"LESSON 1: THE BODY & REED\",\"evidence_time\":\"00:29\",\"evidence\":\"The title card text reads LESSON 1: THE BODY & REED.\"},{\"name\":\"content\",\"value\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\",\"evidence_time\":\"00:29\",\"evidence\":\"The title card text reads LESSON 1: THE BODY & REED.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "01:17",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Created a study note for the observed lesson title.\",\"observed_facts\":[\"At 00:29 the lesson title card displays LESSON 1: THE BODY & REED.\"],\"tool_information\":[\"note_write created a user note.\"],\"reasoning\":[\"The user asked to save lesson title cards; the observed card is a lesson title, so note_write was used.\"],\"uncertainties\":[\"The note identifier is simulated and not shown in the video.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create note\",\"status\":\"completed\",\"evidence\":\"Note record exists with the requested title and content.\",\"arguments\":{\"title\":\"LESSON 1: THE BODY & REED\",\"content\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"LESSON 1: THE BODY & REED\",\"content\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\"}]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "01:17",
+          "content": "Success: saved “LESSON 1: THE BODY & REED” to your study notes as the observed lesson title.",
+          "outcome": "success"
+        }
+      ]
+    }
+  ],
+  "sample_type": "positive",
+  "available_tools": [
+    "todo_create",
+    "todo_query",
+    "todo_update",
+    "calendar_query",
+    "note_write",
+    "order_query",
+    "order_update",
+    "note_search",
+    "document_search",
+    "weather_query",
+    "route_query",
+    "meeting_draft",
+    "shopping_list_query",
+    "shopping_list_update",
+    "budget_query",
+    "budget_update",
+    "calculator",
+    "itinerary_query",
+    "product_search",
+    "calendar_create",
+    "calendar_update",
+    "notification_send",
+    "web_search",
+    "knowledge_search",
+    "history_query",
+    "video_segment_query",
+    "statistics_compute",
+    "report_create"
+  ],
+  "frontend_context": {
+    "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "agent_call",
+          "description": "Delegate one complex, asynchronous objective to the backend agent.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "instruction": {
+                "type": "string",
+                "description": "Complete, self-contained backend work request."
+              },
+              "observed_context": {
+                "type": "string",
+                "description": "Timestamped audiovisual facts available at the trigger."
+              },
+              "user_goal": {
+                "type": "string",
+                "description": "The result the user asked for."
+              },
+              "constraints_and_authorization": {
+                "type": "string",
+                "description": "Scope, permissions, confirmation needs, and user constraints."
+              },
+              "suggested_capabilities": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                },
+                "description": "At least one available daily application tool that is necessary for the requested outcome."
+              },
+              "expected_output": {
+                "type": "string",
+                "description": "Required result, evidence, sources, actions, and artifacts."
+              },
+              "extracted_parameters": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "evidence_time": {
+                      "type": "string",
+                      "description": "MM:SS, no later than trigger_time"
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "description": "Observable audiovisual evidence"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value",
+                    "evidence_time",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "instruction",
+              "observed_context",
+              "user_goal",
+              "constraints_and_authorization",
+              "suggested_capabilities",
+              "expected_output",
+              "extracted_parameters"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "ability": "text_rich_understanding",
+  "mode": "agent",
+  "schema": "omni-interaction-v2",
+  "task": "text_rich_understanding_agent",
+  "video": "video_101.mp4",
+  "generation_context": {
+    "duration_seconds": 233.484,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": 48,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "required_missing_tool": null
+  }
+}

@@ -1,0 +1,2532 @@
+[
+  {
+    "status": "ok",
+    "question": "As the video goes on, keep me updated on the new people, animals, and handheld or worn items that come into view — tell me what each one is and where it sits in the frame.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:00",
+        "window_end": "00:05",
+        "response": "Two young women are right up close to the camera indoors, both under a dog-face filter — the one in front wears a black cap, grey mask and pearl drop earrings, and the one behind at the right wears a pink cap.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The people and their worn items are identified purely from the opening selfie framing.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "Two women stand close to the camera under an AR dog-face filter; the foreground woman has a black cap, grey face mask and pearl drop earrings, the second woman behind at right wears a pink baseball cap."
+          }
+        ],
+        "details": {
+          "target": "two women with AR dog filter, black cap / pink cap / grey mask / pearl earrings",
+          "category": "people and worn accessories",
+          "position": "foreground center-left and mid-ground right",
+          "uncertainty": "their relationship is not visible; only clothing and filter are confirmed"
+        }
+      },
+      {
+        "window_start": "00:06",
+        "trigger_time": "00:07",
+        "window_end": "00:14",
+        "response": "The shot cuts outdoors to dozens of tourists in summer clothes crossing the stone plaza and posing near the arched gateway.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The crowd is confirmed by the wide plaza view after the cut.",
+        "evidence": [
+          {
+            "time": "00:06",
+            "available_time": "00:06",
+            "fact": "A wide plaza in front of a red-brick gate tower is filled with many visitors walking and taking photos near the arch."
+          }
+        ],
+        "details": {
+          "target": "tourist crowd",
+          "category": "people",
+          "position": "spread across the lower half of the frame, denser near the arch",
+          "uncertainty": "exact headcount not determinable"
+        }
+      },
+      {
+        "window_start": "00:18",
+        "trigger_time": "00:18",
+        "window_end": "00:20",
+        "response": "Now pedestrians and scooter riders are moving along a shaded, tree-lined street.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The camera pans down from the canopy to reveal walkers and riders on the street.",
+        "evidence": [
+          {
+            "time": "00:18",
+            "available_time": "00:18",
+            "fact": "People walk and ride electric scooters along a sunny pedestrian street lined with old shopfronts."
+          }
+        ],
+        "details": {
+          "target": "pedestrians and scooter riders",
+          "category": "people",
+          "position": "along the street receding into the center of the frame",
+          "uncertainty": "individual identities not resolvable at this distance"
+        }
+      },
+      {
+        "window_start": "00:21",
+        "trigger_time": "00:21",
+        "window_end": "00:22",
+        "response": "Two sealed plastic cups are lifted into the foreground — an orange drink on the left and a purple-pink smoothie on the right — and they clink together as a voice says cheers.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The cups and their colors are seen, and the toast is confirmed by the spoken word at the same moment.",
+        "evidence": [
+          {
+            "time": "00:21",
+            "available_time": "00:21",
+            "fact": "Two hands hold clear plastic cups with straws, orange liquid on the left and purple-pink on the right, tapping them together."
+          },
+          {
+            "time": "00:21",
+            "available_time": "00:21",
+            "fact": "A female voice says 'cheers' over the street ambience."
+          }
+        ],
+        "details": {
+          "target": "two takeaway drink cups",
+          "category": "handheld items",
+          "position": "lower center foreground, orange cup left and purple-pink cup right",
+          "uncertainty": "drink flavors not identifiable beyond color"
+        }
+      },
+      {
+        "window_start": "00:33",
+        "trigger_time": "00:34",
+        "window_end": "00:35",
+        "response": "A brown dog is lying on the ground at the left of the lane, beside a stone trough and potted plants.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The resting animal is confirmed in the downward view of the quiet lane.",
+        "evidence": [
+          {
+            "time": "00:33",
+            "available_time": "00:33",
+            "fact": "A brown dog lies on the paved ground at left next to a low stone trough and plant pots."
+          }
+        ],
+        "details": {
+          "target": "brown dog",
+          "category": "animal",
+          "position": "left side of the frame, on the ground by the trough",
+          "uncertainty": "breed not identifiable; whether it is stray or owned is unknown"
+        }
+      },
+      {
+        "window_start": "00:49",
+        "trigger_time": "00:50",
+        "window_end": "00:51",
+        "response": "A person rides a scooter down the middle of the wider street, past the parked covered three-wheelers.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The rider appears as the route opens onto the broader road.",
+        "evidence": [
+          {
+            "time": "00:49",
+            "available_time": "00:49",
+            "fact": "A scooter rider travels along the center of the road beside parked blue and pink covered e-carts."
+          }
+        ],
+        "details": {
+          "target": "scooter rider",
+          "category": "person",
+          "position": "center of the road, mid-distance",
+          "uncertainty": "rider's appearance not resolvable at this distance"
+        }
+      },
+      {
+        "window_start": "01:03",
+        "trigger_time": "01:04",
+        "window_end": "01:05",
+        "response": "A man in a dark jacket is standing at the curb on the right, next to the row of parked e-scooters.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The standing person is confirmed at the shopfront as the camera passes.",
+        "evidence": [
+          {
+            "time": "01:03",
+            "available_time": "01:03",
+            "fact": "A man wearing a dark navy jacket stands on the sidewalk at the right, beside parked electric scooters in front of a shop with red banners."
+          }
+        ],
+        "details": {
+          "target": "man in dark jacket",
+          "category": "person",
+          "position": "right side of the frame at the curb",
+          "uncertainty": "his role (shop worker or passer-by) is not visible"
+        }
+      },
+      {
+        "window_start": "01:24",
+        "trigger_time": "01:24",
+        "window_end": "01:26",
+        "response": "Looking straight down, the two walkers' shadows fall on the cobblestones by a round manhole cover, and the right-hand shadow lifts an arm into a V sign.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The shadow figures and the gesture are only readable in the downward shot.",
+        "evidence": [
+          {
+            "time": "01:20",
+            "available_time": "01:20",
+            "fact": "Two human shadows are cast on grey cobblestones next to a circular metal manhole cover."
+          },
+          {
+            "time": "01:24",
+            "available_time": "01:24",
+            "fact": "The right-hand shadow raises an arm and forms a two-finger peace sign."
+          }
+        ],
+        "details": {
+          "target": "two shadows, one making a V sign",
+          "category": "people (as shadows)",
+          "position": "lower half of the frame, left shadow and right shadow side by side",
+          "uncertainty": "the shadows are inferred to belong to the two walkers; not directly confirmed"
+        }
+      },
+      {
+        "window_start": "01:41",
+        "trigger_time": "01:42",
+        "window_end": "01:43",
+        "response": "A tiny brown-grey tabby kitten is cradled against a black jacket in the center of the frame while a hand reaches in from the left to stroke its head, and the voices coo over it.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The kitten and the petting hand are seen, and the affectionate exclamations confirm the encounter.",
+        "evidence": [
+          {
+            "time": "01:40",
+            "available_time": "01:40",
+            "fact": "A small striped tabby kitten with pale eyes is held against black fabric, filling the center of the frame."
+          },
+          {
+            "time": "01:41",
+            "available_time": "01:41",
+            "fact": "A hand enters from the left and touches the kitten's head and chin."
+          },
+          {
+            "time": "01:41",
+            "available_time": "01:41",
+            "fact": "Soft female voices coo at the cat in an affectionate tone."
+          }
+        ],
+        "details": {
+          "target": "tabby kitten and petting hand",
+          "category": "animal and handheld contact",
+          "position": "kitten center frame against black jacket; hand entering from left",
+          "uncertainty": "kitten's exact age unknown; the holder's face is out of frame"
+        }
+      },
+      {
+        "window_start": "01:44",
+        "trigger_time": "01:45",
+        "window_end": "01:51",
+        "response": "In the blurred left background, a person in an orange shirt is standing by a doorway while the kitten is still being held.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The background figure becomes distinguishable as the camera angle shifts.",
+        "evidence": [
+          {
+            "time": "01:44",
+            "available_time": "01:44",
+            "fact": "An out-of-focus person in an orange top and light trousers stands near a doorway at the left edge, holding a bag."
+          }
+        ],
+        "details": {
+          "target": "person in orange shirt",
+          "category": "person",
+          "position": "left background, out of focus",
+          "uncertainty": "features not resolvable due to shallow depth of field"
+        }
+      },
+      {
+        "window_start": "01:57",
+        "trigger_time": "01:58",
+        "window_end": "02:03",
+        "response": "Roughly eight to ten people are ringing the circular well, lowering red buckets on ropes and holding white plastic jugs.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The group and their water-drawing equipment are confirmed in the overhead view of the well.",
+        "evidence": [
+          {
+            "time": "01:57",
+            "available_time": "01:57",
+            "fact": "About eight to ten visitors and locals stand around a large round brick-lined well, using red buckets on ropes and white containers to draw water."
+          }
+        ],
+        "details": {
+          "target": "crowd at the well with red buckets and white jugs",
+          "category": "people and handheld items",
+          "position": "clustered around the circular well in the center and lower frame",
+          "uncertainty": "headcount is approximate; purposes of individual visitors not visible"
+        }
+      },
+      {
+        "window_start": "02:10",
+        "trigger_time": "02:10",
+        "window_end": "02:12",
+        "response": "Sneakered feet step along the white-painted hopscotch squares on the pavement.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The walker's feet enter the downward frame on the painted court.",
+        "evidence": [
+          {
+            "time": "02:10",
+            "available_time": "02:10",
+            "fact": "Feet in light-colored sneakers step across the numbered hopscotch grid painted on the stone slabs."
+          }
+        ],
+        "details": {
+          "target": "sneakered feet",
+          "category": "person (partial) and worn footwear",
+          "position": "upper left of the downward frame, moving across the painted squares",
+          "uncertainty": "only the feet are visible; the person's identity is unknown"
+        }
+      },
+      {
+        "window_start": "02:41",
+        "trigger_time": "02:41",
+        "window_end": "02:44",
+        "response": "A hand in a light-blue sleeve enters from the lower right and points at spots on the site map while the two voices plan the route.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The pointing hand is seen on the map board, and the concurrent conversation confirms it is a planning gesture.",
+        "evidence": [
+          {
+            "time": "02:41",
+            "available_time": "02:41",
+            "fact": "An index finger in a light-blue sleeve enters from the lower right and touches labels on the glossy green-line map."
+          },
+          {
+            "time": "02:41",
+            "available_time": "02:41",
+            "fact": "Two female voices talk over the map, discussing where to go."
+          }
+        ],
+        "details": {
+          "target": "pointing hand in light-blue sleeve",
+          "category": "person (partial)",
+          "position": "entering from the lower right of the map board",
+          "uncertainty": "which of the two women owns the hand is not confirmable"
+        }
+      },
+      {
+        "window_start": "03:19",
+        "trigger_time": "03:20",
+        "window_end": "03:24",
+        "response": "A fluffy white plush toy with a blue eye pops into the lower-left foreground as the orange train rolls past the platform.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The handheld plush appears in the foreground only in the final platform shot.",
+        "evidence": [
+          {
+            "time": "03:19",
+            "available_time": "03:19",
+            "fact": "A white fuzzy plush figure with a round blue eye and pink ear rises into the lower-left corner of the frame in front of the passing train."
+          }
+        ],
+        "details": {
+          "target": "white plush toy",
+          "category": "handheld item",
+          "position": "lower-left foreground, partially out of frame",
+          "uncertainty": "species depiction is uncertain — alpaca- or llama-like; holder stays off camera"
+        }
+      }
+    ],
+    "ability": "object_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "object_perception_rtd",
+    "video": "video_1.mp4",
+    "generation_context": {
+      "duration_seconds": 208.05,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_1"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know whenever a live cat or dog shows up in the video, and tell me what it looks like and where it is.",
+    "question_time": "00:26",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:33",
+        "trigger_time": "00:34",
+        "window_end": "00:40",
+        "response": "A brown dog has appeared, lying on the ground at the left side of the lane beside a low stone trough and some potted plants.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The animal is detected only from its shape and colour in the frame; no sound accompanies it.",
+        "evidence": [
+          {
+            "time": "00:33",
+            "available_time": "00:33",
+            "fact": "A brown dog is visible lying still on the ground at the left edge of the lane, next to a low stone trough and potted plants."
+          }
+        ],
+        "details": {
+          "target": "brown dog",
+          "category": "animal (dog)",
+          "position": "lying on the ground at the left side of the lane, beside a stone trough and potted plants",
+          "uncertainty": "It does not move, so only its brown coat and medium size are clear; breed cannot be determined."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "live-animal-0033",
+          "confirmed_time": "00:33",
+          "definition": "a live cat or dog becomes visible on screen"
+        }
+      },
+      {
+        "window_start": "01:40",
+        "trigger_time": "01:41",
+        "window_end": "01:51",
+        "response": "A small tabby kitten has appeared, cradled in the arms of a person in a black jacket at the centre of the frame.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The kitten is recognised from its striped coat and facial features in the close-up; the identification does not depend on audio.",
+        "evidence": [
+          {
+            "time": "01:40",
+            "available_time": "01:40",
+            "fact": "A brown-grey striped tabby kitten with pale eyes fills the centre of the frame, held against a black jacket."
+          }
+        ],
+        "details": {
+          "target": "tabby kitten",
+          "category": "animal (cat)",
+          "position": "held in the arms of a person wearing a black jacket, centre of the frame",
+          "uncertainty": "It is very young; the coat pattern is clearly striped tabby, but the exact breed cannot be confirmed."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "live-animal-0140",
+          "confirmed_time": "01:40",
+          "definition": "a live cat or dog becomes visible on screen"
+        }
+      }
+    ],
+    "ability": "object_perception",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "object_perception_pr",
+    "video": "video_1.mp4",
+    "generation_context": {
+      "duration_seconds": 208.05,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_1"
+  },
+  {
+    "status": "ok",
+    "question": "If an electric-vehicle rental sign shows up, tell me and check what rentals cost in Jianshui.",
+    "question_time": "01:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "work_type": "tools",
+    "required_tools": [
+      "web_search"
+    ],
+    "responses": [
+      {
+        "trigger_time": "01:13",
+        "source_trigger_time": "01:13",
+        "window_start": "01:13",
+        "window_end": "01:18",
+        "response": "A blue electric-vehicle rental sign just appeared; I will check Jianshui rental prices.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is the newly visible blue rental sign; its text is read from the frame, and no audio is needed.",
+        "evidence": [
+          {
+            "time": "00:01",
+            "available_time": "00:01",
+            "fact": "On-screen text reads 去建水啦, establishing the trip is to Jianshui."
+          },
+          {
+            "time": "01:13",
+            "available_time": "01:13",
+            "fact": "A blue A-frame sign on the right sidewalk reads 电动车出租."
+          },
+          {
+            "time": "01:13",
+            "available_time": "01:13",
+            "fact": "The sign shows no rental price or vendor name."
+          }
+        ],
+        "details": {
+          "target": "blue A-frame roadside sign with white Chinese text 电动车出租",
+          "category": "electric-vehicle rental advertisement sign",
+          "position": "right side of the sidewalk outside an electric-vehicle shop, near parked scooters",
+          "uncertainty": "vendor name, phone number, and rental price are not legible from the visible sign"
+        },
+        "trigger": {
+          "kind": "target",
+          "satisfied": true,
+          "episode_id": "jianshui-ev-rental-sign-1",
+          "confirmed_time": "01:13",
+          "definition": "A newly visible sign whose readable text advertises electric-vehicle rentals appears.",
+          "target": "blue A-frame sign reading 电动车出租",
+          "attributes_match": true
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Search public web sources for current electric scooter or e-bike rental prices in Jianshui after a visible rental sign appeared. Report typical daily rate, deposit, and any booking contact if publicly listed.\",\"observed_context\":\"00:01 on-screen text indicates the trip is to Jianshui. 01:13 a blue A-frame sign on the right reads 电动车出租; no price or vendor details are visible.\",\"user_goal\":\"Know what electric-vehicle rentals cost in Jianshui after seeing the rental sign.\",\"constraints_and_authorization\":\"Use only public web information. Do not book, pay, or assume the user is currently in Jianshui. Mark vendor-specific pricing as unconfirmed if the sign cannot be matched to a listing.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"A simulated web_search result with sources summarizing typical Jianshui e-bike rental prices and deposits, plus uncertainties about the exact vendor.\",\"extracted_parameters\":[{\"name\":\"place\",\"value\":\"Jianshui\",\"evidence_time\":\"00:01\",\"evidence\":\"On-screen text says 去建水啦.\"},{\"name\":\"rental_item\",\"value\":\"electric vehicle/scooter\",\"evidence_time\":\"01:13\",\"evidence\":\"Blue A-frame sign reads 电动车出租.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "02:22",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Public listings suggest Jianshui e-bike rentals cost about 30-80 CNY per day, with deposits commonly 200-500 CNY; the exact vendor from the sign was not confirmed.\",\"observed_facts\":[\"At 01:13, a blue sign reading 电动车出租 was visible on the right.\",\"The sign did not show a price or vendor name.\",\"Earlier on-screen text at 00:01 identified the trip as going to Jianshui.\"],\"tool_information\":[\"web_search returned simulated public rental listings for Jianshui electric scooters/e-bikes.\"],\"reasoning\":[\"The visible sign establishes the rental item, and earlier on-screen text establishes Jianshui as the place to search.\"],\"uncertainties\":[\"Current prices may vary by season and vendor.\",\"The sign's specific shop could not be identified from the video.\"],\"sources\":[{\"tool\":\"web_search\",\"evidence\":\"Simulated results: Jianshui e-bike/scooter rentals are commonly listed at 30-80 CNY per day, with deposits around 200-500 CNY.\",\"arguments\":{\"query\":\"Jianshui electric scooter rental price per day deposit\"}}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "02:22",
+        "response": "Public listings suggest Jianshui e-bike rentals run about 30-80 CNY per day, with 200-500 CNY deposits; the sign's vendor and exact price remain unconfirmed.",
+        "role": "assistant",
+        "outcome": "success"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "object_perception",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "object_perception_agent",
+    "video": "video_1.mp4",
+    "generation_context": {
+      "duration_seconds": 208.05,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": 69,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_1"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever a plush toy shows up in the video, see if it matches any order I'm waiting for.",
+    "question_time": "03:15",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "work_type": "tools",
+    "required_tools": [
+      "order_query"
+    ],
+    "responses": [
+      {
+        "window_start": "03:15",
+        "trigger_time": "03:15",
+        "window_end": "03:15",
+        "response": "I don't have the ability to check your pending orders for plush toys shown in the video.",
+        "refusal_reason": "The requested follow-up requires reading the user's pending order or package records with order_query, which is unavailable in the frontend tool set.",
+        "missing_tools": [
+          "order_query"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "window_start": "03:20",
+        "trigger_time": "03:20",
+        "window_end": "03:25",
+        "response": "A white plush toy with a blue eye has appeared in the lower-left foreground.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is the visible entry and identifiable features of a plush toy; no audio is needed to confirm it.",
+        "evidence": [
+          {
+            "time": "03:16",
+            "available_time": "03:16",
+            "fact": "The railway-platform shot begins with no plush toy in the foreground."
+          },
+          {
+            "time": "03:19",
+            "available_time": "03:19",
+            "fact": "A white fuzzy object enters the lower-left edge of the frame."
+          },
+          {
+            "time": "03:20",
+            "available_time": "03:20",
+            "fact": "The object is clearly a plush toy, with a fluffy white body and a round blue eye in the lower-left foreground."
+          }
+        ],
+        "details": {
+          "target": "white fluffy plush toy with a blue eye",
+          "category": "plush toy / stuffed animal",
+          "position": "lower-left foreground",
+          "uncertainty": "Exact character or product model is uncertain; it resembles an alpaca or llama plush."
+        },
+        "trigger": {
+          "kind": "target",
+          "satisfied": true,
+          "episode_id": "plush_toy_03_20",
+          "confirmed_time": "03:20",
+          "definition": "A newly appearing plush toy becomes visible in the video.",
+          "target": "white fluffy plush toy with a blue eye",
+          "attributes_match": true
+        }
+      }
+    ],
+    "sample_type": "missing_tool",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "object_perception",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "object_perception_agent",
+    "video": "video_1.mp4",
+    "generation_context": {
+      "duration_seconds": 208.05,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "missing_tool",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": "order_query"
+    },
+    "video_folder": "video_1"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on the chase in the video — track the runner and their pursuer and describe how the pursuit develops from start to finish.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:00",
+        "window_end": "00:01",
+        "response": "The video opens mid-panic: a first-person runner is already sprinting across a sunlit rooftop car park, breathing hard over a pounding beat.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Heavy panicked breathing and slapping footfalls over the music (sound) confirm a frantic flight, while the rooftop view and outstretched hand (visual) set the scene.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "First-person view of a sunlit concrete rooftop car park; the runner's elongated shadow and outstretched hand show them already moving fast."
+          },
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "Audio: aggressive beat with distorted bass, plus heavy panicked breathing and footfalls on concrete."
+          }
+        ],
+        "details": {
+          "event": "A panicked first-person sprint begins on a rooftop car park.",
+          "participants": "The runner (camera wearer).",
+          "relations": "The runner is fleeing in distress; no pursuer yet visible."
+        }
+      },
+      {
+        "window_start": "00:02",
+        "trigger_time": "00:02",
+        "window_end": "00:05",
+        "response": "A black-robed figure in a white mask lunges into view — the runner is being hunted and spins away to flee.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The lunging masked figure (visual) defines the threat, while the continuing panicked breathing and abrupt change in footfall direction (sound) confirm the flight response.",
+        "evidence": [
+          {
+            "time": "00:01",
+            "available_time": "00:01",
+            "fact": "A figure in a full black hooded robe and white Ghostface-style mask lunges into frame from the right."
+          },
+          {
+            "time": "00:02",
+            "available_time": "00:02",
+            "fact": "The camera whips left as the runner spins away; panicked breathing and footfalls continue."
+          }
+        ],
+        "details": {
+          "event": "The pursuer reveals itself and the chase officially starts.",
+          "participants": "The runner and a black-robed, white-masked pursuer.",
+          "relations": "The masked figure is attacking/chasing the runner, who turns to escape."
+        }
+      },
+      {
+        "window_start": "00:06",
+        "trigger_time": "00:07",
+        "window_end": "00:09",
+        "response": "The runner hammers down an external zig-zag stairwell while the masked pursuer stays on them from the flights above.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Footfalls and panting on metal steps (sound) mark the descent, and the masked figure seen through the railings overhead (visual) confirms the pursuer is still on their tail.",
+        "evidence": [
+          {
+            "time": "00:04",
+            "available_time": "00:04",
+            "fact": "The runner descends an external zig-zag metal staircase."
+          },
+          {
+            "time": "00:06",
+            "available_time": "00:06",
+            "fact": "The masked pursuer is visible on the landing above through the railings; audio of panting and metal footfalls."
+          }
+        ],
+        "details": {
+          "event": "Descent of the external stairwell with the pursuer closing from above.",
+          "participants": "The runner and the masked pursuer.",
+          "relations": "Pursuer is directly behind/above the runner, maintaining the chase."
+        }
+      },
+      {
+        "window_start": "00:11",
+        "trigger_time": "00:13",
+        "window_end": "00:17",
+        "response": "They grab the steel handrail and slide down it, feet swinging, the metal scraping loudly over the music.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The loud metallic scraping of the rail slide (sound) is the defining cue, matched by the visual of the runner sliding with feet dangling.",
+        "evidence": [
+          {
+            "time": "00:10",
+            "available_time": "00:10",
+            "fact": "The runner grabs the tubular steel handrail and slides down it, feet dangling."
+          },
+          {
+            "time": "00:11",
+            "available_time": "00:11",
+            "fact": "Audio: metallic scraping/clanging of the rail slide over the continuing beat."
+          }
+        ],
+        "details": {
+          "event": "The runner slides down the handrail to lose height quickly.",
+          "participants": "The runner (pursuer still above).",
+          "relations": "Runner uses the rail to accelerate away from the pursuer."
+        }
+      },
+      {
+        "window_start": "00:25",
+        "trigger_time": "00:25",
+        "window_end": "00:27",
+        "response": "At ground level the pursuer closes with a blade, but the runner grapples and shoves them back, then bolts.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "A scuffle with a grunt/yell and fabric rustle (sound) confirms physical contact, while the visual shows the blade and the shove.",
+        "evidence": [
+          {
+            "time": "00:20",
+            "available_time": "00:20",
+            "fact": "At ground level the pursuer closes in brandishing a long blade."
+          },
+          {
+            "time": "00:24",
+            "available_time": "00:24",
+            "fact": "The runner grabs the attacker's arm/hood and shoves them backward; audio scuffle and grunt."
+          }
+        ],
+        "details": {
+          "event": "A brief ground-level struggle ends with the runner shoving the pursuer off.",
+          "participants": "The runner and the armed masked pursuer.",
+          "relations": "Direct physical confrontation; the runner repels the attacker and escapes."
+        }
+      },
+      {
+        "window_start": "00:44",
+        "trigger_time": "00:45",
+        "window_end": "00:48",
+        "response": "Through the dim car park and out onto a service walkway, the runner vaults a mesh fence as the pursuer presses against the gate behind.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Metallic rattle of fence and gate (sound) marks the vault, and the visual shows the pursuer momentarily trapped against the mesh.",
+        "evidence": [
+          {
+            "time": "00:28",
+            "available_time": "00:28",
+            "fact": "The runner dashes through the dim interior of the multi-level car park past blue-topped columns."
+          },
+          {
+            "time": "00:39",
+            "available_time": "00:39",
+            "fact": "On the service walkway the runner vaults a low mesh fence panel."
+          },
+          {
+            "time": "00:44",
+            "available_time": "00:44",
+            "fact": "The masked pursuer appears pressed against the mesh gate behind; audio metallic rattle."
+          }
+        ],
+        "details": {
+          "event": "The runner crosses the car park and vaults a fence, briefly bottlenecking the pursuer at a gate.",
+          "participants": "The runner and the masked pursuer.",
+          "relations": "Runner gains a momentary lead as the pursuer is checked by the gate."
+        }
+      },
+      {
+        "window_start": "00:58",
+        "trigger_time": "00:59",
+        "window_end": "01:02",
+        "response": "Glancing back, the runner sees the pursuer scaling the anchor-studded retaining wall, then swings through another gate.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "A gate clang (sound) accompanies the pass-through, and the visual confirms the pursuer climbing the wall in hot pursuit.",
+        "evidence": [
+          {
+            "time": "00:52",
+            "available_time": "00:52",
+            "fact": "The runner looks back to see the pursuer climbing over the dark anchor-studded retaining wall."
+          },
+          {
+            "time": "00:57",
+            "available_time": "00:57",
+            "fact": "The runner swings through another mesh gate; audio gate clang."
+          }
+        ],
+        "details": {
+          "event": "The pursuer overcomes the wall obstacle and the runner passes a second gate.",
+          "participants": "The runner and the masked pursuer.",
+          "relations": "Pursuer refuses to be shaken off, climbing after the runner."
+        }
+      },
+      {
+        "window_start": "01:17",
+        "trigger_time": "01:18",
+        "window_end": "01:21",
+        "response": "In the garage the runner snatches a wheelie bin and hurls it at the emerging pursuer — the crash echoes — then flees down the stairs.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "A loud plastic/metal crash (sound) is the key cue for the thrown bin, matched by the visual of the bin striking the pursuer.",
+        "evidence": [
+          {
+            "time": "01:14",
+            "available_time": "01:14",
+            "fact": "In the garage the masked pursuer emerges from the stairwell behind."
+          },
+          {
+            "time": "01:16",
+            "available_time": "01:16",
+            "fact": "The runner hurls a black wheelie bin at the pursuer; audio loud crash."
+          }
+        ],
+        "details": {
+          "event": "The runner uses a bin as a projectile to stall the pursuer.",
+          "participants": "The runner and the masked pursuer.",
+          "relations": "Runner actively defends/impedes the pursuer to extend the gap."
+        }
+      },
+      {
+        "window_start": "01:26",
+        "trigger_time": "01:27",
+        "window_end": "01:33",
+        "response": "Outside again, the runner scrambles up the steep retaining wall by its anchor plates and runs the chain-link ledge above.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Scraping of shoes on the wall (sound) marks the climb, with the visual showing hands gripping the anchor plates.",
+        "evidence": [
+          {
+            "time": "01:24",
+            "available_time": "01:24",
+            "fact": "The runner scrambles up the steep retaining wall using its square anchor plates as footholds."
+          },
+          {
+            "time": "01:26",
+            "available_time": "01:26",
+            "fact": "They pull onto the top ledge and run along a narrow path beside a chain-link fence; audio scraping."
+          }
+        ],
+        "details": {
+          "event": "The runner climbs the retaining wall to reach a higher path.",
+          "participants": "The runner (pursuer not in frame).",
+          "relations": "Runner uses vertical terrain to put distance between themselves and the pursuer."
+        }
+      },
+      {
+        "window_start": "01:44",
+        "trigger_time": "01:45",
+        "window_end": "01:47",
+        "response": "They vault a curved metal wall on the terrace and shove open a blue fire-safety door.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "A door latch click (sound) confirms the entry, paired with the visual of the vault and the marked blue door.",
+        "evidence": [
+          {
+            "time": "01:39",
+            "available_time": "01:39",
+            "fact": "The runner vaults over the rounded top of a curved grey metal wall onto a gravel path."
+          },
+          {
+            "time": "01:43",
+            "available_time": "01:43",
+            "fact": "They push open a blue door marked 'FIRE SAFETY DOOR'; audio door latch."
+          }
+        ],
+        "details": {
+          "event": "The runner crosses a terrace and enters through a fire door.",
+          "participants": "The runner.",
+          "relations": "Continuing flight; using building access to evade."
+        }
+      },
+      {
+        "window_start": "01:56",
+        "trigger_time": "01:57",
+        "window_end": "01:59",
+        "response": "In the next stairwell the masked pursuer looms at the top with blade raised, so the runner vaults sideways over a low wall to drop past them.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Footfalls and a grunt on the vault (sound) accompany the escape, while the visual shows the armed pursuer blocking the stairs.",
+        "evidence": [
+          {
+            "time": "01:48",
+            "available_time": "01:48",
+            "fact": "The masked pursuer appears at the top of the stairwell with blade raised."
+          },
+          {
+            "time": "01:54",
+            "available_time": "01:54",
+            "fact": "The runner vaults sideways over a low white wall to drop past the pursuer; audio grunt/footfalls."
+          },
+          {
+            "time": "01:56",
+            "available_time": "01:56",
+            "fact": "The pursuer comes down the stairs after them."
+          }
+        ],
+        "details": {
+          "event": "The pursuer blocks the stairwell; the runner vaults aside to bypass them.",
+          "participants": "The runner and the armed masked pursuer.",
+          "relations": "Pursuer cuts off the direct route; runner evades laterally."
+        }
+      },
+      {
+        "window_start": "02:06",
+        "trigger_time": "02:07",
+        "window_end": "02:09",
+        "response": "The runner races down the last stairs and vaults a maroon wall into a courtyard of white picnic tables.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "A thump on landing (sound) marks the vault, with the visual showing entry into the table-filled courtyard.",
+        "evidence": [
+          {
+            "time": "02:02",
+            "available_time": "02:02",
+            "fact": "The runner races down the remaining stairs past a red-brick building and through a shaded walkway."
+          },
+          {
+            "time": "02:06",
+            "available_time": "02:06",
+            "fact": "They vault a low maroon wall into an open courtyard of white picnic tables; audio thump."
+          }
+        ],
+        "details": {
+          "event": "The runner drops into an open courtyard of picnic tables.",
+          "participants": "The runner.",
+          "relations": "Entering a new, obstacle-rich area of the chase."
+        }
+      },
+      {
+        "window_start": "02:20",
+        "trigger_time": "02:21",
+        "window_end": "02:23",
+        "response": "The pursuer crests the stairs with arms spread; the runner vaults the railing and weaves and leaps between the tables to stay ahead.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "A metal railing clank and footfalls on paving (sound) track the weave, while the visual shows the pursuer entering the table zone.",
+        "evidence": [
+          {
+            "time": "02:12",
+            "available_time": "02:12",
+            "fact": "The pursuer crests the top step with arms spread."
+          },
+          {
+            "time": "02:16",
+            "available_time": "02:16",
+            "fact": "The runner vaults the green railing and weaves between picnic tables as the masked figure chases among them; audio railing clank."
+          },
+          {
+            "time": "02:20",
+            "available_time": "02:20",
+            "fact": "The runner leaps over a table to break away."
+          }
+        ],
+        "details": {
+          "event": "A cat-and-mouse chase through the picnic tables.",
+          "participants": "The runner and the masked pursuer.",
+          "relations": "Pursuer re-engages in the courtyard; runner uses tables as cover to evade."
+        }
+      },
+      {
+        "window_start": "02:51",
+        "trigger_time": "02:52",
+        "window_end": "02:53",
+        "response": "Past a pavilion and a planted path, the runner drops off a low wall and plunges through a doorway into a dark building.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Footfalls transitioning and a thud on the drop (sound) mark the entry, with the visual showing the runner disappearing indoors.",
+        "evidence": [
+          {
+            "time": "02:28",
+            "available_time": "02:28",
+            "fact": "The runner sprints through a shaded pavilion lined with green benches and a 'With All Thy Might' banner."
+          },
+          {
+            "time": "02:42",
+            "available_time": "02:42",
+            "fact": "They drop off a low brick wall onto asphalt and cross a courtyard with palms."
+          },
+          {
+            "time": "02:50",
+            "available_time": "02:50",
+            "fact": "The runner plunges through an open doorway into a dark building interior; audio thud/footfalls."
+          }
+        ],
+        "details": {
+          "event": "The runner leaves the open grounds and enters a dark building.",
+          "participants": "The runner (pursuer off-screen).",
+          "relations": "Runner seeks enclosed cover to break the chase."
+        }
+      },
+      {
+        "window_start": "03:05",
+        "trigger_time": "03:06",
+        "window_end": "03:07",
+        "response": "Inside a dim restroom the runner slips into a stall and pulls the door shut — the music cuts to a tense, echoing silence.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The abrupt drop of the music to reverberant silence plus a door slam/latch (sound) is the critical cue, matched by the visual of the stall door closing.",
+        "evidence": [
+          {
+            "time": "02:58",
+            "available_time": "02:58",
+            "fact": "Inside a dim restroom the runner slips into an empty stall."
+          },
+          {
+            "time": "03:04",
+            "available_time": "03:04",
+            "fact": "They pull the blue door shut; the pounding music cuts away to a tense echoing silence and hushed breathing."
+          }
+        ],
+        "details": {
+          "event": "The runner hides in a restroom stall as the chase audio goes quiet.",
+          "participants": "The runner (hiding).",
+          "relations": "Runner switches from flight to concealment; pursuer not yet in the room."
+        }
+      },
+      {
+        "window_start": "03:13",
+        "trigger_time": "03:14",
+        "window_end": "03:17",
+        "response": "The runner climbs up to hide above the stall as slow echoing footsteps show the pursuer entering and searching stall by stall.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Slow, deliberate echoing footsteps (sound) are the decisive cue that the pursuer has entered and is searching, with the visual confirming the climb to hide.",
+        "evidence": [
+          {
+            "time": "03:08",
+            "available_time": "03:08",
+            "fact": "The runner climbs up onto the toilet/ledge to hide above the stall."
+          },
+          {
+            "time": "03:13",
+            "available_time": "03:13",
+            "fact": "Slow echoing footsteps signal the pursuer entering the restroom and checking stalls."
+          }
+        ],
+        "details": {
+          "event": "The pursuer enters the restroom and searches while the runner hides above a stall.",
+          "participants": "The runner (hidden above) and the masked pursuer (searching).",
+          "relations": "Tense hide-and-seek; pursuer closing in on the hiding spot."
+        }
+      },
+      {
+        "window_start": "03:21",
+        "trigger_time": "03:21",
+        "window_end": "03:22",
+        "response": "The pursuer stops right at the runner's stall, and a sharp sting snaps the screen to black as they're found.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "An abrupt audio sting (sound) coincides with the visual cut to black, marking the climax of the search at the runner's stall.",
+        "evidence": [
+          {
+            "time": "03:18",
+            "available_time": "03:18",
+            "fact": "The masked silhouette with blade stops right at the runner's stall while they crouch hidden above."
+          },
+          {
+            "time": "03:21",
+            "available_time": "03:21",
+            "fact": "A sharp audio sting and the screen snapping to black mark the pursuer finding them."
+          }
+        ],
+        "details": {
+          "event": "The search ends at the runner's stall and the screen cuts to black.",
+          "participants": "The runner (hidden) and the masked pursuer.",
+          "relations": "The pursuer locates the hiding runner; the chase culminates."
+        }
+      }
+    ],
+    "ability": "event_understanding",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "event_understanding_rtd",
+    "video": "video_149.mp4",
+    "generation_context": {
+      "duration_seconds": 212.068,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_149"
+  },
+  {
+    "status": "ok",
+    "question": "Track the chase for me: let me know whenever the sprinting footfalls and driving music cut out and are replaced by a shut door and quiet, held breathing.",
+    "question_time": "02:20",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "03:01",
+        "trigger_time": "03:02",
+        "window_end": "03:11",
+        "response": "The runner has slipped into a stall and shut the door — the sprinting and chase music have dropped away to quiet, held breathing.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The criterion is carried by the audio (beat and footfalls stopping, door slam, hushed breathing), while the frames confirm the blue stall door closing behind the runner.",
+        "evidence": [
+          {
+            "time": "02:50",
+            "available_time": "02:55",
+            "fact": "The driving chase beat fades out as the runner moves into the dim restroom corridor, leaving reverberant ambience."
+          },
+          {
+            "time": "02:58",
+            "available_time": "03:01",
+            "fact": "A door slams and latches shut; sprinting footfalls give way to hushed breathing, and the closed blue stall door is visible."
+          }
+        ],
+        "details": {
+          "event": "The runner ends the sprint by ducking into a restroom stall, pulling the door shut and going quiet as the chase audio drops out.",
+          "participants": "The first-person runner; the masked pursuer remains off-screen at this moment.",
+          "relations": "The runner is evading the pursuer, breaking the audible trail of footfalls and music to conceal themselves."
+        },
+        "trigger": {
+          "kind": "condition",
+          "satisfied": true,
+          "episode_id": "stall-hide-01",
+          "confirmed_time": "03:01",
+          "definition": "Sprinting footfalls and the driving chase music give way to a shut door and quiet, held breathing.",
+          "conditions": [
+            {
+              "condition": "Chase music and sprinting footfalls have stopped",
+              "satisfied": true,
+              "time": "02:55",
+              "evidence": "Beat fades out in the restroom corridor, leaving reverberant ambience."
+            },
+            {
+              "condition": "A door shuts and hushed breathing replaces the running",
+              "satisfied": true,
+              "time": "03:01",
+              "evidence": "Door slam and latch with quiet breathing; blue stall door seen closed."
+            }
+          ]
+        }
+      }
+    ],
+    "ability": "event_understanding",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "event_understanding_pr",
+    "video": "video_149.mp4",
+    "generation_context": {
+      "duration_seconds": 212.068,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_149"
+  },
+  {
+    "status": "ok",
+    "question": "If the runner throws something at the masked pursuer, explain how that changes the chase and save a short note for me.",
+    "question_time": "01:05",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "work_type": "tools_and_reasoning",
+    "required_tools": [
+      "note_write"
+    ],
+    "responses": [
+      {
+        "trigger_time": "01:18",
+        "source_trigger_time": "01:18",
+        "window_start": "01:17",
+        "window_end": "01:22",
+        "response": "Runner threw a bin at the pursuer; I'll note the chase escalation.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The loud crash audibly confirms an object impact, while the visual sequence shows the runner throwing the bin at the pursuer.",
+        "evidence": [
+          {
+            "time": "01:10",
+            "available_time": "01:14",
+            "fact": "The masked pursuer emerges behind the runner in the garage, continuing the chase."
+          },
+          {
+            "time": "01:15",
+            "available_time": "01:15",
+            "fact": "The runner grabs a black wheeled rubbish bin near the ramp."
+          },
+          {
+            "time": "01:16",
+            "available_time": "01:17",
+            "fact": "The runner hurls the bin toward the pursuer and a loud crash is heard."
+          }
+        ],
+        "details": {
+          "event": "On the garage ramp, the first-person runner grabs a black wheeled rubbish bin and throws it at the Ghostface-masked pursuer, producing a loud crash and briefly disrupting the chase.",
+          "participants": "The runner, seen through first-person hands and shadow, and the masked pursuer in a black hooded robe carrying a blade.",
+          "relations": "The pursuer is actively chasing the runner; the runner uses an improvised object defensively to try to create distance."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "bin-throw-01",
+          "confirmed_time": "01:17",
+          "definition": "The runner throws an object at the masked pursuer during the chase."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Using only audiovisual evidence available by 01:18, explain how the runner's throw of a wheeled bin changes the chase dynamic between the runner and the masked pursuer, then create a short note for the viewer.\",\"observed_context\":\"00:01 a Ghostface-masked figure begins chasing the first-person runner; 01:10 the pursuer emerges behind the runner in the garage; 01:15 the runner grabs a black wheeled rubbish bin; 01:16-01:17 the runner hurls the bin at the pursuer and a loud crash is heard.\",\"user_goal\":\"The viewer wants an explanation of the chase progression and a saved note about this escalation.\",\"constraints_and_authorization\":\"The viewer authorized creating a personal note. Use only evidence available at the trigger; do not infer later outcomes or share the note externally.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A concise explanation of the event and a saved note artifact, with action evidence for note_write.\",\"extracted_parameters\":[{\"name\":\"trigger_event\",\"value\":\"runner throws a wheeled rubbish bin at the masked pursuer\",\"evidence_time\":\"01:17\",\"evidence\":\"At 01:15 the runner grabs a black wheeled bin; at 01:16-01:17 it is hurled toward the pursuer and a loud crash is heard.\"},{\"name\":\"note_title\",\"value\":\"Chase escalation: bin throw\",\"evidence_time\":\"01:17\",\"evidence\":\"The throw marks a shift from fleeing to using an object against the pursuer.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "02:42",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Explained the bin throw as a defensive escalation and saved a short note.\",\"observed_facts\":[\"At 00:01 a Ghostface-masked figure begins chasing the first-person runner.\",\"At 01:10 the pursuer emerges behind the runner in the garage.\",\"At 01:15 the runner grabs a black wheeled rubbish bin.\",\"At 01:16-01:17 the runner hurls the bin at the pursuer and a loud crash is heard.\"],\"tool_information\":[\"note_write created a user-authorized note.\"],\"reasoning\":[\"The runner had mainly been fleeing, so throwing an improvised object indicates active resistance and an attempt to create distance from the pursuer.\"],\"uncertainties\":[\"The exact effect on the pursuer after the impact is not confirmed by evidence available at the trigger.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create_note\",\"status\":\"completed\",\"evidence\":\"Note record returned with title and content.\",\"arguments\":{\"title\":\"Chase escalation: bin throw\",\"content\":\"At 01:17 the runner threw a wheeled bin at the masked pursuer, shifting the chase from fleeing to using the environment to create distance.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Chase escalation: bin throw\",\"content\":\"At 01:17 the runner threw a wheeled bin at the masked pursuer, shifting the chase from fleeing to using the environment to create distance.\"}]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "02:42",
+        "response": "The runner hurled a bin at the masked pursuer, shifting the chase from running to using the environment. I saved a short note titled 'Chase escalation: bin throw'.",
+        "role": "assistant",
+        "outcome": "success"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "event_understanding",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "event_understanding_agent",
+    "video": "video_149.mp4",
+    "generation_context": {
+      "duration_seconds": 212.068,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": 84,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_149"
+  },
+  {
+    "status": "ok",
+    "question": "Now that the chase is quiet, whenever the runner is hidden and the pursuer is searching nearby, explain the standoff and save a short note in my notes.",
+    "question_time": "03:05",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "work_type": "tools_and_reasoning",
+    "required_tools": [
+      "note_write"
+    ],
+    "responses": [
+      {
+        "window_start": "03:05",
+        "trigger_time": "03:05",
+        "window_end": "03:05",
+        "response": "I don't have the ability to save that standoff explanation to your notes.",
+        "refusal_reason": "The request explicitly asks for the explanation to be saved as a user note. That requires note_write, which is not available in the frontend tool set; report_create or meeting_draft would not satisfy a note-saving request.",
+        "missing_tools": [
+          "note_write"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "window_start": "03:13",
+        "trigger_time": "03:15",
+        "window_end": "03:19",
+        "response": "The runner is hidden above a restroom stall while the pursuer searches the stalls nearby.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "Quiet room tone and echoing footsteps establish the audio condition; the concealed runner and searching pursuer are confirmed visually.",
+        "evidence": [
+          {
+            "time": "02:58",
+            "available_time": "03:01",
+            "fact": "The runner slips into a restroom stall and pulls the blue door shut."
+          },
+          {
+            "time": "03:01",
+            "available_time": "03:04",
+            "fact": "The chase music drops out, leaving echoing room tone and hushed breathing."
+          },
+          {
+            "time": "03:08",
+            "available_time": "03:11",
+            "fact": "The runner climbs up to hide above the stall."
+          },
+          {
+            "time": "03:12",
+            "available_time": "03:13",
+            "fact": "Slow echoing footsteps enter the restroom and move from stall to stall."
+          }
+        ],
+        "details": {
+          "event": "A quiet restroom standoff: the runner conceals themselves above a stall while the pursuer searches the nearby stalls.",
+          "participants": "The first-person runner and the black-robed, white-masked pursuer.",
+          "relations": "The pursuer is hunting the runner; the runner is evading and hiding from the pursuer."
+        },
+        "trigger": {
+          "kind": "condition",
+          "satisfied": true,
+          "episode_id": "quiet-restroom-search-01",
+          "confirmed_time": "03:13",
+          "definition": "The chase audio is quiet, the runner is hidden in the restroom, and the pursuer is searching nearby.",
+          "conditions": [
+            {
+              "condition": "The chase audio has dropped to quiet room tone with hushed breathing.",
+              "satisfied": true,
+              "time": "03:04",
+              "evidence": "Music is gone by 03:04, leaving echoing restroom ambience and breathing."
+            },
+            {
+              "condition": "The runner is hidden in the restroom stall area.",
+              "satisfied": true,
+              "time": "03:11",
+              "evidence": "By 03:11 the runner has climbed up to hide above the stall."
+            },
+            {
+              "condition": "The pursuer is searching nearby.",
+              "satisfied": true,
+              "time": "03:13",
+              "evidence": "At 03:13 slow echoing footsteps are moving between stalls in the restroom."
+            }
+          ]
+        }
+      }
+    ],
+    "sample_type": "missing_tool",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "event_understanding",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "event_understanding_agent",
+    "video": "video_149.mp4",
+    "generation_context": {
+      "duration_seconds": 212.068,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "missing_tool",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": "note_write"
+    },
+    "video_folder": "video_149"
+  },
+  {
+    "status": "ok",
+    "question": "Track the on-screen text for me as the video plays — read each title or caption exactly as it appears and tell me whenever the visible text changes.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:21",
+        "trigger_time": "00:21",
+        "window_end": "00:22",
+        "response": "The on-screen title now reads 'DUDUK' in thin outlined capitals over the close-up of the instrument.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The change is a rendered text overlay; it can only be confirmed by reading the frame, not by audio.",
+        "evidence": [
+          {
+            "time": "00:21",
+            "available_time": "00:21",
+            "fact": "Outlined capital letters spelling 'DUDUK' become legible in the upper part of the frame above the duduk body."
+          }
+        ],
+        "details": {
+          "text": "DUDUK",
+          "text_source": "screen",
+          "interpretation": "Series title naming the instrument being taught.",
+          "uncertainty": "Text is fully legible despite the warm film-grain overlay."
+        }
+      },
+      {
+        "window_start": "00:23",
+        "trigger_time": "00:23",
+        "window_end": "00:25",
+        "response": "A second line, 'LESSONS FOR BEGINNERS', has faded in directly beneath 'DUDUK'.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "New subtitle text appears on screen; only the visual channel carries this information.",
+        "evidence": [
+          {
+            "time": "00:23",
+            "available_time": "00:23",
+            "fact": "The phrase 'LESSONS FOR BEGINNERS' is now visible below the existing 'DUDUK' title."
+          }
+        ],
+        "details": {
+          "text": "DUDUK / LESSONS FOR BEGINNERS",
+          "text_source": "screen",
+          "interpretation": "Subtitle clarifies the series is aimed at beginners.",
+          "uncertainty": "Both lines are clearly readable."
+        }
+      },
+      {
+        "window_start": "00:26",
+        "trigger_time": "00:26",
+        "window_end": "00:28",
+        "response": "The 'DUDUK' line has dropped away, leaving only 'LESSONS FOR BEGINNERS' on screen.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The change is the removal of one text line, observable only in the frame.",
+        "evidence": [
+          {
+            "time": "00:26",
+            "available_time": "00:26",
+            "fact": "'DUDUK' is no longer present; the single remaining line reads 'LESSONS FOR BEGINNERS'."
+          }
+        ],
+        "details": {
+          "text": "LESSONS FOR BEGINNERS",
+          "text_source": "screen",
+          "interpretation": "Title card simplifies to the beginner-series subtitle before transitioning.",
+          "uncertainty": "Remaining line is fully legible."
+        }
+      },
+      {
+        "window_start": "00:29",
+        "trigger_time": "00:29",
+        "window_end": "00:32",
+        "response": "The screen has gone dark and now shows the centered text 'LESSON 1: THE BODY & REED'.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "A new lesson-title card appears; its content is purely visual text.",
+        "evidence": [
+          {
+            "time": "00:29",
+            "available_time": "00:29",
+            "fact": "On a dark background, outlined capitals read 'LESSON 1: THE BODY & REED'."
+          }
+        ],
+        "details": {
+          "text": "LESSON 1: THE BODY & REED",
+          "text_source": "screen",
+          "interpretation": "Labels the first lesson and names its subject as the instrument's body and reed.",
+          "uncertainty": "Text is clear against the dark card."
+        }
+      },
+      {
+        "window_start": "03:45",
+        "trigger_time": "03:45",
+        "window_end": "03:48",
+        "response": "The closing black card displays the URL 'WWW.DUDUKLESSONS.COM'.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "End-card text appears on a plain background; only vision confirms it.",
+        "evidence": [
+          {
+            "time": "03:45",
+            "available_time": "03:45",
+            "fact": "Centered outlined text on black reads 'WWW.DUDUKLESSONS.COM'."
+          }
+        ],
+        "details": {
+          "text": "WWW.DUDUKLESSONS.COM",
+          "text_source": "screen",
+          "interpretation": "Website address associated with the lesson series, shown as the outro card.",
+          "uncertainty": "URL is fully legible on the plain black screen."
+        }
+      }
+    ],
+    "ability": "text_rich_understanding",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "text_rich_understanding_rtd",
+    "video": "video_101.mp4",
+    "generation_context": {
+      "duration_seconds": 233.484,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_101"
+  },
+  {
+    "status": "ok",
+    "question": "Notify me whenever a lesson title card or end card appears as text on a plain dark background.",
+    "question_time": "00:15",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:30",
+        "trigger_time": "00:30",
+        "window_end": "00:33",
+        "response": "A title card reading 'LESSON 1: THE BODY & REED' is now displayed on a dark background.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is the appearance of legible text on a plain dark screen, which is purely a visual event.",
+        "evidence": [
+          {
+            "time": "00:29",
+            "available_time": "00:30",
+            "fact": "White outlined text 'LESSON 1: THE BODY & REED' is centered on a dark/black background with film-grain texture, clearly a standalone title card rather than an overlay on footage."
+          }
+        ],
+        "details": {
+          "text": "LESSON 1: THE BODY & REED",
+          "text_source": "screen",
+          "interpretation": "This is the title card introducing the first lesson, indicating the topic will be the duduk's body and reed components.",
+          "uncertainty": "None; the text is fully legible and centered on a plain dark background."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "title_card_lesson1",
+          "confirmed_time": "00:30",
+          "definition": "A lesson title card or end card appears as centered text on a plain dark/black background."
+        }
+      },
+      {
+        "window_start": "03:45",
+        "trigger_time": "03:45",
+        "window_end": "03:50",
+        "response": "The end card shows 'WWW.DUDUKLESSONS.COM' on a black screen.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is the appearance of a website URL as text on a solid black background, a purely visual event.",
+        "evidence": [
+          {
+            "time": "03:45",
+            "available_time": "03:45",
+            "fact": "White outlined text 'WWW.DUDUKLESSONS.COM' is centered on a solid black background, serving as the video's end card."
+          }
+        ],
+        "details": {
+          "text": "WWW.DUDUKLESSONS.COM",
+          "text_source": "screen",
+          "interpretation": "This is the closing end card directing viewers to the lesson series website.",
+          "uncertainty": "None; the URL is clearly legible on a solid black background."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "end_card_url",
+          "confirmed_time": "03:45",
+          "definition": "A lesson title card or end card appears as centered text on a plain dark/black background."
+        }
+      }
+    ],
+    "ability": "text_rich_understanding",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "text_rich_understanding_pr",
+    "video": "video_101.mp4",
+    "generation_context": {
+      "duration_seconds": 233.484,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_101"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever a lesson title card appears, tell me what it says and save the lesson title in my study notes.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "work_type": "tools",
+    "required_tools": [
+      "note_write"
+    ],
+    "responses": [
+      {
+        "trigger_time": "00:29",
+        "source_trigger_time": "00:29",
+        "window_start": "00:29",
+        "window_end": "00:32",
+        "response": "Lesson title card appears; I’ll save “LESSON 1: THE BODY & REED” to your notes.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is the legible lesson title text on the card; audio is not needed to confirm it.",
+        "evidence": [
+          {
+            "time": "00:29",
+            "available_time": "00:29",
+            "fact": "A dark title card displays the text LESSON 1: THE BODY & REED."
+          }
+        ],
+        "details": {
+          "text": "LESSON 1: THE BODY & REED",
+          "text_source": "screen",
+          "interpretation": "This card announces the first numbered lesson and its topic, the body and reed.",
+          "uncertainty": "None material; the text is legible on the card."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "lesson-title-card-001",
+          "confirmed_time": "00:29",
+          "definition": "An on-screen card states a lesson number and topic."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Create a study note containing the observed lesson title.\",\"observed_context\":\"At 00:29, a lesson title card displays LESSON 1: THE BODY & REED.\",\"user_goal\":\"Save the lesson title from the title card in the user's study notes.\",\"constraints_and_authorization\":\"The user authorized saving lesson title cards to notes. Use only the text visible by 00:29; do not add later video facts.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with an artifact containing the lesson title and content.\",\"extracted_parameters\":[{\"name\":\"title\",\"value\":\"LESSON 1: THE BODY & REED\",\"evidence_time\":\"00:29\",\"evidence\":\"The title card text reads LESSON 1: THE BODY & REED.\"},{\"name\":\"content\",\"value\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\",\"evidence_time\":\"00:29\",\"evidence\":\"The title card text reads LESSON 1: THE BODY & REED.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "01:17",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Created a study note for the observed lesson title.\",\"observed_facts\":[\"At 00:29 the lesson title card displays LESSON 1: THE BODY & REED.\"],\"tool_information\":[\"note_write created a user note.\"],\"reasoning\":[\"The user asked to save lesson title cards; the observed card is a lesson title, so note_write was used.\"],\"uncertainties\":[\"The note identifier is simulated and not shown in the video.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create note\",\"status\":\"completed\",\"evidence\":\"Note record exists with the requested title and content.\",\"arguments\":{\"title\":\"LESSON 1: THE BODY & REED\",\"content\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"LESSON 1: THE BODY & REED\",\"content\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\"}]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "01:17",
+        "response": "Success: saved “LESSON 1: THE BODY & REED” to your study notes as the observed lesson title.",
+        "role": "assistant",
+        "outcome": "success"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "text_rich_understanding",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "text_rich_understanding_agent",
+    "video": "video_101.mp4",
+    "generation_context": {
+      "duration_seconds": 233.484,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": 48,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_101"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever the wording of an on-screen title or web address changes, put the new exact wording into a report for me.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "work_type": "tools",
+    "required_tools": [
+      "report_create"
+    ],
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:00",
+        "window_end": "00:00",
+        "response": "I don't have the ability to create a report from on-screen wording changes.",
+        "refusal_reason": "The requested follow-up requires creating a report artifact with report_create, which is not available in the frontend tool context.",
+        "missing_tools": [
+          "report_create"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "window_start": "00:21",
+        "trigger_time": "00:21",
+        "window_end": "00:22",
+        "response": "On-screen title wording changes to 'DUDUK'.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is a visible change in on-screen text; audio is not needed.",
+        "evidence": [
+          {
+            "time": "00:21",
+            "available_time": "00:21",
+            "fact": "White outlined text 'DUDUK' is visible over the duduk close-up."
+          }
+        ],
+        "details": {
+          "text": "DUDUK",
+          "text_source": "screen",
+          "interpretation": "The series title word appears as the first visible text state.",
+          "uncertainty": "The exact fade-in occurs between 00:20 and 00:21; the sampled frame at 00:21 confirms the wording."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "text_change_00_21",
+          "confirmed_time": "00:21",
+          "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+        }
+      },
+      {
+        "window_start": "00:23",
+        "trigger_time": "00:23",
+        "window_end": "00:25",
+        "response": "On-screen title wording changes to 'DUDUK' above 'LESSONS FOR BEGINNERS'.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is a visible change in on-screen text; audio is not needed.",
+        "evidence": [
+          {
+            "time": "00:23",
+            "available_time": "00:23",
+            "fact": "Two lines of white outlined text are visible: 'DUDUK' and 'LESSONS FOR BEGINNERS'."
+          }
+        ],
+        "details": {
+          "text": "DUDUK\nLESSONS FOR BEGINNERS",
+          "text_source": "screen",
+          "interpretation": "The full series title is displayed.",
+          "uncertainty": "The added subtitle becomes visible between 00:22 and 00:23; the sampled frame at 00:23 confirms the full wording."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "text_change_00_23",
+          "confirmed_time": "00:23",
+          "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+        }
+      },
+      {
+        "window_start": "00:26",
+        "trigger_time": "00:26",
+        "window_end": "00:28",
+        "response": "On-screen title wording changes to 'LESSONS FOR BEGINNERS'.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is a visible change in on-screen text; audio is not needed.",
+        "evidence": [
+          {
+            "time": "00:26",
+            "available_time": "00:26",
+            "fact": "Only the line 'LESSONS FOR BEGINNERS' remains visible after 'DUDUK' fades."
+          }
+        ],
+        "details": {
+          "text": "LESSONS FOR BEGINNERS",
+          "text_source": "screen",
+          "interpretation": "The series subtitle remains as the visible wording after the main title disappears.",
+          "uncertainty": "The fade of 'DUDUK' occurs between 00:25 and 00:26; the sampled frame at 00:26 confirms the new wording."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "text_change_00_26",
+          "confirmed_time": "00:26",
+          "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+        }
+      },
+      {
+        "window_start": "00:29",
+        "trigger_time": "00:29",
+        "window_end": "00:32",
+        "response": "Lesson title card reads 'LESSON 1: THE BODY & REED'.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is a visible change to a new on-screen title card; audio is not needed.",
+        "evidence": [
+          {
+            "time": "00:29",
+            "available_time": "00:29",
+            "fact": "Centered white outlined text on a dark background reads 'LESSON 1: THE BODY & REED'."
+          }
+        ],
+        "details": {
+          "text": "LESSON 1: THE BODY & REED",
+          "text_source": "screen",
+          "interpretation": "This is the title card for the first lesson.",
+          "uncertainty": "The card is gone by the sampled frame at 00:33; its exact fade-out is between 00:32 and 00:33."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "text_change_00_29",
+          "confirmed_time": "00:29",
+          "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+        }
+      },
+      {
+        "window_start": "03:45",
+        "trigger_time": "03:45",
+        "window_end": "03:48",
+        "response": "Website address card reads 'WWW.DUDUKLESSONS.COM'.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is a visible on-screen web address; audio is not needed.",
+        "evidence": [
+          {
+            "time": "03:45",
+            "available_time": "03:45",
+            "fact": "Centered white outlined text on a black background reads 'WWW.DUDUKLESSONS.COM'."
+          }
+        ],
+        "details": {
+          "text": "WWW.DUDUKLESSONS.COM",
+          "text_source": "screen",
+          "interpretation": "This is the closing website address card.",
+          "uncertainty": "The text is no longer visible in the sampled frame at 03:49; its exact fade-out is between 03:48 and 03:49."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "text_change_03_45",
+          "confirmed_time": "03:45",
+          "definition": "The visible wording of an on-screen title or web address changes to a new exact text state."
+        }
+      }
+    ],
+    "sample_type": "no_context",
+    "available_tools": [],
+    "frontend_context": {
+      "system_prompt": "You are an audiovisual assistant. State capability limitations honestly.",
+      "tools": []
+    },
+    "ability": "text_rich_understanding",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "text_rich_understanding_agent",
+    "video": "video_101.mp4",
+    "generation_context": {
+      "duration_seconds": 233.484,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "no_context",
+      "available_tools": [],
+      "required_missing_tool": "report_create"
+    },
+    "video_folder": "video_101"
+  }
+]

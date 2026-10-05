@@ -1,0 +1,19 @@
+{
+  "index": 0,
+  "seed": "9874773893275550200184535785515670309886645098213414180369070167578055309794",
+  "candidate": 3,
+  "context_index": 0,
+  "correction": 0,
+  "context": {
+    "duration_seconds": 213.787,
+    "preferred_modality": "vision",
+    "question_position": "non_start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "no_context",
+    "available_tools": [],
+    "required_missing_tool": "shopping_list_query"
+  },
+  "status": "ok",
+  "elapsed_seconds": 241.95136308670044
+}

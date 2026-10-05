@@ -1,0 +1,5 @@
+{
+  "index": 1,
+  "status": "interrupted",
+  "error": "Interrupted during prior foreground request; any response and usage retained."
+}

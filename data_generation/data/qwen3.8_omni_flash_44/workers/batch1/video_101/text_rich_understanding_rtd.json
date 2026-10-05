@@ -1,0 +1,129 @@
+{
+  "status": "ok",
+  "question": "Track the on-screen text for me as the video plays — read each title or caption exactly as it appears and tell me whenever the visible text changes.",
+  "question_time": "00:00",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "window_start": "00:21",
+      "trigger_time": "00:21",
+      "window_end": "00:22",
+      "response": "The on-screen title now reads 'DUDUK' in thin outlined capitals over the close-up of the instrument.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The change is a rendered text overlay; it can only be confirmed by reading the frame, not by audio.",
+      "evidence": [
+        {
+          "time": "00:21",
+          "available_time": "00:21",
+          "fact": "Outlined capital letters spelling 'DUDUK' become legible in the upper part of the frame above the duduk body."
+        }
+      ],
+      "details": {
+        "text": "DUDUK",
+        "text_source": "screen",
+        "interpretation": "Series title naming the instrument being taught.",
+        "uncertainty": "Text is fully legible despite the warm film-grain overlay."
+      }
+    },
+    {
+      "window_start": "00:23",
+      "trigger_time": "00:23",
+      "window_end": "00:25",
+      "response": "A second line, 'LESSONS FOR BEGINNERS', has faded in directly beneath 'DUDUK'.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "New subtitle text appears on screen; only the visual channel carries this information.",
+      "evidence": [
+        {
+          "time": "00:23",
+          "available_time": "00:23",
+          "fact": "The phrase 'LESSONS FOR BEGINNERS' is now visible below the existing 'DUDUK' title."
+        }
+      ],
+      "details": {
+        "text": "DUDUK / LESSONS FOR BEGINNERS",
+        "text_source": "screen",
+        "interpretation": "Subtitle clarifies the series is aimed at beginners.",
+        "uncertainty": "Both lines are clearly readable."
+      }
+    },
+    {
+      "window_start": "00:26",
+      "trigger_time": "00:26",
+      "window_end": "00:28",
+      "response": "The 'DUDUK' line has dropped away, leaving only 'LESSONS FOR BEGINNERS' on screen.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The change is the removal of one text line, observable only in the frame.",
+      "evidence": [
+        {
+          "time": "00:26",
+          "available_time": "00:26",
+          "fact": "'DUDUK' is no longer present; the single remaining line reads 'LESSONS FOR BEGINNERS'."
+        }
+      ],
+      "details": {
+        "text": "LESSONS FOR BEGINNERS",
+        "text_source": "screen",
+        "interpretation": "Title card simplifies to the beginner-series subtitle before transitioning.",
+        "uncertainty": "Remaining line is fully legible."
+      }
+    },
+    {
+      "window_start": "00:29",
+      "trigger_time": "00:29",
+      "window_end": "00:32",
+      "response": "The screen has gone dark and now shows the centered text 'LESSON 1: THE BODY & REED'.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "A new lesson-title card appears; its content is purely visual text.",
+      "evidence": [
+        {
+          "time": "00:29",
+          "available_time": "00:29",
+          "fact": "On a dark background, outlined capitals read 'LESSON 1: THE BODY & REED'."
+        }
+      ],
+      "details": {
+        "text": "LESSON 1: THE BODY & REED",
+        "text_source": "screen",
+        "interpretation": "Labels the first lesson and names its subject as the instrument's body and reed.",
+        "uncertainty": "Text is clear against the dark card."
+      }
+    },
+    {
+      "window_start": "03:45",
+      "trigger_time": "03:45",
+      "window_end": "03:48",
+      "response": "The closing black card displays the URL 'WWW.DUDUKLESSONS.COM'.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "End-card text appears on a plain background; only vision confirms it.",
+      "evidence": [
+        {
+          "time": "03:45",
+          "available_time": "03:45",
+          "fact": "Centered outlined text on black reads 'WWW.DUDUKLESSONS.COM'."
+        }
+      ],
+      "details": {
+        "text": "WWW.DUDUKLESSONS.COM",
+        "text_source": "screen",
+        "interpretation": "Website address associated with the lesson series, shown as the outro card.",
+        "uncertainty": "URL is fully legible on the plain black screen."
+      }
+    }
+  ],
+  "ability": "text_rich_understanding",
+  "mode": "rtd",
+  "schema": "omni-interaction-v2",
+  "task": "text_rich_understanding_rtd",
+  "video": "video_101.mp4",
+  "generation_context": {
+    "duration_seconds": 233.484,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "positive",
+    "available_tools": [],
+    "required_missing_tool": null
+  }
+}

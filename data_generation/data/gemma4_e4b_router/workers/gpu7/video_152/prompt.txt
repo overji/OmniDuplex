@@ -1,0 +1,230 @@
+<bos><|turn>system
+You route one video to the most suitable ability categories for realtime interaction task generation.
+
+The original video is the only final evidence. The supplied dense captions
+are fallible navigation references: use them to locate candidates, then verify
+relevance, clarity, timing, and completeness in the video. You may reject,
+correct, or ignore any metadata claim. Do not treat metadata presence as proof.
+
+## Candidate ability catalog
+
+Evaluate every one of the 12 ability categories in this catalog exactly once:
+
+- attribute_perception: Track target attributes (color, material, category, state) and their changes. Distinguish similar attributes and uncertain identities.
+- grounding: Locate an event in time. Distinguish onset, ongoing activity and confirmed completion. Never infer an end from future frames.
+- action_perception: Recognize actions and their onset, continuation or end; distinguish similar motions and occlusion.
+- object_perception: Identify newly appearing people or objects, category, distinguishing specifications and position. Do not invent related but absent objects.
+- emotion_recognition: Infer a specified person's emotion from voice prosody, expression and context, not merely emotional words. All emotions are eligible, not only negative ones.
+- event_understanding: Explain ongoing events, participants, progression and relations. Distinguish this semantic understanding from naming an isolated movement.
+- text_rich_understanding: Read and interpret visible text, subtitles or signs in context. Audio can help but cannot replace actually visible text. Distinguish current information from announcements of future events.
+- object_counting: Count objects currently present, not cumulative appearances. Track identities through occlusion and reappearance without double counting; explain ambiguous visibility.
+- action_counting: Accumulate distinct completed action or speech/sound occurrences. Define separable event boundaries and a counting origin; do not count frames of one sustained action repeatedly.
+- spatial_understanding: Track relative positions, directions and spatial relations. Do not invent metric distances without scale; distinguish screen coordinates from world positions.
+- prospective_reasoning: Predict possible next developments from current evidence, including opportunities and ordinary outcomes, not only risks. Mark predictions as uncertain; never use the actual future as an observed fact.
+- causal_reasoning: Explain why an observed event occurred. Separate observed facts from candidate causes, rank alternatives and state uncertainty instead of equating correlation with causation.
+
+The trigger described by a task request may be deliberately proposed by the
+user; it does not need to be a spontaneous or conversationally natural request.
+Treat a task as trigger-supported whenever the original video contains a real,
+directly verifiable event, object, state change, utterance, or other signal that
+could naturally serve as that trigger and is relevant to the task. Do not reject
+it merely because the trigger wording is hypothetical, forceful, or externally
+specified. Reject it when the corresponding event is absent, only guessed from
+metadata, too ambiguous to verify, or unrelated to the task.
+
+Judge the task as a combination of a possible viewer question and the video,
+not from the video in isolation. A viewer question may introduce the need for a
+lookup, comparison, recording, message, or other Agent work after a trigger;
+the video does not need to contain an explicit request for that work or already
+show an external system. For Agent tasks, it is sufficient that the video offers
+a relevant trigger and at least one concrete parameter that could be extracted
+when the viewer's question supplies the goal, destination, recipient, or other
+preference. Do not mark an Agent task unsuitable solely because no external
+action is currently requested in the footage.
+
+In every mode, the possible question must come from an outside viewer watching
+the video, not from a participant in it. Describe on-screen people in the third
+person; do not assign their actions, experiences, possessions, relationships, or
+location to the viewer, even for first-person camera footage. First-person wording
+may express the viewer's own needs and preferences. Agent follow-up work must
+serve that viewer's goal without assuming access to a participant's accounts or
+authority to act on their behalf. Do not justify suitability with a question that
+requires impersonating a person in the footage.
+
+For Agent feasibility, the possible viewer question must express a natural desired
+outcome whose fulfillment inherently needs backend capabilities. It must not name
+tools, APIs, or functions, ask to use an Agent or backend, or prescribe a tool-use
+sequence. Delegation and tool selection must be inferred from the user's intent.
+Keep the goal and any authorization for external operations clear; implicit
+delegation does not authorize unrequested actions. A request to call a tool or
+Agent is not itself evidence that necessary delegated work exists.
+
+Mark an ability category suitable if the video supports at least one valid task
+in that category in any of RTD, PR, or Agent mode. It need not support all three
+modes. Mark it unsuitable only when no mode can produce a valid task, for example
+because reliable evidence is absent, targets cannot be distinguished, or the
+ability does not fit the observed content. Rank suitable categories by interactive
+value and explain the supporting video evidence. Do not separately select or rank
+mode-specific tasks; downstream generators decide whether each mode can complete
+a valid sample and may skip unsupported modes.
+
+Return exactly one JSON object. Use only the catalog ability IDs as task values, without _rtd, _pr, or _agent suffixes;
+do not copy a task name into a reason or rationale unless needed to identify the
+evidence. Do not add question_time, response timelines, tool calls, or external
+actions. All prose must be concise English.
+
+{
+  "status": "ok",
+  "unsuitable_tasks": [{"task": "<ability_id>", "reason": "<specific reason>"}],
+  "ranked_tasks": [{"task": "<ability_id>", "rank": 1, "rationale": "<specific rationale>"}]
+}
+
+Every catalog ability category must appear exactly once across the two arrays. Ranks must be
+consecutive starting at 1. If no ability category is suitable, return {"status":"skip", "reason":"<reason>"}.
+
+This catalog contains 12 ability categories, not 36 mode-specific tasks.
+The following mode requirements only help determine whether at least one mode is
+feasible for a category; failure of one mode does not exclude the category. RTD requires at least two meaningful time-aligned updates; PR requires
+at least one real future trigger relative to a feasible instruction time. RTD
+tracks meaningful evolution within a descriptive focus. PR requires a selective
+criterion stated in the viewer's question and silence for nonmatching observations;
+generic tracking of every change does not establish PR feasibility. Agent
+requires a real trigger and a video-derived parameter but follow-up work is NOT
+restricted by ability-specific examples. Text-rich understanding requires visible
+text. Object counting concerns current objects; action counting concerns cumulative
+independent occurrences. Prediction and causal explanation require supporting cues,
+not omniscient hindsight. All-video absent-trigger samples are unsuitable.<turn|>
+<|turn>user
+<|video|>Original video audio from 0.00 to 30.00 seconds:<|audio|>Original video audio from 30.00 to 60.00 seconds:<|audio|>Original video audio from 60.00 to 90.00 seconds:<|audio|>Original video audio from 90.00 to 120.00 seconds:<|audio|>Original video audio from 120.00 to 150.00 seconds:<|audio|>Original video audio from 150.00 to 180.00 seconds:<|audio|>Original video audio from 180.00 to 210.00 seconds:<|audio|>Original video audio from 210.00 to 213.79 seconds:<|audio|>{
+  "caption": [
+    {
+      "start": "00:00",
+      "end": "00:08",
+      "caption": "The video opens on a black screen displaying a red-and-white safety warning about parkour and Team STORROR, then cuts to a fisheye-lens view through a grimy window overlooking a coastal prison complex under an overcast sky. A white italic 'STORROR' logo animates over the footage before a hand in a grey sleeve grips the window frame and the camera turns inward. Audio is sparse: low wind rumble, a sharp two-tone whistle around 00:04, and a metallic clank.",
+      "visual": "Verbatim on-screen text on black: 'WARNING / PARKOUR AND ASSOCIATED ACTIVITIES ARE INHERENTLY DANGEROUS AND CAN CAUSE SERIOUS INJURY AND / OR DEATH. / ALL MEMBERS OF TEAM STORROR HAVE BEEN TRAINING FOR OVER 15 YEARS. / THE STUNTS IN THESE VIDEOS ARE PERFORMED BY PROFESSIONALS OR UNDER THE SUPERVISION OF PROFESSIONALS. / DO NOT COPY.' Then: dark window frame edges, beige brick institutional buildings with arched windows and green doors, a paved road, patchy grass, distant green hills and grey sea; heavy fisheye barrel distortion; centered white stylized 'STORROR' wordmark that fades.",
+      "audio": "Near-silence with low ambient wind rumble at the warning card; a piercing two-tone whistle (guard-style) sounds ~00:04-00:06; a dull metallic clank follows as the camera moves; no music.",
+      "speech": "None."
+    },
+    {
+      "start": "00:08",
+      "end": "00:14",
+      "caption": "Inside a dilapidated prison cell, a young man with short blond hair in a light-grey tracksuit and grey sneakers sits hunched on the edge of a bed covered with a black tarp; the POV camera-wearer's grey-sleeved arm enters frame. The man rises, walks to the red door at the back, and pushes it open onto a brightly lit corridor, initiating the escape.",
+      "visual": "Cell interior: peeling cream/yellow walls with stains, brown floor, white wall-mounted sink on left, red wooden door with small window at rear, black sheet/tarp over bedding on right, white electrical box on wall. The seated prisoner stands, crosses the room, and opens the red door revealing a pale green/white hallway beyond.",
+      "audio": "Soft shuffling footsteps on the hard floor, fabric rustle, then the creak/clack of the door latch and door swinging open; ambient room tone; no music.",
+      "speech": "None."
+    },
+    {
+      "start": "00:14",
+      "end": "00:26",
+      "caption": "The chase begins: two runners in matching light-grey tracksuits sprint along an upper-level walkway of a multi-storey prison atrium with teal-green railings and white mesh cages. A guard in a white short-sleeved shirt, black tie and black trousers pursues from behind, shouting. The runners vault the railing, scramble over a curved wire-mesh cage, and drop into a stairwell as the guard follows.",
+      "visual": "Bright institutional atrium: white walls, pale green doors, green-painted railings, wire-mesh enclosures, multiple levels visible with skylights above. Runners leap the railing, hang and climb the mesh, then descend metal-grate stairs; the guard appears mid-corridor running toward camera.",
+      "audio": "Loud pounding footsteps, heavy breathing, metallic rattling of railings and mesh, and the guard's shouted commands ('Stop!' / 'Get back here!') echoing in the atrium; no music.",
+      "speech": "Guard shouts pursuit commands such as 'Stop!' and 'Get back here!'; runners vocalize exertion grunts."
+    },
+    {
+      "start": "00:26",
+      "end": "00:40",
+      "caption": "On the stairwell the guard lunges and grapples with a runner but ends up tumbling to the ground; the runners scramble up another mesh fence and launch across the atrium void, catching the opposite railing and swinging themselves over while the guard rises and resumes the chase below.",
+      "visual": "Close-quarters scuffle on green-floored stairs; guard in white shirt/black trousers sprawled on the floor; POV hands grip white mesh and green top rail; a wide leap across the open atrium with the multi-level cell blocks and skylit roof visible; swinging body-carry over the railing.",
+      "audio": "Scuffling, a heavy thud as the guard falls, clangs of metal railing, whoosh of the jump, continued shouting from the guard and breathless exertion sounds; no music.",
+      "speech": "Guard continues shouting after the runners; indistinct pursuit yells."
+    },
+    {
+      "start": "00:40",
+      "end": "00:55",
+      "caption": "The POV runner balances on a railing high above the atrium floor where the guard reaches up, then drops down to a lower walkway, lands, and sprints on; the group bounds up another flight of metal stairs, putting vertical distance between themselves and the pursuing guard.",
+      "visual": "Downward view of grey sneaker on green railing, guard below with arms raised; landing on a teal-floored walkway; rapid ascent of dark metal-grate stairs with green handrails; other grey-clad runners ahead.",
+      "audio": "Footstep impacts on metal grating, railing clangs, heavy breathing, distant echoing shouts; no music.",
+      "speech": "Faint shouted exchanges between guard and runners; no clear dialogue."
+    },
+    {
+      "start": "00:55",
+      "end": "01:12",
+      "caption": "The runners charge down a corridor lined with pale-green doors, burst through a doorway into a dim shaft, and climb a red metal ladder up through a square hatch onto the sunlit roof. Blue sky with cumulus clouds replaces the gloom; the prison yard with a green sports field and perimeter fences spreads below as one runner edges along the roof.",
+      "visual": "Corridor with repeating mint-green doors and barred windows; red-painted steel ladder/rail in a beige brick shaft; hatch opening to bright exterior; rooftop with grey concrete, brick parapets, chain-link-topped fences, distant sea and hills; runner in grey tracksuit balancing on roof edge.",
+      "audio": "Sprint footsteps, hatch/ladder metallic clanks, then a swell of outdoor wind as they emerge; breathing continues; no music.",
+      "speech": "None distinct; exertion sounds."
+    },
+    {
+      "start": "01:12",
+      "end": "01:28",
+      "caption": "The group slides and rolls down a long sloped corrugated-metal roof studded with skylight strips, the POV hands skimming the surface; they reach the lower section, run along the ridge, and hop a small gap, the camera-wearer's shadow stretching across the panels.",
+      "visual": "Grey ribbed metal roofing with rectangular glass skylights; runners in light-grey tracksuits sliding feet-first then scrambling upright; bright sun, blue sky with scattered clouds; prison buildings and green fields in background; elongated shadow of the camera operator on the roof.",
+      "audio": "Continuous scraping/sliding of clothing and shoes on metal, wind buffeting the mic, footfalls, breathing; no music.",
+      "speech": "None distinct."
+    },
+    {
+      "start": "01:28",
+      "end": "01:43",
+      "caption": "At the roof's edge the runners leap down onto a concrete ledge and then a grassy embankment, roll to absorb the impact, and sprint across a paved yard between beige brick buildings toward a low brick structure, beginning the next climb.",
+      "visual": "Drop from roof to grey concrete slab, then green grass slope with a roll; wide paved courtyard with cracks and weeds, multi-storey tan brick prison blocks, blue sky; runners approach a single-storey brick building with white-framed windows.",
+      "audio": "Heavy landing thuds, rustle of grass, rapid footsteps on pavement, breathing; no music.",
+      "speech": "None distinct."
+    },
+    {
+      "start": "01:43",
+      "end": "01:58",
+      "caption": "Climbers scale a vertical drainpipe on the brick wall to pull themselves onto a flat roof; the group then sprints across the rooftop and leaps a gap between buildings, landing and continuing without pause, with the sea horizon visible beyond the compound.",
+      "visual": "Tan brick wall with grey metal downpipe and black cable; hands and feet on pipe; flat grey roof surfaces, ventilation boxes, chain-link fence tops; a running leap across a void to an adjacent roof; distant blue sea and coastline.",
+      "audio": "Metallic rattle of the pipe, grunts of effort, footfalls on roof, a shouted encouragement ('Go, go, go!'), wind; no music.",
+      "speech": "Runners call out urgency cues like 'Go, boys, go!' while climbing and jumping."
+    },
+    {
+      "start": "01:58",
+      "end": "02:13",
+      "caption": "The runners drop down successive lower roof sections, slide and climb between levels, then traverse a narrow concrete ledge between two buildings before leaping into a paved alley, keeping momentum toward the perimeter.",
+      "visual": "Stepped roof descent with grey surfaces and brick walls; balance run along a thin ledge above a gap; drop to a narrow asphalt passage between cream and brick walls with weeds at the edges.",
+      "audio": "Impacts of landings, scraping on concrete, quick footsteps, breathing; no music.",
+      "speech": "None distinct."
+    },
+    {
+      "start": "02:13",
+      "end": "02:26",
+      "caption": "Exiting through a metal gate into the outer yard, the runners are met by several guards in white shirts and black trousers, one mounted on a green ATV; the group veers away, sprinting along a fenced path and diving into a covered mesh walkway as the guards give chase on foot and by vehicle.",
+      "visual": "Open gate onto gravel/asphalt yard; 3-4 guards converging, one on a green quad bike; tall chain-link fences with barbed wire; runners in grey tracksuits racing down a straight fenced corridor and entering a roofed wire-mesh passage.",
+      "audio": "ATV engine revving, guards shouting, pounding footsteps, mesh rattling; no music.",
+      "speech": "Guards shout pursuit orders; runners yell 'Go, go, go!' to each other."
+    },
+    {
+      "start": "02:26",
+      "end": "02:39",
+      "caption": "The runners vault a cream perimeter wall onto a dark flat roof, sprint across it, and leap down to the ground beside a parked white minibus, continuing their escape route through the compound's outer buildings.",
+      "visual": "Tall pale wall with green trim; dark grey roof with vents; drop to asphalt next to a white Mercedes-style minibus; barbed-wire fencing and low industrial buildings around.",
+      "audio": "Wall-climb scrapes, footfalls on roof, landing thud, breathing; no music.",
+      "speech": "None distinct."
+    },
+    {
+      "start": "02:39",
+      "end": "02:52",
+      "caption": "Passing the bus and the green ATV, the runners are pursued on foot and by vehicle; they scramble up a grassy embankment and plunge into a ditch thick with weeds and purple wildflowers, momentarily breaking the guards' line of sight.",
+      "visual": "White minibus and green quad bike on paved area; guards running; steep green slope with dry grass; runners sliding into a overgrown ditch with tall weeds and purple flower spikes; sea and buildings beyond the ridge.",
+      "audio": "ATV engine, shouted commands, rustling vegetation, thuds of the slide, heavy breathing; no music.",
+      "speech": "Guards shout; runners urge each other onward."
+    },
+    {
+      "start": "02:52",
+      "end": "03:08",
+      "caption": "Using a black pipe/cable for handholds, the runners climb the steep bank and then traverse horizontally along the pipe fixed to a tall brick wall, working their way up to an elevated walkway with metal railings.",
+      "visual": "Close-up of hands on weathered black pipe against beige brick; a runner in grey tracksuit shimmying along the pipe with feet braced on the wall; grassy slope and concrete structures below; metal railing of an upper platform coming into view.",
+      "audio": "Grunts of effort, scraping of shoes on brick, wind, a voiced 'Come on' encouragement; no music.",
+      "speech": "Runners exchange short encouragements ('Come on,' 'Easy does it') during the climb."
+    },
+    {
+      "start": "03:08",
+      "end": "03:22",
+      "caption": "The group vaults the railing onto the walkway, sprints through a vaulted brick tunnel whose arches echo their footsteps, emerges onto a railed bridge over a grassy slope, and drops down to a public road, leaving the prison complex behind.",
+      "visual": "Grey metal railing climb-over; long arched brick corridor with fluorescent lights; bridge with railings over green embankment and trees; descent to an asphalt road with street lamps and houses.",
+      "audio": "Clang of railing, echoing footfalls inside the tunnel, breathing, wind returning outdoors; no music.",
+      "speech": "Urgent calls of 'Come on, come on' and 'Keep going' among the runners."
+    },
+    {
+      "start": "03:22",
+      "end": "03:34",
+      "caption": "Three runners in light-grey tracksuits sprint away down the road with the blue sea and white houses behind them; the white 'STORROR' logo flashes over the footage and end-card overlays appear promoting subscriptions, more videos, and clothing, as the chase audio fades to footsteps, breathing and wind.",
+      "visual": "Sunlit asphalt road curving past grassy banks, trees, houses and the sea horizon; three grey-clad runners receding; on-screen text: pink 'SUBSCRIBE FOR VIDEOS EVERY MONDAY', white 'WATCH MORE', pink 'CLOTHING AVAILABLE AT STORROR.COM', plus thumbnail images and a brief centered 'STORROR' wordmark.",
+      "audio": "Fading footfalls, heavy breathing, open-air wind; no music or dialogue at the close.",
+      "speech": "None."
+    }
+  ]
+}<turn|>
+<|turn>model

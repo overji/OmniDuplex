@@ -8,12 +8,13 @@ from dataclasses import asdict, replace
 from pathlib import Path
 from unittest.mock import patch
 
-from data_generation.src import cli
-from data_generation.src.catalog import TASK_CATALOG, ABILITIES
-from data_generation.src.common import SAMPLE_SCHEMA
-from data_generation.src.merge_qa import build_bundle
-from data_generation.src.registry import TASKS, get_task
-from data_generation.src.tasks import interaction
+from data_generation.src.cli import generate as cli
+from data_generation.src.application import generation, requests
+from data_generation.src.domain.catalog import TASK_CATALOG, ABILITIES
+from data_generation.src.domain.common import SAMPLE_SCHEMA
+from data_generation.src.application.merge_qa import build_bundle
+from data_generation.src.application.registry import TASKS, get_task
+from data_generation.src.domain.tasks import interaction
 from data_generation.tests.fixtures import caption, task_sample, observation
 
 
@@ -21,7 +22,7 @@ class MatrixTests(unittest.TestCase):
     def test_all_36_render_validate_and_merge(self):
         self.assertEqual(len(TASK_CATALOG), 36)
         self.assertEqual(len(TASKS), 37)
-        with tempfile.TemporaryDirectory() as directory, patch.object(interaction, "probe_video_duration", return_value=120):
+        with tempfile.TemporaryDirectory() as directory, patch.object(requests, "probe_video_duration", return_value=120):
             folder = Path(directory) / "video"
             folder.mkdir()
             path = folder / "caption.json"
@@ -29,7 +30,7 @@ class MatrixTests(unittest.TestCase):
             for name in TASK_CATALOG:
                 with self.subTest(task=name):
                     task = get_task(name)
-                    request = task.build_request(path, Path("video.mp4"))
+                    request = requests.build_task_request(name, path, Path("video.mp4"))
                     self.assertEqual(json.loads(request.user_prompt)["caption"], caption())
                     self.assertIn(name, request.system_prompt)
                     self.assertNotIn("{{", request.system_prompt)
@@ -60,19 +61,57 @@ class MatrixTests(unittest.TestCase):
                 with self.subTest(ability=ability), self.assertRaises(ValueError):
                     task.validate_result(bad, context)
 
+    def test_actual_response_required_for_every_task(self):
+        for name in TASK_CATALOG:
+            sample, context = task_sample(name)
+            self.assertNotIn("event_description", sample["responses"][0])
+            get_task(name).validate_result(sample, context)
+            for value in (None, "", "   "):
+                invalid = copy.deepcopy(sample)
+                item = invalid["responses"][0]
+                item["event_description"] = "A visible event occurs."
+                if value is None:
+                    item.pop("response")
+                else:
+                    item["response"] = value
+                with self.subTest(task=name, value=value), self.assertRaises(ValueError):
+                    get_task(name).validate_result(invalid, context)
+
     def test_rtd_windows_and_minimum_updates(self):
         task = get_task("attribute_perception_rtd")
         sample, context = task_sample(task.name)
         for change in (lambda s: s["responses"].pop(),
                        lambda s: s["responses"][1].update(window_start="00:19"),
                        lambda s: s["responses"][1].update(response=s["responses"][0]["response"]),
-                       lambda s: s["responses"][0].update(window_end="00:21")):
+                       lambda s: s["responses"][0].update(window_end="00:19")):
             bad = copy.deepcopy(sample)
             change(bad)
             with self.assertRaises(ValueError):
                 task.validate_result(bad, context)
         with self.assertRaises(ValueError):
             task.validate_result(sample, replace(context, initial_response_delay_seconds=10))
+
+    def test_trigger_windows_allow_interior_recommended_time(self):
+        sample, context = task_sample("event_understanding_pr")
+        item = sample["responses"][0]
+        item.update(trigger_time="00:22", window_end="00:25")
+        get_task("event_understanding_pr").validate_result(sample, context)
+        for change in ({"window_start": "00:23"}, {"window_end": "00:21"},
+                       {"window_start": "00:19"}, {"window_end": "02:01"}):
+            invalid = copy.deepcopy(sample)
+            invalid["responses"][0].update(change)
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                get_task("event_understanding_pr").validate_result(invalid, context)
+        invalid = copy.deepcopy(sample)
+        invalid["responses"][0]["trigger"]["confirmed_time"] = "00:22"
+        with self.assertRaises(ValueError):
+            get_task("event_understanding_pr").validate_result(invalid, context)
+
+    def test_distinct_rtd_updates_can_have_overlapping_valid_windows(self):
+        sample, context = task_sample("attribute_perception_rtd")
+        sample["responses"][0]["window_end"] = "00:45"
+        sample["responses"][1]["window_end"] = "00:50"
+        get_task("attribute_perception_rtd").validate_result(sample, context)
 
     def test_repeated_triggers_need_reset_and_unique_episodes(self):
         task = get_task("object_perception_pr")
@@ -125,12 +164,12 @@ class MatrixTests(unittest.TestCase):
     def test_cli_dry_run_and_generation(self):
         name = "attribute_perception_rtd"
         sample, context = task_sample(name)
-        with tempfile.TemporaryDirectory() as directory, patch.object(interaction, "probe_video_duration", return_value=120), patch.object(interaction.config, "choose_question_position", return_value="start"):
+        with tempfile.TemporaryDirectory() as directory, patch.object(requests, "probe_video_duration", return_value=120), patch.object(interaction.config, "choose_question_position", return_value="start"):
             root = Path(directory)
             source = root / "caption.json"
             source.write_text(json.dumps(caption()))
             args = ["--task", name, "--video", "video.mp4", str(source)]
-            with patch.object(cli, "chat_completion", return_value=json.dumps(sample)) as call, redirect_stdout(io.StringIO()):
+            with patch.object(generation, "chat_completion", return_value=json.dumps(sample)) as call, redirect_stdout(io.StringIO()):
                 self.assertEqual(cli.main(args + ["--print-prompt"]), 0)
                 call.assert_not_called()
                 self.assertEqual(cli.main(args + ["--api-key", "test", "--model", "test", "--output", str(root / "sample.json")]), 0)

@@ -1,0 +1,230 @@
+<bos><|turn>system
+You route one video to the most suitable ability categories for realtime interaction task generation.
+
+The original video is the only final evidence. The supplied dense captions
+are fallible navigation references: use them to locate candidates, then verify
+relevance, clarity, timing, and completeness in the video. You may reject,
+correct, or ignore any metadata claim. Do not treat metadata presence as proof.
+
+## Candidate ability catalog
+
+Evaluate every one of the 12 ability categories in this catalog exactly once:
+
+- attribute_perception: Track target attributes (color, material, category, state) and their changes. Distinguish similar attributes and uncertain identities.
+- grounding: Locate an event in time. Distinguish onset, ongoing activity and confirmed completion. Never infer an end from future frames.
+- action_perception: Recognize actions and their onset, continuation or end; distinguish similar motions and occlusion.
+- object_perception: Identify newly appearing people or objects, category, distinguishing specifications and position. Do not invent related but absent objects.
+- emotion_recognition: Infer a specified person's emotion from voice prosody, expression and context, not merely emotional words. All emotions are eligible, not only negative ones.
+- event_understanding: Explain ongoing events, participants, progression and relations. Distinguish this semantic understanding from naming an isolated movement.
+- text_rich_understanding: Read and interpret visible text, subtitles or signs in context. Audio can help but cannot replace actually visible text. Distinguish current information from announcements of future events.
+- object_counting: Count objects currently present, not cumulative appearances. Track identities through occlusion and reappearance without double counting; explain ambiguous visibility.
+- action_counting: Accumulate distinct completed action or speech/sound occurrences. Define separable event boundaries and a counting origin; do not count frames of one sustained action repeatedly.
+- spatial_understanding: Track relative positions, directions and spatial relations. Do not invent metric distances without scale; distinguish screen coordinates from world positions.
+- prospective_reasoning: Predict possible next developments from current evidence, including opportunities and ordinary outcomes, not only risks. Mark predictions as uncertain; never use the actual future as an observed fact.
+- causal_reasoning: Explain why an observed event occurred. Separate observed facts from candidate causes, rank alternatives and state uncertainty instead of equating correlation with causation.
+
+The trigger described by a task request may be deliberately proposed by the
+user; it does not need to be a spontaneous or conversationally natural request.
+Treat a task as trigger-supported whenever the original video contains a real,
+directly verifiable event, object, state change, utterance, or other signal that
+could naturally serve as that trigger and is relevant to the task. Do not reject
+it merely because the trigger wording is hypothetical, forceful, or externally
+specified. Reject it when the corresponding event is absent, only guessed from
+metadata, too ambiguous to verify, or unrelated to the task.
+
+Judge the task as a combination of a possible viewer question and the video,
+not from the video in isolation. A viewer question may introduce the need for a
+lookup, comparison, recording, message, or other Agent work after a trigger;
+the video does not need to contain an explicit request for that work or already
+show an external system. For Agent tasks, it is sufficient that the video offers
+a relevant trigger and at least one concrete parameter that could be extracted
+when the viewer's question supplies the goal, destination, recipient, or other
+preference. Do not mark an Agent task unsuitable solely because no external
+action is currently requested in the footage.
+
+In every mode, the possible question must come from an outside viewer watching
+the video, not from a participant in it. Describe on-screen people in the third
+person; do not assign their actions, experiences, possessions, relationships, or
+location to the viewer, even for first-person camera footage. First-person wording
+may express the viewer's own needs and preferences. Agent follow-up work must
+serve that viewer's goal without assuming access to a participant's accounts or
+authority to act on their behalf. Do not justify suitability with a question that
+requires impersonating a person in the footage.
+
+For Agent feasibility, the possible viewer question must express a natural desired
+outcome whose fulfillment inherently needs backend capabilities. It must not name
+tools, APIs, or functions, ask to use an Agent or backend, or prescribe a tool-use
+sequence. Delegation and tool selection must be inferred from the user's intent.
+Keep the goal and any authorization for external operations clear; implicit
+delegation does not authorize unrequested actions. A request to call a tool or
+Agent is not itself evidence that necessary delegated work exists.
+
+Mark an ability category suitable if the video supports at least one valid task
+in that category in any of RTD, PR, or Agent mode. It need not support all three
+modes. Mark it unsuitable only when no mode can produce a valid task, for example
+because reliable evidence is absent, targets cannot be distinguished, or the
+ability does not fit the observed content. Rank suitable categories by interactive
+value and explain the supporting video evidence. Do not separately select or rank
+mode-specific tasks; downstream generators decide whether each mode can complete
+a valid sample and may skip unsupported modes.
+
+Return exactly one JSON object. Use only the catalog ability IDs as task values, without _rtd, _pr, or _agent suffixes;
+do not copy a task name into a reason or rationale unless needed to identify the
+evidence. Do not add question_time, response timelines, tool calls, or external
+actions. All prose must be concise English.
+
+{
+  "status": "ok",
+  "unsuitable_tasks": [{"task": "<ability_id>", "reason": "<specific reason>"}],
+  "ranked_tasks": [{"task": "<ability_id>", "rank": 1, "rationale": "<specific rationale>"}]
+}
+
+Every catalog ability category must appear exactly once across the two arrays. Ranks must be
+consecutive starting at 1. If no ability category is suitable, return {"status":"skip", "reason":"<reason>"}.
+
+This catalog contains 12 ability categories, not 36 mode-specific tasks.
+The following mode requirements only help determine whether at least one mode is
+feasible for a category; failure of one mode does not exclude the category. RTD requires at least two meaningful time-aligned updates; PR requires
+at least one real future trigger relative to a feasible instruction time. RTD
+tracks meaningful evolution within a descriptive focus. PR requires a selective
+criterion stated in the viewer's question and silence for nonmatching observations;
+generic tracking of every change does not establish PR feasibility. Agent
+requires a real trigger and a video-derived parameter but follow-up work is NOT
+restricted by ability-specific examples. Text-rich understanding requires visible
+text. Object counting concerns current objects; action counting concerns cumulative
+independent occurrences. Prediction and causal explanation require supporting cues,
+not omniscient hindsight. All-video absent-trigger samples are unsuitable.<turn|>
+<|turn>user
+<|video|>Original video audio from 0.00 to 30.00 seconds:<|audio|>Original video audio from 30.00 to 60.00 seconds:<|audio|>Original video audio from 60.00 to 90.00 seconds:<|audio|>Original video audio from 90.00 to 120.00 seconds:<|audio|>Original video audio from 120.00 to 150.00 seconds:<|audio|>Original video audio from 150.00 to 180.00 seconds:<|audio|>Original video audio from 180.00 to 210.00 seconds:<|audio|>Original video audio from 210.00 to 233.45 seconds:<|audio|>{
+  "caption": [
+    {
+      "start": "00:00",
+      "end": "00:14",
+      "caption": "A middle-aged man with short brown hair, wearing a black leather jacket over a light-colored collared shirt, plays a duduk (a dark wooden double-reed wind instrument) inside a church. He holds the instrument horizontally with both hands, fingers covering the holes, eyes closed in concentration. The church interior features wooden pews with carved balustrades, exposed timber ceiling beams, a brass chandelier hanging on the right, and tall arched windows letting in natural light. The duduk produces a mournful, reedy melody with sustained notes and gentle vibrato.",
+      "visual": "Medium shot of the man centered in frame, slightly right of center. Background shows rows of wooden church pews with turned balusters, a raised gallery with more pews behind him, exposed dark timber roof trusses, a multi-arm brass chandelier on the upper right, and tall narrow arched windows with white light streaming through. The floor appears to be stone tile. The duduk is dark brown/black wood with a lighter-colored reed at the top. His fingers move subtly over the holes.",
+      "audio": "Solo duduk performance: a slow, melancholic melody in a minor mode with characteristic reedy, nasal timbre. Sustained tones with gentle pitch bends and vibrato. Natural room reverb from the church space. No other sounds present.",
+      "speech": "None"
+    },
+    {
+      "start": "00:14",
+      "end": "00:20",
+      "caption": "The man lowers the duduk from his lips, opens his eyes, and addresses the camera directly. He holds the instrument vertically in front of his chest with both hands. He introduces himself as Mark from DudukLessons.com and welcomes viewers to 'Duduk Lessons for Beginners.' His expression is friendly and engaging.",
+      "visual": "Same church setting. The man now faces the camera squarely, holding the duduk upright in front of him. The reed end points upward. His mouth moves as he speaks. The background remains the same with wooden pews, chandelier, and arched windows.",
+      "audio": "The duduk music stops. The man speaks in a clear, warm baritone voice with slight room reverb: 'Hi, my name is Mark from DudukLessons.com, and welcome to Duduk Lessons for Beginners.'",
+      "speech": "'Hi, my name is Mark from DudukLessons.com, and welcome to Duduk Lessons for Beginners.'"
+    },
+    {
+      "start": "00:20",
+      "end": "00:29",
+      "caption": "A title sequence begins with a close-up tracking shot moving along the body of a duduk lying horizontally. The instrument is dark wood with visible finger holes. Text 'DUDUK' appears in thin white outlined capital letters, followed by 'LESSONS FOR BEGINNERS' below it. The shot has a warm, slightly desaturated color grade with floating dust particles and a vintage film grain effect. The camera pans left along the instrument toward the reed end, which is lighter colored (cream/beige) with a dark binding.",
+      "visual": "Extreme close-up of the duduk body on a tan/beige surface. The dark wooden tube with round finger holes fills the lower portion of frame. White outlined text 'DUDUK' appears centered upper portion, then 'LESSONS FOR BEGINNERS' fades in below. Film grain, dust specks, and a warm sepia-toned color filter are applied. The camera slowly tracks/pans left revealing the reed end with its cream-colored cane and dark wrapping.",
+      "audio": "A low, atmospheric drone/pad sound begins, accompanied by a soft percussive hit. The duduk melody from the intro continues faintly underneath. Ambient, cinematic texture.",
+      "speech": "None"
+    },
+    {
+      "start": "00:29",
+      "end": "00:33",
+      "caption": "The screen transitions to a dark/black background with the text 'LESSON 1: THE BODY & REED' displayed in thin white outlined capital letters, centered. Faint vertical scratch lines and dust particles give it a vintage film appearance. The text remains static for a few seconds before fading.",
+      "visual": "Black/dark background with subtle film grain and vertical scratch marks. Centered white outlined text reads 'LESSON 1: THE BODY & REED'. No other visual elements.",
+      "audio": "The atmospheric drone continues with a soft resonant tone. No speech.",
+      "speech": "None"
+    },
+    {
+      "start": "00:33",
+      "end": "00:42",
+      "caption": "The video returns to Mark in the church, now holding the duduk horizontally in his left hand while gesturing with his right. He explains that the Armenian duduk is the world's oldest double-reed instrument and that due to its primitive nature, it can be difficult to get a good sound from. He speaks directly to camera with an earnest expression.",
+      "visual": "Medium shot of Mark in the church, same setting as before. He holds the dark wooden duduk horizontally across his body with his left hand near the reed end. His right hand gestures as he speaks. The reed (cream-colored) is visible at the right end of the instrument. Background: wooden pews, chandelier, arched windows.",
+      "audio": "Mark speaks clearly: 'The Armenian duduk is the world's oldest double-reed instrument. Because of its really primitive nature, it can be rather difficult to get a good sound out of.' Slight church reverb on his voice.",
+      "speech": "'The Armenian duduk is the world's oldest double-reed instrument. Because of its really primitive nature, it can be rather difficult to get a good sound out of.'"
+    },
+    {
+      "start": "00:42",
+      "end": "00:52",
+      "caption": "Mark continues speaking, now emphasizing the beautiful and soulful nature of the duduk sound, saying it makes the effort worthwhile. He gestures with both hands, spreading them apart for emphasis, then brings them back together. He concludes with 'So, let's get started.'",
+      "visual": "Same medium shot. Mark holds the duduk in his left hand, gesturing expressively with his right hand and then both hands. His facial expression is enthusiastic. The church background remains consistent.",
+      "audio": "Mark says: 'But because of its beautiful and soulful nature, I think you'll find that it's all worthwhile. So, let's get started.' Warm, encouraging tone.",
+      "speech": "'But because of its beautiful and soulful nature, I think you'll find that it's all worthwhile. So, let's get started.'"
+    },
+    {
+      "start": "00:52",
+      "end": "01:03",
+      "caption": "Mark begins describing the physical parts of the duduk. He holds the instrument up and points to the finger holes on the front, then rotates it to show the thumb hole on the back. He states the body is made of apricot wood. The camera briefly cuts to a close-up of the finger holes on the dark wooden body before returning to the medium shot.",
+      "visual": "Mark holds the duduk horizontally, pointing with his right index finger at the row of finger holes on the front of the dark wooden tube. He then turns the instrument to show the back. A brief insert shot (around 00:56-01:00) shows an extreme close-up of the smooth dark wood surface with round finger holes, his fingers visible at the edges. Returns to medium shot where he mentions the thumb hole.",
+      "audio": "Mark explains: 'First, the body is made of apricot wood, and we have finger holes here on the front, a thumb hole here in the back, and then we have our reed.' Clear instructional tone.",
+      "speech": "'First, the body is made of apricot wood, and we have finger holes here on the front, a thumb hole here in the back, and then we have our reed.'"
+    },
+    {
+      "start": "01:03",
+      "end": "01:20",
+      "caption": "Mark focuses on the reed assembly. He holds the reed end of the duduk up close to the camera, showing the cap (a small cylindrical piece) and the bridle (a dark wrapping/band around the reed). He removes the cap to reveal the double reed, pointing out that it is 'open a little bit.' He explains that the bridle can be adjusted to stop the reed down to the right spot for easy playing.",
+      "visual": "Close-up of Mark's hands holding the reed end of the duduk. The cream/beige cane reed is visible with a dark brown/black binding (bridle) wrapped around it. A small cap piece is shown. He manipulates the reed with his fingertips, pointing to the opening between the two blades of the double reed. The dark wooden body extends to the left. Church background is blurred.",
+      "audio": "Mark says: 'The reed has a cap and a bridle. Now, if you look down the end of the reed, you'll see the double reed, it's open a little bit, and when you put the bridle on, you can stop it down and get it just at the right spot to make it easy to play.'",
+      "speech": "'The reed has a cap and a bridle. Now, if you look down the end of the reed, you'll see the double reed, it's open a little bit, and when you put the bridle on, you can stop it down and get it just at the right spot to make it easy to play.'"
+    },
+    {
+      "start": "01:20",
+      "end": "01:42",
+      "caption": "Mark elaborates on the importance of proper reed opening. He explains that if the reed is too wide open, it will be extremely difficult to get a good sound, and if it's too closed, no sound will come out at all. He describes it as a 'constant balance' requiring readjustment while playing. He gestures with the reed end toward the camera for emphasis.",
+      "visual": "Medium shot of Mark holding the duduk with the reed end pointed toward camera. He uses his right hand to gesture while explaining. His expression is serious and focused on conveying the technical point. The reed's small opening is visible. Church background consistent.",
+      "audio": "Mark explains: 'Because if it's too wide open, um, it's going to be extremely difficult to get a good sound out of. And if it's, if it's closed, then you won't be able to get any sound out of it. So, it's always a constant balance of finding that right, uh, opening. Constant readjustment, um, you know, while you, while you play pretty much.'",
+      "speech": "'Because if it's too wide open, um, it's going to be extremely difficult to get a good sound out of. And if it's, if it's closed, then you won't be able to get any sound out of it. So, it's always a constant balance of finding that right, uh, opening. Constant readjustment, um, you know, while you, while you play pretty much.'"
+    },
+    {
+      "start": "01:42",
+      "end": "02:02",
+      "caption": "Mark addresses what happens with a first reed: it will likely arrive closed up. He demonstrates the first method of opening it by blowing into the end of the reed. He brings the reed to his lips and blows, producing a brief, airy sound. He then pinches the reed slightly with his fingers and blows again through the mouthpiece to try to open it up.",
+      "visual": "Mark holds the reed end up, then brings it to his mouth and blows into it. His cheeks puff slightly. He then uses his thumb and forefinger to pinch the reed blades together while blowing. The cream-colored reed is prominent in frame. Church background.",
+      "audio": "Mark says: 'What you're probably going to find with your first reed is that it will arrive closed up, and there's several ways that you can open it. One way is just blowing in the end of it, like that, try to get some air through, pinching a little bit, try to open it up, blow through the, uh, the mouthpiece.' A brief airy blowing sound is audible when he demonstrates.",
+      "speech": "'What you're probably going to find with your first reed is that it will arrive closed up, and there's several ways that you can open it. One way is just blowing in the end of it, like that, try to get some air through, pinching a little bit, try to open it up, blow through the, uh, the mouthpiece.'"
+    },
+    {
+      "start": "02:02",
+      "end": "02:26",
+      "caption": "Mark acknowledges that blowing alone can be difficult, especially in dry winter months. He introduces his preferred method: soaking the reed in a small glass of water. He describes using about an eighth to a quarter inch of water, removing the bridle, and propping the reed in the glass so only the very tip is submerged, leaving it for two to four minutes. A cutaway shows a close-up of a clear octagonal glass with a small amount of water, and a hand placing the reed (with bridle removed) into the glass tip-down.",
+      "visual": "Mark speaks to camera holding the reed. Then a cutaway insert (around 02:17-02:25) shows a close-up of a clear, faceted/octagonal drinking glass on a wooden surface with a small pool of water at the bottom. A hand enters frame holding the cream-colored reed (dark bridle removed, just the cane visible) and places it tip-first into the water. The reed stands upright in the glass.",
+      "audio": "Mark explains: 'That can be difficult, especially in these dry winter months, and what I find I often have to do is get a small glass of water, uh, with maybe an eighth inch, a quarter inch of water, and take the bridle off, and I just prop it up in the glass, just so the, just so the very tip is submerged in the water, leave it there for two, three, four minutes.'",
+      "speech": "'That can be difficult, especially in these dry winter months, and what I find I often have to do is get a small glass of water, uh, with maybe an eighth inch, a quarter inch of water, and take the bridle off, and I just prop it up in the glass, just so the, just so the very tip is submerged in the water, leave it there for two, three, four minutes.'"
+    },
+    {
+      "start": "02:26",
+      "end": "02:46",
+      "caption": "Mark demonstrates blowing out the excess water from the soaked reed, producing a sputtering, watery sound. He explains that after blowing out the water, the reed should be a little bit open and playable. He then warns strongly not to forget the reed in the water, as it can wreck the reed, calling it 'a little bit of a risky thing' and suggesting using an alarm.",
+      "visual": "Mark brings the reed to his lips and blows forcefully, producing visible effort. He then holds the reed up and gestures with his free hand while delivering the warning. His expression becomes more serious/cautionary. Church background.",
+      "audio": "A sputtering, wet blowing sound as Mark clears the reed. Then he says: 'And then if you take it out, you'll probably find that... after you blow out the excess water, that you'll be able to have a reed that's a little bit open, you'll be able to get a sound out of. Don't forget that you left it in the water because you can wreck the reed. So it's a little bit of a risky thing, but just, I don't know, use an alarm or something so you don't forget.'",
+      "speech": "'And then if you take it out, you'll probably find that... after you blow out the excess water, that you'll be able to have a reed that's a little bit open, you'll be able to get a sound out of. Don't forget that you left it in the water because you can wreck the reed. So it's a little bit of a risky thing, but just, I don't know, use an alarm or something so you don't forget.'"
+    },
+    {
+      "start": "02:46",
+      "end": "03:05",
+      "caption": "Mark explains the reed's behavior during a playing session. Once the reed is open and he starts playing, it will gradually close down. He then takes the reed off, puts the cap on, lets it sit for a while, and starts playing again, at which point it opens up for a second time. He uses hand gestures to illustrate the cycle of opening and closing.",
+      "visual": "Medium shot of Mark holding the duduk/reed and gesturing with both hands to illustrate the cyclical process. He mimes putting a cap on and setting something aside. His expression is explanatory and patient. Church background consistent.",
+      "audio": "Mark narrates: 'Once I get the reed open and start playing for a bit, the reed will gradually start to close down. And then I'll take the reed off, put the cap on it, let it sit for a while, and then start playing again, and then it'll open up for a second time.'",
+      "speech": "'Once I get the reed open and start playing for a bit, the reed will gradually start to close down. And then I'll take the reed off, put the cap on it, let it sit for a while, and then start playing again, and then it'll open up for a second time.'"
+    },
+    {
+      "start": "03:05",
+      "end": "03:19",
+      "caption": "Mark continues the reed lifecycle explanation: after the second opening, he can play for fifteen to twenty minutes without problem, then the reed gets too wide and he must switch reeds. He mentions that duduk players commonly keep a box of reeds, stating he personally has about thirty or forty reeds, with three or four go-to favorites.",
+      "visual": "Mark gestures with open hands to indicate quantity ('thirty or forty'). He holds the reed in one hand while counting/gesturing with the other. His tone is conversational and informative. Church background.",
+      "audio": "Mark says: 'And then I'll be able to play for fifteen, twenty minutes, no problem, and then it'll start to get too wide, and I'll have to switch reeds. Commonly, duduk players will have a box of reeds. I have like about thirty or forty reeds myself. I have about three or four go-to reeds that are my favorites.'",
+      "speech": "'And then I'll be able to play for fifteen, twenty minutes, no problem, and then it'll start to get too wide, and I'll have to switch reeds. Commonly, duduk players will have a box of reeds. I have like about thirty or forty reeds myself. I have about three or four go-to reeds that are my favorites.'"
+    },
+    {
+      "start": "03:19",
+      "end": "03:40",
+      "caption": "Mark discusses reed storage, emphasizing its importance. He recommends keeping the reed in something like a sunglasses case that has holes in it for air circulation, to allow the reed to dry out. He warns that without ventilation, 'pretty funky green fungus monsters' can grow inside, and you do not want to breathe in those fumes. A cutaway shows a translucent plastic container with ventilation holes in the lid, containing a reed resting on white cotton/tissue padding.",
+      "visual": "Mark speaks to camera, gesturing. A cutaway insert (around 03:24-03:29) shows a close-up of a semi-transparent plastic box (like a sunglasses case) with multiple small circular holes punched in the lid. Inside, a duduk reed (cream cane with dark binding) rests on white cotton or tissue material. A hand lifts the lid to reveal the contents. Returns to Mark in church.",
+      "audio": "Mark explains: 'Storing the reed is very important. Uh, keep it in something like a sunglasses case that has holes in it, because it's very important that you allow air circulation to dry out the reed, because if you don't, you can get some pretty funky green fungus monsters growing in there, and you do not want to be breathing in those fumes.'",
+      "speech": "'Storing the reed is very important. Uh, keep it in something like a sunglasses case that has holes in it, because it's very important that you allow air circulation to dry out the reed, because if you don't, you can get some pretty funky green fungus monsters growing in there, and you do not want to be breathing in those fumes.'"
+    },
+    {
+      "start": "03:40",
+      "end": "03:53",
+      "caption": "Mark concludes Lesson 1, telling viewers 'that's the end of lesson one' and asking them to 'click subscribe' and that they'll see him at lesson two. He points toward the camera. The video then cuts to a black screen with white text 'WWW.DUDUKLESSONS.COM' centered, which remains until the video ends. A soft duduk melody plays over the closing.",
+      "visual": "Mark in the church, smiling and pointing at the camera with his right index finger while holding the reed in his left hand. Then a hard cut to a solid black screen with thin white outlined text reading 'WWW.DUDUKLESSONS.COM' centered in the frame. The text remains static until the video ends.",
+      "audio": "Mark says: 'Anyway, that's the end of lesson one. Please click subscribe, and we'll see you at lesson two.' A gentle, atmospheric duduk melody fades in over the black screen with the website URL. The music is soft and resolving.",
+      "speech": "'Anyway, that's the end of lesson one. Please click subscribe, and we'll see you at lesson two.'"
+    }
+  ]
+}<turn|>
+<|turn>model

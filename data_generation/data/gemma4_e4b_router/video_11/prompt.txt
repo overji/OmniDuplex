@@ -1,0 +1,254 @@
+<bos><|turn>system
+You route one video to the most suitable ability categories for realtime interaction task generation.
+
+The original video is the only final evidence. The supplied dense captions
+are fallible navigation references: use them to locate candidates, then verify
+relevance, clarity, timing, and completeness in the video. You may reject,
+correct, or ignore any metadata claim. Do not treat metadata presence as proof.
+
+## Candidate ability catalog
+
+Evaluate every one of the 12 ability categories in this catalog exactly once:
+
+- attribute_perception: Track target attributes (color, material, category, state) and their changes. Distinguish similar attributes and uncertain identities.
+- grounding: Locate an event in time. Distinguish onset, ongoing activity and confirmed completion. Never infer an end from future frames.
+- action_perception: Recognize actions and their onset, continuation or end; distinguish similar motions and occlusion.
+- object_perception: Identify newly appearing people or objects, category, distinguishing specifications and position. Do not invent related but absent objects.
+- emotion_recognition: Infer a specified person's emotion from voice prosody, expression and context, not merely emotional words. All emotions are eligible, not only negative ones.
+- event_understanding: Explain ongoing events, participants, progression and relations. Distinguish this semantic understanding from naming an isolated movement.
+- text_rich_understanding: Read and interpret visible text, subtitles or signs in context. Audio can help but cannot replace actually visible text. Distinguish current information from announcements of future events.
+- object_counting: Count objects currently present, not cumulative appearances. Track identities through occlusion and reappearance without double counting; explain ambiguous visibility.
+- action_counting: Accumulate distinct completed action or speech/sound occurrences. Define separable event boundaries and a counting origin; do not count frames of one sustained action repeatedly.
+- spatial_understanding: Track relative positions, directions and spatial relations. Do not invent metric distances without scale; distinguish screen coordinates from world positions.
+- prospective_reasoning: Predict possible next developments from current evidence, including opportunities and ordinary outcomes, not only risks. Mark predictions as uncertain; never use the actual future as an observed fact.
+- causal_reasoning: Explain why an observed event occurred. Separate observed facts from candidate causes, rank alternatives and state uncertainty instead of equating correlation with causation.
+
+The trigger described by a task request may be deliberately proposed by the
+user; it does not need to be a spontaneous or conversationally natural request.
+Treat a task as trigger-supported whenever the original video contains a real,
+directly verifiable event, object, state change, utterance, or other signal that
+could naturally serve as that trigger and is relevant to the task. Do not reject
+it merely because the trigger wording is hypothetical, forceful, or externally
+specified. Reject it when the corresponding event is absent, only guessed from
+metadata, too ambiguous to verify, or unrelated to the task.
+
+Judge the task as a combination of a possible viewer question and the video,
+not from the video in isolation. A viewer question may introduce the need for a
+lookup, comparison, recording, message, or other Agent work after a trigger;
+the video does not need to contain an explicit request for that work or already
+show an external system. For Agent tasks, it is sufficient that the video offers
+a relevant trigger and at least one concrete parameter that could be extracted
+when the viewer's question supplies the goal, destination, recipient, or other
+preference. Do not mark an Agent task unsuitable solely because no external
+action is currently requested in the footage.
+
+In every mode, the possible question must come from an outside viewer watching
+the video, not from a participant in it. Describe on-screen people in the third
+person; do not assign their actions, experiences, possessions, relationships, or
+location to the viewer, even for first-person camera footage. First-person wording
+may express the viewer's own needs and preferences. Agent follow-up work must
+serve that viewer's goal without assuming access to a participant's accounts or
+authority to act on their behalf. Do not justify suitability with a question that
+requires impersonating a person in the footage.
+
+For Agent feasibility, the possible viewer question must express a natural desired
+outcome whose fulfillment inherently needs backend capabilities. It must not name
+tools, APIs, or functions, ask to use an Agent or backend, or prescribe a tool-use
+sequence. Delegation and tool selection must be inferred from the user's intent.
+Keep the goal and any authorization for external operations clear; implicit
+delegation does not authorize unrequested actions. A request to call a tool or
+Agent is not itself evidence that necessary delegated work exists.
+
+Mark an ability category suitable if the video supports at least one valid task
+in that category in any of RTD, PR, or Agent mode. It need not support all three
+modes. Mark it unsuitable only when no mode can produce a valid task, for example
+because reliable evidence is absent, targets cannot be distinguished, or the
+ability does not fit the observed content. Rank suitable categories by interactive
+value and explain the supporting video evidence. Do not separately select or rank
+mode-specific tasks; downstream generators decide whether each mode can complete
+a valid sample and may skip unsupported modes.
+
+Return exactly one JSON object. Use only the catalog ability IDs as task values, without _rtd, _pr, or _agent suffixes;
+do not copy a task name into a reason or rationale unless needed to identify the
+evidence. Do not add question_time, response timelines, tool calls, or external
+actions. All prose must be concise English.
+
+{
+  "status": "ok",
+  "unsuitable_tasks": [{"task": "<ability_id>", "reason": "<specific reason>"}],
+  "ranked_tasks": [{"task": "<ability_id>", "rank": 1, "rationale": "<specific rationale>"}]
+}
+
+Every catalog ability category must appear exactly once across the two arrays. Ranks must be
+consecutive starting at 1. If no ability category is suitable, return {"status":"skip", "reason":"<reason>"}.
+
+This catalog contains 12 ability categories, not 36 mode-specific tasks.
+The following mode requirements only help determine whether at least one mode is
+feasible for a category; failure of one mode does not exclude the category. RTD requires at least two meaningful time-aligned updates; PR requires
+at least one real future trigger relative to a feasible instruction time. RTD
+tracks meaningful evolution within a descriptive focus. PR requires a selective
+criterion stated in the viewer's question and silence for nonmatching observations;
+generic tracking of every change does not establish PR feasibility. Agent
+requires a real trigger and a video-derived parameter but follow-up work is NOT
+restricted by ability-specific examples. Text-rich understanding requires visible
+text. Object counting concerns current objects; action counting concerns cumulative
+independent occurrences. Prediction and causal explanation require supporting cues,
+not omniscient hindsight. All-video absent-trigger samples are unsuitable.<turn|>
+<|turn>user
+<|video|>Original video audio from 0.00 to 30.00 seconds:<|audio|>Original video audio from 30.00 to 60.00 seconds:<|audio|>Original video audio from 60.00 to 90.00 seconds:<|audio|>Original video audio from 90.00 to 120.00 seconds:<|audio|>Original video audio from 120.00 to 150.00 seconds:<|audio|>Original video audio from 150.00 to 180.00 seconds:<|audio|>Original video audio from 180.00 to 210.00 seconds:<|audio|>Original video audio from 210.00 to 229.76 seconds:<|audio|>{
+  "caption": [
+    {
+      "start": "00:00",
+      "end": "00:15",
+      "caption": "A high-angle wide shot looks down Bothwell Street, dressed as a New York set: a plume of white steam rises at left beside a stone building with an ornate gold clock reading 'SCOTLAND LIFE INSURANCE SOCIETY', while a yellow NYC taxi (black 'T' logo), a white ambulance, a red fire engine and a black SUV sit among concrete barriers stencilled 'NYPD'. Spectators pack both sidewalks, many filming on phones; a 'HANOVER ST' sign and an American flag appear on the right. A male narrator introduces the video over ambient crowd murmur and engine rumble.",
+      "visual": "Overcast daylight; beige sandstone facade left with projecting clock face; steam jet; yellow taxi mid-left; white box ambulance and red fire truck center; black SUV; grey 'NYPD' jersey barriers; dense crowd with raised smartphones; 'ONE WAY' and 'HANOVER ST' street signs; US flag on dark glass building right; 'DH EVENTS' circular watermark bottom-right.",
+      "audio": "Calm male voiceover; low urban ambience, distant engines, crowd chatter; no music.",
+      "speech": "Welcome to another day of filming for the Spider-Man 4 movie here in Glasgow, Scotland. This video will cover days two and three of the filming here on Bothwell Street in the center of the city. So let's get into it, first with day two."
+    },
+    {
+      "start": "00:15",
+      "end": "00:30",
+      "caption": "Cut to a street-level tracking shot: the Spider-Man stunt double, in a teal-green t-shirt and black trousers, crouches in a wide-legged superhero pose atop a tan APC military vehicle, arms spread for balance. A black camera gimbal rig is mounted on the roof of a black Mercedes SUV directly ahead of the APC; a white DENNIS truck occupies the left lane. The narrator identifies this as a rehearsal take near the end of Bothwell Street.",
+      "visual": "White DENNIS lorry with windscreen banner 'CAUTION OPERATIVE WORKING AT REAR'; yellow taxi and white van behind; gold clock and 'ARKO' / 'HANOVER ST' signs in background; stuntman shifts from standing to deep crouch, then holds pose facing camera; Mercedes three-pointed star grille visible.",
+      "audio": "Narration continues over idling diesel engines and faint crowd noise.",
+      "speech": "This first clip features the Spider-Man stunt double, who is riding on top of an APC military vehicle. For this rehearsal take, the action took place close to the end of Bothwell Street, so it was a good place for members of the public to get a good view. If you could see past all the other people, of course."
+    },
+    {
+      "start": "00:30",
+      "end": "00:45",
+      "caption": "As the APC rolls past, practical effects trigger: the yellow taxi on the left tilts sharply nose-up on its rear axle, and a white panel van on the opposite side lifts its front end into the air, both held by hidden ramps/jacks. Foreground spectators, including a bald man in sunglasses, raise phones to film. The narrator poses a rhetorical question about the cause.",
+      "visual": "Close-up of DENNIS windscreen text; yellow 'NYC T' taxi angled ~45 degrees upward; white van with orange lettering ('Windows', phone number) elevated at the front; blue coach bus and clock tower behind; crowd heads and phones fill lower frame.",
+      "audio": "Narration; hydraulic/mechanical whirring under the lift; crowd murmur swells slightly.",
+      "speech": "This take gives us a hint of what's to come later. As the tank passes by, the yellow cab flips up suddenly, as does the van on the opposite side. What could have caused those vehicles to move so violently? Hmm."
+    },
+    {
+      "start": "00:45",
+      "end": "01:03",
+      "caption": "A comedic beat: a man in a grey t-shirt and black jeans performs a cartwheel/round-off down the empty roadway, watched by two crew members (one in a hi-vis vest), then sprints to the pavement, attempts to vault a metal crowd barrier and tumbles backwards onto the ground among seated onlookers, who burst into laughter and applause. The narrator jokes that 'Glasgow's Spider-Man' has arrived.",
+      "visual": "Wet-looking asphalt with white lane arrows; DENNIS truck left; 'SPICY NUGGETS' advertisement on a kiosk right; man completes flip, runs, leaps barrier, lands flat on his back; spectators in mint-green and white shirts laugh, clap, film; he sits up grinning.",
+      "audio": "Loud crowd laughter and cheering at the fall (~00:57-01:02); narrator's amused tone; ambient street noise.",
+      "speech": "We haven't seen the real Spider-Man today. Or have we? It looks like Glasgow's Spider-Man has shown up to save the day. Looks like he may need some more training before he fights the Inner Demons gang."
+    },
+    {
+      "start": "01:03",
+      "end": "01:14",
+      "caption": "Wide static shot of the set immediately after the take: the yellow taxi and white van remain propped upright at either side of the street, the stuntman stands on the tan APC behind the black Mercedes camera vehicle, and dozens of crew in dark clothing mill about. The narrator frames this as the day's big scene, evidenced by VIP arrivals.",
+      "visual": "Symmetrical composition with tilted vehicles framing center; APC with roof-mounted camera jib; crew clusters; yellow taxis parked right; US flags and clock tower left background.",
+      "audio": "Narration over diffuse set chatter and engine idle.",
+      "speech": "Here we have the set after the take we just saw, with the stuntman and the APC military vehicle. It was the big scene for the day, which is confirmed by the arrival of several important people on set."
+    },
+    {
+      "start": "01:14",
+      "end": "01:24",
+      "caption": "The camera zooms into the crowd and a large red arrow graphic with white outline is overlaid, pointing at a smiling man in a beige cap and dark sunglasses — identified by the narrator as director Destin Daniel Cretton — standing near a blue-and-white bus.",
+      "visual": "Bus front with fleet number '210201014'; red arrow dominates upper-right of frame; Cretton in olive jacket, cap, sunglasses, grinning; surrounding crew and a blonde woman in foreground.",
+      "audio": "Narration only; ambient crowd.",
+      "speech": "I snooped around the video and discovered the director of the movie, Destin Daniel Cretton. It seems that the take was a great success."
+    },
+    {
+      "start": "01:24",
+      "end": "01:37",
+      "caption": "Vignetted, darkened clips follow: Cretton raises both hands to applaud the crew until a passing bus briefly blocks the view; then a separate shot shows the stuntman in the teal shirt atop the APC exchanging a thumbs-up with a crew member in a cap. The narrator describes the exchange.",
+      "visual": "Low-light/spotlight effect around edges; Cretton clapping mid-stride; blue/white coach crossing frame; cut to stuntman standing on APC roof giving thumbs-up beside camera rig and a man in black hoodie and cap.",
+      "audio": "Faint applause; narration; engine hum.",
+      "speech": "Here we can see Cretton applauding the crew, until this bus gets in the way. But I did catch this lovely exchange of thumbs up between Cretton and the stuntman."
+    },
+    {
+      "start": "01:37",
+      "end": "01:57",
+      "caption": "Perspective shifts to a side street: a green forklift and a tall blue truss crane tower stand beside the tan APC loaded on a multi-axle flatbed trailer. The stuntman crouches on the APC roof, leaning and pulling at the hatch door while camera operators film from the crane platform. The narrator explains the limited sightlines from side streets.",
+      "visual": "'ONE WAY' and red 'NO STANDING Anytime' signs on a pole; woman in orange hi-vis vest seated at right; 'FRANKLIN ST' and 'WILLIAM ST' green street plates; stuntman in teal shirt wrestling with hatch; yellow step ladder; crew in caps on blue platform.",
+      "audio": "Narration; machinery clanks and diesel idle.",
+      "speech": "It was also possible for members of the public to view the set from several of the side streets along Bothwell Street. This view allowed us to get a good view of the action, but only if it took place in that small section of the street. In this take, we can see the Spider-Man stuntman maneuvering his body to try to open the hatch door of the APC vehicle."
+    },
+    {
+      "start": "01:57",
+      "end": "02:10",
+      "caption": "The APC, marked 'DD9', rolls backward on its blue trailer to the starting position, bringing the jib-mounted cinema camera into clear view as it swings toward the vehicle. Orange-and-yellow patio umbrellas dot the foreground. The narrator explains the rig enables unmasked close-ups of Spider-Man.",
+      "visual": "Tan APC with black 'DD9' stencil on blue six-axle trailer; black camera head on articulated arm; crew in grey/black shirts and caps adjusting gear; 'FRANKLIN ST' sign; umbrellas bottom frame.",
+      "audio": "Narration; trailer wheels and hydraulics.",
+      "speech": "As the APC vehicle moves back to the starting point, we can get a good view of the camera setup. It allows for close-ups of Spider-Man during these scenes, and is also used when he's not wearing his mask. But we'll look at that part later."
+    },
+    {
+      "start": "02:10",
+      "end": "02:21",
+      "caption": "Ground-level shot: two crew kneel at the front bumper of a black pickup (registration 'AV72 LYC'), one bald man in a black 'PANTHER' tee straining to tighten a bolt on a low wheeled metal device fitted with red canisters; a colleague in a grey hoodie steadies him. The device is then shown being wheeled past on a trailer. The narrator voices curiosity about its purpose.",
+      "visual": "Yellow safety bollards; wet tarmac; device with two rubber wheels, steel frame, red cylinders and a curved metal shield; men in khaki shorts and jeans; close-up of hands cranking the mechanism.",
+      "audio": "Narration; metallic ratcheting/clanking.",
+      "speech": "I was interested to know what these guys were up to. Looks like a pretty serious operation with how much effort he put into tightening that thing. I still wasn't sure what it was as I saw them wheeling it past on this trailer."
+    },
+    {
+      "start": "02:21",
+      "end": "02:29",
+      "caption": "Back to the high-angle street view: the wheeled device now trails along the road attached to vehicles during a chase rehearsal, sliding past the white ambulance and black SUV while the crowd watches from behind 'NYPD' barriers. The narrator notes the attachment but remains uncertain.",
+      "visual": "Steam vent still active left; yellow taxi, white ambulance, black SUV, silver saloon; small wheeled rig crossing frame center; spectators lining both sides; 'ONE WAY' signs.",
+      "audio": "Narration; rolling tires and engine revs.",
+      "speech": "Then, I noticed they had attached it to a couple of the vehicles during this chase scene. But I still wasn't sure. Until..."
+    },
+    {
+      "start": "02:29",
+      "end": "02:46",
+      "caption": "Pyrotechnic payoff: a huge orange fireball erupts behind the advancing APC, followed by a towering column of grey-black smoke; a black quadcopter camera drone hovers above the chaos as the vehicle drives through the haze. Buses displaying 'M19 LEHIGH AVE' and '22nd ST AND' flank the street. The crowd gasps and cheers; the narrator quips 'Not bad for Glasgow city center.'",
+      "visual": "Fireball ~02:33, then dense smoke plume; tan APC with roof turret emerging; drone with gimbal camera mid-air; US flags on buildings; wet reflective road; onlookers with phones.",
+      "audio": "Loud explosion boom, sustained rumble, crowd 'ohhh'/cheering; narration resumes after blast.",
+      "speech": "...this happened. Not bad for Glasgow city center."
+    },
+    {
+      "start": "02:46",
+      "end": "02:51",
+      "caption": "A tighter telephoto shot catches the APC's turret minigun discharging, muzzle flashes flickering, partially obscured by a dark Honda sedan (plate 'RM2 LBG') in the foreground and a vertical 'ONYX' sign at left. The narrator highlights this smaller moment.",
+      "visual": "Smoke lingering; gun barrel flashing; yellow taxi edge left; silver car right; shallow depth of field.",
+      "audio": "Rapid staccato gunfire pops; narration.",
+      "speech": "I captured some smaller moments too. Here, we can see the APC minigun firing off."
+    },
+    {
+      "start": "02:51",
+      "end": "03:01",
+      "caption": "Between-takes glimpse: extras relax at pavement café tables — a masked man in a striped apron pushes a wire cart, women sit chatting near blue and red post boxes — then the same group is shown sprinting away in character during the chase, passing a 'PARKING SUSPENSION' sign and a blue 'F' parking pole as a packed hillside crowd looks on.",
+      "visual": "Glass-fronted café with food poster; orange-and-white barrier tape; extras in casual clothes running left-to-right; 'ONE WAY' sign; dense spectator bank in background.",
+      "audio": "Narration; ambient street and crowd noise.",
+      "speech": "Here are some of the extras between takes. And here they are running away during the chase scene."
+    },
+    {
+      "start": "03:01",
+      "end": "03:09",
+      "caption": "Actors in navy New York police uniforms — caps, shoulder patches, badges — walk off the set through a knot of crew and fans, one adjusting his earpiece. A black 'SUNBELT RENTALS' crane arm and a 'PRADA' storefront rise behind them. The narrator marks the end of the day.",
+      "visual": "Two NYPD-costumed officers foreground; woman in red lanyard filming; stone tenement buildings; crane boom diagonal upper frame.",
+      "audio": "Narration; crowd murmur.",
+      "speech": "And here are some of those New York cops leaving the set at the end of the day."
+    },
+    {
+      "start": "03:09",
+      "end": "03:19",
+      "caption": "The edit returns to the opening high-angle wide of Bothwell Street — steam, taxi, ambulance, fire engine, NYPD barriers, phone-wielding crowd — as the narrator explains that star Tom Holland filmed at 8:30 a.m. on day three, which he missed capturing.",
+      "visual": "Identical framing to segment 1; clock, steam plume, vehicles, barriers, crowd; DH EVENTS watermark.",
+      "audio": "Narration over ambient city sound.",
+      "speech": "The star of the movie, Tom Holland, made an appearance to film his scenes. But unfortunately, this took place at 8:30 a.m. on day three, so I missed out on capturing those moments."
+    },
+    {
+      "start": "03:19",
+      "end": "03:27",
+      "caption": "A comic-book-style illustrated panel with a white border fades in over the live footage: Spider-Man in his red-and-blue suit crouches on the yellow APC while two crew figures stand beside him against a green glass building. The narrator says his animations accurately reconstruct Holland's on-set stunts.",
+      "visual": "Halftone/shaded illustration; yellow tank-like APC; crouching Spidey pose; two stylized crew members; live street visible around panel edges.",
+      "audio": "Narration; ambient continues underneath.",
+      "speech": "I do have some animations that accurately capture his time on set, however. He performed some of the same stunts that were rehearsed by his stunt double the previous day."
+    },
+    {
+      "start": "03:27",
+      "end": "03:35",
+      "caption": "A second animated panel shows Spider-Man standing before a white van lettered 'STAGEHIRE', extending a hand toward fans whose illustrated smartphones and cameras record him, including a bearded man with a DSLR. The narrator recounts Holland greeting fans, waving, shaking hands and lifting a child over the railing.",
+      "visual": "Comic panel centered; 'STAGEHIRE' text on van roof; multiple hands holding phones; red car and yellow taxi in live background corners.",
+      "audio": "Narration; soft ambience.",
+      "speech": "At the end of Bothwell Street, he greeted fans, waving, shaking hands, and even lifting a young fan over the railing for a photo."
+    },
+    {
+      "start": "03:35",
+      "end": "03:50",
+      "caption": "A third panel depicts Spider-Man perched atop the yellow 'DD9' tank/APC with a camera drone hovering nearby; the video then cuts to live footage of the real black quadcopter drifting past a reflective glass skyscraper facade before fading to black. The narrator thanks viewers and asks them to subscribe for further coverage.",
+      "visual": "Illustrated Spidey on tank with drone; transition to live drone against mirrored blue-green glass towers with horizontal fins; gradual darkening to black.",
+      "audio": "Closing narration; faint drone hum/wind; ambience fades out.",
+      "speech": "Thanks for watching this video on days two and three of the Spider-Man 4 movie filming in Glasgow. Please subscribe to the channel and look out for more coverage here as the filming continues."
+    }
+  ]
+}<turn|>
+<|turn>model

@@ -1,0 +1,13 @@
+{
+  "model": "/remote-home/yushengliao/speech/jimodels/openmodels/gemma-4-E4B-it",
+  "gpus": "7",
+  "completed": [
+    {
+      "video": "video_11.mp4",
+      "output": "video_11/route.json",
+      "status": "ok"
+    }
+  ],
+  "failed": [],
+  "kind": "model_format_repair"
+}

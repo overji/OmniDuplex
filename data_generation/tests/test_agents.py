@@ -3,11 +3,12 @@ import json
 import unittest
 from dataclasses import replace
 
-from data_generation.src.agent_tools import TOOLS, PARAMETERS
-from data_generation.src.catalog import ABILITIES
-from data_generation.src.registry import get_task
-from data_generation.src.tasks import _agent
-from data_generation.tests.fixtures import agent_sample
+from data_generation.src.domain.agent_tools import TOOLS, PARAMETERS
+from data_generation.src.domain.catalog import ABILITIES
+from data_generation.src.application.registry import get_task
+from data_generation.src.domain.tasks import _agent
+from data_generation.tests.fixtures import agent_sample, observation
+from data_generation.src.domain.qa import adapt_responses
 
 
 def validate(sample, context, task="event_understanding_agent"):
@@ -18,18 +19,30 @@ class AgentTests(unittest.TestCase):
     def test_all_abilities_work_types_and_negative_branches(self):
         for ability in ABILITIES:
             task = f"{ability}_agent"
-            for work in ("tools", "reasoning", "tools_and_reasoning"):
+            for work in ("tools", "tools_and_reasoning"):
                 with self.subTest(task=task, work=work):
                     sample, context = agent_sample(task, work_type=work)
                     result = validate(sample, context, task)
                     self.assertEqual(result["sample_type"], "positive")
-                    self.assertEqual(result["frontend_context"], _agent.frontend_context(context))
+                    self.assertEqual(result["frontend_context"], _agent.frontend_context(context, get_task(task).capabilities_template))
             for kind in ("no_context", "missing_tool"):
                 sample, context = agent_sample(task, kind)
                 result = validate(sample, context, task)
                 self.assertEqual(result["responses"][0]["trigger_time"], result["question_time"])
-                self.assertGreater(result["annotation"]["trigger_time"], result["question_time"])
-                self.assertNotIn("annotation", result["frontend_context"])
+                self.assertGreater(result["annotations"][0]["trigger_time"], result["question_time"])
+                self.assertNotIn("annotations", result["frontend_context"])
+
+    def test_all_agent_abilities_require_actual_tools(self):
+        for ability in ABILITIES:
+            task = f"{ability}_agent"
+            sample, context = agent_sample(task, work_type="reasoning")
+            with self.subTest(task=task), self.assertRaisesRegex(ValueError, "pure reasoning"):
+                validate(sample, context, task)
+            for work in ("tools", "tools_and_reasoning"):
+                sample, context = agent_sample(task, work_type=work)
+                sample["required_tools"] = []
+                with self.subTest(task=task, work=work), self.assertRaisesRegex(ValueError, "at least one necessary"):
+                    validate(sample, context, task)
 
     def test_negative_invalid_variants_and_skip(self):
         for kind in ("no_context", "missing_tool"):
@@ -44,8 +57,8 @@ class AgentTests(unittest.TestCase):
                 lambda s: s["responses"][0].update(messages=[]),
                 lambda s: s["responses"][0].update(missing_tools=[]),
                 lambda s: s["responses"].append(copy.deepcopy(s["responses"][0])),
-                lambda s: s.pop("annotation"),
-                lambda s: s["annotation"]["evidence"][0].update(available_time="00:21"),
+                lambda s: s.pop("annotations"),
+                lambda s: s["annotations"][0]["evidence"][0].update(available_time="00:21"),
             ]
             for mutate in mutations:
                 invalid = copy.deepcopy(sample)
@@ -74,6 +87,61 @@ class AgentTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 validate(sample, bad)
 
+    def test_every_agent_episode_is_validated_and_merged_in_time_order(self):
+        sample, context = agent_sample()
+        second = json.loads(json.dumps(sample["responses"][0]).replace("00:20", "00:30").replace("00:40", "00:50"))
+        second["trigger"]["episode_id"] = "event-30"
+        sample["responses"].append(second)
+        result = validate(sample, context)
+        merged = adapt_responses(result["responses"])
+        self.assertEqual([r["trigger_time"] for r in merged],
+                         ["00:20", "00:30", "00:40", "00:40", "00:50", "00:50"])
+        self.assertEqual([r["source_trigger_time"] for r in merged if "source_trigger_time" in r],
+                         ["00:20", "00:30"])
+        for mutate in (
+            lambda r: r.pop("response"),
+            lambda r: r.update(response="A different acknowledgement."),
+            lambda r: r["messages"][1].update(timestamp="00:49"),
+            lambda r: r["messages"][2].update(outcome="failed"),
+        ):
+            invalid = copy.deepcopy(sample)
+            mutate(invalid["responses"][1])
+            with self.assertRaises(ValueError):
+                validate(invalid, context)
+        invalid = copy.deepcopy(sample)
+        envelope = json.loads(invalid["responses"][1]["messages"][1]["content"])
+        envelope["actions"] = []
+        invalid["responses"][1]["messages"][1]["content"] = json.dumps(envelope)
+        with self.assertRaisesRegex(ValueError, "every required tool"):
+            validate(invalid, context)
+
+    def test_negative_annotations_cover_multiple_episodes_without_extra_refusals(self):
+        for kind in ("no_context", "missing_tool"):
+            sample, context = agent_sample(sample_type=kind)
+            sample["annotations"].append(observation("event_understanding", "agent", 40))
+            result = validate(sample, context)
+            self.assertEqual(len(result["annotations"]), 2)
+            self.assertEqual(len(result["responses"]), 1)
+            sample["annotations"][1].pop("response")
+            with self.assertRaises(ValueError):
+                validate(sample, context)
+
+    def test_agent_window_and_delay_use_recommended_call_time(self):
+        sample, context = agent_sample()
+        response = sample["responses"][0]
+        response.update(trigger_time="00:22", window_end="00:25")
+        response["messages"][0]["timestamp"] = "00:22"
+        for message in response["messages"][1:]:
+            message["timestamp"] = "00:42"
+        validate(sample, context)
+        response["window_end"] = "01:41"
+        with self.assertRaisesRegex(ValueError, "latest eligible call"):
+            validate(sample, context)
+        sample, context = agent_sample(sample_type="missing_tool")
+        sample["responses"][0]["window_end"] = "00:01"
+        with self.assertRaisesRegex(ValueError, "refusal window"):
+            validate(sample, context)
+
     def test_delegation_cannot_invent_tools_or_future_parameters(self):
         for change in ({"suggested_capabilities": ["invented_tool"]}, {"suggested_capabilities": []},
                        {"extracted_parameters": [{"name": "item", "value": "parcel", "evidence": "Later", "evidence_time": "00:21"}]}):
@@ -85,13 +153,12 @@ class AgentTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 validate(sample, context)
 
-    def test_backend_evidence_and_pure_reasoning(self):
+    def test_backend_evidence_and_required_reasoning(self):
         changes = [
             ("tools", {"simulated": False}),
             ("tools", {"actions": [], "sources": []}),
             ("tools", {"actions": [{"tool": "invented", "operation": "send", "status": "completed", "evidence": "sent"}]}),
-            ("reasoning", {"tool_information": ["Weather queried."]}),
-            ("reasoning", {"reasoning": []}),
+            ("tools_and_reasoning", {"reasoning": []}),
             ("tools", {"actions": [{"tool": "todo_create", "operation": "create", "status": "completed", "evidence": "record", "arguments": {}}]}),
         ]
         for work, change in changes:

@@ -1,0 +1,79 @@
+{
+  "video": "/root/jimodels/OmniDuplex/videos/video_101.mp4",
+  "duration_seconds": 233.484,
+  "caption_sha256": "59454095f150dbcbd0827b3f8c957355cbaa1c66509db0e43d8c746e485678e1",
+  "route_prompt_sha256": "5fdcc9a4157764f51e53193dee8602449d3b4bba9648909b1d37cb9badf362eb",
+  "audio_seconds": 233.4534375,
+  "audio_chunks": 8,
+  "input_tokens": 14882,
+  "input_shapes": {
+    "input_ids": [
+      1,
+      14882
+    ],
+    "attention_mask": [
+      1,
+      14882
+    ],
+    "mm_token_type_ids": [
+      1,
+      14882
+    ],
+    "pixel_values_videos": [
+      1,
+      32,
+      630,
+      768
+    ],
+    "video_position_ids": [
+      1,
+      32,
+      630,
+      2
+    ],
+    "input_features": [
+      8,
+      2999,
+      128
+    ],
+    "input_features_mask": [
+      8,
+      2999
+    ]
+  },
+  "attempts": [
+    {
+      "attempt": 0,
+      "input_tokens": 14882,
+      "output_tokens": 857,
+      "validation_error": "duplicate routed task"
+    },
+    {
+      "attempt": 1,
+      "input_tokens": 15935,
+      "output_tokens": 851,
+      "validation_error": "duplicate routed task"
+    },
+    {
+      "attempt": 2,
+      "input_tokens": 16982,
+      "output_tokens": 851,
+      "validation_error": "duplicate routed task"
+    },
+    {
+      "attempt": 3,
+      "kind": "model_format_repair",
+      "gpu": "6",
+      "input_tokens": 883,
+      "output_tokens": 583,
+      "elapsed_seconds": 43.82104134559631,
+      "preserved_judgments_exactly": true
+    }
+  ],
+  "elapsed_seconds": 43.821049451828,
+  "elapsed_scope": "format repair only; prior audiovisual inference time not recorded",
+  "peak_allocated_gib": {
+    "0": 15.028650283813477
+  },
+  "peak_memory_scope": "format repair only"
+}

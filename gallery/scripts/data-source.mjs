@@ -1,4 +1,4 @@
-import { readdir, readFile, realpath } from 'node:fs/promises'
+import { readdir, readFile, realpath, copyFile } from 'node:fs/promises'
 import path from 'node:path'
 
 export const dataDir = path.resolve(import.meta.dirname, '../../data_generation/data')
@@ -6,15 +6,22 @@ export const dataDir = path.resolve(import.meta.dirname, '../../data_generation/
 export async function listFiles(root = dataDir) {
   try {
     const files = []
-    for (const entry of await readdir(root, { withFileTypes: true })) {
-      if (!entry.isFile() || !entry.name.endsWith('.json')) continue
-      try {
-        const data = JSON.parse(await readFile(path.join(root, entry.name), 'utf8'))
-        if (isFinalTaskResult(data)) files.push(entry.name)
-      } catch {
-        // Invalid and intermediate JSON files are not gallery samples.
+    async function visit(relative = '') {
+      for (const entry of await readdir(path.join(root, relative), { withFileTypes: true })) {
+        const name = relative ? `${relative}/${entry.name}` : entry.name
+        if (entry.isDirectory() && !['workers', 'attempts', 'aborted_attempts'].includes(entry.name) && !entry.name.startsWith('.')) {
+          await visit(name)
+        } else if (entry.isFile() && entry.name.endsWith('.json') && (!relative || entry.name === 'all_qa.json')) {
+          try {
+            const data = await readData(name, root)
+            if (isFinalTaskResult(data)) files.push(name)
+          } catch {
+            // Invalid and intermediate JSON files are not gallery samples.
+          }
+        }
       }
     }
+    await visit()
     return files.sort()
   } catch (error) {
     if (error.code === 'ENOENT') return []
@@ -34,12 +41,13 @@ export function isFinalTaskResult(data) {
 }
 
 export async function readData(name, root = dataDir) {
-  if (!name || name !== path.basename(name) || name.includes('\\') || !name.endsWith('.json')) {
+  if (!name || path.isAbsolute(name) || name.includes('\\') || name.split('/').some(part => !part || part === '.' || part === '..') || !name.endsWith('.json')) {
     throw Object.assign(new Error('Invalid file name'), { status: 400 })
   }
   const resolvedRoot = await realpath(root)
   const file = await realpath(path.join(root, name))
-  if (path.dirname(file) !== resolvedRoot) throw Object.assign(new Error('File outside data directory'), { status: 403 })
+  const relative = path.relative(resolvedRoot, file)
+  if (relative.startsWith(`..${path.sep}`) || relative === '..' || path.isAbsolute(relative)) throw Object.assign(new Error('File outside data directory'), { status: 403 })
   const source = await readFile(file, 'utf8')
   try { return JSON.parse(source) } catch {
     throw Object.assign(new Error(`Invalid JSON: ${name}`), { status: 422 })
@@ -68,9 +76,28 @@ export function dataMiddleware(root = dataDir) {
 
 export function galleryDataPlugin() {
   const virtualId = '\0gallery-snapshot'
+  let config
   return {
     name: 'gallery-data',
-    configureServer(server) { server.middlewares.use(dataMiddleware()) },
+    configResolved(value) { config = value },
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        try {
+          const name = decodeURIComponent(new URL(req.url, 'http://localhost').pathname).slice(1)
+          if (name && name === path.basename(name) && !name.includes('\\') && name.endsWith('.mp4')) {
+            for (const root of [path.resolve(dataDir, '../../videos'), path.resolve(dataDir, '../videos')]) {
+              try {
+                await realpath(path.join(root, name))
+                req.url = `/@fs/${path.join(root, name)}`
+                break
+              } catch (error) { if (error.code !== 'ENOENT') throw error }
+            }
+          }
+        } catch { /* Leave invalid URLs to Vite. */ }
+        next()
+      })
+      server.middlewares.use(dataMiddleware())
+    },
     configurePreviewServer(server) { server.middlewares.use(dataMiddleware()) },
     resolveId(id) { if (id === 'virtual:gallery-snapshot') return virtualId },
     async load(id) {
@@ -84,6 +111,24 @@ export function galleryDataPlugin() {
         }
       }
       return `export default ${JSON.stringify(snapshot)}`
+    },
+    async closeBundle() {
+      if (config.command !== 'build') return
+      const videos = new Set()
+      for (const name of await listFiles()) {
+        const data = await readData(name)
+        for (const sample of Array.isArray(data) ? data : [data]) {
+          if (typeof sample.video === 'string' && sample.video === path.basename(sample.video)) videos.add(sample.video)
+        }
+      }
+      for (const name of videos) {
+        let source
+        for (const root of [path.resolve(dataDir, '../../videos'), path.resolve(dataDir, '../videos')]) {
+          try { source = await realpath(path.join(root, name)); break } catch (error) { if (error.code !== 'ENOENT') throw error }
+        }
+        if (source) await copyFile(source, path.resolve(config.root, config.build.outDir, name))
+        else config.logger.warn(`Gallery video unavailable: ${name}`)
+      }
     },
   }
 }

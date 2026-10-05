@@ -1,0 +1,37 @@
+{
+  "schema": "omniduplex.api_usage.v1",
+  "provider": "qwen",
+  "model": "qwen3.8-omni-flash",
+  "task": "attribute_perception_pr",
+  "video": "video_101.mp4",
+  "recorded_at": "2026-10-04T02:04:41.387538+00:00",
+  "status": "measured",
+  "input_tokens": 103913,
+  "output_tokens": 11786,
+  "total_tokens": 115699,
+  "cached_input_tokens": 0,
+  "raw_usage": {
+    "completion_tokens": 11786,
+    "completion_tokens_details": {
+      "reasoning_tokens": 11222,
+      "text_tokens": 564
+    },
+    "prompt_tokens": 103913,
+    "prompt_tokens_details": {
+      "audio_tokens": 1633,
+      "cached_tokens": 0,
+      "text_tokens": 7913,
+      "video_tokens": 94367
+    },
+    "total_tokens": 115699
+  },
+  "estimated_cost_cny": 0.1149526,
+  "pricing": {
+    "currency": "CNY",
+    "unit": "per_million_tokens",
+    "input": 0.8,
+    "cached_input": 0.1,
+    "output": 2.7,
+    "source": "QWEN_*_PRICE_CNY_PER_MILLION settings or documented defaults"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "omniduplex.api_usage.v1",
+  "provider": "qwen",
+  "model": "qwen3.8-omni-flash",
+  "task": "attribute_perception_agent",
+  "video": "video_101.mp4",
+  "recorded_at": "2026-10-04T02:20:36.293255+00:00",
+  "status": "unavailable",
+  "reason": "provider response did not include usage",
+  "input_tokens": null,
+  "output_tokens": null,
+  "total_tokens": null,
+  "cached_input_tokens": null,
+  "estimated_cost_cny": null
+}

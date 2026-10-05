@@ -52,3 +52,30 @@ test('live API discovers changes, isolates invalid files and rejects traversal',
     await rm(outside, { recursive: true, force: true })
   }
 })
+
+test('nested bundles are discoverable but worker artifacts and escaped symlinks are excluded', async () => {
+  const { mkdir } = await import('node:fs/promises')
+  const { listFiles, readData } = await import('./data-source.mjs')
+  const root = await mkdtemp(path.join(tmpdir(), 'gallery-bundles-'))
+  const outside = await mkdtemp(path.join(tmpdir(), 'gallery-external-'))
+  const sample = { status: 'ok', question: 'watch', responses: [], mode: 'rtd', video: 'video_1.mp4' }
+  try {
+    await mkdir(path.join(root, 'run/workers/batch1'), { recursive: true })
+    await mkdir(path.join(root, 'run/attempts'), { recursive: true })
+    await writeFile(path.join(root, 'run/all_qa.json'), JSON.stringify([sample]))
+    await writeFile(path.join(root, 'run/individual.json'), JSON.stringify(sample))
+    await writeFile(path.join(root, 'run/workers/batch1/all_qa.json'), JSON.stringify([sample]))
+    await writeFile(path.join(root, 'run/attempts/all_qa.json'), JSON.stringify([sample]))
+    await writeFile(path.join(outside, 'secret.json'), JSON.stringify([sample]))
+    await symlink(path.join(outside, 'secret.json'), path.join(root, 'run/escaped.json'))
+    await symlink(outside, path.join(root, 'external'))
+    assert.deepEqual(await listFiles(root), ['run/all_qa.json'])
+    assert.deepEqual(await readData('run/all_qa.json', root), [sample])
+    await assert.rejects(readData('run/escaped.json', root), { status: 403 })
+    await assert.rejects(readData('external/secret.json', root), { status: 403 })
+    for (const name of ['run/../secret.json', 'run//all_qa.json', 'run/./all_qa.json']) await assert.rejects(readData(name, root), { status: 400 })
+  } finally {
+    await rm(root, { recursive: true, force: true })
+    await rm(outside, { recursive: true, force: true })
+  }
+})

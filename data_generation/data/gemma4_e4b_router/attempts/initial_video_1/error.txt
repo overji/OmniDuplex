@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/root/jimodels/OmniDuplex/tmp/gemma4_router/run.py", line 115, in <module>
+    response = processor.decode(generated, skip_special_tokens=True).strip()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/jimodels/OmniDuplex/data_generation/src/domain/tasks/route.py", line 70, in validate_result
+    raise ValueError("duplicate routed task")
+ValueError: duplicate routed task

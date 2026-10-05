@@ -1,0 +1,119 @@
+{
+  "status": "ok",
+  "question": "I'm jotting down the escape route as I watch. Whenever the runners enter a covered wire-mesh walkway, tell me which way they're heading and add a note for that segment.",
+  "question_time": "02:15",
+  "audio_dependency": "helpful",
+  "vision_dependency": "required",
+  "work_type": "tools_and_reasoning",
+  "required_tools": [
+    "note_write"
+  ],
+  "responses": [
+    {
+      "window_start": "02:21",
+      "trigger_time": "02:21",
+      "window_end": "02:26",
+      "response": "I'll note the mesh-walkway entry; they're heading into the covered passage.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The mesh walls and roof are visible as the runners cross inside, and the footsteps/mesh rattle sound enclosed.",
+      "evidence": [
+        {
+          "time": "02:20",
+          "available_time": "02:21",
+          "fact": "The grey-suited runners run from the open yard toward the entrance of a roofed wire-mesh corridor."
+        },
+        {
+          "time": "02:21",
+          "available_time": "02:21",
+          "fact": "Wire-mesh sides and overhead framing surround the runners as they cross into the covered walkway."
+        },
+        {
+          "time": "02:21",
+          "available_time": "02:21",
+          "fact": "Footsteps and light mesh rattle take on an enclosed sound as they move inside."
+        }
+      ],
+      "details": {
+        "target": "the grey-suited runners, including the POV camera wearer",
+        "reference": "the covered wire-mesh walkway beside the open yard",
+        "relation": "entering and moving from the open yard into the enclosed passage",
+        "uncertainty": "The exact number of runners fully inside is partly blocked by the POV view; no metric distance or real-world location is available."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "mesh_walkway_entry_0221",
+        "confirmed_time": "02:21",
+        "definition": "The grey-suited runners enter a covered wire-mesh walkway from the open yard."
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "02:21",
+          "content": "I'll note the mesh-walkway entry; they're heading into the covered passage.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Write a personal note titled 'Escape route: mesh walkway entry'. Record that at 02:21 the grey-suited runners entered a covered wire-mesh walkway, moving away from the open yard into the passage. Use only the observed spatial facts; do not infer a real-world location or metric distance.\",\"observed_context\":\"At 02:20-02:21, the runners leave the open yard and enter a roofed wire-mesh corridor. At 02:21, mesh sides and overhead framing surround them, and footsteps/mesh rattle sound enclosed.\",\"user_goal\":\"Save an escape-route note for the mesh-walkway segment and identify the direction of travel relative to the yard.\",\"constraints_and_authorization\":\"The viewer authorized a personal note. No deadline was specified. Do not claim completion of any external action beyond writing the note, and do not invent distances or locations.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A note artifact with title and content, plus action evidence from note_write confirming creation.\",\"extracted_parameters\":[{\"name\":\"event_time\",\"value\":\"02:21\",\"evidence_time\":\"02:21\",\"evidence\":\"The runners are visibly inside the covered wire-mesh walkway.\"},{\"name\":\"direction\",\"value\":\"away from the open yard into the covered passage\",\"evidence_time\":\"02:21\",\"evidence\":\"Their backs face the yard as they run into the mesh corridor.\"},{\"name\":\"reference_structure\",\"value\":\"covered wire-mesh walkway\",\"evidence_time\":\"02:21\",\"evidence\":\"Wire-mesh walls and an overhead frame enclose the passage.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "02:44",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Created a personal note recording the 02:21 mesh-walkway entry and the runners' direction from the open yard into the covered passage.\",\"observed_facts\":[\"At 02:21, grey-suited runners entered a covered wire-mesh walkway from the open yard.\",\"The movement was away from the yard and into the enclosed passage.\"],\"tool_information\":[\"note_write created a note titled 'Escape route: mesh walkway entry'.\"],\"reasoning\":[\"The user asked for an escape-route note tied to a spatial trigger.\",\"The available evidence confirms entry into the mesh walkway and direction relative to the yard, but not metric distance or real-world location.\"],\"uncertainties\":[\"The exact number of runners fully inside is partly obscured by the POV view.\",\"No scale is available, so no distance is estimated.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create_note\",\"status\":\"completed\",\"evidence\":\"Note titled 'Escape route: mesh walkway entry' was created with the observed 02:21 entry and direction.\",\"arguments\":{\"title\":\"Escape route: mesh walkway entry\",\"content\":\"At 02:21, the grey-suited runners entered a covered wire-mesh walkway, moving away from the open yard into the passage. No metric distance or real-world location was inferred.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Escape route: mesh walkway entry\",\"content\":\"At 02:21, the grey-suited runners entered a covered wire-mesh walkway, moving away from the open yard into the passage. No metric distance or real-world location was inferred.\"}]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "02:44",
+          "content": "Note added: the 02:21 mesh-walkway entry is saved as an escape-route note, with the runners moving from the open yard into the covered passage.",
+          "outcome": "success"
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "window_start": "02:21",
+      "trigger_time": "02:21",
+      "window_end": "02:26",
+      "response": "I'll note the mesh-walkway entry; they're heading into the covered passage.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The mesh walls and roof are visible as the runners cross inside, and the footsteps/mesh rattle sound enclosed.",
+      "evidence": [
+        {
+          "time": "02:20",
+          "available_time": "02:21",
+          "fact": "The grey-suited runners run from the open yard toward the entrance of a roofed wire-mesh corridor."
+        },
+        {
+          "time": "02:21",
+          "available_time": "02:21",
+          "fact": "Wire-mesh sides and overhead framing surround the runners as they cross into the covered walkway."
+        },
+        {
+          "time": "02:21",
+          "available_time": "02:21",
+          "fact": "Footsteps and light mesh rattle take on an enclosed sound as they move inside."
+        }
+      ],
+      "details": {
+        "target": "the grey-suited runners, including the POV camera wearer",
+        "reference": "the covered wire-mesh walkway beside the open yard",
+        "relation": "entering and moving from the open yard into the enclosed passage",
+        "uncertainty": "The exact number of runners fully inside is partly blocked by the POV view; no metric distance or real-world location is available."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "mesh_walkway_entry_0221",
+        "confirmed_time": "02:21",
+        "definition": "The grey-suited runners enter a covered wire-mesh walkway from the open yard."
+      }
+    }
+  ]
+}

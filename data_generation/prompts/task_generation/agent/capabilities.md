@@ -1,5 +1,6 @@
 The frontend delegates triggered work through agent_call. It cannot directly call backend tools.
-The backend may perform complex reasoning, use the available daily application tools, or both.
+Delegate only work that requires at least one available daily application tool;
+complex reasoning may support that tool work. Answer ordinary perception directly.
 Audiovisual understanding and complex reasoning are not tools and must never appear in the tool list.
 Use only the following backend tools and operation scopes:
 {{AVAILABLE_TOOLS}}
@@ -34,10 +35,11 @@ Frontend function definition:
         },
         "suggested_capabilities": {
           "type": "array",
+          "minItems": 1,
           "items": {
             "type": "string"
           },
-          "description": "Only available daily application tool names; empty for pure complex reasoning."
+          "description": "At least one available daily application tool that is necessary for the requested outcome."
         },
         "expected_output": {
           "type": "string",

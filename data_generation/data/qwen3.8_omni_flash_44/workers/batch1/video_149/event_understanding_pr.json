@@ -1,0 +1,70 @@
+{
+  "status": "ok",
+  "question": "Track the chase for me: let me know whenever the sprinting footfalls and driving music cut out and are replaced by a shut door and quiet, held breathing.",
+  "question_time": "02:20",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "responses": [
+    {
+      "window_start": "03:01",
+      "trigger_time": "03:02",
+      "window_end": "03:11",
+      "response": "The runner has slipped into a stall and shut the door — the sprinting and chase music have dropped away to quiet, held breathing.",
+      "trigger_type": "sound+visual",
+      "trigger_type_reason": "The criterion is carried by the audio (beat and footfalls stopping, door slam, hushed breathing), while the frames confirm the blue stall door closing behind the runner.",
+      "evidence": [
+        {
+          "time": "02:50",
+          "available_time": "02:55",
+          "fact": "The driving chase beat fades out as the runner moves into the dim restroom corridor, leaving reverberant ambience."
+        },
+        {
+          "time": "02:58",
+          "available_time": "03:01",
+          "fact": "A door slams and latches shut; sprinting footfalls give way to hushed breathing, and the closed blue stall door is visible."
+        }
+      ],
+      "details": {
+        "event": "The runner ends the sprint by ducking into a restroom stall, pulling the door shut and going quiet as the chase audio drops out.",
+        "participants": "The first-person runner; the masked pursuer remains off-screen at this moment.",
+        "relations": "The runner is evading the pursuer, breaking the audible trail of footfalls and music to conceal themselves."
+      },
+      "trigger": {
+        "kind": "condition",
+        "satisfied": true,
+        "episode_id": "stall-hide-01",
+        "confirmed_time": "03:01",
+        "definition": "Sprinting footfalls and the driving chase music give way to a shut door and quiet, held breathing.",
+        "conditions": [
+          {
+            "condition": "Chase music and sprinting footfalls have stopped",
+            "satisfied": true,
+            "time": "02:55",
+            "evidence": "Beat fades out in the restroom corridor, leaving reverberant ambience."
+          },
+          {
+            "condition": "A door shuts and hushed breathing replaces the running",
+            "satisfied": true,
+            "time": "03:01",
+            "evidence": "Door slam and latch with quiet breathing; blue stall door seen closed."
+          }
+        ]
+      }
+    }
+  ],
+  "ability": "event_understanding",
+  "mode": "pr",
+  "schema": "omni-interaction-v2",
+  "task": "event_understanding_pr",
+  "video": "video_149.mp4",
+  "generation_context": {
+    "duration_seconds": 212.068,
+    "preferred_modality": "audio",
+    "question_position": "non_start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "positive",
+    "available_tools": [],
+    "required_missing_tool": null
+  }
+}

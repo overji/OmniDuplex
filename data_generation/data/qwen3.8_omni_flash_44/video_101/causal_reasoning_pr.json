@@ -1,0 +1,61 @@
+{
+  "status": "ok",
+  "question": "Whenever the man in the video blows into the reed and it makes a wet, sputtering sound, alert me and explain why that's happening.",
+  "question_time": "02:12",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "responses": [
+    {
+      "window_start": "02:29",
+      "trigger_time": "02:30",
+      "window_end": "02:40",
+      "response": "The reed just sputtered wetly as he blew into it — most likely residual water from the soak you saw a moment ago is being cleared out; the inside of the reed isn't visible, so that's an inference rather than a direct observation.",
+      "trigger_type": "sound+visual",
+      "trigger_type_reason": "The reminder hinges on hearing the wet, sputtering quality (audio) while seeing him blow into the reed (visual); his earlier dry blow produced only an airy tone, so the sputter sound is the discriminating cue.",
+      "evidence": [
+        {
+          "time": "02:21",
+          "available_time": "02:24",
+          "fact": "A cutaway shows the reed placed tip-down into a glass of water, i.e. soaked."
+        },
+        {
+          "time": "02:27",
+          "available_time": "02:29",
+          "fact": "The man raises the reed to his lips and blows, and a wet, sputtering sound is heard."
+        }
+      ],
+      "details": {
+        "event": "A wet, sputtering sound occurs as the man blows into the duduk reed right after the soaking demonstration.",
+        "candidate_causes": [
+          "Residual water trapped in the reed from the just-shown soak is being expelled, making the blades splutter as air passes.",
+          "The reed blades are partly stuck together or hold debris, producing an irregular blowing sound."
+        ],
+        "basis": "Immediately before the sputter, a cutaway showed the reed submerged in water and he had described soaking it to open it; the sputter coincides exactly with the blow he uses to clear the reed.",
+        "uncertainty": "The reed's interior is not visible, so the water-residue explanation is inferred from the preceding soak and the wet character of the sound, not directly seen.",
+        "claim_type": "inference"
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "reed_wet_sputter_1",
+        "confirmed_time": "02:29",
+        "definition": "The man blows into the duduk reed and a wet, sputtering sound is produced."
+      }
+    }
+  ],
+  "ability": "causal_reasoning",
+  "mode": "pr",
+  "schema": "omni-interaction-v2",
+  "task": "causal_reasoning_pr",
+  "video": "video_101.mp4",
+  "generation_context": {
+    "duration_seconds": 233.484,
+    "preferred_modality": "vision",
+    "question_position": "non_start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "positive",
+    "available_tools": [],
+    "required_missing_tool": null
+  }
+}

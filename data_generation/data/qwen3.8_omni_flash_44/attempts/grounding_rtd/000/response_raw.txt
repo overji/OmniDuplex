@@ -1,0 +1,49 @@
+{
+  "status": "ok",
+  "question": "Keep me updated on the loud moments from the street shoot — tell me when the crowd erupts or a big effect goes off, and when the noise dies down.",
+  "question_time": "00:45",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "responses": [
+    {
+      "window_start": "00:58",
+      "trigger_time": "00:59",
+      "window_end": "01:02",
+      "response": "The crowd just erupted — loud laughter and applause after the man in the grey shirt tumbled backwards over the barrier.",
+      "trigger_type": "sound+visual",
+      "trigger_type_reason": "The burst of laughter and clapping is the audible trigger; the picture confirms it follows the failed barrier vault.",
+      "evidence": [
+        {"time": "00:56", "available_time": "00:57", "fact": "The man in the grey t-shirt leaps the metal crowd barrier and lands flat on his back on the pavement side."},
+        {"time": "00:57", "available_time": "00:58", "fact": "A loud wave of crowd laughter and applause breaks out and sustains as onlookers clap and film."}
+      ],
+      "details": {"event": "crowd laughter and applause after the barrier fall", "localization": "span", "start": "00:57", "end": "01:02"}
+    },
+    {
+      "window_start": "02:34",
+      "trigger_time": "02:35",
+      "window_end": "02:40",
+      "response": "A big explosion just went off behind the APC — deep boom, fireball, and smoke boiling up the street.",
+      "trigger_type": "sound+visual",
+      "trigger_type_reason": "The blast's boom is the dominant audio cue; the fireball and rising smoke column confirm it on screen.",
+      "evidence": [
+        {"time": "02:33", "available_time": "02:33", "fact": "A large orange fireball erupts directly behind the advancing tan APC."},
+        {"time": "02:33", "available_time": "02:33", "fact": "A loud explosion boom with sustained low rumble is heard over the street."},
+        {"time": "02:34", "available_time": "02:34", "fact": "A thick grey-black smoke column towers over the roadway as the crowd reacts."}
+      ],
+      "details": {"event": "pyrotechnic explosion behind the APC with smoke plume", "localization": "span", "start": "02:33", "end": "02:40"}
+    },
+    {
+      "window_start": "02:48",
+      "trigger_time": "02:49",
+      "window_end": "02:51",
+      "response": "Now the APC's turret is chattering — rapid gunfire pops as it rolls through the traffic.",
+      "trigger_type": "sound+visual",
+      "trigger_type_reason": "The staccato popping is the audible trigger; the telephoto shot shows the roof turret on the moving APC.",
+      "evidence": [
+        {"time": "02:47", "available_time": "02:47", "fact": "Rapid staccato gunfire pops are heard from the APC's roof turret."},
+        {"time": "02:48", "available_time": "02:48", "fact": "The tan APC with its mounted turret advances down the smoky street behind a dark sedan."}
+      ],
+      "details": {"event": "APC turret minigun firing bursts", "localization": "span", "start": "02:47", "end": "02:50"}
+    }
+  ]
+}

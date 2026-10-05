@@ -1,0 +1,213 @@
+{
+  "status": "ok",
+  "question": "Whenever the voice-over mentions a specific training-batch date, save it in my notes.",
+  "question_time": "00:01",
+  "audio_dependency": "required",
+  "vision_dependency": "none",
+  "work_type": "tools",
+  "required_tools": [
+    "note_write"
+  ],
+  "responses": [
+    {
+      "window_start": "00:04",
+      "trigger_time": "00:04",
+      "window_end": "00:08",
+      "response": "First batch date heard: April 6; saving it.",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The trigger is a spoken training-batch date mention; the audio alone confirms the date.",
+      "evidence": [
+        {
+          "time": "00:03",
+          "available_time": "00:04",
+          "fact": "The female Mandarin voice-over says April 6 is a training-batch start date."
+        }
+      ],
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:01",
+        "count": 1,
+        "occurrences": [
+          {
+            "id": "batch-date-april-6",
+            "time": "00:04"
+          }
+        ],
+        "counting_basis": "Each distinct spoken mention of a specific volleyball training-batch date is counted once when the date is fully heard."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "batch-date-april-6",
+        "confirmed_time": "00:04",
+        "definition": "The voice-over mentions a specific calendar date tied to a volleyball training batch."
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "00:04",
+          "content": "First batch date heard: April 6; saving it.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Create a note for the user recording the training-batch date just mentioned by the voice-over.\",\"observed_context\":\"At 00:04, the female Mandarin voice-over says April 6 is a training-batch start date.\",\"user_goal\":\"Save each voice-over-mentioned training-batch date in the user's notes.\",\"constraints_and_authorization\":\"The user authorized note writing. Record only the spoken date; do not infer a year or create calendar events.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with a note containing the April 6 batch date and the evidence timestamp.\",\"extracted_parameters\":[{\"name\":\"date\",\"value\":\"April 6\",\"evidence_time\":\"00:04\",\"evidence\":\"Voice-over says April 6 as a training-batch start date.\"},{\"name\":\"note_title\",\"value\":\"Volleyball batch date: April 6\",\"evidence_time\":\"00:04\",\"evidence\":\"Derived from the spoken date mention.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "00:20",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Note created for the April 6 training-batch date.\",\"observed_facts\":[\"At 00:04 the voice-over mentioned April 6 as a training-batch start date.\"],\"tool_information\":[\"note_write created a user note.\"],\"reasoning\":[\"The spoken date was extracted and stored as requested; no year was inferred.\"],\"uncertainties\":[\"The year was not stated in the video.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create_note\",\"status\":\"completed\",\"evidence\":\"Note saved with the spoken April 6 date.\",\"arguments\":{\"title\":\"Volleyball batch date: April 6\",\"content\":\"Voice-over mentioned April 6 as a training-batch start date at 00:04.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Volleyball batch date: April 6\",\"content\":\"Voice-over mentioned April 6 as a training-batch start date at 00:04.\"}]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "00:20",
+          "content": "Success: I saved a note titled 'Volleyball batch date: April 6' with the voice-over's April 6 training-batch mention."
+        }
+      ]
+    },
+    {
+      "window_start": "00:10",
+      "trigger_time": "00:10",
+      "window_end": "00:16",
+      "response": "Second batch date heard: April 13; saving it.",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The trigger is a spoken training-batch date mention; the audio alone confirms the date.",
+      "evidence": [
+        {
+          "time": "00:09",
+          "available_time": "00:10",
+          "fact": "The female Mandarin voice-over says April 13 is the second training-batch reporting date."
+        }
+      ],
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:01",
+        "count": 2,
+        "occurrences": [
+          {
+            "id": "batch-date-april-6",
+            "time": "00:04"
+          },
+          {
+            "id": "batch-date-april-13",
+            "time": "00:10"
+          }
+        ],
+        "counting_basis": "Each distinct spoken mention of a specific volleyball training-batch date is counted once when the date is fully heard."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "batch-date-april-13",
+        "confirmed_time": "00:10",
+        "definition": "The voice-over mentions a specific calendar date tied to a volleyball training batch."
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "00:10",
+          "content": "Second batch date heard: April 13; saving it.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Create a note for the user recording the second training-batch date just mentioned by the voice-over.\",\"observed_context\":\"At 00:10, the female Mandarin voice-over says April 13 is the second training-batch reporting date; this follows an April 6 mention at 00:04.\",\"user_goal\":\"Save each voice-over-mentioned training-batch date in the user's notes.\",\"constraints_and_authorization\":\"The user authorized note writing. Record only the spoken date; do not infer a year or create calendar events.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with a note containing the April 13 batch date and the evidence timestamp.\",\"extracted_parameters\":[{\"name\":\"date\",\"value\":\"April 13\",\"evidence_time\":\"00:10\",\"evidence\":\"Voice-over says April 13 as the second training-batch reporting date.\"},{\"name\":\"note_title\",\"value\":\"Volleyball batch date: April 13\",\"evidence_time\":\"00:10\",\"evidence\":\"Derived from the spoken date mention.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "00:26",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Note created for the April 13 training-batch date.\",\"observed_facts\":[\"At 00:04 the voice-over mentioned April 6 as a training-batch start date.\",\"At 00:10 the voice-over mentioned April 13 as the second training-batch reporting date.\"],\"tool_information\":[\"note_write created a user note.\"],\"reasoning\":[\"The second spoken date was extracted and stored as a separate note; the earlier April 6 mention was already noted.\",\"No year was inferred.\"],\"uncertainties\":[\"The year was not stated in the video.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create_note\",\"status\":\"completed\",\"evidence\":\"Note saved with the spoken April 13 date.\",\"arguments\":{\"title\":\"Volleyball batch date: April 13\",\"content\":\"Voice-over mentioned April 13 as the second training-batch reporting date at 00:10.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Volleyball batch date: April 13\",\"content\":\"Voice-over mentioned April 13 as the second training-batch reporting date at 00:10.\"}]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "00:26",
+          "content": "Success: I saved a note titled 'Volleyball batch date: April 13' with the voice-over's April 13 training-batch mention."
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "window_start": "00:04",
+      "trigger_time": "00:04",
+      "window_end": "00:08",
+      "response": "Voice-over mentioned April 6 as a training-batch start date.",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The trigger is a spoken training-batch date mention; the audio alone confirms the date.",
+      "evidence": [
+        {
+          "time": "00:03",
+          "available_time": "00:04",
+          "fact": "The female Mandarin voice-over says April 6 is a training-batch start date."
+        }
+      ],
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:01",
+        "count": 1,
+        "occurrences": [
+          {
+            "id": "batch-date-april-6",
+            "time": "00:04"
+          }
+        ],
+        "counting_basis": "Each distinct spoken mention of a specific volleyball training-batch date is counted once when the date is fully heard."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "batch-date-april-6",
+        "confirmed_time": "00:04",
+        "definition": "The voice-over mentions a specific calendar date tied to a volleyball training batch."
+      }
+    },
+    {
+      "window_start": "00:10",
+      "trigger_time": "00:10",
+      "window_end": "00:16",
+      "response": "Voice-over mentioned April 13 as the second training-batch reporting date.",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The trigger is a spoken training-batch date mention; the audio alone confirms the date.",
+      "evidence": [
+        {
+          "time": "00:09",
+          "available_time": "00:10",
+          "fact": "The female Mandarin voice-over says April 13 is the second training-batch reporting date."
+        }
+      ],
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:01",
+        "count": 2,
+        "occurrences": [
+          {
+            "id": "batch-date-april-6",
+            "time": "00:04"
+          },
+          {
+            "id": "batch-date-april-13",
+            "time": "00:10"
+          }
+        ],
+        "counting_basis": "Each distinct spoken mention of a specific volleyball training-batch date is counted once when the date is fully heard."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "batch-date-april-13",
+        "confirmed_time": "00:10",
+        "definition": "The voice-over mentions a specific calendar date tied to a volleyball training batch."
+      }
+    }
+  ]
+}

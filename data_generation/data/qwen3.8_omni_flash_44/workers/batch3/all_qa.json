@@ -1,0 +1,1650 @@
+[
+  {
+    "status": "ok",
+    "question": "Keep me updated on how the runner's escape is unfolding and what might happen next, listening to the chase sounds as well as watching the action.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "00:04",
+        "trigger_time": "00:04",
+        "window_end": "00:06",
+        "response": "The masked figure has just lunged in and the runner is sprinting for the open stairwell; with the roof otherwise wide open, they'll probably throw themselves down the stairs to break line of sight, though the pursuer looks quick enough to stay right on their tail.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The visual shows the lunge and the runner's line toward the stairwell, while the panicked breathing and slapping footfalls confirm the sudden full-speed flight.",
+        "evidence": [
+          {
+            "time": "00:01",
+            "available_time": "00:01",
+            "fact": "A figure in a black hooded robe and white Ghostface mask lunges into frame from the right on the sunlit rooftop car park."
+          },
+          {
+            "time": "00:02",
+            "available_time": "00:03",
+            "fact": "The camera whips and the runner sprints toward the open-air stairwell flanked by grey bollards."
+          },
+          {
+            "time": "00:00",
+            "available_time": "00:02",
+            "fact": "Aggressive beat with heavy panicked breathing and slapping footfalls on concrete."
+          }
+        ],
+        "details": {
+          "prediction": "The runner will commit to the stairwell descent to try to lose the pursuer vertically.",
+          "basis": "The pursuer is at arm's length on an otherwise open roof with the stairwell the only visible exit, and the breathing and footfalls signal immediate flight.",
+          "confidence": 0.6,
+          "claim_type": "prediction",
+          "update_reason": "The chase has just begun and the first decision point is the stairwell."
+        }
+      },
+      {
+        "window_start": "00:30",
+        "trigger_time": "00:31",
+        "window_end": "00:35",
+        "response": "Having shoved the pursuer back at the shutter, the runner has ducked into the pillar-lined garage; the columns give lots of angles to shake a tail, but the echoing footsteps here could just as easily let the masked figure zero in on them.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The visual shows the shove and the entry into the column-filled garage, while the echoing footfalls and continuing panting convey the enclosed, trackable space.",
+        "evidence": [
+          {
+            "time": "00:24",
+            "available_time": "00:25",
+            "fact": "Runner grabs the pursuer's arm/hood and shoves them backward near the roller shutter."
+          },
+          {
+            "time": "00:25",
+            "available_time": "00:26",
+            "fact": "Scuffle grunt and fabric rustle, then sprinting footfalls resume."
+          },
+          {
+            "time": "00:28",
+            "available_time": "00:30",
+            "fact": "Runner dashes into the dim car park interior, weaving past blue-topped columns and parked cars."
+          },
+          {
+            "time": "00:29",
+            "available_time": "00:30",
+            "fact": "Footfalls echo in the enclosed garage; panting continues under steady music."
+          }
+        ],
+        "details": {
+          "prediction": "The runner will try to use the columns to break the pursuer's line of sight, but the echo may give their position away.",
+          "basis": "The brief shove opened a small gap, and the enclosed garage produces both many sightlines and echoing steps.",
+          "confidence": 0.55,
+          "claim_type": "prediction",
+          "update_reason": "The location shifted from the open plaza to an enclosed garage right after the shove."
+        }
+      },
+      {
+        "window_start": "01:19",
+        "trigger_time": "01:19",
+        "window_end": "01:22",
+        "response": "The runner just hurled a wheelie bin at the masked figure and is tearing down the next flight; that crash might buy a second or two, but the pursuer has been climbing and vaulting all along, so I'd expect them straight back on the runner's heels.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The visual shows the bin throw and the descent, while the loud crash and pounding footfalls mark the improvised obstruction and renewed sprint.",
+        "evidence": [
+          {
+            "time": "01:15",
+            "available_time": "01:16",
+            "fact": "Runner grabs a black wheeled rubbish bin."
+          },
+          {
+            "time": "01:16",
+            "available_time": "01:17",
+            "fact": "Bin hurled at pursuer; loud plastic/metal crash and grunts."
+          },
+          {
+            "time": "01:18",
+            "available_time": "01:19",
+            "fact": "Runner sprints down another concrete staircase; rapid footfalls under pounding music."
+          }
+        ],
+        "details": {
+          "prediction": "The bin will only briefly slow the pursuer, who will likely recover and resume the chase down the stairs.",
+          "basis": "The pursuer has repeatedly scaled walls and vaulted fences, so a single thrown bin is only a momentary obstacle.",
+          "confidence": 0.6,
+          "claim_type": "prediction",
+          "update_reason": "The runner used an improvised weapon, a new tactic that may only delay an agile pursuer."
+        }
+      },
+      {
+        "window_start": "02:16",
+        "trigger_time": "02:17",
+        "window_end": "02:21",
+        "response": "The masked figure has just crested the stairs with arms wide, and the runner is now looping between the picnic tables; the tables offer cover to twist away, but the open courtyard limits escape routes, so the pursuer may cut them off.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The visual shows the pursuer at the stair top and the runner weaving tables, while the railing clank and footfalls on paving confirm the close, fast exchange.",
+        "evidence": [
+          {
+            "time": "02:11",
+            "available_time": "02:12",
+            "fact": "Ghostface pursuer crests the top of the green-railed stairs with arms spread."
+          },
+          {
+            "time": "02:13",
+            "available_time": "02:14",
+            "fact": "Runner vaults over the green railing back into the picnic-table zone."
+          },
+          {
+            "time": "02:13",
+            "available_time": "02:14",
+            "fact": "Metal railing clank and footfalls on paving; panting under driving music."
+          },
+          {
+            "time": "02:15",
+            "available_time": "02:16",
+            "fact": "Runner weaves between white-slab picnic tables as the masked figure gives chase."
+          }
+        ],
+        "details": {
+          "prediction": "The runner will keep weaving the tables to stay out of reach, but the open courtyard risks the pursuer anticipating and cutting them off.",
+          "basis": "The pursuer is close at the stair top and the tables give only partial cover in an otherwise open space.",
+          "confidence": 0.5,
+          "claim_type": "prediction",
+          "update_reason": "The chase moved into an open furnished courtyard, changing the cover dynamics."
+        }
+      },
+      {
+        "window_start": "02:53",
+        "trigger_time": "02:54",
+        "window_end": "02:57",
+        "response": "The runner has just broken from the open courtyard into a dark building, and a dim row of restroom stalls is now ahead; going indoors may let them break the pursuer's sightline, but an enclosed space also risks trapping them if the masked figure follows in.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The visual shows the doorway entry and the stall corridor, while the muffling of footfalls signals the shift into a confined interior.",
+        "evidence": [
+          {
+            "time": "02:48",
+            "available_time": "02:49",
+            "fact": "Runner crosses courtyard with palm trees and thatched structure, heading for an open doorway."
+          },
+          {
+            "time": "02:50",
+            "available_time": "02:51",
+            "fact": "Runner plunges through the doorway into a dark building interior; footfalls muffle."
+          },
+          {
+            "time": "02:52",
+            "available_time": "02:53",
+            "fact": "Dim restroom corridor with cream walls and blue stall doors appears."
+          }
+        ],
+        "details": {
+          "prediction": "The runner will likely try to conceal themselves inside the building rather than keep running, but the enclosed layout could corner them.",
+          "basis": "A long outdoor run ends at a dark interior with stalls, and the muffled footfalls mark the move into confined space.",
+          "confidence": 0.55,
+          "claim_type": "prediction",
+          "update_reason": "The setting shifted from exposed outdoor courtyards to a dark interior, changing the escape options."
+        }
+      },
+      {
+        "window_start": "03:05",
+        "trigger_time": "03:06",
+        "window_end": "03:08",
+        "response": "The runner has shut themselves in a stall and the music has dropped to near silence; that upward glance suggests they may climb onto the fixture to hide above sightline, but a pursuer sweeping the room could still catch their legs or hear them breathing.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The visual shows the closed stall door and the upward glance, while the fading music and hushed panting confirm the switch to concealment.",
+        "evidence": [
+          {
+            "time": "02:58",
+            "available_time": "03:00",
+            "fact": "Runner slips into an empty stall and pulls the blue door shut, hand pressed to it."
+          },
+          {
+            "time": "03:00",
+            "available_time": "03:02",
+            "fact": "Door latch click; the chase music fades away leaving reverberant room tone and hushed panting."
+          },
+          {
+            "time": "03:04",
+            "available_time": "03:05",
+            "fact": "Runner glances up toward the ceiling/light fixture."
+          }
+        ],
+        "details": {
+          "prediction": "The runner will attempt to hide above the stall line, but remains vulnerable to detection from below or by sound.",
+          "basis": "The door is shut, the music is gone, breathing is hushed, and the upward glance indicates a hiding attempt using vertical space.",
+          "confidence": 0.5,
+          "claim_type": "prediction",
+          "update_reason": "The runner transitioned from fleeing to hiding, and the audio quieted to signal concealment."
+        }
+      },
+      {
+        "window_start": "03:14",
+        "trigger_time": "03:15",
+        "window_end": "03:17",
+        "response": "The runner is now perched above the stall while the masked figure's echoing footsteps sweep the restroom stall by stall; if the pursuer doesn't think to look up, the runner might stay hidden, but the search is closing in fast.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The visual shows the runner tucked above the stall and the masked silhouette moving between stalls, while the slow echoing footsteps confirm the systematic search.",
+        "evidence": [
+          {
+            "time": "03:08",
+            "available_time": "03:11",
+            "fact": "Runner perched above the stall, legs tucked up on the fixture."
+          },
+          {
+            "time": "03:12",
+            "available_time": "03:14",
+            "fact": "Slow echoing footsteps; masked silhouette enters the restroom and begins checking stalls."
+          }
+        ],
+        "details": {
+          "prediction": "The runner may evade detection if the pursuer fails to look above the stalls, but the systematic search raises the risk of being found.",
+          "basis": "The runner is concealed above the sightline while the pursuer is audibly and visibly sweeping the stalls one by one.",
+          "confidence": 0.45,
+          "claim_type": "prediction",
+          "update_reason": "The pursuer has entered the hiding place, so the outcome now hinges on whether they look up."
+        }
+      }
+    ],
+    "ability": "prospective_reasoning",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "prospective_reasoning_rtd",
+    "video": "video_149.mp4",
+    "generation_context": {
+      "duration_seconds": 212.068,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_149"
+  },
+  {
+    "status": "ok",
+    "question": "Listen for moments when the masked pursuer in the video actually catches up to the runner — a scuffle with grunts, a hard impact, or footsteps stopping right at the hiding spot. Tell me each time that happens, and what you think is likely to happen next.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "00:25",
+        "trigger_time": "00:26",
+        "window_end": "00:28",
+        "response": "I just heard a scuffle and a grunt — the runner shoved the masked pursuer back. That may buy a moment, but the pursuer could lunge again.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The clash is carried by the scuffle, grunt and fabric rustle in the audio; the frames only confirm who is involved at arm's length.",
+        "evidence": [
+          {
+            "time": "00:20",
+            "available_time": "00:23",
+            "fact": "The black-hooded, white-masked pursuer is directly in front of the runner with a blade raised, and the music intensifies."
+          },
+          {
+            "time": "00:23",
+            "available_time": "00:25",
+            "fact": "A scuffle with a grunt/yell and fabric rustle is heard as the runner's hands push the pursuer's chest and the figure stumbles back toward the roller shutter."
+          }
+        ],
+        "details": {
+          "prediction": "The shove probably creates a brief gap, but the pursuer is likely to recover and resume the chase immediately.",
+          "basis": "Close-range scuffle audio plus the pursuer still holding a blade and standing only a few metres away after being pushed back.",
+          "confidence": 0.6,
+          "claim_type": "prediction",
+          "update_reason": "First audible direct clash between runner and pursuer since the chase began."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "clash-01",
+          "confirmed_time": "00:25",
+          "definition": "Audio indicating the masked pursuer has caught up to the runner: a scuffle with grunts, a hard impact, or footsteps stopping at the hiding spot followed by a sting."
+        }
+      },
+      {
+        "window_start": "01:18",
+        "trigger_time": "01:19",
+        "window_end": "01:21",
+        "response": "That loud crash sounds like the runner struck the pursuer with a bin — it may slow them down, though I can't tell if it stops the chase.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The plastic/metal impact and grunts are the trigger; the frames show the bin leaving the runner's hands toward the masked figure.",
+        "evidence": [
+          {
+            "time": "01:15",
+            "available_time": "01:16",
+            "fact": "The runner hoists a black wheeled bin as the masked pursuer emerges from the stairwell behind."
+          },
+          {
+            "time": "01:17",
+            "available_time": "01:18",
+            "fact": "A loud plastic/metal crash with grunts is heard as the bin hits the pursuer, who staggers under it."
+          }
+        ],
+        "details": {
+          "prediction": "The impact likely delays the pursuer for a few seconds, but they may keep following once the bin is aside.",
+          "basis": "A single heavy impact sound with no indication the pursuer is disabled, while the runner is already moving for the next staircase.",
+          "confidence": 0.55,
+          "claim_type": "prediction",
+          "update_reason": "Second audible clash: a thrown object striking the pursuer at close range."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "clash-02",
+          "confirmed_time": "01:18",
+          "definition": "Audio indicating the masked pursuer has caught up to the runner: a scuffle with grunts, a hard impact, or footsteps stopping at the hiding spot followed by a sting."
+        }
+      },
+      {
+        "window_start": "03:20",
+        "trigger_time": "03:21",
+        "window_end": "03:22",
+        "response": "The footsteps stopped right at the stall and the audio just cut with a sting — the pursuer may have found the runner; whether they escape is unclear.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The decisive cue is auditory: slow echoing footsteps halting at the hiding spot, then an abrupt sting; the dark frames only show a silhouette at the stall.",
+        "evidence": [
+          {
+            "time": "03:12",
+            "available_time": "03:16",
+            "fact": "With the chase music gone, slow echoing footsteps enter the quiet restroom and move stall to stall."
+          },
+          {
+            "time": "03:18",
+            "available_time": "03:20",
+            "fact": "The footsteps halt directly at the runner's stall, a blade-carrying silhouette is at the doorway, and an abrupt audio sting hits as the picture goes black."
+          }
+        ],
+        "details": {
+          "prediction": "The pursuer has probably located the hiding spot, but it is uncertain whether the runner is caught or makes a last break for it.",
+          "basis": "Footsteps ceasing right outside the stall plus the sudden sting, with no sound of the runner fleeing beforehand.",
+          "confidence": 0.65,
+          "claim_type": "prediction",
+          "update_reason": "Third audible clash signature: the search stops at the hiding spot and the audio cuts, unlike the earlier running and panting that never indicated contact."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "clash-03",
+          "confirmed_time": "03:20",
+          "definition": "Audio indicating the masked pursuer has caught up to the runner: a scuffle with grunts, a hard impact, or footsteps stopping at the hiding spot followed by a sting."
+        }
+      }
+    ],
+    "ability": "prospective_reasoning",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "prospective_reasoning_pr",
+    "video": "video_149.mp4",
+    "generation_context": {
+      "duration_seconds": 212.068,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_149"
+  },
+  {
+    "status": "ok",
+    "question": "I'm watching this chase and want to track how the runner buys time. Whenever he shoves the masked chaser, slams a gate on him, or throws something at him, give me a quick uncertain guess whether it'll slow him down, and jot each guess in my notes so I can check them on a rewatch.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "work_type": "tools_and_reasoning",
+    "required_tools": [
+      "note_write"
+    ],
+    "responses": [
+      {
+        "trigger_time": "00:26",
+        "source_trigger_time": "00:26",
+        "window_start": "00:26",
+        "window_end": "00:32",
+        "response": "Shove at the shutter — might buy seconds; logging this guess in your notes.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "A scuffle grunt and stumble are audible as the frames show the runner pushing the black-robed chaser back near the roller shutter.",
+        "evidence": [
+          {
+            "time": "00:22",
+            "available_time": "00:24",
+            "fact": "The masked chaser closes in beside the grey roller-shutter wall."
+          },
+          {
+            "time": "00:24",
+            "available_time": "00:26",
+            "fact": "The runner grabs and shoves the chaser backward; a scuffle grunt and stumble are audible, and the chaser is seen off balance near the shutter."
+          }
+        ],
+        "details": {
+          "prediction": "The shove may unbalance the chaser for a few seconds, but he was already closing in, so he could recover quickly.",
+          "basis": "The audible scuffle and visible stumble at the shutter, with the runner immediately bolting away.",
+          "confidence": 0.55,
+          "claim_type": "prediction",
+          "update_reason": "First forceful buy-time move detected; an uncertain guess is sent for logging per the standing request."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "buy-time-shove-0026",
+          "confirmed_time": "00:26",
+          "definition": "The runner physically impedes the masked chaser by shoving him, slamming a gate on him, or throwing an object at him."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Write a note logging the runner's shove at 00:26 with an uncertain prediction that it may buy a few seconds before the chaser recovers.\",\"observed_context\":\"00:01 masked chaser appears on the rooftop car park; 00:05-00:18 runner descends stair railings; 00:22-00:24 chaser closes in at the roller shutter; 00:24-00:26 runner grabs and shoves him, scuffle grunt audible, chaser stumbles.\",\"user_goal\":\"A running note of each buy-time move with an uncertain guess so the user can check the guesses on a rewatch.\",\"constraints_and_authorization\":\"User authorized writing to their own notes; prediction must be marked uncertain; use only footage up to 00:26.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A saved note artifact containing the timestamped event and uncertain prediction, with action evidence of the write.\",\"extracted_parameters\":[{\"name\":\"event\",\"value\":\"runner shoves the masked chaser at the roller shutter\",\"evidence_time\":\"00:26\",\"evidence\":\"Hands grab and push the black-robed figure; scuffle grunt and stumble at 00:24-00:26.\"},{\"name\":\"event_timestamp\",\"value\":\"00:26\",\"evidence_time\":\"00:26\",\"evidence\":\"The shove lands just before the runner bolts across the plaza.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "00:46",
+        "source_trigger_time": "00:46",
+        "window_start": "00:46",
+        "window_end": "00:52",
+        "response": "Gate slammed on the chaser — may hold him briefly; noted my guess.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "A metallic gate rattle on the audio track coincides with frames showing the runner forcing the mesh gate shut as the chaser reaches it.",
+        "evidence": [
+          {
+            "time": "00:41",
+            "available_time": "00:43",
+            "fact": "The runner reaches the galvanised mesh gate on the narrow walkway with the chaser behind."
+          },
+          {
+            "time": "00:44",
+            "available_time": "00:46",
+            "fact": "The runner forces the mesh gate shut as the chaser reaches it; a metallic rattle is audible."
+          }
+        ],
+        "details": {
+          "prediction": "The slammed gate may hold the chaser for a moment, but a determined pursuer could force it or go around.",
+          "basis": "The audible gate rattle and visible contact at the mesh as the runner moves on along the narrow walkway.",
+          "confidence": 0.6,
+          "claim_type": "prediction",
+          "update_reason": "Second forceful buy-time move detected; an uncertain guess is sent for logging per the standing request."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "buy-time-gate-0046",
+          "confirmed_time": "00:46",
+          "definition": "The runner physically impedes the masked chaser by shoving him, slamming a gate on him, or throwing an object at him."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Write a note logging the gate slam at 00:46 with an uncertain prediction that it may briefly hold the chaser.\",\"observed_context\":\"00:26 runner shoved the chaser at the shutter; 00:39-00:43 runner reaches the mesh gate; 00:44-00:46 chaser reaches the mesh as the runner slams the gate, metallic rattle audible.\",\"user_goal\":\"A running note of each buy-time move with an uncertain guess so the user can check the guesses on a rewatch.\",\"constraints_and_authorization\":\"User authorized writing to their own notes; prediction must be marked uncertain; only footage up to 00:46 may inform the note.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A saved note artifact with the timestamped gate slam and the uncertain prediction, plus action evidence of the write.\",\"extracted_parameters\":[{\"name\":\"event\",\"value\":\"runner slams the mesh gate on the chaser\",\"evidence_time\":\"00:46\",\"evidence\":\"The gate is forced shut while the masked figure reaches it; metallic rattle heard.\"},{\"name\":\"event_timestamp\",\"value\":\"00:46\",\"evidence_time\":\"00:46\",\"evidence\":\"The slam occurs just before the runner continues along the white-brick path.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "01:11",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Note saved logging the 00:26 shove with an uncertain buy-time prediction.\",\"observed_facts\":[\"At 00:26 the runner shoved the masked chaser near the roller shutter; a scuffle grunt was audible.\"],\"tool_information\":[\"note_write created a note titled 'Chase buy-time log - shove 00:26'.\"],\"reasoning\":[\"A shove can momentarily off-balance a pursuer, but he was already closing in, so recovery may be quick; the guess is uncertain.\"],\"uncertainties\":[\"Whether the shove actually slowed the chaser is not observable from the prefix.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create note\",\"status\":\"completed\",\"evidence\":\"Note record returned with title and content saved.\",\"arguments\":{\"title\":\"Chase buy-time log - shove 00:26\",\"content\":\"00:26 runner shoves chaser at the shutter; uncertain guess: may buy a few seconds before he recovers.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Chase buy-time log - shove 00:26\"}]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "01:11",
+        "response": "Success: saved in your notes — the shove at 00:26 might buy a few seconds, though the chaser could recover fast; uncertain guess.",
+        "role": "assistant",
+        "outcome": "success"
+      },
+      {
+        "trigger_time": "01:18",
+        "source_trigger_time": "01:18",
+        "window_start": "01:18",
+        "window_end": "01:24",
+        "response": "Bin hurled at the chaser — could block the stairs; logging my guess.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "A loud crash on the audio track coincides with frames of the black wheeled bin being thrown at the masked figure near the stairhead.",
+        "evidence": [
+          {
+            "time": "01:16",
+            "available_time": "01:18",
+            "fact": "The runner hurls a black wheeled bin toward the masked chaser on the ramp."
+          },
+          {
+            "time": "01:18",
+            "available_time": "01:18",
+            "fact": "A loud crash is audible as the bin strikes or blocks the chaser near the stairhead."
+          }
+        ],
+        "details": {
+          "prediction": "The hurled bin could obstruct the stairwell for several seconds, though a pursuing figure may step over or around it.",
+          "basis": "The bin's bulk and the crash impact at the top of the staircase, with the runner already moving down.",
+          "confidence": 0.65,
+          "claim_type": "prediction",
+          "update_reason": "Third forceful buy-time move detected; an uncertain guess is sent for logging per the standing request."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "buy-time-bin-0118",
+          "confirmed_time": "01:18",
+          "definition": "The runner physically impedes the masked chaser by shoving him, slamming a gate on him, or throwing an object at him."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Write a note logging the bin hurl at 01:18 with an uncertain prediction that it may obstruct the stairwell.\",\"observed_context\":\"00:26 shove at the shutter; 00:46 gate slam on the chaser; 01:16-01:18 runner hurls a black wheeled bin at the masked chaser on the ramp; a loud crash is audible at impact.\",\"user_goal\":\"A running note of each buy-time move with an uncertain guess so the user can check the guesses on a rewatch.\",\"constraints_and_authorization\":\"User authorized writing to their own notes; prediction must be marked uncertain; only footage up to 01:18 may inform the note.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A saved note artifact with the timestamped bin hurl and the uncertain obstruction prediction, plus action evidence of the write.\",\"extracted_parameters\":[{\"name\":\"event\",\"value\":\"runner hurls a wheeled bin at the chaser\",\"evidence_time\":\"01:18\",\"evidence\":\"Black bin is swung toward the masked figure; loud crash heard at impact.\"},{\"name\":\"event_timestamp\",\"value\":\"01:18\",\"evidence_time\":\"01:18\",\"evidence\":\"Impact occurs as the runner reaches the staircase.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "01:31",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Note saved logging the 00:46 gate slam with an uncertain hold-time prediction.\",\"observed_facts\":[\"At 00:46 the runner slammed the mesh gate as the chaser reached it; a metallic rattle was audible.\"],\"tool_information\":[\"note_write created a note titled 'Chase buy-time log - gate slam 00:46'.\"],\"reasoning\":[\"A slammed mesh gate can briefly block a pursuer, but the narrow walkway offers possible forcing or bypass, so the effect is uncertain.\"],\"uncertainties\":[\"Whether the chaser is delayed or bypasses the gate cannot be confirmed from the prefix.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create note\",\"status\":\"completed\",\"evidence\":\"Note record returned with title and content saved.\",\"arguments\":{\"title\":\"Chase buy-time log - gate slam 00:46\",\"content\":\"00:46 runner slams mesh gate on chaser; uncertain guess: may hold him briefly, he could force or bypass it.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Chase buy-time log - gate slam 00:46\"}]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "01:31",
+        "response": "Success: saved — the gate slam at 00:46 may hold him briefly, but he could force or bypass it; uncertain guess.",
+        "role": "assistant",
+        "outcome": "success"
+      },
+      {
+        "trigger_time": "02:03",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Note saved logging the 01:18 bin hurl with an uncertain obstruction prediction.\",\"observed_facts\":[\"At 01:16-01:18 the runner hurled a black wheeled bin at the chaser on the ramp; a loud crash was audible.\"],\"tool_information\":[\"note_write created a note titled 'Chase buy-time log - bin hurl 01:18'.\"],\"reasoning\":[\"An impacted wheeled bin is bulky and could block a narrow stairhead for several seconds, but a determined pursuer may climb around it; the guess is uncertain.\"],\"uncertainties\":[\"Whether the bin actually obstructs the chaser is not observable from the prefix.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create note\",\"status\":\"completed\",\"evidence\":\"Note record returned with title and content saved.\",\"arguments\":{\"title\":\"Chase buy-time log - bin hurl 01:18\",\"content\":\"01:18 runner hurls wheeled bin at chaser; uncertain guess: may block the stairwell for a few seconds.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Chase buy-time log - bin hurl 01:18\"}]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "02:03",
+        "response": "Success: saved — the bin throw at 01:18 could block the stairs for a few seconds, though he may step around it; uncertain guess.",
+        "role": "assistant",
+        "outcome": "success"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "prospective_reasoning",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "prospective_reasoning_agent",
+    "video": "video_149.mp4",
+    "generation_context": {
+      "duration_seconds": 212.068,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": 45,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_149"
+  },
+  {
+    "status": "ok",
+    "question": "I sometimes film action clips, so whenever the runner and another person get into a close, audible struggle, predict whether the camera is likely to be knocked or damaged, and check whether my equipment budget could cover a replacement.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "work_type": "tools",
+    "required_tools": [
+      "budget_query"
+    ],
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:00",
+        "window_end": "00:00",
+        "response": "I don't have the ability to check your equipment budget records.",
+        "refusal_reason": "The requested follow-up requires reading existing user budget/accounting records with budget_query, which is not available in the frontend context.",
+        "missing_tools": [
+          "budget_query"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "window_start": "00:24",
+        "trigger_time": "00:24",
+        "window_end": "00:26",
+        "response": "The runner and the chaser have a close, audible physical struggle.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "A grunt and fabric rustle mark the contact, while the first-person view shows hands grabbing the chaser's arm/hood.",
+        "evidence": [
+          {
+            "time": "00:22",
+            "available_time": "00:22",
+            "fact": "The chaser closes to arm's length in front of the first-person camera."
+          },
+          {
+            "time": "00:24",
+            "available_time": "00:24",
+            "fact": "Hands grab the chaser's arm/hood, with an audible grunt and fabric rustle."
+          }
+        ],
+        "details": {
+          "prediction": "The first-person camera may be knocked or jostled enough to need repair or replacement, but the damage is uncertain.",
+          "basis": "A close physical struggle occurs directly in front of the camera, with grabbing and shoving visible and audible.",
+          "confidence": 0.6,
+          "claim_type": "prediction",
+          "update_reason": "New close-contact evidence creates a possible gear-damage development worth flagging."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "close-struggle-001",
+          "confirmed_time": "00:24",
+          "definition": "The runner and another person engage in a close, audible physical struggle."
+        }
+      }
+    ],
+    "sample_type": "missing_tool",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "prospective_reasoning",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "prospective_reasoning_agent",
+    "video": "video_149.mp4",
+    "generation_context": {
+      "duration_seconds": 212.068,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "missing_tool",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": "budget_query"
+    },
+    "video_folder": "video_149"
+  },
+  {
+    "status": "ok",
+    "question": "As the instructor works on getting the reed to speak, keep explaining why the sound it makes changes from one attempt to the next.",
+    "question_time": "01:52",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "01:52",
+        "trigger_time": "01:53",
+        "window_end": "02:02",
+        "response": "That thin airy hiss is the dry reed's blades still nearly shut, so air leaks through without building a full tone; his embouchure on the bare reed could be contributing too, which the sound alone can't rule out.",
+        "trigger_type": "sound+speech",
+        "trigger_type_reason": "The audible airy hiss is the observed event, and his just-spoken remark that a first reed arrives closed up supplies the causal cue; the visible blowing only corroborates it.",
+        "evidence": [
+          {
+            "time": "01:42",
+            "available_time": "01:50",
+            "fact": "The instructor states that a first reed will probably arrive closed up."
+          },
+          {
+            "time": "01:50",
+            "available_time": "01:52",
+            "fact": "He brings the bare reed to his lips and blows; a thin, airy hiss is heard instead of a sustained tone."
+          }
+        ],
+        "details": {
+          "event": "The instructor's first blow into the dry reed produces only a thin airy hiss rather than a tone.",
+          "candidate_causes": [
+            "The dry reed's blades are still almost closed, so air passes without the reed vibrating into a full tone",
+            "His breath and embouchure on the bare reed are not yet set, limiting vibration"
+          ],
+          "basis": "He has just said a first reed arrives closed up, and the heard sound is a leaky hiss consistent with tightly shut blades.",
+          "uncertainty": "From the sound alone it is not possible to separate how much is reed tightness versus blowing technique.",
+          "claim_type": "inference"
+        }
+      },
+      {
+        "window_start": "02:29",
+        "trigger_time": "02:30",
+        "window_end": "02:38",
+        "response": "Now it sputters and gurgles because the soak left water inside the reed that he is blowing out; the reed is opening up, but this wet noise is mostly trapped water rather than a real tone yet.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The wet sputtering gurgle is the observed audio event, and the preceding cutaway of the reed standing in water supplies the cause; no speech is needed to confirm it.",
+        "evidence": [
+          {
+            "time": "02:17",
+            "available_time": "02:25",
+            "fact": "A cutaway shows the reed propped tip-down in a shallow glass of water to soak."
+          },
+          {
+            "time": "02:27",
+            "available_time": "02:29",
+            "fact": "He blows into the reed again and a wet, sputtering gurgle is heard."
+          }
+        ],
+        "details": {
+          "event": "After soaking, the instructor's blow into the reed produces a wet sputtering gurgle.",
+          "candidate_causes": [
+            "Water drawn into the reed during the soak is being expelled, breaking up the airflow into a gurgle",
+            "The reed blades have loosened enough to vibrate but are still damp and unstable"
+          ],
+          "basis": "The reed was just shown standing in water, and the resulting sound is a liquid sputter rather than the earlier dry hiss.",
+          "uncertainty": "The gurgle indicates moisture and partial opening, but the exact degree to which the reed will now speak a tone is not yet audible.",
+          "claim_type": "inference"
+        }
+      }
+    ],
+    "ability": "causal_reasoning",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "causal_reasoning_rtd",
+    "video": "video_101.mp4",
+    "generation_context": {
+      "duration_seconds": 233.484,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_101"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever the man in the video blows into the reed and it makes a wet, sputtering sound, alert me and explain why that's happening.",
+    "question_time": "02:12",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "02:29",
+        "trigger_time": "02:30",
+        "window_end": "02:40",
+        "response": "The reed just sputtered wetly as he blew into it — most likely residual water from the soak you saw a moment ago is being cleared out; the inside of the reed isn't visible, so that's an inference rather than a direct observation.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The reminder hinges on hearing the wet, sputtering quality (audio) while seeing him blow into the reed (visual); his earlier dry blow produced only an airy tone, so the sputter sound is the discriminating cue.",
+        "evidence": [
+          {
+            "time": "02:21",
+            "available_time": "02:24",
+            "fact": "A cutaway shows the reed placed tip-down into a glass of water, i.e. soaked."
+          },
+          {
+            "time": "02:27",
+            "available_time": "02:29",
+            "fact": "The man raises the reed to his lips and blows, and a wet, sputtering sound is heard."
+          }
+        ],
+        "details": {
+          "event": "A wet, sputtering sound occurs as the man blows into the duduk reed right after the soaking demonstration.",
+          "candidate_causes": [
+            "Residual water trapped in the reed from the just-shown soak is being expelled, making the blades splutter as air passes.",
+            "The reed blades are partly stuck together or hold debris, producing an irregular blowing sound."
+          ],
+          "basis": "Immediately before the sputter, a cutaway showed the reed submerged in water and he had described soaking it to open it; the sputter coincides exactly with the blow he uses to clear the reed.",
+          "uncertainty": "The reed's interior is not visible, so the water-residue explanation is inferred from the preceding soak and the wet character of the sound, not directly seen.",
+          "claim_type": "inference"
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "reed_wet_sputter_1",
+          "confirmed_time": "02:29",
+          "definition": "The man blows into the duduk reed and a wet, sputtering sound is produced."
+        }
+      }
+    ],
+    "ability": "causal_reasoning",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "causal_reasoning_pr",
+    "video": "video_101.mp4",
+    "generation_context": {
+      "duration_seconds": 233.484,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_101"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever the instructor blows into the reed by itself and it makes a weak or sputtery sound, explain the likely cause using reliable sources.",
+    "question_time": "01:40",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "work_type": "tools_and_reasoning",
+    "required_tools": [
+      "web_search"
+    ],
+    "responses": [
+      {
+        "trigger_time": "01:56",
+        "source_trigger_time": "01:56",
+        "window_start": "01:54",
+        "window_end": "02:02",
+        "response": "Weak reed blow heard; I will check why blowing alone sounds airy.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The audible weak hiss identifies the reed test; the visual reed-to-mouth confirms the source.",
+        "evidence": [
+          {
+            "time": "01:45",
+            "available_time": "01:49",
+            "fact": "The instructor says a first reed will probably arrive closed up."
+          },
+          {
+            "time": "01:51",
+            "available_time": "01:54",
+            "fact": "He raises the reed to his lips and blows; a brief weak airy hiss/rasp is heard, not a sustained duduk tone."
+          }
+        ],
+        "details": {
+          "event": "The instructor blows into the reed by itself and it makes a weak airy hiss instead of a normal duduk note.",
+          "candidate_causes": [
+            "Dry or closed reed aperture leaks air because the reed is not moistened/open enough",
+            "Insufficient breath control, embouchure, or a damaged reed"
+          ],
+          "basis": "Observed weak airy sound during a reed-only blow, preceded by the statement that first reeds may arrive closed; web sources describe dry/closed double reeds leaking air.",
+          "uncertainty": "Exact reed opening and moisture cannot be measured from the video; breath pressure is also not measurable.",
+          "claim_type": "inference"
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "weak-dry-reed-blow",
+          "confirmed_time": "01:54",
+          "definition": "The instructor blows into the reed by itself and it makes a weak or sputtery sound rather than a normal duduk note."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Explain why the instructor's reed-only blow sounds airy rather than like a duduk note, using reliable public sources.\",\"observed_context\":\"01:45 The instructor says a first reed will probably arrive closed up. 01:51 He raises the reed to his lips and blows. 01:54 A brief weak airy hiss/rasp is heard, not a sustained duduk tone.\",\"user_goal\":\"A viewer wants a source-backed causal explanation of the weak reed sound.\",\"constraints_and_authorization\":\"User is an outside viewer; no account access or external writes. Use only facts available by 01:56 and general double-reed information; state uncertainty.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"Success status with web_search sources, ranked candidate causes, basis, and uncertainty.\",\"extracted_parameters\":[{\"name\":\"observed_sound\",\"value\":\"weak airy hiss/rasp during reed-only blow\",\"evidence_time\":\"01:54\",\"evidence\":\"The instructor blows into the reed and a brief airy sound is heard.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "02:31",
+        "source_trigger_time": "02:31",
+        "window_start": "02:29",
+        "window_end": "02:40",
+        "response": "Wet reed sputter heard; I will check why clearing water sounds like that.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The audible wet sputter identifies the reed test; the preceding visual soaking confirms the reed was in water.",
+        "evidence": [
+          {
+            "time": "02:20",
+            "available_time": "02:25",
+            "fact": "A cutaway shows the reed placed tip-down in a glass with a shallow pool of water."
+          },
+          {
+            "time": "02:26",
+            "available_time": "02:29",
+            "fact": "He blows into the soaked reed and a sputtering watery sound is heard."
+          }
+        ],
+        "details": {
+          "event": "The instructor blows into the recently soaked reed and it sputters wetly instead of sounding like a clean duduk note.",
+          "candidate_causes": [
+            "Residual water in the soaked reed is being expelled and disrupting vibration",
+            "The reed is too open or closed, or the blow is too hard"
+          ],
+          "basis": "Immediate cutaway shows the reed soaked in shallow water; the following blow produces a wet sputter; web sources describe trapped water in reeds causing sputtering until cleared.",
+          "uncertainty": "Amount of water inside the reed, exact aperture, and breath pressure are not visible or measurable.",
+          "claim_type": "inference"
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "wet-reed-sputter-blow",
+          "confirmed_time": "02:29",
+          "definition": "The instructor blows into the reed by itself and it makes a weak or sputtery sound rather than a normal duduk note."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Explain why the instructor's soaked reed blow sputters instead of sounding like a clean duduk note, using reliable public sources.\",\"observed_context\":\"02:20 A cutaway shows the reed placed tip-down in a glass with a shallow pool of water. 02:26 The instructor blows into the soaked reed. 02:29 A sputtering watery sound is heard.\",\"user_goal\":\"A viewer wants a source-backed causal explanation of the wet reed sputter.\",\"constraints_and_authorization\":\"User is an outside viewer; no account access or external writes. Use only facts available by 02:31 and general double-reed information; state uncertainty.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"Success status with web_search sources, ranked candidate causes, basis, and uncertainty.\",\"extracted_parameters\":[{\"name\":\"reed_condition\",\"value\":\"reed was soaked in shallow water before the blow\",\"evidence_time\":\"02:25\",\"evidence\":\"The cutaway shows the reed tip submerged in a glass of water.\"},{\"name\":\"observed_sound\",\"value\":\"sputtering watery sound during soaked reed blow\",\"evidence_time\":\"02:29\",\"evidence\":\"The instructor blows into the reed and a wet sputter is heard.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "02:39",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"A dry or closed double reed can leak air, producing an airy rasp instead of a tone.\",\"observed_facts\":[\"At 01:45 the instructor says a first reed may arrive closed up.\",\"At 01:51 he blows into the reed by itself.\",\"At 01:54 the sound is a brief weak airy hiss/rasp, not a sustained duduk note.\"],\"tool_information\":[\"web_search returned general double-reed guidance about moisture and aperture.\"],\"reasoning\":[\"Most supported cause: the reed is dry or closed, so the blades do not vibrate as a controlled reed tone.\",\"Alternative: insufficient breath control or embouchure could also cause airiness.\",\"The observed context and source information favor the reed-state explanation, but the exact aperture cannot be measured.\"],\"uncertainties\":[\"Reed moisture and opening width are not directly visible.\",\"The instructor's breath pressure is not measurable from the clip.\"],\"sources\":[{\"tool\":\"web_search\",\"evidence\":\"Double-reed instruments generally need a moistened reed and a slightly open aperture; dry or closed reeds often leak air and sound breathy.\",\"arguments\":{\"query\":\"why does a dry double reed sound airy when blown\"}}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "02:39",
+        "response": "Success: Sources say a dry or closed double reed leaks air unless moistened and opened slightly, so the airy rasp is expected rather than a playable duduk tone.",
+        "role": "assistant",
+        "outcome": "success"
+      },
+      {
+        "trigger_time": "03:14",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Water left in a soaked reed can be expelled when blown, causing a sputtering sound.\",\"observed_facts\":[\"At 02:20 the reed is shown tip-down in a shallow glass of water.\",\"At 02:26 the instructor blows into the soaked reed.\",\"At 02:29 the sound is a sputtering watery burst, not a stable duduk tone.\"],\"tool_information\":[\"web_search returned general double-reed guidance about water in reeds and clearing excess moisture.\"],\"reasoning\":[\"Most supported cause: residual water in the reed channels is vibrating and being ejected, interrupting a clean tone.\",\"Alternative: the reed may be too open or closed, or the blow may be too hard.\",\"The immediate soaking cutaway and wet sound strongly support water clearance as the main cause.\"],\"uncertainties\":[\"The amount of water inside the reed is not visible.\",\"The exact reed aperture and breath pressure cannot be measured from the clip.\"],\"sources\":[{\"tool\":\"web_search\",\"evidence\":\"Soaked double reeds can sputter when blown because trapped water must be cleared before the reed vibrates cleanly.\",\"arguments\":{\"query\":\"why does a soaked double reed sputter when blown\"}}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "03:14",
+        "response": "Success: Sources indicate water trapped in a soaked reed vibrates and ejects as droplets when blown, so the sputter is the reed clearing itself before it can speak cleanly.",
+        "role": "assistant",
+        "outcome": "success"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "causal_reasoning",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "causal_reasoning_agent",
+    "video": "video_101.mp4",
+    "generation_context": {
+      "duration_seconds": 233.484,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": 43,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_101"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever the instructor demonstrates a reed step with a brief breath sound and explains what it is for, put that explanation into draft minutes for my practice group's next meeting.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "work_type": "tools",
+    "required_tools": [
+      "meeting_draft"
+    ],
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:00",
+        "window_end": "00:00",
+        "response": "I don't have the ability to prepare draft meeting minutes for your practice group.",
+        "refusal_reason": "The requested follow-up requires preparing a meeting-record draft, but meeting_draft is not available in the frontend toolset; no available substitute can create the requested draft minutes.",
+        "missing_tools": [
+          "meeting_draft"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "window_start": "02:00",
+        "trigger_time": "02:01",
+        "window_end": "02:02",
+        "response": "A brief airy breath sound accompanies the instructor's demonstration of opening a closed reed.",
+        "trigger_type": "sound+speech",
+        "trigger_type_reason": "The matched trigger is an audible breath demonstration, and the surrounding speech states its purpose.",
+        "evidence": [
+          {
+            "time": "01:46",
+            "available_time": "01:54",
+            "fact": "The instructor says a first reed may arrive closed and that one way to open it is to blow into the end."
+          },
+          {
+            "time": "01:58",
+            "available_time": "02:00",
+            "fact": "A short airy blow is heard while the reed is held at his lips."
+          }
+        ],
+        "details": {
+          "event": "The instructor makes a brief airy blow into the reed during a spoken demonstration about opening a closed reed.",
+          "candidate_causes": [
+            "He is trying to push air through the closed reed to open it.",
+            "He is testing the reed's airflow before further adjustment."
+          ],
+          "basis": "The preceding speech names blowing into the reed as a way to open a closed reed, and the reed is visibly at his lips during the sound.",
+          "uncertainty": "The result of the blow is not audible, so the purpose is inferred from the demonstration context rather than directly observed.",
+          "claim_type": "inference"
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "reed-open-blow-demo",
+          "confirmed_time": "02:00",
+          "definition": "A brief non-musical breath sound demonstrates a reed step, and the instructor explains its purpose."
+        }
+      },
+      {
+        "window_start": "02:34",
+        "trigger_time": "02:35",
+        "window_end": "02:38",
+        "response": "A wet sputtering breath sound accompanies the instructor's explanation of clearing water from the soaked reed.",
+        "trigger_type": "sound+speech",
+        "trigger_type_reason": "The matched trigger is an audible sputtering breath demonstration, and the speech states that it is to remove excess water.",
+        "evidence": [
+          {
+            "time": "02:18",
+            "available_time": "02:25",
+            "fact": "The instructor describes placing the reed tip in a small glass of water for a few minutes to open it."
+          },
+          {
+            "time": "02:27",
+            "available_time": "02:29",
+            "fact": "A wet sputtering blow is heard as he holds the reed to his mouth."
+          },
+          {
+            "time": "02:31",
+            "available_time": "02:34",
+            "fact": "He says to blow out the excess water after taking the reed from the water."
+          }
+        ],
+        "details": {
+          "event": "The instructor makes a wet sputtering blow into the reed after the soaking demonstration and refers to blowing out excess water.",
+          "candidate_causes": [
+            "He is clearing water from the reed after soaking it.",
+            "He is testing whether the soaked reed will speak before playing."
+          ],
+          "basis": "The earlier cutaway and speech show the reed being soaked, and the nearby speech explicitly mentions blowing out excess water.",
+          "uncertainty": "The amount of water expelled is not visible, and the exact purpose is inferred from the spoken instruction and demonstration sequence.",
+          "claim_type": "inference"
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "reed-clear-water-sputter-demo",
+          "confirmed_time": "02:34",
+          "definition": "A brief non-musical breath sound demonstrates a reed step, and the instructor explains its purpose."
+        }
+      }
+    ],
+    "sample_type": "missing_tool",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "causal_reasoning",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "causal_reasoning_agent",
+    "video": "video_101.mp4",
+    "generation_context": {
+      "duration_seconds": 233.484,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "missing_tool",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": "meeting_draft"
+    },
+    "video_folder": "video_101"
+  }
+]

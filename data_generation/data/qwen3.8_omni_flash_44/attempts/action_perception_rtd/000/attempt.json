@@ -1,0 +1,20 @@
+{
+  "index": 0,
+  "seed": "53203824878191193763590128664187047868194242147841233777069340766211956694729",
+  "candidate": 0,
+  "context_index": 0,
+  "correction": 0,
+  "context": {
+    "duration_seconds": 213.787,
+    "preferred_modality": "vision",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "positive",
+    "available_tools": [],
+    "required_missing_tool": null
+  },
+  "status": "failed",
+  "error": "evidence must be available by the earliest eligible response time",
+  "elapsed_seconds": 244.0923295021057
+}

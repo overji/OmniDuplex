@@ -3,10 +3,10 @@ import copy
 import json
 from dataclasses import asdict
 
-from data_generation.src.agent_tools import TOOLS
-from data_generation.src.common import SAMPLE_SCHEMA, format_mmss
-from data_generation.src.registry import get_task
-from data_generation.src.tasks import _agent
+from data_generation.src.domain.agent_tools import TOOLS
+from data_generation.src.domain.common import SAMPLE_SCHEMA, format_mmss
+from data_generation.src.application.registry import get_task
+from data_generation.src.domain.tasks import _agent
 
 
 def caption(duration=120):
@@ -35,14 +35,12 @@ def observation(ability, mode, time=20):
         "prospective_reasoning": {"prediction": "ball may fall", "basis": "rolling toward edge", "confidence": 0.8, "claim_type": "prediction", "update_reason": "closer to edge"},
         "causal_reasoning": {"event": "cup fell", "candidate_causes": ["hand contact", "unstable support"], "basis": "hand near cup", "uncertainty": "contact partly hidden", "claim_type": "inference"},
     }
-    item = {"trigger_time": timestamp, "response": f"Observed update at {timestamp}.",
-            "trigger_type": "visual", "trigger_type_reason": "visible change", "event_description": "A change occurs.",
+    item = {"window_start": timestamp, "trigger_time": timestamp, "window_end": timestamp, "response": f"Observed update at {timestamp}.",
+            "trigger_type": "visual", "trigger_type_reason": "visible change",
             "evidence": [{"time": timestamp, "available_time": timestamp, "fact": "The change is visible."}],
             "details": copy.deepcopy(details[ability])}
-    if mode == "rtd":
-        item.update(window_start="00:00" if time == 20 else "00:20", window_end=timestamp)
-    else:
-        item["trigger"] = {"kind": "event", "satisfied": True, "episode_id": f"event-{time}", "confirmed_time": timestamp, "definition": "the next relevant change"}
+    if mode != "rtd":
+        item["trigger"] = {"kind": "event", "satisfied": True, "episode_id": f"event-{time}", "confirmed_time": timestamp, "definition": "each relevant change"}
     return item
 
 
@@ -60,14 +58,13 @@ def agent_sample(task="event_understanding_agent", sample_type="positive", work_
     ability = task.removesuffix("_agent")
     context = agent_context(task, sample_type)
     required = [] if work_type == "reasoning" else ["todo_create"]
-    result = {"status": "ok", "question": "When the next relevant change happens, create a todo for it.",
+    result = {"status": "ok", "question": "When each relevant change happens, create a todo for it.",
               "question_time": "00:00", "work_type": work_type, "required_tools": required,
               "audio_dependency": "none", "vision_dependency": "required"}
     item = observation(ability, "agent")
-    del item["response"]
     if sample_type != "positive":
-        result["annotation"] = item
-        result["responses"] = [{"trigger_time": "00:00", "response": "I cannot create todos with my available tools.",
+        result["annotations"] = [item]
+        result["responses"] = [{"window_start": "00:00", "trigger_time": "00:00", "window_end": "00:00", "response": "I cannot create todos with my available tools.",
                                 "refusal_reason": "Todo creation is unavailable.", "missing_tools": ["todo_create"]}]
         return result, context
     arguments = {
@@ -90,6 +87,7 @@ def agent_sample(task="event_understanding_agent", sample_type="positive", work_
         {"role": "tool", "name": "agent_call", "timestamp": "00:40", "content": json.dumps(envelope)},
         {"role": "assistant", "timestamp": "00:40", "content": "The task is handled.", "outcome": "success"},
     ]
+    item["response"] = item["messages"][0]["content"]
     result["responses"] = [item]
     return result, context
 

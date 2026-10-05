@@ -1,0 +1,68 @@
+```json
+{
+  "status": "ok",
+  "unsuitable_tasks": [
+    {
+      "task": "emotion_recognition",
+      "reason": "No clear emotional expressions or prosody are visible or audible for any individuals."
+    }
+  ],
+  "ranked_tasks": [
+    {
+      "task": "action_perception",
+      "rank": 1,
+      "rationale": "The video shows multiple instances of running, climbing, jumping, and sliding, which can be tracked and recognized."
+    },
+    {
+      "task": "object_perception",
+      "rank": 2,
+      "rationale": "The video features various objects such as prison buildings, railings, gates, and vehicles (ATV, minibus), which can be identified."
+    },
+    {
+      "task": "spatial_understanding",
+      "rank": 3,
+      "rationale": "The video provides a clear sequence of movements across different spatial locations, including stairwells, rooftops, and corridors."
+    },
+    {
+      "task": "event_understanding",
+      "rank": 4,
+      "rationale": "The video depicts a continuous event of an escape and pursuit, which can be explained in terms of its progression and participants."
+    },
+    {
+      "task": "grounding",
+      "rank": 5,
+      "rationale": "The video provides clear temporal markers for the onset, continuation, and completion of actions, such as the start of the escape or a specific jump."
+    },
+    {
+      "task": "attribute_perception",
+      "rank": 6,
+      "rationale": "The video tracks attributes of objects and people, such as the color of the tracksuits (light-grey), the buildings (beige brick), and the environment (overcast sky, blue sea)."
+    },
+    {
+      "task": "object_counting",
+      "rank": 7,
+      "rationale": "The video shows multiple individuals (runners and guards) and vehicles (ATV, minibus) that can be counted."
+    },
+    {
+      "task": "action_counting",
+      "rank": 8,
+      "rationale": "The video contains multiple distinct actions, such as jumps, climbs, and sprints, which can be counted."
+    },
+    {
+      "task": "text_rich_understanding",
+      "rank": 9,
+      "rationale": "The video contains visible text on the opening warning card, which can be read and interpreted."
+    },
+    {
+      "task": "causal_reasoning",
+      "rank": 10,
+      "rationale": "The video provides cues for causal reasoning, such as the runners escaping because of the pursuit, or the runners using a pipe to climb the wall."
+    },
+    {
+      "task": "prospective_reasoning",
+      "rank": 11,
+      "rationale": "Based on the ongoing chase, one could predict the runners' next movements or the guards' pursuit strategies."
+    }
+  ]
+}
+```

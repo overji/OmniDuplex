@@ -1,0 +1,47 @@
+{
+  "status": "ok",
+  "question": "As the instructor works on getting the reed to speak, keep explaining why the sound it makes changes from one attempt to the next.",
+  "question_time": "01:52",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "responses": [
+    {
+      "window_start": "01:52",
+      "trigger_time": "01:53",
+      "window_end": "02:02",
+      "response": "That thin airy hiss is the dry reed's blades still nearly shut, so air leaks through without building a full tone; his embouchure on the bare reed could be contributing too, which the sound alone can't rule out.",
+      "trigger_type": "sound+speech",
+      "trigger_type_reason": "The audible airy hiss is the observed event, and his just-spoken remark that a first reed arrives closed up supplies the causal cue; the visible blowing only corroborates it.",
+      "evidence": [
+        {"time": "01:42", "available_time": "01:50", "fact": "The instructor states that a first reed will probably arrive closed up."},
+        {"time": "01:50", "available_time": "01:52", "fact": "He brings the bare reed to his lips and blows; a thin, airy hiss is heard instead of a sustained tone."}
+      ],
+      "details": {
+        "event": "The instructor's first blow into the dry reed produces only a thin airy hiss rather than a tone.",
+        "candidate_causes": ["The dry reed's blades are still almost closed, so air passes without the reed vibrating into a full tone", "His breath and embouchure on the bare reed are not yet set, limiting vibration"],
+        "basis": "He has just said a first reed arrives closed up, and the heard sound is a leaky hiss consistent with tightly shut blades.",
+        "uncertainty": "From the sound alone it is not possible to separate how much is reed tightness versus blowing technique.",
+        "claim_type": "inference"
+      }
+    },
+    {
+      "window_start": "02:29",
+      "trigger_time": "02:30",
+      "window_end": "02:38",
+      "response": "Now it sputters and gurgles because the soak left water inside the reed that he is blowing out; the reed is opening up, but this wet noise is mostly trapped water rather than a real tone yet.",
+      "trigger_type": "sound+visual",
+      "trigger_type_reason": "The wet sputtering gurgle is the observed audio event, and the preceding cutaway of the reed standing in water supplies the cause; no speech is needed to confirm it.",
+      "evidence": [
+        {"time": "02:17", "available_time": "02:25", "fact": "A cutaway shows the reed propped tip-down in a shallow glass of water to soak."},
+        {"time": "02:27", "available_time": "02:29", "fact": "He blows into the reed again and a wet, sputtering gurgle is heard."}
+      ],
+      "details": {
+        "event": "After soaking, the instructor's blow into the reed produces a wet sputtering gurgle.",
+        "candidate_causes": ["Water drawn into the reed during the soak is being expelled, breaking up the airflow into a gurgle", "The reed blades have loosened enough to vibrate but are still damp and unstable"],
+        "basis": "The reed was just shown standing in water, and the resulting sound is a liquid sputter rather than the earlier dry hiss.",
+        "uncertainty": "The gurgle indicates moisture and partial opening, but the exact degree to which the reed will now speak a tone is not yet audible.",
+        "claim_type": "inference"
+      }
+    }
+  ]
+}

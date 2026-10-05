@@ -1,0 +1,195 @@
+{
+  "source": "Gemma4 final validated routes",
+  "video_order": [
+    "video_1",
+    "video_101",
+    "video_103",
+    "video_11",
+    "video_149",
+    "video_152"
+  ],
+  "weighting": "Each suitable rank r receives 13-r points; unsuitable receives 0; weight = category points / total points. These are sampling allocation weights, not confidence scores.",
+  "total_points": 458,
+  "rows": [
+    {
+      "task": "action_perception",
+      "name": "动作感知",
+      "ranks": {
+        "video_1": 4,
+        "video_101": 2,
+        "video_103": 2,
+        "video_11": 1,
+        "video_149": 2,
+        "video_152": 1
+      },
+      "suitable_count": 6,
+      "weighted_points": 66,
+      "weight_percent": 14.41048034934498
+    },
+    {
+      "task": "object_perception",
+      "name": "物体感知",
+      "ranks": {
+        "video_1": 2,
+        "video_101": 3,
+        "video_103": 3,
+        "video_11": 2,
+        "video_149": 3,
+        "video_152": 2
+      },
+      "suitable_count": 6,
+      "weighted_points": 63,
+      "weight_percent": 13.755458515283841
+    },
+    {
+      "task": "spatial_understanding",
+      "name": "空间理解",
+      "ranks": {
+        "video_1": 3,
+        "video_101": 4,
+        "video_103": 4,
+        "video_11": 3,
+        "video_149": 5,
+        "video_152": 3
+      },
+      "suitable_count": 6,
+      "weighted_points": 56,
+      "weight_percent": 12.22707423580786
+    },
+    {
+      "task": "event_understanding",
+      "name": "事件理解",
+      "ranks": {
+        "video_1": 11,
+        "video_101": 5,
+        "video_103": 1,
+        "video_11": 5,
+        "video_149": 1,
+        "video_152": 4
+      },
+      "suitable_count": 6,
+      "weighted_points": 51,
+      "weight_percent": 11.135371179039302
+    },
+    {
+      "task": "grounding",
+      "name": "时间定位",
+      "ranks": {
+        "video_1": 5,
+        "video_101": 7,
+        "video_103": 6,
+        "video_11": 4,
+        "video_149": 4,
+        "video_152": 5
+      },
+      "suitable_count": 6,
+      "weighted_points": 47,
+      "weight_percent": 10.262008733624455
+    },
+    {
+      "task": "attribute_perception",
+      "name": "属性感知",
+      "ranks": {
+        "video_1": 7,
+        "video_101": 6,
+        "video_103": 5,
+        "video_11": 6,
+        "video_149": 6,
+        "video_152": 6
+      },
+      "suitable_count": 6,
+      "weighted_points": 42,
+      "weight_percent": 9.170305676855897
+    },
+    {
+      "task": "text_rich_understanding",
+      "name": "文字理解",
+      "ranks": {
+        "video_1": 1,
+        "video_101": 1,
+        "video_103": 9,
+        "video_11": 9,
+        "video_149": 8,
+        "video_152": 9
+      },
+      "suitable_count": 6,
+      "weighted_points": 41,
+      "weight_percent": 8.951965065502183
+    },
+    {
+      "task": "object_counting",
+      "name": "物体计数",
+      "ranks": {
+        "video_1": 6,
+        "video_101": null,
+        "video_103": 7,
+        "video_11": 7,
+        "video_149": 9,
+        "video_152": 7
+      },
+      "suitable_count": 5,
+      "weighted_points": 29,
+      "weight_percent": 6.331877729257641
+    },
+    {
+      "task": "causal_reasoning",
+      "name": "因果推理",
+      "ranks": {
+        "video_1": 8,
+        "video_101": 8,
+        "video_103": 10,
+        "video_11": 10,
+        "video_149": 7,
+        "video_152": 10
+      },
+      "suitable_count": 6,
+      "weighted_points": 25,
+      "weight_percent": 5.458515283842795
+    },
+    {
+      "task": "action_counting",
+      "name": "动作计数",
+      "ranks": {
+        "video_1": 9,
+        "video_101": 9,
+        "video_103": 8,
+        "video_11": 8,
+        "video_149": null,
+        "video_152": 8
+      },
+      "suitable_count": 5,
+      "weighted_points": 23,
+      "weight_percent": 5.021834061135371
+    },
+    {
+      "task": "prospective_reasoning",
+      "name": "前瞻推理",
+      "ranks": {
+        "video_1": 10,
+        "video_101": 10,
+        "video_103": 11,
+        "video_11": 11,
+        "video_149": 10,
+        "video_152": 11
+      },
+      "suitable_count": 6,
+      "weighted_points": 15,
+      "weight_percent": 3.2751091703056767
+    },
+    {
+      "task": "emotion_recognition",
+      "name": "情绪识别",
+      "ranks": {
+        "video_1": null,
+        "video_101": null,
+        "video_103": null,
+        "video_11": null,
+        "video_149": null,
+        "video_152": null
+      },
+      "suitable_count": 0,
+      "weighted_points": 0,
+      "weight_percent": 0.0
+    }
+  ]
+}

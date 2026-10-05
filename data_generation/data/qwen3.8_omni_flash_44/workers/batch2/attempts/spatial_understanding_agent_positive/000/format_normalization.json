@@ -1,0 +1,6 @@
+{
+  "changes": [
+    "Removed redundant annotations exactly duplicated in positive response evidence and details."
+  ],
+  "scope": "No substantive observations, timing, question, tool actions, or backend claims edited."
+}

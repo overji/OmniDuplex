@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from scripts.build_evidence_samples import build_sample, timestamp_seconds
 from data_generation.tests.fixtures import saved_agent
-from data_generation.src.merge_qa import adapt_responses
+from data_generation.src.domain.qa import adapt_responses
 
 
 class EvidenceSampleTests(unittest.TestCase):

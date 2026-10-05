@@ -1,0 +1,84 @@
+{
+  "status": "ok",
+  "question": "I'm watching this prison-escape clip. From now on, notify me only when one of the runners in grey starts climbing upward on a ladder or a vertical pipe. Ignore railing vaults, wire-mesh scrambles, and stair runs.",
+  "question_time": "00:33",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "window_start": "00:58",
+      "trigger_time": "00:58",
+      "window_end": "01:02",
+      "response": "A runner in grey has started climbing up the red ladder in the enclosed shaft.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The onset of an upward climb on a fixed ladder is purely a visual motion cue; no audio is needed to confirm it.",
+      "evidence": [
+        {"time": "00:57", "available_time": "00:58", "fact": "The runners leave the corridor and reach a dead-end vertical shaft."},
+        {"time": "00:58", "available_time": "00:58", "fact": "Grey-sleeved hands grip red ladder rungs and the body moves upward inside the shaft."}
+      ],
+      "details": {
+        "actor": "runners in grey (the camera-wearer and one ahead)",
+        "action": "climbing upward on a red ladder in a vertical shaft",
+        "phase": "onset",
+        "uncertainty": "low; the red rungs and the upward motion are clearly visible in frame"
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "ladder-pipe-climb-1",
+        "confirmed_time": "00:58",
+        "definition": "a runner in grey begins climbing upward on a ladder or a vertical pipe"
+      }
+    },
+    {
+      "window_start": "01:45",
+      "trigger_time": "01:45",
+      "window_end": "01:49",
+      "response": "One of the runners in grey is now climbing the vertical drainpipe on the brick wall.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Scaling a vertical pipe is identified by the visible hand-and-foot placement on the pipe and the upward body movement; audio adds nothing decisive.",
+      "evidence": [
+        {"time": "01:44", "available_time": "01:45", "fact": "A runner in grey reaches the base of a grey metal downpipe on a tan brick wall."},
+        {"time": "01:45", "available_time": "01:45", "fact": "The runner wraps hands and feet around the pipe and ascends it toward the roof edge."}
+      ],
+      "details": {
+        "actor": "a runner in grey",
+        "action": "climbing upward on a vertical metal drainpipe",
+        "phase": "onset",
+        "uncertainty": "low; the pipe and the climbing posture are unambiguous"
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "ladder-pipe-climb-2",
+        "confirmed_time": "01:45",
+        "definition": "a runner in grey begins climbing upward on a ladder or a vertical pipe"
+      }
+    },
+    {
+      "window_start": "02:57",
+      "trigger_time": "02:57",
+      "window_end": "03:02",
+      "response": "A runner in grey has begun pulling themselves up the brick wall using the black pipe.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The climb is confirmed by the visible grip on the black pipe and the upward movement off the ditch floor; no audio cue is required.",
+      "evidence": [
+        {"time": "02:56", "available_time": "02:57", "fact": "A runner in grey grabs a weathered black pipe fixed to a beige brick wall at the top of the ditch."},
+        {"time": "02:57", "available_time": "02:57", "fact": "The runner hauls upward on the pipe, lifting their body off the slope."}
+      ],
+      "details": {
+        "actor": "a runner in grey",
+        "action": "climbing upward on a brick wall using a black pipe as handhold",
+        "phase": "onset",
+        "uncertainty": "moderate; hands partly obscure the pipe and the climb soon turns into a horizontal traverse, but the initial upward pull is visible"
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "ladder-pipe-climb-3",
+        "confirmed_time": "02:57",
+        "definition": "a runner in grey begins climbing upward on a ladder or a vertical pipe"
+      }
+    }
+  ]
+}

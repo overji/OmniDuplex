@@ -1,0 +1,37 @@
+{
+  "schema": "omniduplex.api_usage.v1",
+  "provider": "qwen",
+  "model": "qwen3.8-omni-flash",
+  "task": "spatial_understanding_agent",
+  "video": "video_152.mp4",
+  "recorded_at": "2026-10-04T02:57:50.632510+00:00",
+  "status": "measured",
+  "input_tokens": 138703,
+  "output_tokens": 9321,
+  "total_tokens": 148024,
+  "cached_input_tokens": 0,
+  "raw_usage": {
+    "completion_tokens": 9321,
+    "completion_tokens_details": {
+      "reasoning_tokens": 7892,
+      "text_tokens": 1429
+    },
+    "prompt_tokens": 138703,
+    "prompt_tokens_details": {
+      "audio_tokens": 1493,
+      "cached_tokens": 0,
+      "text_tokens": 10092,
+      "video_tokens": 127118
+    },
+    "total_tokens": 148024
+  },
+  "estimated_cost_cny": 0.1361291,
+  "pricing": {
+    "currency": "CNY",
+    "unit": "per_million_tokens",
+    "input": 0.8,
+    "cached_input": 0.1,
+    "output": 2.7,
+    "source": "QWEN_*_PRICE_CNY_PER_MILLION settings or documented defaults"
+  }
+}

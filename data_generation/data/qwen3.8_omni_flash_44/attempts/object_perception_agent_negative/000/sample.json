@@ -1,0 +1,223 @@
+{
+  "status": "ok",
+  "question": "Whenever a plush toy shows up in the video, see if it matches any order I'm waiting for.",
+  "question_time": "03:15",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "work_type": "tools",
+  "required_tools": [
+    "order_query"
+  ],
+  "responses": [
+    {
+      "window_start": "03:15",
+      "trigger_time": "03:15",
+      "window_end": "03:15",
+      "response": "I don't have the ability to check your pending orders for plush toys shown in the video.",
+      "refusal_reason": "The requested follow-up requires reading the user's pending order or package records with order_query, which is unavailable in the frontend tool set.",
+      "missing_tools": [
+        "order_query"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "window_start": "03:20",
+      "trigger_time": "03:20",
+      "window_end": "03:25",
+      "response": "A white plush toy with a blue eye has appeared in the lower-left foreground.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is the visible entry and identifiable features of a plush toy; no audio is needed to confirm it.",
+      "evidence": [
+        {
+          "time": "03:16",
+          "available_time": "03:16",
+          "fact": "The railway-platform shot begins with no plush toy in the foreground."
+        },
+        {
+          "time": "03:19",
+          "available_time": "03:19",
+          "fact": "A white fuzzy object enters the lower-left edge of the frame."
+        },
+        {
+          "time": "03:20",
+          "available_time": "03:20",
+          "fact": "The object is clearly a plush toy, with a fluffy white body and a round blue eye in the lower-left foreground."
+        }
+      ],
+      "details": {
+        "target": "white fluffy plush toy with a blue eye",
+        "category": "plush toy / stuffed animal",
+        "position": "lower-left foreground",
+        "uncertainty": "Exact character or product model is uncertain; it resembles an alpaca or llama plush."
+      },
+      "trigger": {
+        "kind": "target",
+        "satisfied": true,
+        "episode_id": "plush_toy_03_20",
+        "confirmed_time": "03:20",
+        "definition": "A newly appearing plush toy becomes visible in the video.",
+        "target": "white fluffy plush toy with a blue eye",
+        "attributes_match": true
+      }
+    }
+  ],
+  "sample_type": "missing_tool",
+  "available_tools": [
+    "todo_create",
+    "todo_query",
+    "todo_update",
+    "calendar_query",
+    "note_write",
+    "order_update",
+    "note_search",
+    "document_search",
+    "weather_query",
+    "route_query",
+    "meeting_draft",
+    "shopping_list_query",
+    "shopping_list_update",
+    "budget_query",
+    "budget_update",
+    "calculator",
+    "itinerary_query",
+    "product_search",
+    "calendar_create",
+    "calendar_update",
+    "notification_send",
+    "web_search",
+    "knowledge_search",
+    "history_query",
+    "video_segment_query",
+    "statistics_compute",
+    "report_create"
+  ],
+  "frontend_context": {
+    "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "agent_call",
+          "description": "Delegate one complex, asynchronous objective to the backend agent.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "instruction": {
+                "type": "string",
+                "description": "Complete, self-contained backend work request."
+              },
+              "observed_context": {
+                "type": "string",
+                "description": "Timestamped audiovisual facts available at the trigger."
+              },
+              "user_goal": {
+                "type": "string",
+                "description": "The result the user asked for."
+              },
+              "constraints_and_authorization": {
+                "type": "string",
+                "description": "Scope, permissions, confirmation needs, and user constraints."
+              },
+              "suggested_capabilities": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                },
+                "description": "At least one available daily application tool that is necessary for the requested outcome."
+              },
+              "expected_output": {
+                "type": "string",
+                "description": "Required result, evidence, sources, actions, and artifacts."
+              },
+              "extracted_parameters": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "evidence_time": {
+                      "type": "string",
+                      "description": "MM:SS, no later than trigger_time"
+                    },
+                    "evidence": {
+                      "type": "string",
+                      "description": "Observable audiovisual evidence"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value",
+                    "evidence_time",
+                    "evidence"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "instruction",
+              "observed_context",
+              "user_goal",
+              "constraints_and_authorization",
+              "suggested_capabilities",
+              "expected_output",
+              "extracted_parameters"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "ability": "object_perception",
+  "mode": "agent",
+  "schema": "omni-interaction-v2",
+  "task": "object_perception_agent",
+  "video": "video_1.mp4",
+  "generation_context": {
+    "duration_seconds": 208.05,
+    "preferred_modality": "vision",
+    "question_position": "non_start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "missing_tool",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "required_missing_tool": "order_query"
+  }
+}

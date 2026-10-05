@@ -1,0 +1,223 @@
+{
+  "status": "ok",
+  "question": "I'm watching this escape video from the outside. Let me know whenever one of the grey-suited runners ends up at a lower level than the person filming.",
+  "question_time": "00:49",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "window_start": "00:49",
+      "trigger_time": "00:49",
+      "window_end": "00:50",
+      "response": "Two grey-suited runners have dropped from the railing down to the atrium floor, below the person filming.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The vertical relation between the runners and the camera is read entirely from the frame; no audio cue is needed.",
+      "evidence": [
+        {"time": "00:48", "available_time": "00:48", "fact": "The camera is held at the green atrium railing, with runners in light-grey tracksuits at the same level."},
+        {"time": "00:49", "available_time": "00:49", "fact": "Two grey-suited runners are in mid-air beneath the railing, falling toward the teal floor while the camera stays at railing height."}
+      ],
+      "details": {
+        "target": "the grey-suited runners other than the person filming",
+        "reference": "the camera position of the person filming",
+        "relation": "runners vertically below the camera",
+        "uncertainty": "No scale is available, so the exact height difference is unknown; the judgement is from the camera's viewpoint only."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "below-01",
+        "confirmed_time": "00:49",
+        "definition": "A grey-suited runner moves to a level below the person filming."
+      }
+    },
+    {
+      "window_start": "01:31",
+      "trigger_time": "01:31",
+      "window_end": "01:33",
+      "response": "A runner has leapt off the roof edge onto the lower roof, now below the person filming.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The drop to a lower roof surface is visible; sound adds nothing to the spatial judgement.",
+      "evidence": [
+        {"time": "01:30", "available_time": "01:30", "fact": "The camera and a grey-suited runner are on the same upper roof edge."},
+        {"time": "01:31", "available_time": "01:31", "fact": "That runner is airborne below the camera's roof level, heading for a lower roof section."},
+        {"time": "01:32", "available_time": "01:32", "fact": "The runner lands on the lower roof while the camera remains at the upper edge looking down."}
+      ],
+      "details": {
+        "target": "the grey-suited runner at the roof edge",
+        "reference": "the camera position of the person filming",
+        "relation": "runner on a lower roof level than the camera",
+        "uncertainty": "The vertical gap cannot be measured; only the relative roof levels are visible."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "below-02",
+        "confirmed_time": "01:31",
+        "definition": "A grey-suited runner moves to a level below the person filming.",
+        "reset_time": "00:51"
+      }
+    },
+    {
+      "window_start": "01:58",
+      "trigger_time": "01:59",
+      "window_end": "02:05",
+      "response": "Both runners ahead have dropped onto the lower roof, below the person filming.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Their position on a lower roof plane relative to the camera is purely visual.",
+      "evidence": [
+        {"time": "01:57", "available_time": "01:57", "fact": "Two grey-suited runners are at the edge of the roof the camera is on."},
+        {"time": "01:58", "available_time": "01:58", "fact": "Both runners are in the air below the camera's roof edge."},
+        {"time": "01:59", "available_time": "01:59", "fact": "The camera looks down at the two runners standing on the lower roof surface."}
+      ],
+      "details": {
+        "target": "the two grey-suited runners ahead",
+        "reference": "the camera position of the person filming",
+        "relation": "runners on the roof level below the camera",
+        "uncertainty": "Height difference is unmeasured; the relation holds only while the camera stays at the upper edge."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "below-03",
+        "confirmed_time": "01:58",
+        "definition": "A grey-suited runner moves to a level below the person filming.",
+        "reset_time": "01:35"
+      }
+    },
+    {
+      "window_start": "02:10",
+      "trigger_time": "02:11",
+      "window_end": "02:12",
+      "response": "The runner ahead has stepped down onto a lower ledge, below the person filming.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The step-down to a lower ledge is seen from the camera's higher vantage point.",
+      "evidence": [
+        {"time": "02:09", "available_time": "02:09", "fact": "A grey-suited runner is on the same roof as the camera, near the far edge."},
+        {"time": "02:10", "available_time": "02:10", "fact": "That runner lowers onto a narrow ledge beneath the roof line."},
+        {"time": "02:11", "available_time": "02:11", "fact": "The camera looks down at the runner crouched on the lower ledge."}
+      ],
+      "details": {
+        "target": "the grey-suited runner ahead",
+        "reference": "the camera position of the person filming",
+        "relation": "runner on a ledge below the camera",
+        "uncertainty": "No scale, so the drop height is unknown; ledge vs. roof distinction is read from the frame."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "below-04",
+        "confirmed_time": "02:10",
+        "definition": "A grey-suited runner moves to a level below the person filming.",
+        "reset_time": "02:07"
+      }
+    },
+    {
+      "window_start": "02:35",
+      "trigger_time": "02:36",
+      "window_end": "02:37",
+      "response": "A runner has climbed down the fence to the ground, below the person filming.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The runner's descent along the fence to ground level is visible from the roof above.",
+      "evidence": [
+        {"time": "02:34", "available_time": "02:34", "fact": "A grey-suited runner is at the top of the chain-link fence at the camera's roof level."},
+        {"time": "02:35", "available_time": "02:35", "fact": "The runner is on the fence below the roof edge, descending."},
+        {"time": "02:36", "available_time": "02:36", "fact": "The camera looks down at the runner now on the asphalt below the fence."}
+      ],
+      "details": {
+        "target": "the grey-suited runner on the fence",
+        "reference": "the camera position of the person filming on the roof",
+        "relation": "runner below the camera, on the far side of the fence",
+        "uncertainty": "Fence height is not measurable; the relation is inferred from the downward camera angle."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "below-05",
+        "confirmed_time": "02:35",
+        "definition": "A grey-suited runner moves to a level below the person filming.",
+        "reset_time": "02:14"
+      }
+    },
+    {
+      "window_start": "02:47",
+      "trigger_time": "02:48",
+      "window_end": "02:51",
+      "response": "The runners have slid down the embankment into the ditch, below the person filming.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Their lower position in the ditch relative to the camera on the slope is visual.",
+      "evidence": [
+        {"time": "02:46", "available_time": "02:46", "fact": "Grey-suited runners are ahead on the same grassy slope as the camera."},
+        {"time": "02:47", "available_time": "02:47", "fact": "The runners slide down into the overgrown ditch beneath the camera's level."},
+        {"time": "02:48", "available_time": "02:48", "fact": "The camera looks down at the runners among the weeds below the slope."}
+      ],
+      "details": {
+        "target": "the grey-suited runners on the slope",
+        "reference": "the camera position of the person filming upslope",
+        "relation": "runners downslope and below the camera",
+        "uncertainty": "Slope depth is unmeasured; the relation depends on the camera staying above the ditch."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "below-06",
+        "confirmed_time": "02:47",
+        "definition": "A grey-suited runner moves to a level below the person filming.",
+        "reset_time": "02:40"
+      }
+    },
+    {
+      "window_start": "03:07",
+      "trigger_time": "03:08",
+      "window_end": "03:09",
+      "response": "A runner is now below the person filming, hanging on the pipe against the brick wall.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The runner's lower position on the pipe is seen from the camera's higher footing on the wall.",
+      "evidence": [
+        {"time": "03:06", "available_time": "03:06", "fact": "A grey-suited runner is on the black pipe at roughly the camera's level."},
+        {"time": "03:07", "available_time": "03:07", "fact": "The runner is on the pipe below the camera's position on the wall."},
+        {"time": "03:08", "available_time": "03:08", "fact": "The camera looks down at the runner braced on the pipe beneath it."}
+      ],
+      "details": {
+        "target": "the grey-suited runner on the wall pipe",
+        "reference": "the camera position of the person filming on the same wall",
+        "relation": "runner on the pipe below the camera",
+        "uncertainty": "Wall height is not measurable; both are on the same face, so only relative vertical order is certain."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "below-07",
+        "confirmed_time": "03:07",
+        "definition": "A grey-suited runner moves to a level below the person filming.",
+        "reset_time": "03:00"
+      }
+    },
+    {
+      "window_start": "03:11",
+      "trigger_time": "03:12",
+      "window_end": "03:13",
+      "response": "Another grey-suited runner is below the person filming, climbing up to the walkway.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The downward view over the railing shows the runner beneath the camera's walkway level.",
+      "evidence": [
+        {"time": "03:10", "available_time": "03:10", "fact": "The camera reaches the railed walkway above the wall."},
+        {"time": "03:11", "available_time": "03:11", "fact": "The camera looks down over the railing at a grey-suited runner below."},
+        {"time": "03:12", "available_time": "03:12", "fact": "That runner is on the walkway edge beneath the camera, pulling up."}
+      ],
+      "details": {
+        "target": "the grey-suited runner at the walkway railing",
+        "reference": "the camera position of the person filming on the walkway",
+        "relation": "runner below the walkway level of the camera",
+        "uncertainty": "The gap is unmeasured; the runner's identity among the group is not distinguishable."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "below-08",
+        "confirmed_time": "03:11",
+        "definition": "A grey-suited runner moves to a level below the person filming.",
+        "reset_time": "03:10"
+      }
+    }
+  ]
+}

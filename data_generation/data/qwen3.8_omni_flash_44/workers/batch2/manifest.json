@@ -1,0 +1,606 @@
+{
+  "settings": {
+    "provider": "qwen",
+    "model": "qwen3.8-omni-flash",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "upload_url": null,
+    "timeout": 120.0,
+    "retries": 2,
+    "seed": 0,
+    "temperature": 0.1,
+    "max_contexts": 3,
+    "validation_retries": 2,
+    "implementation": "8357a820ac4e398bfa3013c76aa0173ce1b7c31587c8b2bf6a735ef0ed587e5b",
+    "selection": {
+      "attribute_perception": "video_101",
+      "grounding": "video_11",
+      "action_perception": "video_152",
+      "object_perception": "video_1",
+      "event_understanding": "video_149",
+      "text_rich_understanding": "video_101",
+      "object_counting": "video_1",
+      "action_counting": "video_103",
+      "spatial_understanding": "video_152",
+      "prospective_reasoning": "video_149",
+      "causal_reasoning": "video_101"
+    }
+  },
+  "slots": {
+    "object_counting_rtd": {
+      "fingerprint": "5af331dd143297df91e8f31c957d1630ff24329b3a2879a42f10ac5c96837d52",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "64217915226040032082966500772940544147013093512009855518935749374207386216988",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 228.42141366004944
+        }
+      ],
+      "content_hash": "7caf6c986355ebab968f99367b1c9a22a2cce6aa544b1ed080ceea6f1d8814ab",
+      "selected_attempt": 0
+    },
+    "object_counting_pr": {
+      "fingerprint": "29c41a05074f739af9d1380f69fb92c0cc2b0cdcfc552a1092101d02d06b3443",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "80466907466516443122589889547053959309822362982649656446729255975791885079893",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "trigger must be an object",
+          "elapsed_seconds": 180.26034426689148
+        },
+        {
+          "index": 1,
+          "seed": "80466907466516443122589889547053959309822362982649656446729255975791885079893",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 29.13105535507202
+        }
+      ],
+      "content_hash": "a62887a7847bf3d965790bbbdaf806e07564011888a92187c0b423fc4627055e",
+      "selected_attempt": 1
+    },
+    "object_counting_agent_positive": {
+      "fingerprint": "fb066bb028784253bfd75850871b34b6d414b3f4b3a9a596babc09f80248fe55",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "22902665415805707894872279298408117669384991639491467789136613271065603406311",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 28,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "separate future annotation is only for capability negatives",
+          "elapsed_seconds": 213.99339413642883
+        },
+        {
+          "index": 1,
+          "seed": "22902665415805707894872279298408117669384991639491467789136613271065603406311",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 28,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "separate future annotation is only for capability negatives",
+          "elapsed_seconds": 163.91647005081177
+        },
+        {
+          "index": 2,
+          "status": "interrupted",
+          "error": "Interrupted during prior foreground request; any response and usage retained."
+        },
+        {
+          "index": 3,
+          "seed": "22902665415805707894872279298408117669384991639491467789136613271065603406311",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 28,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "kind": "reuse_complete_model_response",
+          "reused_source": "/root/jimodels/OmniDuplex/data_generation/data/qwen3.8_omni_flash_44/workers/batch2/attempts/object_counting_agent_positive/001/response_raw.txt",
+          "status": "ok",
+          "elapsed_seconds": 0.007326364517211914
+        }
+      ],
+      "content_hash": "d867857386378a8d9d61f12229df770b0c45ab87913234673a637e1ed406e099",
+      "selected_attempt": 3
+    },
+    "object_counting_agent_negative": {
+      "fingerprint": "0490fcb866c4907d2a9028faa45435347ac023ad7f5939b973b5cb83d14b46f7",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "75783257988752741651288620906543104745426468167336183306753755615639858701355",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "todo_create"
+          },
+          "status": "ok",
+          "elapsed_seconds": 112.09661602973938
+        }
+      ],
+      "content_hash": "53a0929ddc277d4ad3edc2bb07d15e065eb550e6c60226eafd5ed9e708bac100",
+      "selected_attempt": 0
+    },
+    "action_counting_rtd": {
+      "fingerprint": "f6fd19de56839f203925454897775a139360bc9c7c6d95de72fc2e3a84313619",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "104045511395318906202964539704466482770906470737972410095689372738844516723627",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 149.7829942703247
+        }
+      ],
+      "content_hash": "6bc11b83cc744a27ec46338f8be4b72ae2d75e1b0cc296eeb3e00a1e0ebdcde0",
+      "selected_attempt": 0
+    },
+    "action_counting_pr": {
+      "fingerprint": "4190a6f40b9ad723e86343da6e6c61b6f4d6000ad1894eb2d60f7da722ccc1b1",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "33878338517976088593290785887798983370085354651052059340332408604142876189658",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 139.53494715690613
+        }
+      ],
+      "content_hash": "cf563a06f759d001fe7fcfc25b03766a7a567084d5426290359c83e336cf241b",
+      "selected_attempt": 0
+    },
+    "action_counting_agent_positive": {
+      "fingerprint": "f758a180d2ed65566629d97de2de86f12ca975d00325c70991292b543bf00081",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "68619694508202761849094301923020950606521720331602777657888523958986967175988",
+          "candidate": 1,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": 16,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 280.54269766807556
+        }
+      ],
+      "content_hash": "4497cd22a1fd088901700c593e2b3948ce0864b3806238eb3d3380f612d53da0",
+      "selected_attempt": 0
+    },
+    "action_counting_agent_negative": {
+      "fingerprint": "c34bc44aeb40caf0dfae0631b59771ef81c54f0a58077a017ce7e8823d33235f",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "92984918643699065165541471673265231085595352424932021505697467513832157680701",
+          "candidate": 4,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "meeting_draft"
+          },
+          "status": "failed",
+          "error": "cumulative updates must preserve and extend history",
+          "elapsed_seconds": 163.92699360847473
+        },
+        {
+          "index": 1,
+          "seed": "92984918643699065165541471673265231085595352424932021505697467513832157680701",
+          "candidate": 4,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "meeting_draft"
+          },
+          "status": "ok",
+          "elapsed_seconds": 151.92348170280457
+        }
+      ],
+      "content_hash": "b5618e20d0083a3b143ace76e0e96e1128b14f0ffb6aa2df90213089ff08b37d",
+      "selected_attempt": 1
+    },
+    "spatial_understanding_rtd": {
+      "fingerprint": "76adeb67b9662006564d4daff02b0c3a3d300ae620bfa00ad9e7bba9f444a50a",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "21067521127592481126168013102093639939475312912392941370247429810025600444168",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 477.8666949272156
+        }
+      ],
+      "content_hash": "7e9b4373506b19d45a5d31405149352f63ee8aa6233a3402a3bc66bc6336c64d",
+      "selected_attempt": 0
+    },
+    "spatial_understanding_pr": {
+      "fingerprint": "e4707f36abc56bc83b37808d8088c37889c7ebca71a5e046ab2daced200fcda9",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "80448443177799082138256234297122684959982691943500452133089403449842818699609",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "evidence must be available by the earliest eligible response time",
+          "elapsed_seconds": 171.57630515098572
+        },
+        {
+          "index": 1,
+          "seed": "80448443177799082138256234297122684959982691943500452133089403449842818699609",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 187.42835402488708
+        }
+      ],
+      "content_hash": "61e12c54b6c0cb117170dacd99518b25fe9acc6b602629b670f5592050613b96",
+      "selected_attempt": 1
+    },
+    "spatial_understanding_agent_positive": {
+      "fingerprint": "2f7e7ec8d571d4164f35e7408fc126135cc2f7dded1e24097ba91620bb7fa599",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "3839903695868858221749114222814256919519692383435767723433903450972620700739",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": 23,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 270.82063722610474
+        }
+      ],
+      "content_hash": "517004c1c4da3dae6d77f06710a9368af332b5da5d0399d2c804754c383cbfbe",
+      "selected_attempt": 0
+    },
+    "spatial_understanding_agent_negative": {
+      "fingerprint": "1077e2533f07cdfee81840e40d6dccb4811ba6e0a0bbbcf6fa5bfa3166092c59",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "33284145960821303165789305593717509651592366867465813698528793707687786677369",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "weather_query"
+          },
+          "status": "ok",
+          "elapsed_seconds": 116.75699210166931
+        }
+      ],
+      "content_hash": "202bf89eb9aa3ed2ec98c35bda3ea288ded2c45b1a0e53dedadc72747bd5682c",
+      "selected_attempt": 0
+    }
+  }
+}

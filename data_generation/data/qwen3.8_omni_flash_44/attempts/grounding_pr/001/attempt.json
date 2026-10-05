@@ -1,0 +1,19 @@
+{
+  "index": 1,
+  "seed": "6473396541096104800022313539621951850921356422916058091596056678540677489373",
+  "candidate": 0,
+  "context_index": 0,
+  "correction": 1,
+  "context": {
+    "duration_seconds": 229.762,
+    "preferred_modality": "audio",
+    "question_position": "non_start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "positive",
+    "available_tools": [],
+    "required_missing_tool": null
+  },
+  "status": "ok",
+  "elapsed_seconds": 49.4882173538208
+}

@@ -1,0 +1,170 @@
+{
+  "status": "ok",
+  "question": "While I watch this duduk lesson, track the reed's condition. Each time the instructor demonstrates a care step that changes it, let me know if I already have a to-do reminder for that step.",
+  "question_time": "00:00",
+  "audio_dependency": "helpful",
+  "vision_dependency": "required",
+  "work_type": "tools",
+  "required_tools": [
+    "todo_query"
+  ],
+  "responses": [
+    {
+      "window_start": "00:00",
+      "trigger_time": "00:00",
+      "window_end": "00:00",
+      "response": "I don't have the ability to check your existing to-do reminders for each reed-care step.",
+      "refusal_reason": "The requested follow-up requires reading existing user todos and their status with todo_query, which is not available; todo_create and todo_update cannot retrieve existing reminders.",
+      "missing_tools": [
+        "todo_query"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "window_start": "01:06",
+      "trigger_time": "01:08",
+      "window_end": "01:15",
+      "response": "The reed cap has been removed, exposing the double reed.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The cap is visibly lifted away in close-up, changing the reed from capped to exposed.",
+      "evidence": [
+        {
+          "time": "01:04",
+          "available_time": "01:06",
+          "fact": "Close-up shows the small cap being taken off the cream-colored reed."
+        }
+      ],
+      "details": {
+        "target": "the duduk reed",
+        "attributes": "capped → uncapped/exposed",
+        "uncertainty": "The cap removal is visible; the exact reed aperture after removal is not measured."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "reed-care-uncap",
+        "confirmed_time": "01:06",
+        "definition": "the instructor demonstrates a reed-care step that changes the reed's condition"
+      }
+    },
+    {
+      "window_start": "01:56",
+      "trigger_time": "01:58",
+      "window_end": "02:02",
+      "response": "He is blowing into the exposed reed while pinching it to try opening it.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The reed is visibly at his lips and fingers pinch it, while an airy blowing sound confirms airflow.",
+      "evidence": [
+        {
+          "time": "01:50",
+          "available_time": "01:52",
+          "fact": "He brings the exposed reed to his mouth and blows into it."
+        },
+        {
+          "time": "01:55",
+          "available_time": "01:56",
+          "fact": "His fingers pinch the reed blades while he continues blowing."
+        }
+      ],
+      "details": {
+        "target": "the duduk reed",
+        "attributes": "exposed dry reed → blown/partially opened",
+        "uncertainty": "The audible blow confirms airflow, but the actual opening change is not precisely visible."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "reed-care-blow-open",
+        "confirmed_time": "01:56",
+        "definition": "the instructor demonstrates a reed-care step that changes the reed's condition"
+      }
+    },
+    {
+      "window_start": "02:20",
+      "trigger_time": "02:22",
+      "window_end": "02:26",
+      "response": "The reed is standing tip-down in a shallow glass of water to soak.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "A close-up clearly shows the reed placed into water, changing its condition to soaking.",
+      "evidence": [
+        {
+          "time": "02:18",
+          "available_time": "02:20",
+          "fact": "A hand lowers the reed into a clear glass with a small amount of water."
+        }
+      ],
+      "details": {
+        "target": "the duduk reed",
+        "attributes": "blown reed → submerged/soaking",
+        "uncertainty": "The water depth is shallow; the exact soak duration starts at placement."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "reed-care-soak",
+        "confirmed_time": "02:20",
+        "definition": "the instructor demonstrates a reed-care step that changes the reed's condition"
+      }
+    },
+    {
+      "window_start": "02:28",
+      "trigger_time": "02:30",
+      "window_end": "02:36",
+      "response": "He is blowing excess water out of the soaked reed.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The reed is visibly held to his lips after the soak, and a sputtering wet blowing sound indicates water clearance.",
+      "evidence": [
+        {
+          "time": "02:26",
+          "available_time": "02:28",
+          "fact": "He holds the reed to his lips after the soak."
+        },
+        {
+          "time": "02:28",
+          "available_time": "02:28",
+          "fact": "A sputtering wet blowing sound is audible."
+        }
+      ],
+      "details": {
+        "target": "the duduk reed",
+        "attributes": "soaking reed → water-cleared",
+        "uncertainty": "The sound indicates water clearance, but residual moisture is not visible."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "reed-care-clear-water",
+        "confirmed_time": "02:28",
+        "definition": "the instructor demonstrates a reed-care step that changes the reed's condition"
+      }
+    },
+    {
+      "window_start": "03:26",
+      "trigger_time": "03:28",
+      "window_end": "03:30",
+      "response": "The reed is shown stored in a ventilated case on soft padding.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The cutaway reveals the reed resting inside a holed plastic case, showing a distinct storage condition.",
+      "evidence": [
+        {
+          "time": "03:24",
+          "available_time": "03:26",
+          "fact": "A translucent plastic case with holes is opened, revealing the reed resting on white padding."
+        }
+      ],
+      "details": {
+        "target": "the duduk reed",
+        "attributes": "handled reed → stored/ventilated",
+        "uncertainty": "The clip shows storage condition, but whether it is temporary or long-term storage is unclear."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "reed-care-store",
+        "confirmed_time": "03:26",
+        "definition": "the instructor demonstrates a reed-care step that changes the reed's condition"
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "video": "/root/jimodels/OmniDuplex/videos/video_149.mp4",
+  "duration_seconds": 212.068,
+  "caption_sha256": "564cc632589b59c51447a3ad2450fdf3890bfe01def84b8bdaf46e3f63ad4266",
+  "route_prompt_sha256": "5fdcc9a4157764f51e53193dee8602449d3b4bba9648909b1d37cb9badf362eb",
+  "audio_seconds": 212.067875,
+  "audio_chunks": 8,
+  "input_tokens": 12834,
+  "input_shapes": {
+    "input_ids": [
+      1,
+      12834
+    ],
+    "attention_mask": [
+      1,
+      12834
+    ],
+    "mm_token_type_ids": [
+      1,
+      12834
+    ],
+    "pixel_values_videos": [
+      1,
+      32,
+      630,
+      768
+    ],
+    "video_position_ids": [
+      1,
+      32,
+      630,
+      2
+    ],
+    "input_features": [
+      8,
+      2999,
+      128
+    ],
+    "input_features_mask": [
+      8,
+      2999
+    ]
+  },
+  "attempts": [
+    {
+      "attempt": 0,
+      "input_tokens": 12834,
+      "output_tokens": 888,
+      "validation_error": "duplicate routed task"
+    },
+    {
+      "attempt": 1,
+      "input_tokens": 13923,
+      "output_tokens": 732
+    }
+  ],
+  "output_tokens": 732,
+  "elapsed_seconds": 168.13865089416504,
+  "peak_allocated_gib": {
+    "0": 17.588005542755127
+  }
+}

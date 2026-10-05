@@ -1,0 +1,69 @@
+{
+  "status": "ok",
+  "question": "Whenever a lesson title card appears, tell me what it says and save the lesson title in my study notes.",
+  "question_time": "00:00",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "work_type": "tools",
+  "required_tools": [
+    "note_write"
+  ],
+  "responses": [
+    {
+      "window_start": "00:29",
+      "trigger_time": "00:29",
+      "window_end": "00:32",
+      "response": "Lesson title card appears; I’ll save “LESSON 1: THE BODY & REED” to your notes.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is the legible lesson title text on the card; audio is not needed to confirm it.",
+      "evidence": [
+        {
+          "time": "00:29",
+          "available_time": "00:29",
+          "fact": "A dark title card displays the text LESSON 1: THE BODY & REED."
+        }
+      ],
+      "details": {
+        "text": "LESSON 1: THE BODY & REED",
+        "text_source": "screen",
+        "interpretation": "This card announces the first numbered lesson and its topic, the body and reed.",
+        "uncertainty": "None material; the text is legible on the card."
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "lesson-title-card-001",
+        "confirmed_time": "00:29",
+        "definition": "An on-screen card states a lesson number and topic."
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "00:29",
+          "content": "Lesson title card appears; I’ll save “LESSON 1: THE BODY & REED” to your notes.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Create a study note containing the observed lesson title.\",\"observed_context\":\"At 00:29, a lesson title card displays LESSON 1: THE BODY & REED.\",\"user_goal\":\"Save the lesson title from the title card in the user's study notes.\",\"constraints_and_authorization\":\"The user authorized saving lesson title cards to notes. Use only the text visible by 00:29; do not add later video facts.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with an artifact containing the lesson title and content.\",\"extracted_parameters\":[{\"name\":\"title\",\"value\":\"LESSON 1: THE BODY & REED\",\"evidence_time\":\"00:29\",\"evidence\":\"The title card text reads LESSON 1: THE BODY & REED.\"},{\"name\":\"content\",\"value\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\",\"evidence_time\":\"00:29\",\"evidence\":\"The title card text reads LESSON 1: THE BODY & REED.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "01:17",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Created a study note for the observed lesson title.\",\"observed_facts\":[\"At 00:29 the lesson title card displays LESSON 1: THE BODY & REED.\"],\"tool_information\":[\"note_write created a user note.\"],\"reasoning\":[\"The user asked to save lesson title cards; the observed card is a lesson title, so note_write was used.\"],\"uncertainties\":[\"The note identifier is simulated and not shown in the video.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create note\",\"status\":\"completed\",\"evidence\":\"Note record exists with the requested title and content.\",\"arguments\":{\"title\":\"LESSON 1: THE BODY & REED\",\"content\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"LESSON 1: THE BODY & REED\",\"content\":\"Lesson title shown on screen at 00:29: LESSON 1: THE BODY & REED.\"}]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "01:17",
+          "content": "Success: saved “LESSON 1: THE BODY & REED” to your study notes as the observed lesson title.",
+          "outcome": "success"
+        }
+      ]
+    }
+  ]
+}

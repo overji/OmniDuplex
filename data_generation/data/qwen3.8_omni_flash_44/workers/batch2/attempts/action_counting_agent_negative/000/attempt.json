@@ -1,0 +1,20 @@
+{
+  "index": 0,
+  "seed": "92984918643699065165541471673265231085595352424932021505697467513832157680701",
+  "candidate": 4,
+  "context_index": 0,
+  "correction": 0,
+  "context": {
+    "duration_seconds": 152.734,
+    "preferred_modality": "vision",
+    "question_position": "non_start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "no_context",
+    "available_tools": [],
+    "required_missing_tool": "meeting_draft"
+  },
+  "status": "failed",
+  "error": "cumulative updates must preserve and extend history",
+  "elapsed_seconds": 163.92699360847473
+}

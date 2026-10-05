@@ -1,0 +1,65 @@
+{
+  "status": "ok",
+  "question": "Whenever a plush toy shows up in the video, see if it matches any order I'm waiting for.",
+  "question_time": "03:15",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "work_type": "tools",
+  "required_tools": [
+    "order_query"
+  ],
+  "responses": [
+    {
+      "window_start": "03:15",
+      "trigger_time": "03:15",
+      "window_end": "03:15",
+      "response": "I don't have the ability to check your pending orders for plush toys shown in the video.",
+      "refusal_reason": "The requested follow-up requires reading the user's pending order or package records with order_query, which is unavailable in the frontend tool set.",
+      "missing_tools": [
+        "order_query"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "window_start": "03:20",
+      "trigger_time": "03:20",
+      "window_end": "03:25",
+      "response": "A white plush toy with a blue eye has appeared in the lower-left foreground.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is the visible entry and identifiable features of a plush toy; no audio is needed to confirm it.",
+      "evidence": [
+        {
+          "time": "03:16",
+          "available_time": "03:16",
+          "fact": "The railway-platform shot begins with no plush toy in the foreground."
+        },
+        {
+          "time": "03:19",
+          "available_time": "03:19",
+          "fact": "A white fuzzy object enters the lower-left edge of the frame."
+        },
+        {
+          "time": "03:20",
+          "available_time": "03:20",
+          "fact": "The object is clearly a plush toy, with a fluffy white body and a round blue eye in the lower-left foreground."
+        }
+      ],
+      "details": {
+        "target": "white fluffy plush toy with a blue eye",
+        "category": "plush toy / stuffed animal",
+        "position": "lower-left foreground",
+        "uncertainty": "Exact character or product model is uncertain; it resembles an alpaca or llama plush."
+      },
+      "trigger": {
+        "kind": "target",
+        "satisfied": true,
+        "episode_id": "plush_toy_03_20",
+        "confirmed_time": "03:20",
+        "definition": "A newly appearing plush toy becomes visible in the video.",
+        "target": "white fluffy plush toy with a blue eye",
+        "attributes_match": true
+      }
+    }
+  ]
+}

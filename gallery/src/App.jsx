@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import snapshot from 'virtual:gallery-snapshot'
 
-const FALLBACK_DURATION = 273
+import { parseTime, formatTime, sampleKind, decodeJSON, reviewRecords, isActiveWindow, windowLanes, matchesFilters, initialFile } from './review-model.mjs'
 function getVideoUrl(videoName) {
   return videoName ? `${import.meta.env.BASE_URL}${encodeURIComponent(videoName)}` : ''
 }
@@ -23,22 +23,6 @@ function Icon({ name, size = 18 }) {
   )
 }
 
-function parseTime(value) {
-  if (typeof value === 'number') return Number.isFinite(value) && value >= 0 ? value : null
-  if (typeof value !== 'string' || !value.trim()) return null
-  const parts = value.split(':').map(Number)
-  if (![2, 3].includes(parts.length) || parts.some(part => !Number.isFinite(part) || part < 0)) return null
-  const seconds = parts.reduce((total, part) => total * 60 + part, 0)
-  return seconds >= 0 ? seconds : null
-}
-
-function formatTime(seconds) {
-  if (!Number.isFinite(seconds) || seconds < 0) return '00:00'
-  const minutes = Math.floor(seconds / 60)
-  const remaining = Math.floor(seconds % 60)
-  return `${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`
-}
-
 function MetaPill({ icon, label, value, accent = false }) {
   return (
     <div className={`meta-pill${accent ? ' meta-pill--accent' : ''}`}>
@@ -49,33 +33,70 @@ function MetaPill({ icon, label, value, accent = false }) {
   )
 }
 
-function EventCard({ event, index, isActive, onSelect, cardRef }) {
-  return (
-    <article
-      ref={cardRef}
-      className={`event-card${isActive ? ' event-card--active' : ''}`}
-      aria-current={isActive ? 'true' : undefined}
-    >
-      <button className="event-card__button" type="button" onClick={onSelect} disabled={!onSelect}>
-        <span className="event-card__rail" aria-hidden="true">
-          <span className="event-card__dot" />
-        </span>
-        <span className="event-card__content">
-          <span className="event-card__topline">
-            <span className="timecode"><Icon name="clock" size={14} />{event.trigger_time || '—'}</span>
-            <span className="event-number">EVENT {String(index + 1).padStart(2, '0')}</span>
-            <span className="event-card__arrow"><Icon name="arrow" size={17} /></span>
-          </span>
-          <strong className="event-card__response">{event.response || 'No response provided'}</strong>
-          <span className="event-card__description">{event.event_description || 'No event description available.'}</span>
-          <span className="event-card__reason">
-            <Icon name="eye" size={14} />
-            <span>{event.trigger_type_reason || 'No trigger reason provided.'}</span>
-          </span>
-        </span>
-      </button>
-    </article>
-  )
+function TimeButton({ label, seconds, onSeek }) {
+  return <button className="time-button" type="button" disabled={seconds === null} onClick={() => onSeek(seconds)}>{label} <strong>{formatTime(seconds)}</strong></button>
+}
+
+function EventCard({ event, index, isActive, onSeek, cardRef }) {
+  const body = event.role === 'tool' ? decodeJSON(event.response) : event.response
+  return <article ref={cardRef} className={`event-card${isActive ? ' event-card--active' : ''}${event.track === 'annotations' ? ' event-card--annotation' : ''}`} aria-current={isActive ? 'true' : undefined}>
+    <button className="event-card__button" type="button" disabled={event.seconds === null} onClick={() => onSeek(event.seconds)}>
+      <span className="event-card__rail"><span className="event-card__dot" /></span>
+      <span className="event-card__content">
+        <span className="event-card__topline"><span className="timecode">{event.trigger_time}</span><span className="event-number">{event.label} · {index + 1}</span><Icon name="arrow" /></span>
+        <strong className="event-card__response">{typeof body === 'object' && body !== null ? body.summary || body.status || 'Tool result' : body || 'No response provided'}</strong>
+        {event.trigger_type_reason && <span className="event-card__reason">{event.trigger_type} · {event.trigger_type_reason}</span>}
+        {event.event_description && <span className="event-card__description">{event.event_description}</span>}
+      </span>
+    </button>
+    <div className="event-card__details">
+      {event.hasWindow ? <div className="window-times"><span>Valid response window</span><TimeButton label="Earliest" seconds={event.start} onSeek={onSeek} /><TimeButton label="Recommended" seconds={event.seconds} onSeek={onSeek} /><TimeButton label="Latest" seconds={event.end} onSeek={onSeek} /></div>
+        : <TimeButton label="Message time" seconds={event.seconds} onSeek={onSeek} />}
+      {(event.window_start !== undefined || event.window_end !== undefined) && !event.hasWindow && <p role="alert">Invalid or incomplete window — see raw fields below.</p>}
+      {event.refusal_reason && <p className="refusal-reason">{event.refusal_reason}</p>}
+      {event.missing_tools && <p>Missing tools: {event.missing_tools.join(', ') || 'None'}</p>}
+      {event.evidence?.length > 0 && <details><summary>Evidence ({event.evidence.length})</summary>{event.evidence.map((evidence, i) => <div className="evidence-record" key={i}><TimeButton label="Observed" seconds={parseTime(evidence.time)} onSeek={onSeek} /><TimeButton label="Available" seconds={parseTime(evidence.available_time)} onSeek={onSeek} /><p>{evidence.fact}</p></div>)}</details>}
+      {event.details && <details><summary>Task details</summary><ValueView value={event.details} /></details>}
+      {event.trigger && <details><summary>Trigger criterion</summary><ValueView value={event.trigger} /></details>}
+      {event.tool_calls?.map((call, i) => <details key={i}><summary>Tool call · {call.function?.name || call.name}</summary><ValueView value={decodeJSON(call.function?.arguments ?? call.arguments)} /></details>)}
+      {event.role === 'tool' && <details><summary>Simulated backend result</summary><ValueView value={body} /></details>}
+      {event.outcome && <p>Outcome: <strong>{event.outcome}</strong></p>}
+    </div>
+  </article>
+}
+
+function WindowTimeline({ events, currentTime, duration, questionSeconds, onSeek }) {
+  const windows = windowLanes(events)
+  const position = seconds => `${Math.max(0, Math.min(seconds / duration * 100, 100))}%`
+  if (!duration) return <p className="data-null">Timeline unavailable until video duration is known.</p>
+  return <>
+    <p className="timeline-legend">Band: valid response window · Diamond: recommended time · Dot: message time</p>
+    <div className="scrubber">
+      <div className="scrubber__track" /><div className="scrubber__fill" style={{ width: position(currentTime) }} />
+      {questionSeconds !== null && <div className="question-marker" style={{ left: position(questionSeconds) }} title={`Question time ${formatTime(questionSeconds)}`}><span>QUESTION</span></div>}
+      <input aria-label="Video timeline" type="range" min="0" max={duration} step="0.1" value={Math.min(currentTime, duration)} onChange={e => onSeek(Number(e.target.value))} />
+    </div>
+    {['responses', 'annotations'].map(track => {
+      const records = events.filter(event => event.track === track)
+      if (!records.length) return null
+      const bands = windows.filter(event => event.track === track)
+      const laneCount = bands.length ? Math.max(...bands.map(event => event.lane)) + 1 : 0
+      const messages = records.filter(event => !event.hasWindow && event.seconds !== null)
+      const messageLanes = messages.map((event, index) => messages.slice(0, index).filter(previous => previous.seconds === event.seconds).length)
+      const messageLaneCount = messages.length ? Math.max(...messageLanes) + 1 : 0
+      return <div className={`window-track window-track--${track}`} key={track}>
+        <span>{track === 'annotations' ? 'Observation annotations · not Agent actions' : 'Responses / messages'}</span>
+        <div className="window-track__lanes" style={{ height: `${Math.max(1, laneCount + messageLaneCount) * 26}px` }}>
+          {bands.map(event => <div key={event.id} className={`window-band${isActiveWindow(event, currentTime) ? ' is-active' : ''}`} style={{ left: position(event.start), width: `${Math.max(0, Math.min(event.end, duration) - Math.min(event.start, duration)) / duration * 100}%`, top: `${event.lane * 26 + 6}px` }}>
+            <button className="window-band__hit" type="button" aria-label={`Window ${event.id}: ${formatTime(event.start)} to ${formatTime(event.end)}`} title={`${event.label}: ${formatTime(event.start)} → ${formatTime(event.end)}`} onClick={() => onSeek(event.start)} />
+            <button className="window-trigger" type="button" style={{ left: event.end === event.start ? '0%' : `${(event.seconds - event.start) / (event.end - event.start) * 100}%` }} title={`Recommended: ${event.trigger_time}`} aria-label={`Recommended time ${event.trigger_time} for ${event.id}`} onClick={() => onSeek(event.seconds)} />
+          </div>)}
+          {messages.map((event, index) => <button key={event.id} className="message-marker" type="button" style={{ left: position(event.seconds), top: `${(laneCount + messageLanes[index]) * 26 + 6}px` }} title={`${event.label} · ${event.trigger_time}`} aria-label={`${event.label} at ${event.trigger_time}`} onClick={() => onSeek(event.seconds)} />)}
+        </div>
+      </div>
+    })}
+    <div className="timeline-scale"><span>00:00</span><span>{formatTime(duration / 4)}</span><span>{formatTime(duration / 2)}</span><span>{formatTime(duration * .75)}</span><span>{formatTime(duration)}</span></div>
+  </>
 }
 
 function SampleReview({ sampleData }) {
@@ -84,61 +105,28 @@ function SampleReview({ sampleData }) {
   const videoRef = useRef(null)
   const cardRefs = useRef(new Map())
   const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(FALLBACK_DURATION)
+  const [duration, setDuration] = useState(Number.isFinite(sampleData.generation_context?.duration_seconds) && sampleData.generation_context.duration_seconds > 0 ? sampleData.generation_context.duration_seconds : null)
   const [videoError, setVideoError] = useState(!videoName)
   const [isPlaying, setIsPlaying] = useState(false)
 
-  const events = useMemo(() => {
-    const source = Array.isArray(sampleData.responses) ? sampleData.responses : [
-      ...(Array.isArray(sampleData.audio_events) ? sampleData.audio_events : []),
-      ...(Array.isArray(sampleData.visual_events) ? sampleData.visual_events : []),
-    ]
-    return source
-      .map((value, originalIndex) => {
-        const event = value && typeof value === 'object' ? value : { response: String(value) }
-        return {
-          ...event,
-          trigger_time: event.trigger_time ?? event.start_time,
-          response: event.response ?? event.event_name,
-          event_description: event.event_description ?? event['detailed description'],
-          trigger_type_reason: event.trigger_type_reason ?? event.evidence_for_judgment ?? event.visual_details,
-          seconds: parseTime(event.start_seconds ?? event.trigger_time ?? event.start_time),
-          originalIndex,
-        }
-      })
-      .sort((a, b) => (a.seconds ?? Infinity) - (b.seconds ?? Infinity))
-  }, [sampleData])
-
-  const activeIndex = useMemo(() => {
-    let found = -1
-    events.forEach((event, index) => {
-      if (event.seconds !== null && event.seconds <= currentTime) found = index
-    })
-    return found
-  }, [currentTime, events])
+  const events = useMemo(() => reviewRecords(sampleData), [sampleData])
+  const activeIds = events.filter(event => isActiveWindow(event, currentTime)).map(event => event.id).join('|')
+  const activeIndex = events.findIndex(event => isActiveWindow(event, currentTime))
 
   useEffect(() => {
     if (activeIndex < 0) return
     const card = cardRefs.current.get(activeIndex)
     if (card) card.parentElement.scrollTo({ top: card.offsetTop, behavior: 'smooth' })
-  }, [activeIndex])
+  }, [activeIndex, activeIds])
 
   function seekTo(seconds) {
     if (seconds === null || !videoRef.current || videoError) return
-    const safeTime = Math.min(Math.max(seconds, 0), duration)
+    const safeTime = duration ? Math.min(Math.max(seconds, 0), duration) : Math.max(seconds, 0)
     videoRef.current.currentTime = safeTime
     setCurrentTime(safeTime)
   }
 
-  function handleScrub(event) {
-    seekTo(Number(event.target.value))
-  }
-
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0
   const questionSeconds = parseTime(sampleData.question_time)
-  const questionPosition = questionSeconds !== null && duration > 0
-    ? Math.min((questionSeconds / duration) * 100, 100)
-    : null
 
   return (
     <div className="app-shell">
@@ -152,7 +140,7 @@ function SampleReview({ sampleData }) {
         </a>
         <div className="header-context">
           <span className="header-context__eyebrow">GALLERY / SELECTED SAMPLE</span>
-          <span className="header-context__title">Proactive Event Review</span>
+          <span className="header-context__title">Multimodal Sample Review</span>
         </div>
         <div className={`status-badge status-badge--${sampleData.status === 'ok' ? 'ok' : 'warning'}`}>
           <span className="status-badge__dot" />
@@ -175,7 +163,9 @@ function SampleReview({ sampleData }) {
         <div className="intro__meta">
           <MetaPill icon="eye" label="Vision" value={sampleData.vision_dependency} accent />
           <MetaPill icon="audio" label="Audio" value={sampleData.audio_dependency} />
-          <MetaPill icon="check" label="Detected" value={`${events.length} events`} />
+          <MetaPill icon="check" label="Task" value={sampleData.ability || sampleData.task} />
+          <MetaPill icon="check" label="Mode" value={sampleData.mode} />
+          <MetaPill icon="check" label="Sample" value={`${sampleKind(sampleData)}${sampleKind(sampleData) === 'negative' ? ` · ${sampleData.sample_type}` : ''}`} />
         </div>
       </section>
 
@@ -195,7 +185,7 @@ function SampleReview({ sampleData }) {
               playsInline
               onLoadedMetadata={(event) => {
                 const value = event.currentTarget.duration
-                setDuration(Number.isFinite(value) && value > 0 ? value : FALLBACK_DURATION)
+                setDuration(Number.isFinite(value) && value > 0 ? value : duration)
                 setVideoError(false)
               }}
               onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
@@ -220,65 +210,29 @@ function SampleReview({ sampleData }) {
           <div className="timeline-panel">
             <div className="timeline-panel__readout">
               <span><strong>{formatTime(currentTime)}</strong> / {formatTime(duration)}</span>
-              <span>{events.length} EVENTS</span>
+              <span>{events.length} RECORDS</span>
             </div>
-            <div className="scrubber">
-              <div className="scrubber__track" />
-              <div className="scrubber__fill" style={{ width: `${progress}%` }} />
-              {questionPosition !== null && (
-                <div
-                  className="question-marker"
-                  style={{ left: `${questionPosition}%` }}
-                  title={`Question time: ${sampleData.question_time}`}
-                  aria-label={`Question time ${sampleData.question_time}`}
-                >
-                  <span>QUESTION</span>
-                </div>
-              )}
-              {events.map((event, index) => event.seconds !== null && (
-                <button
-                  key={`${event.trigger_time}-${index}`}
-                  type="button"
-                  className={`timeline-marker${index === activeIndex ? ' timeline-marker--active' : ''}`}
-                  style={{ left: `${Math.min((event.seconds / duration) * 100, 100)}%` }}
-                  onClick={() => seekTo(event.seconds)}
-                  aria-label={`Jump to event ${index + 1} at ${event.trigger_time}`}
-                  title={`${event.trigger_time} — ${event.response || 'Event'}`}
-                />
-              ))}
-              <input
-                aria-label="Video timeline"
-                type="range"
-                min="0"
-                max={duration}
-                step="0.1"
-                value={Math.min(currentTime, duration)}
-                onChange={handleScrub}
-              />
-            </div>
-            <div className="timeline-scale" aria-hidden="true">
-              <span>00:00</span><span>{formatTime(duration / 4)}</span><span>{formatTime(duration / 2)}</span><span>{formatTime(duration * 0.75)}</span><span>{formatTime(duration)}</span>
-            </div>
+            <WindowTimeline events={events} currentTime={currentTime} duration={duration} questionSeconds={questionSeconds} onSeek={seekTo} />
           </div>
         </div>
 
         <aside className="events-column" aria-label="Detected event timeline">
           <div className="section-heading section-heading--events">
-            <div><span className="section-heading__number">02</span><h2>Event Timeline</h2></div>
+            <div><span className="section-heading__number">02</span><h2>Responses & Annotations</h2></div>
             <span className="event-count">{String(events.length).padStart(2, '0')}</span>
           </div>
           <div className="events-list">
             {events.length ? events.map((event, index) => (
               <EventCard
-                key={`${event.trigger_time}-${event.originalIndex}`}
+                key={event.id}
                 event={event}
                 index={index}
-                isActive={index === activeIndex}
-                onSelect={event.seconds === null ? undefined : () => seekTo(event.seconds)}
+                isActive={isActiveWindow(event, currentTime)}
+                onSeek={seekTo}
                 cardRef={(node) => node ? cardRefs.current.set(index, node) : cardRefs.current.delete(index)}
               />
             )) : (
-              <div className="empty-state"><Icon name="alert" /><strong>No events found</strong><span>This sample does not contain responses, audio events, or visual events.</span></div>
+              <div className="empty-state"><Icon name="alert" /><strong>No events found</strong><span>This sample contains no responses or annotations.</span></div>
             )}
           </div>
           <div className="events-footer"><span>SELECT AN EVENT TO SEEK</span><span>SYNCED WITH VIDEO</span></div>
@@ -297,7 +251,7 @@ function SampleReview({ sampleData }) {
 
 const sectionLabels = {
   video_summary: 'Video summary', responses: 'Responses', audio_events: 'Audio events',
-  visual_events: 'Visual events', items: 'Items', uncertainties: 'Uncertainties',
+  visual_events: 'Visual events', items: 'Items', uncertainties: 'Uncertainties', annotations: 'Observation annotations',
 }
 
 function ValueView({ value }) {
@@ -315,8 +269,8 @@ function DataSections({ data, onSeek }) {
   return <section className="data-sections" aria-label="All sample data">
     <h2>All sample data</h2>
     {data && typeof data === 'object' && !Array.isArray(data)
-      ? Object.entries(data).map(([key, value]) => <section className="data-section" key={key}>
-        <h3>{sectionLabels[key] || key}{Array.isArray(value) ? ` (${value.length})` : ''}</h3>
+      ? Object.entries(data).map(([key, value]) => <details className="data-section" key={key}>
+        <summary>{sectionLabels[key] || key}{Array.isArray(value) ? ` (${value.length})` : ''}</summary>
         {Array.isArray(value) ? (value.length ? value.map((item, index) => {
           const seconds = parseTime(item?.start_seconds ?? item?.trigger_time ?? item?.start_time ?? item?.first_appearance_time)
           return <article className="data-record" key={index}>
@@ -325,7 +279,7 @@ function DataSections({ data, onSeek }) {
             </div><ValueView value={item} />
           </article>
         }) : <p className="data-null">No entries</p>) : <ValueView value={value} />}
-      </section>) : <ValueView value={data} />}
+      </details>) : <ValueView value={data} />}
     <details className="raw-data"><summary>Raw JSON</summary><pre>{JSON.stringify(data, null, 2)}</pre></details>
   </section>
 }
@@ -351,6 +305,7 @@ export default function App() {
   const [point, setPoint] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [filters, setFilters] = useState({ ability: '', mode: '', kind: '', video: '' })
   const [offline, setOffline] = useState(location.protocol === 'file:')
 
   useEffect(() => {
@@ -373,7 +328,7 @@ export default function App() {
         }
         if (controller.signal.aborted) return
         setFiles(names)
-        setFile(names.includes(saved.file) ? saved.file : names[0] || '')
+        setFile(initialFile(names, saved.file))
         if (!names.length) setLoading(false)
       } catch (err) {
         if (!controller.signal.aborted) { setError(err.message); setLoading(false) }
@@ -415,7 +370,9 @@ export default function App() {
     setFile(name)
   }
 
-  const selected = points[point]
+  const visiblePoints = points.map((entry, index) => ({ entry, index })).filter(({ entry }) => matchesFilters(entry, filters))
+  const selectedPoint = visiblePoints.some(item => item.index === point) ? point : visiblePoints[0]?.index
+  const selected = points[selectedPoint]
   const reviewData = selected && typeof selected === 'object' && !Array.isArray(selected) ? selected : null
   return <div className="gallery-layout">
     <aside className="file-sidebar" aria-label="Data files">
@@ -428,10 +385,14 @@ export default function App() {
     <main className="gallery-main">
       <header className="point-picker">
         <h2>{file || 'Gallery'} <span>{points.length} samples</span></h2>
-        <div className="point-buttons" aria-label="Data points">{points.map((entry, index) => {
+        <div className="sample-filters">
+          {['ability', 'mode', 'kind', 'video'].map(field => <label key={field}>{field === 'kind' ? 'Sample type' : field}<select aria-label={`Filter ${field}`} value={filters[field]} onChange={e => setFilters({ ...filters, [field]: e.target.value })}><option value="">All</option>{[...new Set(points.map(entry => field === 'kind' ? sampleKind(entry) : entry?.[field]).filter(Boolean))].sort().map(value => <option key={value} value={value}>{value}</option>)}</select></label>)}
+          <span>{visiblePoints.length} / {points.length} samples</span>
+        </div>
+        <div className="point-buttons" aria-label="Data points">{visiblePoints.map(({ entry, index }) => {
           const title = entry?.question || entry?.name || entry?.id || entry?.video_summary?.main_content_summary
-          return <button type="button" key={index} aria-pressed={point === index} title={title ? String(title) : `Sample ${index + 1}`} onClick={() => { setPoint(index); saveSelection(file, index) }}>
-            <strong>{String(index + 1).padStart(2, '0')}</strong><span>{title ? String(title) : `Sample ${index + 1}`}</span>
+          return <button type="button" key={index} aria-pressed={selectedPoint === index} title={title ? String(title) : `Sample ${index + 1}`} onClick={() => { setPoint(index); saveSelection(file, index) }}>
+            <strong>{String(index + 1).padStart(2, '0')}</strong><span>{entry?.ability || entry?.task} · {entry?.mode} · {sampleKind(entry)}{sampleKind(entry) === 'negative' ? ` (${entry.sample_type})` : ''}<br />{title ? String(title) : `Sample ${index + 1}`}</span>
           </button>
         })}</div>
       </header>
@@ -439,7 +400,8 @@ export default function App() {
         : error ? <p className="gallery-message" role="alert">{error}</p>
         : !files.length ? <p className="gallery-message">No JSON files found in data_generation/data.</p>
         : !points.length ? <p className="gallery-message">This file contains no samples.</p>
-        : reviewData ? <SampleReview key={`${file}:${point}`} sampleData={reviewData} />
+        : !visiblePoints.length ? <p className="gallery-message">No samples match these filters.</p>
+        : reviewData ? <SampleReview key={`${file}:${selectedPoint}`} sampleData={reviewData} />
         : <DataSections data={selected} onSeek={() => {}} />}
     </main>
   </div>

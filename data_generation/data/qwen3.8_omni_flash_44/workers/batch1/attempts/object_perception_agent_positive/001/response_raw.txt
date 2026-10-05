@@ -1,0 +1,81 @@
+{
+  "status": "ok",
+  "question": "If an electric-vehicle rental sign shows up, tell me and check what rentals cost in Jianshui.",
+  "question_time": "01:00",
+  "audio_dependency": "none",
+  "vision_dependency": "required",
+  "work_type": "tools",
+  "required_tools": [
+    "web_search"
+  ],
+  "responses": [
+    {
+      "window_start": "01:13",
+      "trigger_time": "01:13",
+      "window_end": "01:18",
+      "response": "A blue electric-vehicle rental sign just appeared; I will check Jianshui rental prices.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is the newly visible blue rental sign; its text is read from the frame, and no audio is needed.",
+      "evidence": [
+        {
+          "time": "00:01",
+          "available_time": "00:01",
+          "fact": "On-screen text reads 去建水啦, establishing the trip is to Jianshui."
+        },
+        {
+          "time": "01:13",
+          "available_time": "01:13",
+          "fact": "A blue A-frame sign on the right sidewalk reads 电动车出租."
+        },
+        {
+          "time": "01:13",
+          "available_time": "01:13",
+          "fact": "The sign shows no rental price or vendor name."
+        }
+      ],
+      "details": {
+        "target": "blue A-frame roadside sign with white Chinese text 电动车出租",
+        "category": "electric-vehicle rental advertisement sign",
+        "position": "right side of the sidewalk outside an electric-vehicle shop, near parked scooters",
+        "uncertainty": "vendor name, phone number, and rental price are not legible from the visible sign"
+      },
+      "trigger": {
+        "kind": "target",
+        "satisfied": true,
+        "episode_id": "jianshui-ev-rental-sign-1",
+        "confirmed_time": "01:13",
+        "definition": "A newly visible sign whose readable text advertises electric-vehicle rentals appears.",
+        "target": "blue A-frame sign reading 电动车出租",
+        "attributes_match": true
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "01:13",
+          "content": "A blue electric-vehicle rental sign just appeared; I will check Jianshui rental prices.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Search public web sources for current electric scooter or e-bike rental prices in Jianshui after a visible rental sign appeared. Report typical daily rate, deposit, and any booking contact if publicly listed.\",\"observed_context\":\"00:01 on-screen text indicates the trip is to Jianshui. 01:13 a blue A-frame sign on the right reads 电动车出租; no price or vendor details are visible.\",\"user_goal\":\"Know what electric-vehicle rentals cost in Jianshui after seeing the rental sign.\",\"constraints_and_authorization\":\"Use only public web information. Do not book, pay, or assume the user is currently in Jianshui. Mark vendor-specific pricing as unconfirmed if the sign cannot be matched to a listing.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"A simulated web_search result with sources summarizing typical Jianshui e-bike rental prices and deposits, plus uncertainties about the exact vendor.\",\"extracted_parameters\":[{\"name\":\"place\",\"value\":\"Jianshui\",\"evidence_time\":\"00:01\",\"evidence\":\"On-screen text says 去建水啦.\"},{\"name\":\"rental_item\",\"value\":\"electric vehicle/scooter\",\"evidence_time\":\"01:13\",\"evidence\":\"Blue A-frame sign reads 电动车出租.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "02:22",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Public listings suggest Jianshui e-bike rentals cost about 30-80 CNY per day, with deposits commonly 200-500 CNY; the exact vendor from the sign was not confirmed.\",\"observed_facts\":[\"At 01:13, a blue sign reading 电动车出租 was visible on the right.\",\"The sign did not show a price or vendor name.\",\"Earlier on-screen text at 00:01 identified the trip as going to Jianshui.\"],\"tool_information\":[\"web_search returned simulated public rental listings for Jianshui electric scooters/e-bikes.\"],\"reasoning\":[\"The visible sign establishes the rental item, and earlier on-screen text establishes Jianshui as the place to search.\"],\"uncertainties\":[\"Current prices may vary by season and vendor.\",\"The sign's specific shop could not be identified from the video.\"],\"sources\":[{\"tool\":\"web_search\",\"evidence\":\"Simulated results: Jianshui e-bike/scooter rentals are commonly listed at 30-80 CNY per day, with deposits around 200-500 CNY.\",\"arguments\":{\"query\":\"Jianshui electric scooter rental price per day deposit\"}}],\"actions\":[],\"artifacts\":[]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "02:22",
+          "content": "Public listings suggest Jianshui e-bike rentals run about 30-80 CNY per day, with 200-500 CNY deposits; the sign's vendor and exact price remain unconfirmed.",
+          "outcome": "success"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "model": "/remote-home/yushengliao/speech/jimodels/openmodels/gemma-4-E4B-it",
+  "backend": "transformers",
+  "gpus": "5",
+  "temperature": 0.1,
+  "max_new_tokens": 4096,
+  "memory_fraction": 0.4,
+  "caption_source": "/root/jimodels/OmniDuplex/data_generation/data/qwen3.8_omni_flash_caption",
+  "expand_kv_for_sdpa": true,
+  "validation_retries": 2,
+  "completed": [
+    {
+      "video": "video_103.mp4",
+      "output": "video_103/route.json",
+      "status": "ok",
+      "elapsed_seconds": 143.2508671283722
+    }
+  ],
+  "failed": [
+    {
+      "video": "video_11",
+      "error": "duplicate routed task"
+    }
+  ],
+  "preprocessing": {
+    "video_processor": {
+      "do_convert_rgb": true,
+      "do_normalize": true,
+      "do_rescale": true,
+      "do_resize": true,
+      "do_sample_frames": true,
+      "image_mean": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "image_std": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "max_soft_tokens": 70,
+      "num_frames": 32,
+      "patch_size": 16,
+      "pooling_kernel_size": 3,
+      "resample": 3,
+      "rescale_factor": 0.00392156862745098,
+      "return_metadata": false,
+      "video_processor_type": "Gemma4VideoProcessor"
+    },
+    "audio_sample_rate": 16000,
+    "audio_chunk_seconds": 30.0,
+    "audio_coverage": "full soundtrack, sequential chunks",
+    "video_coverage": "processor default frame sampling across full video"
+  },
+  "device_map": {
+    "": "cuda:0"
+  },
+  "generation_config": {
+    "max_length": null,
+    "max_new_tokens": null,
+    "min_length": null,
+    "min_new_tokens": null,
+    "early_stopping": null,
+    "max_time": null,
+    "stop_strings": null,
+    "do_sample": true,
+    "num_beams": null,
+    "use_cache": null,
+    "cache_implementation": null,
+    "cache_config": null,
+    "temperature": 1.0,
+    "top_k": 64,
+    "top_p": 0.95,
+    "min_p": null,
+    "top_h": null,
+    "typical_p": null,
+    "epsilon_cutoff": null,
+    "eta_cutoff": null,
+    "repetition_penalty": null,
+    "encoder_repetition_penalty": null,
+    "length_penalty": null,
+    "no_repeat_ngram_size": null,
+    "bad_words_ids": null,
+    "renormalize_logits": null,
+    "forced_bos_token_id": null,
+    "forced_eos_token_id": null,
+    "remove_invalid_values": null,
+    "exponential_decay_length_penalty": null,
+    "suppress_tokens": null,
+    "begin_suppress_tokens": null,
+    "sequence_bias": null,
+    "token_healing": null,
+    "guidance_scale": null,
+    "watermarking_config": null,
+    "num_return_sequences": null,
+    "output_attentions": null,
+    "output_hidden_states": null,
+    "output_scores": null,
+    "output_logits": null,
+    "return_dict_in_generate": null,
+    "pad_token_id": 0,
+    "bos_token_id": 2,
+    "eos_token_id": [
+      1,
+      106,
+      50
+    ],
+    "encoder_no_repeat_ngram_size": null,
+    "decoder_start_token_id": null,
+    "is_assistant": null,
+    "num_assistant_tokens": null,
+    "num_assistant_tokens_schedule": null,
+    "assistant_confidence_threshold": null,
+    "prompt_lookup_num_tokens": null,
+    "max_matching_ngram_size": null,
+    "assistant_early_exit": null,
+    "assistant_lookbehind": null,
+    "target_lookbehind": null,
+    "compile_config": null,
+    "disable_compile": null,
+    "continuous_batching_config": null,
+    "low_memory": null,
+    "penalty_alpha": null,
+    "dola_layers": null,
+    "diversity_penalty": null,
+    "num_beam_groups": null,
+    "constraints": null,
+    "force_words_ids": null,
+    "prefill_chunk_size": null,
+    "_from_model_config": null,
+    "transformers_version": "5.12.1"
+  },
+  "versions": {
+    "transformers": "5.12.1",
+    "torch": "2.11.0+cu128"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "omniduplex.api_usage_summary.v1",
+  "provider": "qwen",
+  "model": "qwen3.8-omni-flash",
+  "currency": "CNY",
+  "historical_note": "These six captions were generated before API usage capture was enabled. The provider token usage was not saved, so historical token totals and charges cannot be recovered from caption.json.",
+  "calls": [
+    {"video": "video_1.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "video_101.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "video_103.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "video_11.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "video_149.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "video_152.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null}
+  ],
+  "totals": {
+    "calls": 6,
+    "measured_calls": 0,
+    "unavailable_calls": 6,
+    "input_tokens": null,
+    "output_tokens": null,
+    "total_tokens": null,
+    "estimated_cost_cny": null
+  }
+}

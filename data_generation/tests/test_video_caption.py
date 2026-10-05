@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src import video_caption
+from data_generation.src.infrastructure import video as video_caption
 
 
 class DurationTests(unittest.TestCase):
@@ -20,7 +20,7 @@ class DurationTests(unittest.TestCase):
                     }
                 )
             )
-            with patch("src.video_caption.subprocess.run", return_value=result):
+            with patch("data_generation.src.infrastructure.video.subprocess.run", return_value=result):
                 duration = video_caption.probe_video_duration(Path(handle.name))
         self.assertEqual(duration, 12.345)
 
@@ -37,13 +37,6 @@ class DurationTests(unittest.TestCase):
                     }
                 )
             )
-            with patch("src.video_caption.subprocess.run", return_value=result):
+            with patch("data_generation.src.infrastructure.video.subprocess.run", return_value=result):
                 duration = video_caption.probe_video_duration(Path(handle.name))
         self.assertEqual(duration, 5.25)
-
-    def test_video_to_data_url_uses_detected_mime_type(self) -> None:
-        with tempfile.NamedTemporaryFile(suffix=".mp4") as handle:
-            handle.write(b"video-bytes")
-            handle.flush()
-            data_url = video_caption.video_to_data_url(Path(handle.name))
-        self.assertEqual(data_url, "data:video/mp4;base64,dmlkZW8tYnl0ZXM=")

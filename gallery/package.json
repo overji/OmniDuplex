@@ -8,7 +8,7 @@
     "build": "vite build && node scripts/make-portable.mjs",
     "preview": "vite preview",
     "start": "node scripts/serve.mjs",
-    "test": "node --test scripts/data-source.test.mjs"
+    "test": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
     "react": "latest",

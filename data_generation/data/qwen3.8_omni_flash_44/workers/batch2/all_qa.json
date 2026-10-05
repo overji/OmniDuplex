@@ -1,0 +1,2528 @@
+[
+  {
+    "status": "ok",
+    "question": "Keep me posted on how many red water buckets are in view around the well, updating me whenever that count changes.",
+    "question_time": "01:55",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "01:57",
+        "trigger_time": "01:58",
+        "window_end": "02:02",
+        "response": "Three red water buckets are in view around the well.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The count depends entirely on seeing the red buckets at the well rim; no audio cue distinguishes them.",
+        "evidence": [
+          {
+            "time": "01:57",
+            "available_time": "01:57",
+            "fact": "Looking down at the circular well, three red buckets are clearly visible at the stone rim (left, center, right); people partly block the far side."
+          }
+        ],
+        "details": {
+          "counting_mode": "current",
+          "count": 3,
+          "target_ids": [
+            "bucket_left",
+            "bucket_center",
+            "bucket_right"
+          ],
+          "counting_basis": "Only red buckets clearly visible above the well rim at 01:57 are counted; any bucket fully hidden behind people on the far side is excluded.",
+          "deduplication_rule": "Each bucket is identified by its position/rope and counted once while visible; none has left and re-entered the frame yet."
+        }
+      },
+      {
+        "window_start": "02:03",
+        "trigger_time": "02:03",
+        "window_end": "02:03",
+        "response": "A fourth red bucket has come into view at the near edge, so four are visible now.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The change is a bucket entering the frame as the camera tilts; only vision reveals it.",
+        "evidence": [
+          {
+            "time": "02:03",
+            "available_time": "02:03",
+            "fact": "The camera angle lowers and a fourth red bucket resting at the near rim enters the frame, alongside the left, center and right rim buckets."
+          }
+        ],
+        "details": {
+          "counting_mode": "current",
+          "count": 4,
+          "target_ids": [
+            "bucket_left",
+            "bucket_center",
+            "bucket_right",
+            "bucket_near"
+          ],
+          "counting_basis": "Four red buckets are visible at 02:03 after the near-rim bucket re-enters the frame due to the camera tilt.",
+          "deduplication_rule": "The newly revealed near-rim bucket is a distinct physical bucket, not a re-appearance of one already in the set; the three rim buckets keep their identities, so no double counting."
+        }
+      },
+      {
+        "window_start": "02:04",
+        "trigger_time": "02:05",
+        "window_end": "02:10",
+        "response": "The camera has moved on to the paved area; no red buckets are in view now.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The count drops to zero because the well leaves the frame; this is purely visual.",
+        "evidence": [
+          {
+            "time": "02:04",
+            "available_time": "02:04",
+            "fact": "The frame now shows the white-painted hopscotch court on stone slabs; the well and its red buckets are out of view."
+          }
+        ],
+        "details": {
+          "counting_mode": "current",
+          "count": 0,
+          "target_ids": [],
+          "counting_basis": "No red buckets are present in the frame from 02:04 onward as the camera has left the well.",
+          "deduplication_rule": "The current set is empty; the well buckets are out of frame and are not counted, and they do not reappear later in the video."
+        }
+      }
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "object_counting_rtd",
+    "video": "video_1.mp4",
+    "generation_context": {
+      "duration_seconds": 208.05,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_1"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever both friends in the video are visibly in the frame together—either directly or as their full shadows—let me know; isolated hands or feet don't count.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:00",
+        "window_end": "00:05",
+        "response": "Both friends are in frame together right now—the woman in the black cap and grey mask and the woman in the pink cap.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The count of friends present is read purely from who is visible in the frame; no audio cue is needed.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "Opening selfie shows two women together: the front one in a black cap and grey mask, the rear one in a pink cap, both under a dog-face AR filter."
+          }
+        ],
+        "trigger": {
+          "kind": "count",
+          "satisfied": true,
+          "episode_id": "friends_together_1",
+          "confirmed_time": "00:00",
+          "definition": "Both friends are visibly present in the frame together, either directly or as full shadows; isolated hands or feet do not count.",
+          "previous_count": 0,
+          "count": 2,
+          "threshold": 2,
+          "operator": "ge"
+        },
+        "details": {
+          "counting_mode": "current",
+          "count": 2,
+          "target_ids": [
+            "friend_black_cap_grey_mask",
+            "friend_pink_cap"
+          ],
+          "counting_basis": "Both friends are directly visible together in the selfie; each is one distinct person, counted once.",
+          "deduplication_rule": "Count only distinct individuals presently in frame; partial limbs in other shots are ignored, so the figure-count resets to 0 between shots."
+        }
+      },
+      {
+        "window_start": "01:21",
+        "trigger_time": "01:22",
+        "window_end": "01:26",
+        "response": "Both friends are together again—their two full-body shadows are side by side on the cobblestones.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Reappearance is confirmed by two distinct full-body shadow silhouettes in the frame; audio adds nothing to the count.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "The vlog's two subjects are the two friends introduced in the opening selfie."
+          },
+          {
+            "time": "01:21",
+            "available_time": "01:21",
+            "fact": "A downward shot of cobblestones shows two full human shadows side by side, one raising an arm in a peace sign, indicating both walkers are in frame."
+          }
+        ],
+        "trigger": {
+          "kind": "count",
+          "satisfied": true,
+          "episode_id": "friends_together_2",
+          "confirmed_time": "01:21",
+          "definition": "Both friends are visibly present in the frame together, either directly or as full shadows; isolated hands or feet do not count.",
+          "previous_count": 0,
+          "count": 2,
+          "threshold": 2,
+          "operator": "ge",
+          "reset_time": "00:06"
+        },
+        "details": {
+          "counting_mode": "current",
+          "count": 2,
+          "target_ids": [
+            "friend_black_cap_grey_mask",
+            "friend_pink_cap"
+          ],
+          "counting_basis": "Two distinct full-body shadow silhouettes lie on the cobblestones; as the vlog's two walkers introduced at the start, these map to the same two friends, so the current count is 2.",
+          "deduplication_rule": "The shadows are mapped to the two friends already introduced rather than treated as new objects; hands-only or feet-only appearances elsewhere are not counted, preventing double counting."
+        }
+      }
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "object_counting_pr",
+    "video": "video_1.mp4",
+    "generation_context": {
+      "duration_seconds": 208.05,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_1"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever three or more red buckets are clearly visible at this well, tell me the current count and check whether visitors are allowed to draw water there.",
+    "question_time": "01:53",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "work_type": "tools_and_reasoning",
+    "required_tools": [
+      "web_search"
+    ],
+    "responses": [
+      {
+        "trigger_time": "01:58",
+        "source_trigger_time": "01:58",
+        "window_start": "01:57",
+        "window_end": "02:03",
+        "response": "Three red buckets are clearly visible at the well; I'll check visitor rules.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is established by visible red buckets and the well signage; speech and music are not needed.",
+        "evidence": [
+          {
+            "time": "01:52",
+            "available_time": "01:53",
+            "fact": "A grey brick archway shows gold characters 大板井, identifying the well site."
+          },
+          {
+            "time": "01:56",
+            "available_time": "01:56",
+            "fact": "The camera reaches a large circular stone-lined well where people are gathered with containers."
+          },
+          {
+            "time": "01:57",
+            "available_time": "01:57",
+            "fact": "Three red buckets are clearly and simultaneously visible at the well: one on a rope over the opening, one on the left rim, and one on the right side."
+          }
+        ],
+        "details": {
+          "counting_mode": "current",
+          "count": 3,
+          "target_ids": [
+            "red_bucket_rope",
+            "red_bucket_left_rim",
+            "red_bucket_right_side"
+          ],
+          "counting_basis": "Only red plastic water buckets that are sufficiently unoccluded in the well area at 01:57 are counted; white jugs, red lanterns, stools, and partially occluded red buckets are excluded.",
+          "deduplication_rule": "Buckets are identified by position and rope/handle within the continuous well shot; a bucket leaving and re-entering frame is the same target, and the count is the current visible set, not cumulative appearances."
+        },
+        "trigger": {
+          "kind": "condition",
+          "satisfied": true,
+          "episode_id": "well-red-buckets-ge3-01",
+          "confirmed_time": "01:57",
+          "definition": "Three or more red buckets are clearly visible at this well.",
+          "conditions": [
+            {
+              "condition": "The scene is the well identified by the 大板井 archway.",
+              "satisfied": true,
+              "time": "01:53",
+              "evidence": "Archway sign visible at 01:52-01:53 and the circular well is visible by 01:56."
+            },
+            {
+              "condition": "At least three red buckets are simultaneously clearly visible in the well area.",
+              "satisfied": true,
+              "time": "01:57",
+              "evidence": "One bucket hangs on a rope, one rests on the left rim, and one is on the right side."
+            }
+          ]
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Search public visitor guidance for the 大板井 well in Jianshui to determine whether visitors may draw water and what container or queue rules apply.\",\"observed_context\":\"01:52-01:53: archway sign reads 大板井, identifying the well site. 01:56: the circular stone-lined well is visible. 01:57-01:58: three red buckets are clearly visible at the well, indicating active water drawing.\",\"user_goal\":\"Know whether visitors are allowed to draw water at this well when three or more red buckets are visible.\",\"constraints_and_authorization\":\"User authorized a read-only lookup. Do not purchase items or make reservations. Report uncertainty if official rules are not current.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"A web_search result summarizing visitor water-drawing permission and relevant rules, with source evidence and uncertainties.\",\"extracted_parameters\":[{\"name\":\"location\",\"value\":\"大板井 (Daban Well), Jianshui\",\"evidence_time\":\"01:53\",\"evidence\":\"Gold characters 大板井 on the archway identify the well site.\"},{\"name\":\"visible_red_bucket_count\",\"value\":\"3\",\"evidence_time\":\"01:57\",\"evidence\":\"Three red buckets are clearly visible at the well: one on a rope, one on the left rim, one on the right side.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "02:26",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Public guidance indicates visitors may draw water at Daban Well with personal containers, subject to posted queue and safety rules.\",\"observed_facts\":[\"At 01:57, three red buckets were clearly visible at the well identified by the 大板井 archway.\"],\"tool_information\":[\"web_search queried visitor water-drawing rules for Daban Well in Jianshui.\"],\"reasoning\":[\"The visible bucket count signaled active communal drawing, so the lookup focused on visitor access and container rules.\"],\"uncertainties\":[\"Rules can change; onsite signage should be checked before drawing water.\"],\"sources\":[{\"tool\":\"web_search\",\"arguments\":{\"query\":\"Daban Well Jianshui visitor rules draw water personal containers\"},\"evidence\":\"Visitor guidance for Daban Well says the public may draw water using personal containers and should follow posted queue, fee, and container rules.\"}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "02:26",
+        "response": "Success: public guidance says visitors may draw water at Daban Well with personal containers, following posted queue and container rules; verify onsite signage.",
+        "role": "assistant",
+        "outcome": "success"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "object_counting",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "object_counting_agent",
+    "video": "video_1.mp4",
+    "generation_context": {
+      "duration_seconds": 208.05,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": 28,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_1"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever exactly two straw hats are shown resting together, add a to-do for me to buy two sun hats before the weekend.",
+    "question_time": "02:10",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "work_type": "tools",
+    "required_tools": [
+      "todo_create"
+    ],
+    "responses": [
+      {
+        "window_start": "02:10",
+        "trigger_time": "02:10",
+        "window_end": "02:10",
+        "response": "I don't have the ability to create that to-do for you when exactly two straw hats appear.",
+        "refusal_reason": "The requested follow-up requires creating a user-authorized todo with an owner and deadline, but the frontend context provides no todo creation capability.",
+        "missing_tools": [
+          "todo_create"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "window_start": "02:14",
+        "trigger_time": "02:14",
+        "window_end": "02:14",
+        "response": "Exactly two straw hats are resting together on the ledge.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The trigger is a current visual count of two distinct hat objects; audio is not needed to identify or count them.",
+        "evidence": [
+          {
+            "time": "02:13",
+            "available_time": "02:13",
+            "fact": "The preceding shot shows pavement and feet, with no loose straw hats visible on a ledge."
+          },
+          {
+            "time": "02:14",
+            "available_time": "02:14",
+            "fact": "Two distinct round woven straw hats are visible side by side on a wooden ledge."
+          }
+        ],
+        "details": {
+          "counting_mode": "current",
+          "count": 2,
+          "target_ids": [
+            "straw-hat-left",
+            "straw-hat-right"
+          ],
+          "counting_basis": "Direct visual count of distinct loose straw hats present in the same frame at 02:14; both hats are fully visible and separated on the ledge.",
+          "deduplication_rule": "Count each physical hat once by its position on the ledge; there is no occlusion, reappearance, or cumulative tracking within this shot."
+        },
+        "trigger": {
+          "kind": "count",
+          "satisfied": true,
+          "episode_id": "two-straw-hats-0214",
+          "confirmed_time": "02:14",
+          "definition": "Exactly two loose straw hats are currently visible resting together in the frame.",
+          "previous_count": 0,
+          "count": 2,
+          "threshold": 2,
+          "operator": "eq"
+        }
+      }
+    ],
+    "sample_type": "no_context",
+    "available_tools": [],
+    "frontend_context": {
+      "system_prompt": "You are an audiovisual assistant. State capability limitations honestly.",
+      "tools": []
+    },
+    "ability": "object_counting",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "object_counting_agent",
+    "video": "video_1.mp4",
+    "generation_context": {
+      "duration_seconds": 208.05,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "no_context",
+      "available_tools": [],
+      "required_missing_tool": "todo_create"
+    },
+    "video_folder": "video_1"
+  },
+  {
+    "status": "ok",
+    "question": "Keep a running count of how many separate interview statements I hear from the team's coach or players in this report, and tell me the total each time one finishes.",
+    "question_time": "00:12",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "00:43",
+        "trigger_time": "00:43",
+        "window_end": "01:07",
+        "response": "That's 1 completed interview statement so far — the head coach's translated remarks have just finished.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The counted occurrence is a spoken interview statement; its completion is confirmed by the voice stopping, so audio is the decisive modality, with the on-screen interview shot only corroborating that it is a soundbite rather than narration.",
+        "evidence": [
+          {
+            "time": "00:19",
+            "available_time": "00:20",
+            "fact": "The white-haired coach in the red shirt appears in an interview close-up with a lower-third and begins his translated statement."
+          },
+          {
+            "time": "00:43",
+            "available_time": "00:43",
+            "fact": "His translated voice-over ends, completing the first interview statement."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:12",
+          "count": 1,
+          "occurrences": [
+            {
+              "id": "s1",
+              "time": "00:43"
+            }
+          ],
+          "counting_basis": "Each on-camera interview soundbite from the head coach or a player, in their own voice or via the male translator, counts as one completed occurrence once the statement ends; the female narrator's voice-over is not counted."
+        }
+      },
+      {
+        "window_start": "01:08",
+        "trigger_time": "01:08",
+        "window_end": "01:34",
+        "response": "Now 2 completed interview statements — a player's Mandarin answer has just ended.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "Completion of the spoken answer is heard in the audio track; the interview framing only confirms it is a player soundbite.",
+        "evidence": [
+          {
+            "time": "00:53",
+            "available_time": "00:54",
+            "fact": "A young player in a black shirt appears in an interview close-up with a lower-third and begins speaking in Mandarin."
+          },
+          {
+            "time": "01:08",
+            "available_time": "01:08",
+            "fact": "His answer ends, completing the second interview statement."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:12",
+          "count": 2,
+          "occurrences": [
+            {
+              "id": "s1",
+              "time": "00:43"
+            },
+            {
+              "id": "s2",
+              "time": "01:08"
+            }
+          ],
+          "counting_basis": "Each on-camera interview soundbite from the head coach or a player, in their own voice or via the male translator, counts as one completed occurrence once the statement ends; the female narrator's voice-over is not counted."
+        }
+      },
+      {
+        "window_start": "01:35",
+        "trigger_time": "01:35",
+        "window_end": "01:47",
+        "response": "3 completed interview statements heard — the next player's answer has just wrapped up.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The end of the spoken answer is an audio cue; the lower-third shot merely identifies it as an interview.",
+        "evidence": [
+          {
+            "time": "01:20",
+            "available_time": "01:21",
+            "fact": "A player in a sleeveless 'CHINA' jersey appears in an interview close-up with a lower-third and begins speaking."
+          },
+          {
+            "time": "01:35",
+            "available_time": "01:35",
+            "fact": "His statement ends, completing the third interview statement."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:12",
+          "count": 3,
+          "occurrences": [
+            {
+              "id": "s1",
+              "time": "00:43"
+            },
+            {
+              "id": "s2",
+              "time": "01:08"
+            },
+            {
+              "id": "s3",
+              "time": "01:35"
+            }
+          ],
+          "counting_basis": "Each on-camera interview soundbite from the head coach or a player, in their own voice or via the male translator, counts as one completed occurrence once the statement ends; the female narrator's voice-over is not counted."
+        }
+      },
+      {
+        "window_start": "01:48",
+        "trigger_time": "01:48",
+        "window_end": "02:31",
+        "response": "4 completed interview statements so far — another player's answer has just finished.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "Completion is determined by the voice stopping in the audio; the interview shot corroborates the source.",
+        "evidence": [
+          {
+            "time": "01:35",
+            "available_time": "01:36",
+            "fact": "A second player in a black sleeveless top appears in an interview close-up with a lower-third and begins speaking."
+          },
+          {
+            "time": "01:48",
+            "available_time": "01:48",
+            "fact": "His statement ends, completing the fourth interview statement."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:12",
+          "count": 4,
+          "occurrences": [
+            {
+              "id": "s1",
+              "time": "00:43"
+            },
+            {
+              "id": "s2",
+              "time": "01:08"
+            },
+            {
+              "id": "s3",
+              "time": "01:35"
+            },
+            {
+              "id": "s4",
+              "time": "01:48"
+            }
+          ],
+          "counting_basis": "Each on-camera interview soundbite from the head coach or a player, in their own voice or via the male translator, counts as one completed occurrence once the statement ends; the female narrator's voice-over is not counted."
+        }
+      },
+      {
+        "window_start": "02:32",
+        "trigger_time": "02:32",
+        "window_end": "02:32",
+        "response": "5 completed interview statements — the coach's closing translated remarks have just ended as the report finishes.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The final spoken statement's completion is heard in the audio at the end of the clip.",
+        "evidence": [
+          {
+            "time": "02:12",
+            "available_time": "02:13",
+            "fact": "The head coach in red returns in an interview close-up with a lower-third and begins his final translated statement."
+          },
+          {
+            "time": "02:32",
+            "available_time": "02:32",
+            "fact": "His translated voice-over ends with the report, completing the fifth interview statement."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:12",
+          "count": 5,
+          "occurrences": [
+            {
+              "id": "s1",
+              "time": "00:43"
+            },
+            {
+              "id": "s2",
+              "time": "01:08"
+            },
+            {
+              "id": "s3",
+              "time": "01:35"
+            },
+            {
+              "id": "s4",
+              "time": "01:48"
+            },
+            {
+              "id": "s5",
+              "time": "02:32"
+            }
+          ],
+          "counting_basis": "Each on-camera interview soundbite from the head coach or a player, in their own voice or via the male translator, counts as one completed occurrence once the statement ends; the female narrator's voice-over is not counted."
+        }
+      }
+    ],
+    "ability": "action_counting",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "action_counting_rtd",
+    "video": "video_103.mp4",
+    "generation_context": {
+      "duration_seconds": 152.734,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_103"
+  },
+  {
+    "status": "ok",
+    "question": "While I watch this volleyball training report, keep a running count of each separate interview soundbite from the team's coach or players that I hear, and tell me the total each time one finishes. Don't count the narrator's voice-over or the court sounds.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "00:43",
+        "trigger_time": "00:43",
+        "window_end": "01:07",
+        "response": "Count 1: head coach Vital Heynen's first interview clip has finished.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The reminder fires when the interviewee's speech stops and the female narrator resumes, an audio cue; the on-screen caption only corroborates who spoke.",
+        "evidence": [
+          {
+            "time": "00:19",
+            "available_time": "00:43",
+            "fact": "A male interview voice speaks continuously from 00:19 (carrying over the B-roll) and stops at 00:43 as the narrator's voice returns."
+          },
+          {
+            "time": "00:20",
+            "available_time": "00:20",
+            "fact": "On-screen caption identifies this speaker as head coach Vital Heynen."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:00",
+          "count": 1,
+          "occurrences": [
+            {
+              "id": "a",
+              "time": "00:43"
+            }
+          ],
+          "counting_basis": "Each contiguous interview soundbite by a coach or player, bounded by that speaker stopping and the narrator or next speaker taking over; voice-over narration and gym ambience are excluded."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "sb1",
+          "confirmed_time": "00:43",
+          "definition": "A separate interview soundbite from a team coach or player finishes (the speaker stops)."
+        }
+      },
+      {
+        "window_start": "01:08",
+        "trigger_time": "01:08",
+        "window_end": "01:34",
+        "response": "Count 2: setter Yu Yaochen's interview clip has finished.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The cue is the player's speech ending and the narrator resuming; the caption and prior narration only identify the speaker.",
+        "evidence": [
+          {
+            "time": "00:53",
+            "available_time": "01:08",
+            "fact": "A male player's interview voice runs 00:53-01:08 (over the B-roll insert) and stops at 01:08 as the narrator resumes."
+          },
+          {
+            "time": "00:43",
+            "available_time": "00:54",
+            "fact": "Narration at 00:43-00:53 names Yu Yaochen as the returning setter, and the caption at 00:54 confirms his identity."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:00",
+          "count": 2,
+          "occurrences": [
+            {
+              "id": "a",
+              "time": "00:43"
+            },
+            {
+              "id": "b",
+              "time": "01:08"
+            }
+          ],
+          "counting_basis": "Each contiguous interview soundbite by a coach or player, bounded by that speaker stopping and the narrator or next speaker taking over; voice-over narration and gym ambience are excluded."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "sb2",
+          "confirmed_time": "01:08",
+          "definition": "A separate interview soundbite from a team coach or player finishes (the speaker stops)."
+        }
+      },
+      {
+        "window_start": "01:35",
+        "trigger_time": "01:35",
+        "window_end": "01:47",
+        "response": "Count 3: Ji Daoshuai's interview clip just ended as the shot cut straight to the next speaker.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The cue is one interviewee's voice stopping and a different male voice beginning at the cut; the caption identifies the first speaker.",
+        "evidence": [
+          {
+            "time": "01:20",
+            "available_time": "01:35",
+            "fact": "An interview voice runs 01:20-01:35 and ends at 01:35, immediately followed by a different male interview voice."
+          },
+          {
+            "time": "01:21",
+            "available_time": "01:21",
+            "fact": "On-screen caption identifies the 01:20-01:35 speaker as Ji Daoshuai."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:00",
+          "count": 3,
+          "occurrences": [
+            {
+              "id": "a",
+              "time": "00:43"
+            },
+            {
+              "id": "b",
+              "time": "01:08"
+            },
+            {
+              "id": "c",
+              "time": "01:35"
+            }
+          ],
+          "counting_basis": "Each contiguous interview soundbite by a coach or player, bounded by that speaker stopping and the narrator or next speaker taking over; voice-over narration and gym ambience are excluded."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "sb3",
+          "confirmed_time": "01:35",
+          "definition": "A separate interview soundbite from a team coach or player finishes (the speaker stops)."
+        }
+      },
+      {
+        "window_start": "01:48",
+        "trigger_time": "01:48",
+        "window_end": "02:32",
+        "response": "Count 4: Li Yongzhen's interview clip has finished.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The cue is the player's speech ending and the narrator resuming over the treatment-table footage; the caption identifies the speaker.",
+        "evidence": [
+          {
+            "time": "01:35",
+            "available_time": "01:48",
+            "fact": "A male interview voice runs 01:35-01:48 and stops at 01:48 as the narrator resumes."
+          },
+          {
+            "time": "01:36",
+            "available_time": "01:36",
+            "fact": "On-screen caption identifies this speaker as Li Yongzhen."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:00",
+          "count": 4,
+          "occurrences": [
+            {
+              "id": "a",
+              "time": "00:43"
+            },
+            {
+              "id": "b",
+              "time": "01:08"
+            },
+            {
+              "id": "c",
+              "time": "01:35"
+            },
+            {
+              "id": "d",
+              "time": "01:48"
+            }
+          ],
+          "counting_basis": "Each contiguous interview soundbite by a coach or player, bounded by that speaker stopping and the narrator or next speaker taking over; voice-over narration and gym ambience are excluded."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "sb4",
+          "confirmed_time": "01:48",
+          "definition": "A separate interview soundbite from a team coach or player finishes (the speaker stops)."
+        }
+      },
+      {
+        "window_start": "02:33",
+        "trigger_time": "02:33",
+        "window_end": "02:33",
+        "response": "Count 5: Heynen's closing interview clip ended with the report.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The cue is the coach's translated interview voice running to the end of the audio; the caption identifies the speaker.",
+        "evidence": [
+          {
+            "time": "02:12",
+            "available_time": "02:33",
+            "fact": "The head coach's translated interview voice runs 02:12 to the final frame at 02:33, with no further narrator segment after it."
+          },
+          {
+            "time": "02:13",
+            "available_time": "02:13",
+            "fact": "On-screen caption re-identifies the speaker as head coach Vital Heynen."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:00",
+          "count": 5,
+          "occurrences": [
+            {
+              "id": "a",
+              "time": "00:43"
+            },
+            {
+              "id": "b",
+              "time": "01:08"
+            },
+            {
+              "id": "c",
+              "time": "01:35"
+            },
+            {
+              "id": "d",
+              "time": "01:48"
+            },
+            {
+              "id": "e",
+              "time": "02:33"
+            }
+          ],
+          "counting_basis": "Each contiguous interview soundbite by a coach or player, bounded by that speaker stopping and the narrator or next speaker taking over; voice-over narration and gym ambience are excluded."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "sb5",
+          "confirmed_time": "02:33",
+          "definition": "A separate interview soundbite from a team coach or player finishes (the speaker stops)."
+        }
+      }
+    ],
+    "ability": "action_counting",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "action_counting_pr",
+    "video": "video_103.mp4",
+    "generation_context": {
+      "duration_seconds": 152.734,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_103"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever the voice-over mentions a specific training-batch date, save it in my notes.",
+    "question_time": "00:01",
+    "audio_dependency": "required",
+    "vision_dependency": "none",
+    "work_type": "tools",
+    "required_tools": [
+      "note_write"
+    ],
+    "responses": [
+      {
+        "trigger_time": "00:04",
+        "source_trigger_time": "00:04",
+        "window_start": "00:04",
+        "window_end": "00:08",
+        "response": "First batch date heard: April 6; saving it.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The trigger is a spoken training-batch date mention; the audio alone confirms the date.",
+        "evidence": [
+          {
+            "time": "00:03",
+            "available_time": "00:04",
+            "fact": "The female Mandarin voice-over says April 6 is a training-batch start date."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:01",
+          "count": 1,
+          "occurrences": [
+            {
+              "id": "batch-date-april-6",
+              "time": "00:04"
+            }
+          ],
+          "counting_basis": "Each distinct spoken mention of a specific volleyball training-batch date is counted once when the date is fully heard."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "batch-date-april-6",
+          "confirmed_time": "00:04",
+          "definition": "The voice-over mentions a specific calendar date tied to a volleyball training batch."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Create a note for the user recording the training-batch date just mentioned by the voice-over.\",\"observed_context\":\"At 00:04, the female Mandarin voice-over says April 6 is a training-batch start date.\",\"user_goal\":\"Save each voice-over-mentioned training-batch date in the user's notes.\",\"constraints_and_authorization\":\"The user authorized note writing. Record only the spoken date; do not infer a year or create calendar events.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with a note containing the April 6 batch date and the evidence timestamp.\",\"extracted_parameters\":[{\"name\":\"date\",\"value\":\"April 6\",\"evidence_time\":\"00:04\",\"evidence\":\"Voice-over says April 6 as a training-batch start date.\"},{\"name\":\"note_title\",\"value\":\"Volleyball batch date: April 6\",\"evidence_time\":\"00:04\",\"evidence\":\"Derived from the spoken date mention.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "00:10",
+        "source_trigger_time": "00:10",
+        "window_start": "00:10",
+        "window_end": "00:16",
+        "response": "Second batch date heard: April 13; saving it.",
+        "trigger_type": "speech",
+        "trigger_type_reason": "The trigger is a spoken training-batch date mention; the audio alone confirms the date.",
+        "evidence": [
+          {
+            "time": "00:09",
+            "available_time": "00:10",
+            "fact": "The female Mandarin voice-over says April 13 is the second training-batch reporting date."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:01",
+          "count": 2,
+          "occurrences": [
+            {
+              "id": "batch-date-april-6",
+              "time": "00:04"
+            },
+            {
+              "id": "batch-date-april-13",
+              "time": "00:10"
+            }
+          ],
+          "counting_basis": "Each distinct spoken mention of a specific volleyball training-batch date is counted once when the date is fully heard."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "batch-date-april-13",
+          "confirmed_time": "00:10",
+          "definition": "The voice-over mentions a specific calendar date tied to a volleyball training batch."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Create a note for the user recording the second training-batch date just mentioned by the voice-over.\",\"observed_context\":\"At 00:10, the female Mandarin voice-over says April 13 is the second training-batch reporting date; this follows an April 6 mention at 00:04.\",\"user_goal\":\"Save each voice-over-mentioned training-batch date in the user's notes.\",\"constraints_and_authorization\":\"The user authorized note writing. Record only the spoken date; do not infer a year or create calendar events.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with a note containing the April 13 batch date and the evidence timestamp.\",\"extracted_parameters\":[{\"name\":\"date\",\"value\":\"April 13\",\"evidence_time\":\"00:10\",\"evidence\":\"Voice-over says April 13 as the second training-batch reporting date.\"},{\"name\":\"note_title\",\"value\":\"Volleyball batch date: April 13\",\"evidence_time\":\"00:10\",\"evidence\":\"Derived from the spoken date mention.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "00:20",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Note created for the April 6 training-batch date.\",\"observed_facts\":[\"At 00:04 the voice-over mentioned April 6 as a training-batch start date.\"],\"tool_information\":[\"note_write created a user note.\"],\"reasoning\":[\"The spoken date was extracted and stored as requested; no year was inferred.\"],\"uncertainties\":[\"The year was not stated in the video.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create_note\",\"status\":\"completed\",\"evidence\":\"Note saved with the spoken April 6 date.\",\"arguments\":{\"title\":\"Volleyball batch date: April 6\",\"content\":\"Voice-over mentioned April 6 as a training-batch start date at 00:04.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Volleyball batch date: April 6\",\"content\":\"Voice-over mentioned April 6 as a training-batch start date at 00:04.\"}]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:20",
+        "response": "Success: I saved a note titled 'Volleyball batch date: April 6' with the voice-over's April 6 training-batch mention.",
+        "role": "assistant",
+        "outcome": "success"
+      },
+      {
+        "trigger_time": "00:26",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Note created for the April 13 training-batch date.\",\"observed_facts\":[\"At 00:04 the voice-over mentioned April 6 as a training-batch start date.\",\"At 00:10 the voice-over mentioned April 13 as the second training-batch reporting date.\"],\"tool_information\":[\"note_write created a user note.\"],\"reasoning\":[\"The second spoken date was extracted and stored as a separate note; the earlier April 6 mention was already noted.\",\"No year was inferred.\"],\"uncertainties\":[\"The year was not stated in the video.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create_note\",\"status\":\"completed\",\"evidence\":\"Note saved with the spoken April 13 date.\",\"arguments\":{\"title\":\"Volleyball batch date: April 13\",\"content\":\"Voice-over mentioned April 13 as the second training-batch reporting date at 00:10.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Volleyball batch date: April 13\",\"content\":\"Voice-over mentioned April 13 as the second training-batch reporting date at 00:10.\"}]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:26",
+        "response": "Success: I saved a note titled 'Volleyball batch date: April 13' with the voice-over's April 13 training-batch mention.",
+        "role": "assistant",
+        "outcome": "success"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "action_counting",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "action_counting_agent",
+    "video": "video_103.mp4",
+    "generation_context": {
+      "duration_seconds": 152.734,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": 16,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_103"
+  },
+  {
+    "status": "ok",
+    "question": "As I watch this training report, keep a running count of completed interview segments. Every second one, prepare a meeting-record draft of all the interviews so far for my records.",
+    "question_time": "00:18",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "work_type": "tools",
+    "required_tools": [
+      "meeting_draft"
+    ],
+    "responses": [
+      {
+        "window_start": "00:18",
+        "trigger_time": "00:18",
+        "window_end": "00:18",
+        "response": "I don't have the ability to prepare meeting-record drafts after every second completed interview segment.",
+        "refusal_reason": "The requested follow-up requires the meeting_draft capability to prepare a meeting-record draft, but the frontend has no tools available.",
+        "missing_tools": [
+          "meeting_draft"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "window_start": "01:08",
+        "trigger_time": "01:08",
+        "window_end": "01:08",
+        "response": "The running total has reached two completed interview segments.",
+        "trigger_type": "speech+visual",
+        "trigger_type_reason": "Speech marks the end of each interview answer, while visual cuts and lower-thirds confirm the segment boundaries and speaker changes.",
+        "evidence": [
+          {
+            "time": "00:43",
+            "available_time": "00:43",
+            "fact": "Heynen's translated interview answer ends and the report cuts away, completing the first interview segment after the request."
+          },
+          {
+            "time": "01:08",
+            "available_time": "01:08",
+            "fact": "Yu Yaochen's interview answer ends and the report cuts to a wide scrimmage, completing the second interview segment."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:18",
+          "count": 2,
+          "occurrences": [
+            {
+              "id": "interview-1",
+              "time": "00:43"
+            },
+            {
+              "id": "interview-2",
+              "time": "01:08"
+            }
+          ],
+          "counting_basis": "Distinct interview segments are counted once when the on-camera or translated answer ends and the report cuts to another scene or speaker; a continuous translated answer over B-roll remains one segment."
+        },
+        "trigger": {
+          "kind": "count",
+          "satisfied": true,
+          "episode_id": "interview-even-total-2",
+          "confirmed_time": "01:08",
+          "definition": "The running total of completed interview segments reaches a new even number.",
+          "previous_count": 1,
+          "count": 2,
+          "threshold": 2,
+          "operator": "eq"
+        }
+      },
+      {
+        "window_start": "01:49",
+        "trigger_time": "01:49",
+        "window_end": "01:49",
+        "response": "The running total has reached four completed interview segments.",
+        "trigger_type": "speech+visual",
+        "trigger_type_reason": "Speech marks the end of each interview answer, while visual cuts and lower-thirds confirm the segment boundaries and speaker changes.",
+        "evidence": [
+          {
+            "time": "00:43",
+            "available_time": "00:43",
+            "fact": "Heynen's translated interview answer ends and the report cuts away, completing the first interview segment after the request."
+          },
+          {
+            "time": "01:08",
+            "available_time": "01:08",
+            "fact": "Yu Yaochen's interview answer ends and the report cuts to a wide scrimmage, completing the second interview segment."
+          },
+          {
+            "time": "01:36",
+            "available_time": "01:36",
+            "fact": "Ji Daoshuai's interview answer ends and the edit moves to Li Yongzhen's interview, completing the third interview segment."
+          },
+          {
+            "time": "01:49",
+            "available_time": "01:49",
+            "fact": "Li Yongzhen's interview answer ends and the report cuts to the courtside treatment table, completing the fourth interview segment."
+          }
+        ],
+        "details": {
+          "counting_mode": "cumulative",
+          "counting_start": "00:18",
+          "count": 4,
+          "occurrences": [
+            {
+              "id": "interview-1",
+              "time": "00:43"
+            },
+            {
+              "id": "interview-2",
+              "time": "01:08"
+            },
+            {
+              "id": "interview-3",
+              "time": "01:36"
+            },
+            {
+              "id": "interview-4",
+              "time": "01:49"
+            }
+          ],
+          "counting_basis": "Distinct interview segments are counted once when the on-camera or translated answer ends and the report cuts to another scene or speaker; a continuous translated answer over B-roll remains one segment."
+        },
+        "trigger": {
+          "kind": "count",
+          "satisfied": true,
+          "episode_id": "interview-even-total-4",
+          "confirmed_time": "01:49",
+          "definition": "The running total of completed interview segments reaches a new even number.",
+          "previous_count": 3,
+          "count": 4,
+          "threshold": 4,
+          "operator": "eq",
+          "reset_time": "01:36"
+        }
+      }
+    ],
+    "sample_type": "no_context",
+    "available_tools": [],
+    "frontend_context": {
+      "system_prompt": "You are an audiovisual assistant. State capability limitations honestly.",
+      "tools": []
+    },
+    "ability": "action_counting",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "action_counting_agent",
+    "video": "video_103.mp4",
+    "generation_context": {
+      "duration_seconds": 152.734,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "no_context",
+      "available_tools": [],
+      "required_missing_tool": "meeting_draft"
+    },
+    "video_folder": "video_103"
+  },
+  {
+    "status": "ok",
+    "question": "Keep tracking where the runners in grey are within the prison complex — inside the building, up on the roofs, at ground level in the yards, down in low spots, along the outer walls, on a raised walkway, or out beyond the perimeter — and update me whenever that changes.",
+    "question_time": "00:10",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:10",
+        "trigger_time": "00:10",
+        "window_end": "00:13",
+        "response": "They start enclosed inside a small cell with a red door at the back.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The enclosed-cell location is read from the visible walls, bed and door; no audio cue is needed.",
+        "evidence": [
+          {
+            "time": "00:10",
+            "available_time": "00:10",
+            "fact": "Interior of a stained cell: a runner in grey sits on a tarp-covered bed, a wall sink at left and a red door at the rear."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey (including the camera wearer)",
+          "reference": "the prison cell",
+          "relation": "inside / enclosed by the cell walls",
+          "uncertainty": "the cell's floor level is not visible"
+        }
+      },
+      {
+        "window_start": "00:16",
+        "trigger_time": "00:16",
+        "window_end": "01:03",
+        "response": "Now inside the prison building, on the atrium's upper walkways beside the wire-mesh cages.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The interior atrium setting is identified from the visible railings, mesh cages and open void; audio adds nothing reliable here.",
+        "evidence": [
+          {
+            "time": "00:16",
+            "available_time": "00:16",
+            "fact": "Runners in grey sprint along a green-railed upper walkway with a curved wire-mesh cage and an open atrium void below."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the multi-storey atrium interior",
+          "relation": "inside the building, on an elevated interior walkway",
+          "uncertainty": "which storey of the atrium is not labeled"
+        }
+      },
+      {
+        "window_start": "01:04",
+        "trigger_time": "01:04",
+        "window_end": "01:31",
+        "response": "They're out on the roof now, perched high above the yard.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The move from interior to exterior rooftop is confirmed by the visible sky, roof surface and yard below.",
+        "evidence": [
+          {
+            "time": "01:02",
+            "available_time": "01:02",
+            "fact": "A square hatch opens onto bright sky as a runner climbs up through it."
+          },
+          {
+            "time": "01:04",
+            "available_time": "01:04",
+            "fact": "A runner in grey is on the sunlit roof edge with the sports field and perimeter fences spread below."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the prison rooftops",
+          "relation": "outside the building, elevated on the roof above the compound",
+          "uncertainty": "exact height above the yard is not measurable"
+        }
+      },
+      {
+        "window_start": "01:34",
+        "trigger_time": "01:34",
+        "window_end": "01:39",
+        "response": "Down at ground level, rolling on a grassy slope beside the buildings.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The drop to ground level is read from the visible grass and the runner's roll on it.",
+        "evidence": [
+          {
+            "time": "01:32",
+            "available_time": "01:32",
+            "fact": "A runner leaves the roof edge and drops toward a green grassy bank."
+          },
+          {
+            "time": "01:34",
+            "available_time": "01:34",
+            "fact": "The runner is on the grass, rolling to absorb the landing at the base of the slope."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the grassy bank / paved yard outside the blocks",
+          "relation": "outside at ground level, below the roofline",
+          "uncertainty": "whether this slope links to the later yards is not yet visible"
+        }
+      },
+      {
+        "window_start": "01:50",
+        "trigger_time": "01:50",
+        "window_end": "02:13",
+        "response": "Back up on a flat rooftop.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The return to an elevated exterior surface is confirmed by the visible flat grey roof.",
+        "evidence": [
+          {
+            "time": "01:48",
+            "available_time": "01:48",
+            "fact": "Hands and feet are on a vertical drainpipe against a brick wall, pulling upward."
+          },
+          {
+            "time": "01:50",
+            "available_time": "01:50",
+            "fact": "A runner in grey stands on a flat grey rooftop with ventilation boxes and a fenced edge."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "a flat building roof",
+          "relation": "outside, elevated on a rooftop",
+          "uncertainty": "this roof's height relative to the previous one is unclear"
+        }
+      },
+      {
+        "window_start": "02:14",
+        "trigger_time": "02:14",
+        "window_end": "02:25",
+        "response": "At ground level again, in a narrow alley between buildings.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The descent to a ground-level passage is read from the visible walls and asphalt with weeds.",
+        "evidence": [
+          {
+            "time": "02:14",
+            "available_time": "02:14",
+            "fact": "POV moves along a thin asphalt alley hemmed by a cream wall and a brick wall, weeds at the edges."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the alley / outer yard between structures",
+          "relation": "outside at ground level, confined between walls",
+          "uncertainty": "whether the alley opens straight into the outer yard is not visible yet"
+        }
+      },
+      {
+        "window_start": "02:32",
+        "trigger_time": "02:32",
+        "window_end": "02:37",
+        "response": "Up on another flat roof after scaling a tall wall.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The climb over the wall onto a roof is confirmed by the visible wall top and dark roof surface.",
+        "evidence": [
+          {
+            "time": "02:30",
+            "available_time": "02:30",
+            "fact": "A runner's legs go over the top of a tall pale wall with green trim."
+          },
+          {
+            "time": "02:32",
+            "available_time": "02:32",
+            "fact": "Runners in grey sprint across a dark flat roof dotted with vents."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "a dark flat roof beyond a tall wall",
+          "relation": "outside, elevated on a rooftop",
+          "uncertainty": "the wall's height is not measurable"
+        }
+      },
+      {
+        "window_start": "02:38",
+        "trigger_time": "02:38",
+        "window_end": "02:43",
+        "response": "Down at ground level, running past a parked white minibus.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The drop to the paved area by the vehicle is read from the visible bus and asphalt.",
+        "evidence": [
+          {
+            "time": "02:38",
+            "available_time": "02:38",
+            "fact": "A runner in grey is on the asphalt beside a parked white minibus, with low buildings around."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the paved outer yard by the minibus",
+          "relation": "outside at ground level",
+          "uncertainty": "the bus's position relative to the perimeter is not clear"
+        }
+      },
+      {
+        "window_start": "02:46",
+        "trigger_time": "02:46",
+        "window_end": "02:52",
+        "response": "Slid into an overgrown ditch, below the surrounding ground.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The descent into the low weedy cut is confirmed by the visible ditch walls and vegetation.",
+        "evidence": [
+          {
+            "time": "02:44",
+            "available_time": "02:44",
+            "fact": "A runner scrambles down a steep grassy embankment."
+          },
+          {
+            "time": "02:46",
+            "available_time": "02:46",
+            "fact": "The runner slides into a ditch thick with weeds and purple flowers, below the bank."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the overgrown ditch",
+          "relation": "outside, depressed below the surrounding ground level",
+          "uncertainty": "how deep the ditch is cannot be measured"
+        }
+      },
+      {
+        "window_start": "03:00",
+        "trigger_time": "03:00",
+        "window_end": "03:09",
+        "response": "Traversing horizontally along a black pipe fixed to a high brick wall.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The sideways move at height on the wall face is read from the visible pipe and brickwork.",
+        "evidence": [
+          {
+            "time": "02:56",
+            "available_time": "02:56",
+            "fact": "Hands grip a weathered black pipe running along a beige brick wall."
+          },
+          {
+            "time": "03:00",
+            "available_time": "03:00",
+            "fact": "A runner in grey shimmies sideways on the pipe, feet braced on the wall, with a drop to grass below."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the black pipe on the tall brick wall",
+          "relation": "outside, at height, moving horizontally along the wall face",
+          "uncertainty": "the wall's height above the ground below is not measurable"
+        }
+      },
+      {
+        "window_start": "03:14",
+        "trigger_time": "03:14",
+        "window_end": "03:19",
+        "response": "Over a railing and onto a raised walkway through a vaulted brick passage.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The climb over the railing into the arched passage is confirmed by the visible railing and brick vaults.",
+        "evidence": [
+          {
+            "time": "03:12",
+            "available_time": "03:12",
+            "fact": "POV hands go over a grey metal railing on an upper platform."
+          },
+          {
+            "time": "03:14",
+            "available_time": "03:14",
+            "fact": "A runner vaults the railing into a long vaulted brick corridor with arched ceilings."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the railed walkway / vaulted passage",
+          "relation": "outside, on a raised route through a brick passage",
+          "uncertainty": "whether the passage is fully enclosed or open-sided is not clear"
+        }
+      },
+      {
+        "window_start": "03:20",
+        "trigger_time": "03:20",
+        "window_end": "03:33",
+        "response": "Out on an open public road, beyond the prison walls.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The exit onto the unenclosed road is read from the visible asphalt, houses, trees and sea with no surrounding walls.",
+        "evidence": [
+          {
+            "time": "03:18",
+            "available_time": "03:18",
+            "fact": "Runners cross a railed bridge over a grassy slope toward a road."
+          },
+          {
+            "time": "03:20",
+            "available_time": "03:20",
+            "fact": "Three runners in grey sprint along an open asphalt road lined with grass banks, trees and houses, the sea behind."
+          }
+        ],
+        "details": {
+          "target": "the runners in grey",
+          "reference": "the public road outside the complex",
+          "relation": "beyond the prison perimeter, at ground level on an open road",
+          "uncertainty": "the road's distance from the prison cannot be measured"
+        }
+      }
+    ],
+    "ability": "spatial_understanding",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "spatial_understanding_rtd",
+    "video": "video_152.mp4",
+    "generation_context": {
+      "duration_seconds": 213.787,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_152"
+  },
+  {
+    "status": "ok",
+    "question": "I'm watching this escape video from the outside. Let me know whenever one of the grey-suited runners ends up at a lower level than the person filming.",
+    "question_time": "00:49",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:50",
+        "trigger_time": "00:50",
+        "window_end": "00:51",
+        "response": "Two grey-suited runners have landed on the atrium floor below the person filming.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The vertical relation between the runners and the camera is read entirely from the frame; no audio cue is needed.",
+        "evidence": [
+          {
+            "time": "00:48",
+            "available_time": "00:48",
+            "fact": "The camera is held at the green atrium railing, with runners in light-grey tracksuits at the same level."
+          },
+          {
+            "time": "00:49",
+            "available_time": "00:49",
+            "fact": "Two grey-suited runners are in mid-air beneath the railing, falling toward the teal floor while the camera stays at railing height."
+          },
+          {
+            "time": "00:50",
+            "available_time": "00:50",
+            "fact": "The two runners have landed on the teal atrium floor, clearly below the camera's railing position."
+          }
+        ],
+        "details": {
+          "target": "the grey-suited runners other than the person filming",
+          "reference": "the camera position of the person filming",
+          "relation": "runners vertically below the camera",
+          "uncertainty": "No scale is available, so the exact height difference is unknown; the judgement is from the camera's viewpoint only."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "below-01",
+          "confirmed_time": "00:50",
+          "definition": "A grey-suited runner moves to a level below the person filming."
+        }
+      },
+      {
+        "window_start": "01:32",
+        "trigger_time": "01:32",
+        "window_end": "01:34",
+        "response": "A runner has leapt off the roof edge and landed on the lower roof, now below the person filming.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The drop to a lower roof surface is visible; sound adds nothing to the spatial judgement.",
+        "evidence": [
+          {
+            "time": "01:30",
+            "available_time": "01:30",
+            "fact": "The camera and a grey-suited runner are on the same upper roof edge."
+          },
+          {
+            "time": "01:31",
+            "available_time": "01:31",
+            "fact": "That runner is airborne below the camera's roof level, heading for a lower roof section."
+          },
+          {
+            "time": "01:32",
+            "available_time": "01:32",
+            "fact": "The runner lands on the lower roof while the camera remains at the upper edge looking down."
+          }
+        ],
+        "details": {
+          "target": "the grey-suited runner at the roof edge",
+          "reference": "the camera position of the person filming",
+          "relation": "runner on a lower roof level than the camera",
+          "uncertainty": "The vertical gap cannot be measured; only the relative roof levels are visible."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "below-02",
+          "confirmed_time": "01:32",
+          "definition": "A grey-suited runner moves to a level below the person filming.",
+          "reset_time": "00:52"
+        }
+      },
+      {
+        "window_start": "01:59",
+        "trigger_time": "01:59",
+        "window_end": "02:05",
+        "response": "Both runners ahead have dropped onto the lower roof, below the person filming.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Their position on a lower roof plane relative to the camera is purely visual.",
+        "evidence": [
+          {
+            "time": "01:57",
+            "available_time": "01:57",
+            "fact": "Two grey-suited runners are at the edge of the roof the camera is on."
+          },
+          {
+            "time": "01:58",
+            "available_time": "01:58",
+            "fact": "Both runners are in the air below the camera's roof edge."
+          },
+          {
+            "time": "01:59",
+            "available_time": "01:59",
+            "fact": "The camera looks down at the two runners standing on the lower roof surface."
+          }
+        ],
+        "details": {
+          "target": "the two grey-suited runners ahead",
+          "reference": "the camera position of the person filming",
+          "relation": "runners on the roof level below the camera",
+          "uncertainty": "Height difference is unmeasured; the relation holds only while the camera stays at the upper edge."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "below-03",
+          "confirmed_time": "01:59",
+          "definition": "A grey-suited runner moves to a level below the person filming.",
+          "reset_time": "01:36"
+        }
+      },
+      {
+        "window_start": "02:11",
+        "trigger_time": "02:11",
+        "window_end": "02:13",
+        "response": "The runner ahead has stepped down onto a lower ledge, below the person filming.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The step-down to a lower ledge is seen from the camera's higher vantage point.",
+        "evidence": [
+          {
+            "time": "02:09",
+            "available_time": "02:09",
+            "fact": "A grey-suited runner is on the same roof as the camera, near the far edge."
+          },
+          {
+            "time": "02:10",
+            "available_time": "02:10",
+            "fact": "That runner lowers onto a narrow ledge beneath the roof line."
+          },
+          {
+            "time": "02:11",
+            "available_time": "02:11",
+            "fact": "The camera looks down at the runner crouched on the lower ledge."
+          }
+        ],
+        "details": {
+          "target": "the grey-suited runner ahead",
+          "reference": "the camera position of the person filming",
+          "relation": "runner on a ledge below the camera",
+          "uncertainty": "No scale, so the drop height is unknown; ledge vs. roof distinction is read from the frame."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "below-04",
+          "confirmed_time": "02:11",
+          "definition": "A grey-suited runner moves to a level below the person filming.",
+          "reset_time": "02:07"
+        }
+      },
+      {
+        "window_start": "02:36",
+        "trigger_time": "02:36",
+        "window_end": "02:38",
+        "response": "A runner has climbed down the fence to the ground, below the person filming.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The runner's descent along the fence to ground level is visible from the roof above.",
+        "evidence": [
+          {
+            "time": "02:34",
+            "available_time": "02:34",
+            "fact": "A grey-suited runner is at the top of the chain-link fence at the camera's roof level."
+          },
+          {
+            "time": "02:35",
+            "available_time": "02:35",
+            "fact": "The runner is on the fence below the roof edge, descending."
+          },
+          {
+            "time": "02:36",
+            "available_time": "02:36",
+            "fact": "The camera looks down at the runner now on the asphalt below the fence."
+          }
+        ],
+        "details": {
+          "target": "the grey-suited runner on the fence",
+          "reference": "the camera position of the person filming on the roof",
+          "relation": "runner below the camera, on the far side of the fence",
+          "uncertainty": "Fence height is not measurable; the relation is inferred from the downward camera angle."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "below-05",
+          "confirmed_time": "02:36",
+          "definition": "A grey-suited runner moves to a level below the person filming.",
+          "reset_time": "02:15"
+        }
+      },
+      {
+        "window_start": "02:48",
+        "trigger_time": "02:48",
+        "window_end": "02:52",
+        "response": "The runners have slid down the embankment into the ditch, below the person filming.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Their lower position in the ditch relative to the camera on the slope is visual.",
+        "evidence": [
+          {
+            "time": "02:46",
+            "available_time": "02:46",
+            "fact": "Grey-suited runners are ahead on the same grassy slope as the camera."
+          },
+          {
+            "time": "02:47",
+            "available_time": "02:47",
+            "fact": "The runners slide down into the overgrown ditch beneath the camera's level."
+          },
+          {
+            "time": "02:48",
+            "available_time": "02:48",
+            "fact": "The camera looks down at the runners among the weeds below the slope."
+          }
+        ],
+        "details": {
+          "target": "the grey-suited runners on the slope",
+          "reference": "the camera position of the person filming upslope",
+          "relation": "runners downslope and below the camera",
+          "uncertainty": "Slope depth is unmeasured; the relation depends on the camera staying above the ditch."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "below-06",
+          "confirmed_time": "02:48",
+          "definition": "A grey-suited runner moves to a level below the person filming.",
+          "reset_time": "02:40"
+        }
+      },
+      {
+        "window_start": "03:08",
+        "trigger_time": "03:08",
+        "window_end": "03:10",
+        "response": "A runner is now below the person filming, hanging on the pipe against the brick wall.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The runner's lower position on the pipe is seen from the camera's higher footing on the wall.",
+        "evidence": [
+          {
+            "time": "03:06",
+            "available_time": "03:06",
+            "fact": "A grey-suited runner is on the black pipe at roughly the camera's level."
+          },
+          {
+            "time": "03:07",
+            "available_time": "03:07",
+            "fact": "The runner is on the pipe below the camera's position on the wall."
+          },
+          {
+            "time": "03:08",
+            "available_time": "03:08",
+            "fact": "The camera looks down at the runner braced on the pipe beneath it."
+          }
+        ],
+        "details": {
+          "target": "the grey-suited runner on the wall pipe",
+          "reference": "the camera position of the person filming on the same wall",
+          "relation": "runner on the pipe below the camera",
+          "uncertainty": "Wall height is not measurable; both are on the same face, so only relative vertical order is certain."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "below-07",
+          "confirmed_time": "03:08",
+          "definition": "A grey-suited runner moves to a level below the person filming.",
+          "reset_time": "02:55"
+        }
+      },
+      {
+        "window_start": "03:12",
+        "trigger_time": "03:12",
+        "window_end": "03:14",
+        "response": "Another grey-suited runner is below the person filming, climbing up to the walkway.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The downward view over the railing shows the runner beneath the camera's walkway level.",
+        "evidence": [
+          {
+            "time": "03:10",
+            "available_time": "03:10",
+            "fact": "The camera reaches the railed walkway above the wall."
+          },
+          {
+            "time": "03:11",
+            "available_time": "03:11",
+            "fact": "The camera looks down over the railing at a grey-suited runner below."
+          },
+          {
+            "time": "03:12",
+            "available_time": "03:12",
+            "fact": "That runner is on the walkway edge beneath the camera, pulling up."
+          }
+        ],
+        "details": {
+          "target": "the grey-suited runner at the walkway railing",
+          "reference": "the camera position of the person filming on the walkway",
+          "relation": "runner below the walkway level of the camera",
+          "uncertainty": "The gap is unmeasured; the runner's identity among the group is not distinguishable."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "below-08",
+          "confirmed_time": "03:12",
+          "definition": "A grey-suited runner moves to a level below the person filming.",
+          "reset_time": "03:11"
+        }
+      }
+    ],
+    "ability": "spatial_understanding",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "spatial_understanding_pr",
+    "video": "video_152.mp4",
+    "generation_context": {
+      "duration_seconds": 213.787,
+      "preferred_modality": "vision",
+      "question_position": "non_start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_152"
+  },
+  {
+    "status": "ok",
+    "question": "I'm jotting down the escape route as I watch. Whenever the runners enter a covered wire-mesh walkway, tell me which way they're heading and add a note for that segment.",
+    "question_time": "02:15",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "work_type": "tools_and_reasoning",
+    "required_tools": [
+      "note_write"
+    ],
+    "responses": [
+      {
+        "trigger_time": "02:21",
+        "source_trigger_time": "02:21",
+        "window_start": "02:21",
+        "window_end": "02:26",
+        "response": "I'll note the mesh-walkway entry; they're heading into the covered passage.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The mesh walls and roof are visible as the runners cross inside, and the footsteps/mesh rattle sound enclosed.",
+        "evidence": [
+          {
+            "time": "02:20",
+            "available_time": "02:21",
+            "fact": "The grey-suited runners run from the open yard toward the entrance of a roofed wire-mesh corridor."
+          },
+          {
+            "time": "02:21",
+            "available_time": "02:21",
+            "fact": "Wire-mesh sides and overhead framing surround the runners as they cross into the covered walkway."
+          },
+          {
+            "time": "02:21",
+            "available_time": "02:21",
+            "fact": "Footsteps and light mesh rattle take on an enclosed sound as they move inside."
+          }
+        ],
+        "details": {
+          "target": "the grey-suited runners, including the POV camera wearer",
+          "reference": "the covered wire-mesh walkway beside the open yard",
+          "relation": "entering and moving from the open yard into the enclosed passage",
+          "uncertainty": "The exact number of runners fully inside is partly blocked by the POV view; no metric distance or real-world location is available."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "mesh_walkway_entry_0221",
+          "confirmed_time": "02:21",
+          "definition": "The grey-suited runners enter a covered wire-mesh walkway from the open yard."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Write a personal note titled 'Escape route: mesh walkway entry'. Record that at 02:21 the grey-suited runners entered a covered wire-mesh walkway, moving away from the open yard into the passage. Use only the observed spatial facts; do not infer a real-world location or metric distance.\",\"observed_context\":\"At 02:20-02:21, the runners leave the open yard and enter a roofed wire-mesh corridor. At 02:21, mesh sides and overhead framing surround them, and footsteps/mesh rattle sound enclosed.\",\"user_goal\":\"Save an escape-route note for the mesh-walkway segment and identify the direction of travel relative to the yard.\",\"constraints_and_authorization\":\"The viewer authorized a personal note. No deadline was specified. Do not claim completion of any external action beyond writing the note, and do not invent distances or locations.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A note artifact with title and content, plus action evidence from note_write confirming creation.\",\"extracted_parameters\":[{\"name\":\"event_time\",\"value\":\"02:21\",\"evidence_time\":\"02:21\",\"evidence\":\"The runners are visibly inside the covered wire-mesh walkway.\"},{\"name\":\"direction\",\"value\":\"away from the open yard into the covered passage\",\"evidence_time\":\"02:21\",\"evidence\":\"Their backs face the yard as they run into the mesh corridor.\"},{\"name\":\"reference_structure\",\"value\":\"covered wire-mesh walkway\",\"evidence_time\":\"02:21\",\"evidence\":\"Wire-mesh walls and an overhead frame enclose the passage.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "02:44",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Created a personal note recording the 02:21 mesh-walkway entry and the runners' direction from the open yard into the covered passage.\",\"observed_facts\":[\"At 02:21, grey-suited runners entered a covered wire-mesh walkway from the open yard.\",\"The movement was away from the yard and into the enclosed passage.\"],\"tool_information\":[\"note_write created a note titled 'Escape route: mesh walkway entry'.\"],\"reasoning\":[\"The user asked for an escape-route note tied to a spatial trigger.\",\"The available evidence confirms entry into the mesh walkway and direction relative to the yard, but not metric distance or real-world location.\"],\"uncertainties\":[\"The exact number of runners fully inside is partly obscured by the POV view.\",\"No scale is available, so no distance is estimated.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create_note\",\"status\":\"completed\",\"evidence\":\"Note titled 'Escape route: mesh walkway entry' was created with the observed 02:21 entry and direction.\",\"arguments\":{\"title\":\"Escape route: mesh walkway entry\",\"content\":\"At 02:21, the grey-suited runners entered a covered wire-mesh walkway, moving away from the open yard into the passage. No metric distance or real-world location was inferred.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Escape route: mesh walkway entry\",\"content\":\"At 02:21, the grey-suited runners entered a covered wire-mesh walkway, moving away from the open yard into the passage. No metric distance or real-world location was inferred.\"}]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "02:44",
+        "response": "Note added: the 02:21 mesh-walkway entry is saved as an escape-route note, with the runners moving from the open yard into the covered passage.",
+        "role": "assistant",
+        "outcome": "success"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "spatial_understanding",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "spatial_understanding_agent",
+    "video": "video_152.mp4",
+    "generation_context": {
+      "duration_seconds": 213.787,
+      "preferred_modality": "audio",
+      "question_position": "non_start",
+      "agent_delay_seconds": 23,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "video_152"
+  },
+  {
+    "status": "ok",
+    "question": "Each time the runners come out of an enclosed prison area into open air, check the local weather for that spot and tell me whether rain or wind could make the surfaces slippery.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "work_type": "tools",
+    "required_tools": [
+      "weather_query"
+    ],
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:00",
+        "window_end": "00:00",
+        "response": "I don't have the ability to check local weather for the spots shown in the video.",
+        "refusal_reason": "The requested follow-up requires weather_query to retrieve local weather for a place and time, but no tools are available in the frontend context.",
+        "missing_tools": [
+          "weather_query"
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "window_start": "01:04",
+        "trigger_time": "01:05",
+        "window_end": "01:08",
+        "response": "The runners emerge from the enclosed hatch onto the open roof.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The change is confirmed by visible movement from a dim enclosed shaft to a sunlit outdoor roof.",
+        "evidence": [
+          {
+            "time": "00:59",
+            "available_time": "01:00",
+            "fact": "A red ladder is visible inside an enclosed beige brick shaft."
+          },
+          {
+            "time": "01:02",
+            "available_time": "01:03",
+            "fact": "A runner climbs through a bright square hatch."
+          },
+          {
+            "time": "01:04",
+            "available_time": "01:04",
+            "fact": "The view opens onto a sunlit roof with the sea and prison buildings beyond."
+          }
+        ],
+        "details": {
+          "target": "the runners in light-grey tracksuits",
+          "reference": "the enclosed stairwell and hatch below the roof",
+          "relation": "moving from an enclosed interior space to an exposed outdoor roof",
+          "uncertainty": "The POV camera makes exact spacing unclear, but the surroundings visibly change from enclosed to open."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "enclosed-to-open-roof-1",
+          "confirmed_time": "01:04",
+          "definition": "the runners move from an enclosed prison area into open air"
+        }
+      },
+      {
+        "window_start": "02:28",
+        "trigger_time": "02:29",
+        "window_end": "02:32",
+        "response": "The runners leave the covered walkway and get onto the open roof.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The transition is visible as the group climbs from a roofed mesh passage to an outdoor roof surface.",
+        "evidence": [
+          {
+            "time": "02:22",
+            "available_time": "02:23",
+            "fact": "The runners are inside a covered wire-mesh walkway."
+          },
+          {
+            "time": "02:26",
+            "available_time": "02:27",
+            "fact": "They climb up a pale perimeter wall."
+          },
+          {
+            "time": "02:28",
+            "available_time": "02:28",
+            "fact": "They are on an open dark roof beyond the wall."
+          }
+        ],
+        "details": {
+          "target": "the runners in light-grey tracksuits",
+          "reference": "the covered wire-mesh walkway and perimeter wall",
+          "relation": "exiting a covered passage onto an exposed outdoor roof",
+          "uncertainty": "Individual positions shift quickly in the POV shot, but the group is visibly outside after the climb."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "covered-walkway-to-open-roof-2",
+          "confirmed_time": "02:28",
+          "definition": "the runners move from an enclosed prison area into open air"
+        }
+      },
+      {
+        "window_start": "03:16",
+        "trigger_time": "03:17",
+        "window_end": "03:19",
+        "response": "The runners exit the brick tunnel onto the outdoor bridge.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The change is confirmed by visible movement from an enclosed vaulted tunnel to an open railed bridge.",
+        "evidence": [
+          {
+            "time": "03:13",
+            "available_time": "03:14",
+            "fact": "The runners are inside a vaulted brick tunnel."
+          },
+          {
+            "time": "03:16",
+            "available_time": "03:16",
+            "fact": "They emerge onto an outdoor railed bridge with grass and trees beyond."
+          }
+        ],
+        "details": {
+          "target": "the runners in light-grey tracksuits",
+          "reference": "the enclosed vaulted brick tunnel",
+          "relation": "moving from an interior covered passage to an exposed outdoor bridge",
+          "uncertainty": "The camera angle is wide and moving, but the open-air surroundings are clearly visible."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "tunnel-to-open-bridge-3",
+          "confirmed_time": "03:16",
+          "definition": "the runners move from an enclosed prison area into open air"
+        }
+      }
+    ],
+    "sample_type": "no_context",
+    "available_tools": [],
+    "frontend_context": {
+      "system_prompt": "You are an audiovisual assistant. State capability limitations honestly.",
+      "tools": []
+    },
+    "ability": "spatial_understanding",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "spatial_understanding_agent",
+    "video": "video_152.mp4",
+    "generation_context": {
+      "duration_seconds": 213.787,
+      "preferred_modality": "audio",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "no_context",
+      "available_tools": [],
+      "required_missing_tool": "weather_query"
+    },
+    "video_folder": "video_152"
+  }
+]

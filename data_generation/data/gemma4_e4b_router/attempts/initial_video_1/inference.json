@@ -1,0 +1,44 @@
+{
+  "video": "/root/jimodels/OmniDuplex/videos/video_1.mp4",
+  "duration_seconds": 208.05,
+  "caption_sha256": "b79bd27e7092154b6cc971cf956e1e83cf790c92d5a98c2539e2cb8cf1727080",
+  "route_prompt_sha256": "5fdcc9a4157764f51e53193dee8602449d3b4bba9648909b1d37cb9badf362eb",
+  "audio_seconds": 208.0508125,
+  "audio_chunks": 7,
+  "input_tokens": 12801,
+  "input_shapes": {
+    "input_ids": [
+      1,
+      12801
+    ],
+    "attention_mask": [
+      1,
+      12801
+    ],
+    "mm_token_type_ids": [
+      1,
+      12801
+    ],
+    "pixel_values_videos": [
+      1,
+      32,
+      630,
+      768
+    ],
+    "video_position_ids": [
+      1,
+      32,
+      630,
+      2
+    ],
+    "input_features": [
+      7,
+      2999,
+      128
+    ],
+    "input_features_mask": [
+      7,
+      2999
+    ]
+  }
+}

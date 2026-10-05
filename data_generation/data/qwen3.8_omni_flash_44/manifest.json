@@ -1,0 +1,2285 @@
+{
+  "settings": {
+    "provider": "qwen",
+    "model": "qwen3.8-omni-flash",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "upload_url": null,
+    "timeout": 120.0,
+    "retries": 2,
+    "seed": 0,
+    "temperature": 0.1,
+    "max_contexts": 3,
+    "validation_retries": 2,
+    "implementation": "8357a820ac4e398bfa3013c76aa0173ce1b7c31587c8b2bf6a735ef0ed587e5b",
+    "selection": {
+      "attribute_perception": "video_101",
+      "grounding": "video_11",
+      "action_perception": "video_152",
+      "object_perception": "video_1",
+      "event_understanding": "video_149",
+      "text_rich_understanding": "video_101",
+      "object_counting": "video_1",
+      "action_counting": "video_103",
+      "spatial_understanding": "video_152",
+      "prospective_reasoning": "video_149",
+      "causal_reasoning": "video_101"
+    }
+  },
+  "slots": {
+    "attribute_perception_rtd": {
+      "fingerprint": "3f38cccc5bccb24a0bb0eafa9f60b867ca91eb41114b8f95e09f046115993854",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "92549777114309071006826481558605093775292578954203536202651478319540173727846",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 100.27671647071838
+        }
+      ],
+      "content_hash": "5b3c043d98dc1a1025cb9c6d56ab398ad8e1808363e74cb91ea9f7dae9d70200",
+      "selected_attempt": 0,
+      "worker_source": "."
+    },
+    "attribute_perception_pr": {
+      "fingerprint": "0086b30e7a4de124bc1e0d5092fb18fd3a42035ef2d3b468d505e47eae351e0a",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "50788169503268113946612217467289451531318482910084926937941683531434454796233",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 142.2320544719696
+        }
+      ],
+      "content_hash": "a7f3dc76d5411b5aeb6b91807156d7ef87217efd463cfffae963cb94e21b72bd",
+      "selected_attempt": 0,
+      "worker_source": "."
+    },
+    "attribute_perception_agent_positive": {
+      "fingerprint": "c9e7cda47c1925884d50b10ca6adc59e63a53215307217fe7af001b66d93c52b",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "16324357176860058625624362685233160321880749413125122172881329290691511240982",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": 46,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "agent message fields must match its role",
+          "elapsed_seconds": 279.16278743743896
+        },
+        {
+          "index": 1,
+          "seed": "16324357176860058625624362685233160321880749413125122172881329290691511240982",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": 46,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "agent message fields must match its role",
+          "elapsed_seconds": 252.14820408821106
+        },
+        {
+          "index": 2,
+          "seed": "16324357176860058625624362685233160321880749413125122172881329290691511240982",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 2,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": 46,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "agent message fields must match its role",
+          "elapsed_seconds": 122.2404670715332
+        },
+        {
+          "index": 3,
+          "status": "interrupted",
+          "error": "Interrupted during prior foreground request; any response and usage retained."
+        },
+        {
+          "index": 4,
+          "seed": "16324357176860058625624362685233160321880749413125122172881329290691511240982",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": 46,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "kind": "reuse_complete_model_response",
+          "reused_source": "/root/jimodels/OmniDuplex/data_generation/data/qwen3.8_omni_flash_44/attempts/attribute_perception_agent_positive/000/response_raw.txt",
+          "status": "ok",
+          "elapsed_seconds": 0.0049822330474853516
+        }
+      ],
+      "content_hash": "2ccbd911f7f62032b511ec113f23e8a376f5e800a553234747ab5f61b8055158",
+      "selected_attempt": 4,
+      "worker_source": "."
+    },
+    "attribute_perception_agent_negative": {
+      "fingerprint": "5af6b4055a7e66f18e3beb4ef30e0387c9204cec86663f4205dde20cec8d48b1",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "1885160735964141726921245586882407322284376229860032228620911862473940002365",
+          "candidate": 4,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "missing_tool",
+            "available_tools": [
+              "todo_create",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": "todo_query"
+          },
+          "status": "ok",
+          "elapsed_seconds": 174.11085033416748
+        }
+      ],
+      "content_hash": "45858da1b5b0fcf3e1983733837128fb4e55317c2f5250034808f8bb39469317",
+      "selected_attempt": 0,
+      "worker_source": "."
+    },
+    "grounding_rtd": {
+      "fingerprint": "fdcba0458d5b154fcd34dde934adf6e9797930d12e8ebffc0f74ba0d07a68051",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "2927585172878756815751684561899328374810197055889614836327366485410696816971",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 229.762,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "grounding end cannot use future evidence",
+          "elapsed_seconds": 156.96145153045654
+        },
+        {
+          "index": 1,
+          "seed": "2927585172878756815751684561899328374810197055889614836327366485410696816971",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 229.762,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 284.38260889053345
+        }
+      ],
+      "content_hash": "6a7999ac59f31cb8c6e567fbe7b2ef92ddd7c1e4d9f87d015069032eaf11d57a",
+      "selected_attempt": 1,
+      "worker_source": "."
+    },
+    "grounding_pr": {
+      "fingerprint": "6a22e1ce7cb7f14449bf4913b7b6efeeaeda5edb3cf53b0df710baf01e97f0db",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "6473396541096104800022313539621951850921356422916058091596056678540677489373",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 229.762,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "grounding end cannot use future evidence",
+          "elapsed_seconds": 80.94986367225647
+        },
+        {
+          "index": 1,
+          "seed": "6473396541096104800022313539621951850921356422916058091596056678540677489373",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 229.762,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 49.4882173538208
+        }
+      ],
+      "content_hash": "90c58a9ce6e6ffddb294c68ce3b040291ff67adafc4070b015aa6670e03c0d60",
+      "selected_attempt": 1,
+      "worker_source": "."
+    },
+    "grounding_agent_positive": {
+      "fingerprint": "a2f5e7f9e5ddf97e85e78f2de07b93c9311fe376b6258d83fb2a37a35118be82",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "8206768574111447568769517469037396610028711124377577893738376825835160867694",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 229.762,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": 25,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 371.5130019187927
+        }
+      ],
+      "content_hash": "ff45922dfced1538aa825d5527554e209a8cec999ab5cb337527495c194d343f",
+      "selected_attempt": 0,
+      "worker_source": "."
+    },
+    "grounding_agent_negative": {
+      "fingerprint": "92652813f6c96861a519dbcf6889cdfedac81efee34d0371e0cce71922f6283b",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "22773252616973743423227930929794089175692403100716575359366341531401798134666",
+          "candidate": 1,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 229.762,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "missing_tool",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": "shopping_list_update"
+          },
+          "status": "ok",
+          "elapsed_seconds": 158.6601243019104
+        }
+      ],
+      "content_hash": "0fdab1275884df18b63431cffeac7d8a7b5af6e178d4e12db31a0a700d18ac6d",
+      "selected_attempt": 0,
+      "worker_source": "."
+    },
+    "action_perception_rtd": {
+      "fingerprint": "a6b25fd269dc2db58a0dd7c53f9577f116d485c27cea425003b3717c5357e5e9",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "53203824878191193763590128664187047868194242147841233777069340766211956694729",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "evidence must be available by the earliest eligible response time",
+          "elapsed_seconds": 244.0923295021057
+        },
+        {
+          "index": 1,
+          "seed": "53203824878191193763590128664187047868194242147841233777069340766211956694729",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 447.04428911209106
+        }
+      ],
+      "content_hash": "1f8f23342f47725cea739e161944175b6734ebccbebd1ad0bfa7130cccb33cf5",
+      "selected_attempt": 1,
+      "worker_source": "."
+    },
+    "action_perception_pr": {
+      "fingerprint": "9871babb7386e4b45cb1ef407addcfd89de4c94035e1e3e70283a3aab6423539",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "42369452901458874221505029976258009091552398096807361180618337315262354004118",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 119.77445244789124
+        }
+      ],
+      "content_hash": "1518602af07ef1fe5486e36af949dfa685e5e2c52885cfb261adbcb6edd42de7",
+      "selected_attempt": 0,
+      "worker_source": "."
+    },
+    "action_perception_agent_positive": {
+      "fingerprint": "78414a00186e876f98378c46710b947556f9ef457d3d05ee82ac78fcaba6720f",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "4423593983771653090482393167657082554934784714555653855881561813461738660273",
+          "candidate": 4,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": 105,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 225.28209137916565
+        }
+      ],
+      "content_hash": "c768df0378ad84b121edff1692887386fb984b790503e1d107017ecab23f32f9",
+      "selected_attempt": 0,
+      "worker_source": "."
+    },
+    "action_perception_agent_negative": {
+      "fingerprint": "e5aaa3eb8909809d20faabc35e2d4badee2c36f093cf330cb64de40eba00102b",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "9874773893275550200184535785515670309886645098213414180369070167578055309794",
+          "candidate": 3,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "shopping_list_query"
+          },
+          "status": "ok",
+          "elapsed_seconds": 241.95136308670044
+        }
+      ],
+      "content_hash": "d344cb1381f101632ffd4ba0741a216d0121785e256e805d8be8d4f004ee3d3c",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch4"
+    },
+    "object_perception_rtd": {
+      "fingerprint": "bb549fa46df4d853f91416e256a53f382434b2e2a3918fb6bb331ae02d0c126d",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "81333560330504965930749759674345581281488291378412089773846996273583182413988",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 201.59383606910706
+        }
+      ],
+      "content_hash": "e4ad8c934d12b12ca5cf4d97136445fe7c609f20a33284db6059458f6d3576f6",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "object_perception_pr": {
+      "fingerprint": "1828283a8f5a2c52c9a544f3329f5cec2125dbd37904a447fe34ddd5b951532c",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "81185792644140147382749761233917466611683157831259958476008736381054373617969",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 65.43023657798767
+        }
+      ],
+      "content_hash": "91ae42e0ee41095ae8cc553b173518d1fd398f5f1c788074a9f9c7b35e5d3aa2",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "object_perception_agent_positive": {
+      "fingerprint": "74ccf17c740d9920f50ffea4dabde3c3b5f633c18aaf2cc1ca150b3043dce044",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "89038048701752963339985705150557023275085895193886474675419061963543251498369",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 69,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "separate future annotation is only for capability negatives",
+          "elapsed_seconds": 223.28639769554138
+        },
+        {
+          "index": 1,
+          "seed": "89038048701752963339985705150557023275085895193886474675419061963543251498369",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 69,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 214.77897548675537
+        }
+      ],
+      "content_hash": "35e9de9896b7480d013a67c3022fd8e9c7053360924b4ba85a35b8d47d22d4ab",
+      "selected_attempt": 1,
+      "worker_source": "workers/batch1"
+    },
+    "object_perception_agent_negative": {
+      "fingerprint": "8fb56599bdd8a8088390671823afaf62bb289160c26f582bbc353a942999e6bc",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "78925346810890985564468759342350526881329833528329349481022355898496238197092",
+          "candidate": 3,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "missing_tool",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": "order_query"
+          },
+          "status": "ok",
+          "elapsed_seconds": 112.24450826644897
+        }
+      ],
+      "content_hash": "37b54c4fc61cf42f9acd346f7958fac1b93c455dd37602e48d2370cbf6a35ef2",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "event_understanding_rtd": {
+      "fingerprint": "7e155017a19eeac32906097e99fada859a06b856182883cbc581f115492450f8",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "status": "interrupted",
+          "error": "Interrupted during prior foreground request; any response and usage retained."
+        },
+        {
+          "index": 1,
+          "seed": "96064713066261360988509815849012357494758748159303823275589821451342459551882",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 488.73539781570435
+        }
+      ],
+      "content_hash": "22f492d825b1a414f552a0b2543016750d1fd0573c38f238b1acacdc68e45624",
+      "selected_attempt": 1,
+      "worker_source": "workers/batch1"
+    },
+    "event_understanding_pr": {
+      "fingerprint": "8b6dce244816e6ac7c488f873d3ba594b70e20070a752492d51c7c683d1de2dd",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "66758018607183196693855767075722819285514218278272111732798605788454031282587",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 105.81543588638306
+        }
+      ],
+      "content_hash": "8dd8b9f4897dc1f4dc8cd9e00c00cf3cbc54cb1fc7c13e52658ad32ed5153c4a",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "event_understanding_agent_positive": {
+      "fingerprint": "7de68927534849dffad3f907ffc3ff1c658df89cd70c558facbfdffc3b59b9cf",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "41058019075458815515201728003890586280787614055678153254581450818486554954192",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 84,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 162.69796657562256
+        }
+      ],
+      "content_hash": "7cc7c141666ef111e03f4d66f0aacfd873df165a1a8d25e5382a7e9014a8f827",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "event_understanding_agent_negative": {
+      "fingerprint": "1f5d406867eb78e23920cb4d212d4737a939883ec7e0da3676d92287ba1ce6bd",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "47310304981626260182175630513843626120984873239309345391293080813054823434970",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "missing_tool",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": "note_write"
+          },
+          "status": "ok",
+          "elapsed_seconds": 164.8905107975006
+        }
+      ],
+      "content_hash": "23f8a76c59f1c1a2ef4d34e3b1e5bfb945f8651f583a322f3f7d3c182410c1f8",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "text_rich_understanding_rtd": {
+      "fingerprint": "c271a001312e711c9cb5c3a39e617375ec9437209381299bd94c09c64baeced5",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "93588372561116601184280834456179860235647530523226660622905434989811970204039",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 64.28333330154419
+        }
+      ],
+      "content_hash": "94eb5ec05c03eea197e7093fbe240dfb6cf3b85a1ae0af0917bee0e47138096a",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "text_rich_understanding_pr": {
+      "fingerprint": "ed98fa025cc39b372a0cadaf7cd5d58aad6cc1b6e0703a14d3db5473262cfedd",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "27652402942213120331716370890404363697918430224674160035392013546254424770111",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 60.42637491226196
+        }
+      ],
+      "content_hash": "be949ccf5f016dbbdccd71b6b089c6285f26a8bfc94f7f85a8f958d82b485556",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "text_rich_understanding_agent_positive": {
+      "fingerprint": "b9c8db2875c20fdc2475e9a8986dad57d7b27fa3347c423971faf6e81db28113",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "46541307991610711869015339118913984570334000424275325991250799826651857052357",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": 48,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 272.2641224861145
+        }
+      ],
+      "content_hash": "36cd843e69ae8daaca919e557d44ccc5918e4a6c32faf470077ed8d35a073eb1",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "text_rich_understanding_agent_negative": {
+      "fingerprint": "b4343e31a019168f08145b1e01c3de32cd6c11dd40a9c7ae1e243503385a18e5",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "35329499115932394120926906159134766703143063389298339372697668197377551621334",
+          "candidate": 2,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "report_create"
+          },
+          "status": "ok",
+          "elapsed_seconds": 146.66651058197021
+        }
+      ],
+      "content_hash": "dbc4808d9630f2aeaa4a2bc46ccd86ef03006d7891d83ba1f77db6dccb6c6ab2",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch1"
+    },
+    "object_counting_rtd": {
+      "fingerprint": "5af331dd143297df91e8f31c957d1630ff24329b3a2879a42f10ac5c96837d52",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "64217915226040032082966500772940544147013093512009855518935749374207386216988",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 228.42141366004944
+        }
+      ],
+      "content_hash": "7caf6c986355ebab968f99367b1c9a22a2cce6aa544b1ed080ceea6f1d8814ab",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch2"
+    },
+    "object_counting_pr": {
+      "fingerprint": "29c41a05074f739af9d1380f69fb92c0cc2b0cdcfc552a1092101d02d06b3443",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "80466907466516443122589889547053959309822362982649656446729255975791885079893",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "trigger must be an object",
+          "elapsed_seconds": 180.26034426689148
+        },
+        {
+          "index": 1,
+          "seed": "80466907466516443122589889547053959309822362982649656446729255975791885079893",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 29.13105535507202
+        }
+      ],
+      "content_hash": "a62887a7847bf3d965790bbbdaf806e07564011888a92187c0b423fc4627055e",
+      "selected_attempt": 1,
+      "worker_source": "workers/batch2"
+    },
+    "object_counting_agent_positive": {
+      "fingerprint": "fb066bb028784253bfd75850871b34b6d414b3f4b3a9a596babc09f80248fe55",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "22902665415805707894872279298408117669384991639491467789136613271065603406311",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 28,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "separate future annotation is only for capability negatives",
+          "elapsed_seconds": 213.99339413642883
+        },
+        {
+          "index": 1,
+          "seed": "22902665415805707894872279298408117669384991639491467789136613271065603406311",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 28,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "separate future annotation is only for capability negatives",
+          "elapsed_seconds": 163.91647005081177
+        },
+        {
+          "index": 2,
+          "status": "interrupted",
+          "error": "Interrupted during prior foreground request; any response and usage retained."
+        },
+        {
+          "index": 3,
+          "seed": "22902665415805707894872279298408117669384991639491467789136613271065603406311",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 28,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "kind": "reuse_complete_model_response",
+          "reused_source": "/root/jimodels/OmniDuplex/data_generation/data/qwen3.8_omni_flash_44/workers/batch2/attempts/object_counting_agent_positive/001/response_raw.txt",
+          "status": "ok",
+          "elapsed_seconds": 0.007326364517211914
+        }
+      ],
+      "content_hash": "d867857386378a8d9d61f12229df770b0c45ab87913234673a637e1ed406e099",
+      "selected_attempt": 3,
+      "worker_source": "workers/batch2"
+    },
+    "object_counting_agent_negative": {
+      "fingerprint": "0490fcb866c4907d2a9028faa45435347ac023ad7f5939b973b5cb83d14b46f7",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "75783257988752741651288620906543104745426468167336183306753755615639858701355",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 208.05,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "todo_create"
+          },
+          "status": "ok",
+          "elapsed_seconds": 112.09661602973938
+        }
+      ],
+      "content_hash": "53a0929ddc277d4ad3edc2bb07d15e065eb550e6c60226eafd5ed9e708bac100",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch2"
+    },
+    "action_counting_rtd": {
+      "fingerprint": "f6fd19de56839f203925454897775a139360bc9c7c6d95de72fc2e3a84313619",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "104045511395318906202964539704466482770906470737972410095689372738844516723627",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 149.7829942703247
+        }
+      ],
+      "content_hash": "6bc11b83cc744a27ec46338f8be4b72ae2d75e1b0cc296eeb3e00a1e0ebdcde0",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch2"
+    },
+    "action_counting_pr": {
+      "fingerprint": "4190a6f40b9ad723e86343da6e6c61b6f4d6000ad1894eb2d60f7da722ccc1b1",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "33878338517976088593290785887798983370085354651052059340332408604142876189658",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 139.53494715690613
+        }
+      ],
+      "content_hash": "cf563a06f759d001fe7fcfc25b03766a7a567084d5426290359c83e336cf241b",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch2"
+    },
+    "action_counting_agent_positive": {
+      "fingerprint": "f758a180d2ed65566629d97de2de86f12ca975d00325c70991292b543bf00081",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "68619694508202761849094301923020950606521720331602777657888523958986967175988",
+          "candidate": 1,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": 16,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 280.54269766807556
+        }
+      ],
+      "content_hash": "4497cd22a1fd088901700c593e2b3948ce0864b3806238eb3d3380f612d53da0",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch2"
+    },
+    "action_counting_agent_negative": {
+      "fingerprint": "c34bc44aeb40caf0dfae0631b59771ef81c54f0a58077a017ce7e8823d33235f",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "92984918643699065165541471673265231085595352424932021505697467513832157680701",
+          "candidate": 4,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "meeting_draft"
+          },
+          "status": "failed",
+          "error": "cumulative updates must preserve and extend history",
+          "elapsed_seconds": 163.92699360847473
+        },
+        {
+          "index": 1,
+          "seed": "92984918643699065165541471673265231085595352424932021505697467513832157680701",
+          "candidate": 4,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 152.734,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "meeting_draft"
+          },
+          "status": "ok",
+          "elapsed_seconds": 151.92348170280457
+        }
+      ],
+      "content_hash": "b5618e20d0083a3b143ace76e0e96e1128b14f0ffb6aa2df90213089ff08b37d",
+      "selected_attempt": 1,
+      "worker_source": "workers/batch2"
+    },
+    "spatial_understanding_rtd": {
+      "fingerprint": "76adeb67b9662006564d4daff02b0c3a3d300ae620bfa00ad9e7bba9f444a50a",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "21067521127592481126168013102093639939475312912392941370247429810025600444168",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 477.8666949272156
+        }
+      ],
+      "content_hash": "7e9b4373506b19d45a5d31405149352f63ee8aa6233a3402a3bc66bc6336c64d",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch2"
+    },
+    "spatial_understanding_pr": {
+      "fingerprint": "e4707f36abc56bc83b37808d8088c37889c7ebca71a5e046ab2daced200fcda9",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "80448443177799082138256234297122684959982691943500452133089403449842818699609",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "evidence must be available by the earliest eligible response time",
+          "elapsed_seconds": 171.57630515098572
+        },
+        {
+          "index": 1,
+          "seed": "80448443177799082138256234297122684959982691943500452133089403449842818699609",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 187.42835402488708
+        }
+      ],
+      "content_hash": "61e12c54b6c0cb117170dacd99518b25fe9acc6b602629b670f5592050613b96",
+      "selected_attempt": 1,
+      "worker_source": "workers/batch2"
+    },
+    "spatial_understanding_agent_positive": {
+      "fingerprint": "2f7e7ec8d571d4164f35e7408fc126135cc2f7dded1e24097ba91620bb7fa599",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "3839903695868858221749114222814256919519692383435767723433903450972620700739",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": 23,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 270.82063722610474
+        }
+      ],
+      "content_hash": "517004c1c4da3dae6d77f06710a9368af332b5da5d0399d2c804754c383cbfbe",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch2"
+    },
+    "spatial_understanding_agent_negative": {
+      "fingerprint": "1077e2533f07cdfee81840e40d6dccb4811ba6e0a0bbbcf6fa5bfa3166092c59",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "33284145960821303165789305593717509651592366867465813698528793707687786677369",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 213.787,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "no_context",
+            "available_tools": [],
+            "required_missing_tool": "weather_query"
+          },
+          "status": "ok",
+          "elapsed_seconds": 116.75699210166931
+        }
+      ],
+      "content_hash": "202bf89eb9aa3ed2ec98c35bda3ea288ded2c45b1a0e53dedadc72747bd5682c",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch2"
+    },
+    "prospective_reasoning_rtd": {
+      "fingerprint": "9482fda4d77a357d5fa55471fba211e697f445b6bde2456a50780945b55cc2ca",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "69348254193158072445720324546121409413752194162786200137352258483296299540562",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "vision",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 254.37831091880798
+        }
+      ],
+      "content_hash": "3fe189494dcf5a92172427b04ce38b5d90928797ce3927782ea277f9e84757db",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch3"
+    },
+    "prospective_reasoning_pr": {
+      "fingerprint": "c00537499543e8aace40d990303ee51e1dd9d08bff7c91d2731a133f48f7d86e",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "39139833438669687586975503587093951874288952137850981997793278911975072622573",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 90.9410994052887
+        }
+      ],
+      "content_hash": "d87eb6064a3ae2dc490090cfdde2367d0b4af6727c41acfad021c34398794118",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch3"
+    },
+    "prospective_reasoning_agent_positive": {
+      "fingerprint": "21b2e923805c6b8741c0d7a74ca2dca5f1811e23e02e16b66d04bd4b8a2fc9de",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "7334499718882205395525918605392529676240423234353799355361000524112674594833",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": 45,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "model returned invalid JSON: Expecting ',' delimiter: line 51 column 11 (char 5452)",
+          "elapsed_seconds": 272.4591519832611
+        },
+        {
+          "index": 1,
+          "status": "interrupted",
+          "error": "Interrupted during prior foreground request; any response and usage retained."
+        },
+        {
+          "index": 2,
+          "seed": "7334499718882205395525918605392529676240423234353799355361000524112674594833",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": 45,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "failed",
+          "error": "separate future annotation is only for capability negatives",
+          "elapsed_seconds": 267.23504877090454
+        },
+        {
+          "index": 3,
+          "seed": "7334499718882205395525918605392529676240423234353799355361000524112674594833",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 1,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": 45,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 276.55627274513245
+        }
+      ],
+      "content_hash": "ed354e4553d220c6c714d652b7e7365670d61d96c230c76fc4db1b7cca59ae23",
+      "selected_attempt": 3,
+      "worker_source": "workers/batch3"
+    },
+    "prospective_reasoning_agent_negative": {
+      "fingerprint": "4edfb4aeed6876b1b740b609c6eba333a4835c5adb5abb3a6c719813f9ecffe9",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "12200016995154831182104499912972619961030989183454200231575195781001961203166",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 212.068,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "missing_tool",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": "budget_query"
+          },
+          "status": "ok",
+          "elapsed_seconds": 144.13531136512756
+        }
+      ],
+      "content_hash": "0336b1c7984daa268c9a0d4d4631d624f43879d8855f4b9f85b87d58bbc97ce0",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch3"
+    },
+    "causal_reasoning_rtd": {
+      "fingerprint": "f7f254fd8ed84e4892accfdb1da106e1d756365f5ecf24056935ef7de079db2d",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "15423503962992175225056374511629377038429474109643887573769566261792902798732",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "audio",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 92.32987403869629
+        }
+      ],
+      "content_hash": "1d03d5c1940efa3d2736b58bc1bad22d7f68ece96fafca83bafa3dd359251809",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch3"
+    },
+    "causal_reasoning_pr": {
+      "fingerprint": "3393f9de5d4e1548d7b848f4c84f0df94053d88162438ae4327072dcb1281df7",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "42394065633118801981615036865150663733986492129872489358304883088788316989080",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 66.14864182472229
+        }
+      ],
+      "content_hash": "e231cbb10408ab4c72e15968d4b20cef7c02031e158426cad1fc97fe84597d8a",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch3"
+    },
+    "causal_reasoning_agent_positive": {
+      "fingerprint": "bfee4cd954870f14788a55e98a0508e451fb85c6531f9966490fe0d342ac9291",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "88081336499394397730159410015024903275353713937211901125637771751511040001104",
+          "candidate": 1,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "vision",
+            "question_position": "non_start",
+            "agent_delay_seconds": 43,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "positive",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "meeting_draft",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": null
+          },
+          "status": "ok",
+          "elapsed_seconds": 218.3769245147705
+        }
+      ],
+      "content_hash": "0da7486a7efe50652ebb54090ab78695fe755db02038740bc674645f9d6c02e1",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch3"
+    },
+    "causal_reasoning_agent_negative": {
+      "fingerprint": "7c9914e39334384f9a4bf1ce12ecc9c06f17ee3dca3431a8f18aaa51a54cc90b",
+      "status": "ok",
+      "attempts": [
+        {
+          "index": 0,
+          "seed": "63612427250572049695120754037041144202570629154735710175714373145166417747987",
+          "candidate": 0,
+          "context_index": 0,
+          "correction": 0,
+          "context": {
+            "duration_seconds": 233.484,
+            "preferred_modality": "audio",
+            "question_position": "start",
+            "agent_delay_seconds": null,
+            "initial_response_delay_seconds": 0,
+            "sample_type": "missing_tool",
+            "available_tools": [
+              "todo_create",
+              "todo_query",
+              "todo_update",
+              "calendar_query",
+              "note_write",
+              "order_query",
+              "order_update",
+              "note_search",
+              "document_search",
+              "weather_query",
+              "route_query",
+              "shopping_list_query",
+              "shopping_list_update",
+              "budget_query",
+              "budget_update",
+              "calculator",
+              "itinerary_query",
+              "product_search",
+              "calendar_create",
+              "calendar_update",
+              "notification_send",
+              "web_search",
+              "knowledge_search",
+              "history_query",
+              "video_segment_query",
+              "statistics_compute",
+              "report_create"
+            ],
+            "required_missing_tool": "meeting_draft"
+          },
+          "status": "ok",
+          "elapsed_seconds": 144.40178227424622
+        }
+      ],
+      "content_hash": "d0d58e0740d7ce7f48fe8058b394a2bdc564f2eca2e898938282fd0f2480e610",
+      "selected_attempt": 0,
+      "worker_source": "workers/batch3"
+    }
+  }
+}

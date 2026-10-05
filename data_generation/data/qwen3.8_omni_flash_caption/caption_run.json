@@ -1,0 +1,47 @@
+{
+  "model": "qwen3.8-omni-flash",
+  "provider": "qwen",
+  "selected_videos": [
+    "video_1.mp4",
+    "video_101.mp4",
+    "video_103.mp4",
+    "video_11.mp4",
+    "video_149.mp4",
+    "video_152.mp4"
+  ],
+  "completed": [
+    {
+      "video": "video_152.mp4",
+      "segments": 16,
+      "output": "video_152/caption.json"
+    }
+  ],
+  "reused": [
+    {
+      "video": "video_1.mp4",
+      "segments": 17,
+      "output": "video_1/caption.json"
+    },
+    {
+      "video": "video_101.mp4",
+      "segments": 16,
+      "output": "video_101/caption.json"
+    },
+    {
+      "video": "video_103.mp4",
+      "segments": 13,
+      "output": "video_103/caption.json"
+    },
+    {
+      "video": "video_11.mp4",
+      "segments": 19,
+      "output": "video_11/caption.json"
+    },
+    {
+      "video": "video_149.mp4",
+      "segments": 18,
+      "output": "video_149/caption.json"
+    }
+  ],
+  "failed": []
+}

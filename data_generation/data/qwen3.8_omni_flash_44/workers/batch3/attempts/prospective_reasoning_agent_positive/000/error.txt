@@ -1,0 +1,38 @@
+Traceback (most recent call last):
+  File "/root/jimodels/OmniDuplex/data_generation/src/infrastructure/json_io.py", line 23, in extract_json
+    result = json.loads(candidate)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/lib/python3.12/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 51 column 11 (char 5452)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/jimodels/OmniDuplex/data_generation/src/infrastructure/json_io.py", line 30, in extract_json
+    result, end = decoder.raw_decode(candidate[start:])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/miniconda3/lib/python3.12/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 51 column 11 (char 5452)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/jimodels/OmniDuplex/tmp/qwen44/run.py", line 194, in <module>
+    generated=generation.generate(replace(options(job),usage_output=active_attempt/'usage.json'),request=request)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/jimodels/OmniDuplex/data_generation/src/application/generation.py", line 67, in generate
+    result = task.validate_result(extract_json(raw_response), request.context)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/jimodels/OmniDuplex/data_generation/src/infrastructure/json_io.py", line 32, in extract_json
+    raise ValueError(f"model returned invalid JSON: {exc}") from exc
+ValueError: model returned invalid JSON: Expecting ',' delimiter: line 51 column 11 (char 5452)

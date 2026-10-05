@@ -1,0 +1,203 @@
+{
+  "status": "ok",
+  "question": "Each time the crowd lets out a loud cheer or laugh at something on the street set, make a note with the time and what triggered it, so I can find the reaction moments later.",
+  "question_time": "00:50",
+  "audio_dependency": "required",
+  "vision_dependency": "helpful",
+  "work_type": "tools",
+  "required_tools": [
+    "note_write"
+  ],
+  "responses": [
+    {
+      "window_start": "00:58",
+      "trigger_time": "00:58",
+      "window_end": "01:02",
+      "response": "Crowd laughs after barrier fall; I'll note it.",
+      "trigger_type": "sound",
+      "trigger_type_reason": "The qualifying cue is the audible burst of crowd laughter and cheering; the visible fall identifies what triggered it.",
+      "evidence": [
+        {
+          "time": "00:57",
+          "available_time": "00:58",
+          "fact": "A man in a grey shirt falls backward onto the pavement behind a metal crowd barrier."
+        },
+        {
+          "time": "00:58",
+          "available_time": "00:58",
+          "fact": "Spectators produce a loud burst of laughter and cheering."
+        }
+      ],
+      "details": {
+        "event": "Onset of loud crowd laughter after a barrier fall",
+        "localization": "moment",
+        "start": "00:58",
+        "end": "00:58"
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "crowd-reaction-0058",
+        "confirmed_time": "00:58",
+        "definition": "A loud crowd laugh or cheer is heard immediately after a visible action or pyrotechnic on the street set."
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "00:58",
+          "content": "Crowd laughs after barrier fall; I'll note it.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Create a note for the viewer logging the loud crowd reaction at 00:58, when spectators laugh and cheer after a man in a grey shirt falls backward over a crowd barrier on the film set.\",\"observed_context\":\"At 00:57 the man falls backward over the barrier; at 00:58 loud crowd laughter and cheering is heard.\",\"user_goal\":\"Save a timestamped note of each loud crowd reaction to an on-set action.\",\"constraints_and_authorization\":\"The viewer authorized note-taking. Do not share or send the note; only create a personal note.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with title and content containing the 00:58 timestamp and the barrier-fall trigger.\",\"extracted_parameters\":[{\"name\":\"reaction_time\",\"value\":\"00:58\",\"evidence_time\":\"00:58\",\"evidence\":\"Loud crowd laughter and cheering begins after the barrier fall.\"},{\"name\":\"trigger_event\",\"value\":\"man falls backward over crowd barrier\",\"evidence_time\":\"00:57\",\"evidence\":\"A man in a grey shirt tumbles onto the pavement behind the barrier.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "01:23",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Personal note created for the 00:58 crowd laugh after the barrier fall.\",\"observed_facts\":[\"Loud crowd laughter and cheering began at 00:58.\",\"The reaction followed a man falling backward over a crowd barrier.\"],\"tool_information\":[\"note_write created a user-authorized note.\"],\"reasoning\":[\"The viewer requested a timestamped note for loud crowd reactions; the observed reaction and trigger were available at the call time.\"],\"uncertainties\":[\"The faller's identity and role on set are not confirmed.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create note\",\"status\":\"completed\",\"evidence\":\"Note stored with title 'Crowd reaction 00:58'.\",\"arguments\":{\"title\":\"Crowd reaction 00:58\",\"content\":\"At 00:58, the crowd laughed and cheered loudly after a man in a grey shirt fell backward over a crowd barrier on the film set.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Crowd reaction 00:58\"}]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "01:23",
+          "content": "Success: note saved for the 00:58 crowd laugh after the barrier fall. I'll log later loud reactions similarly.",
+          "outcome": "success"
+        }
+      ]
+    },
+    {
+      "window_start": "02:34",
+      "trigger_time": "02:34",
+      "window_end": "02:40",
+      "response": "Crowd cheers after fireball behind armored vehicle; I'll note it.",
+      "trigger_type": "sound",
+      "trigger_type_reason": "The qualifying cue is the audible crowd gasp and cheer; the visible fireball behind the armored vehicle identifies what triggered it.",
+      "evidence": [
+        {
+          "time": "02:33",
+          "available_time": "02:33",
+          "fact": "A large fireball erupts behind the tan armored vehicle with a loud boom."
+        },
+        {
+          "time": "02:34",
+          "available_time": "02:34",
+          "fact": "The nearby crowd gasps and cheers loudly."
+        }
+      ],
+      "details": {
+        "event": "Onset of loud crowd cheering after a fireball behind an armored vehicle",
+        "localization": "moment",
+        "start": "02:34",
+        "end": "02:34"
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "crowd-reaction-0234",
+        "confirmed_time": "02:34",
+        "definition": "A loud crowd laugh or cheer is heard immediately after a visible action or pyrotechnic on the street set."
+      },
+      "messages": [
+        {
+          "role": "assistant",
+          "timestamp": "02:34",
+          "content": "Crowd cheers after fireball behind armored vehicle; I'll note it.",
+          "tool_calls": [
+            {
+              "type": "function",
+              "function": {
+                "name": "agent_call",
+                "arguments": "{\"instruction\":\"Create a note for the viewer logging the loud crowd reaction at 02:34, when spectators gasp and cheer after a large fireball erupts behind the tan armored vehicle on the film set.\",\"observed_context\":\"At 02:33 a large fireball erupts behind the tan armored vehicle with a loud boom; at 02:34 the nearby crowd gasps and cheers loudly.\",\"user_goal\":\"Save a timestamped note of each loud crowd reaction to an on-set action.\",\"constraints_and_authorization\":\"The viewer authorized note-taking. Do not share or send the note; only create a personal note.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A completed note_write action with title and content containing the 02:34 timestamp and the fireball trigger.\",\"extracted_parameters\":[{\"name\":\"reaction_time\",\"value\":\"02:34\",\"evidence_time\":\"02:34\",\"evidence\":\"Loud crowd gasping and cheering begins after the fireball.\"},{\"name\":\"trigger_event\",\"value\":\"large fireball behind tan armored vehicle\",\"evidence_time\":\"02:33\",\"evidence\":\"A large fireball erupts behind the tan armored vehicle with a loud boom.\"}]}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "name": "agent_call",
+          "timestamp": "02:59",
+          "content": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Personal note created for the 02:34 crowd cheer after the fireball behind the armored vehicle.\",\"observed_facts\":[\"Loud crowd gasping and cheering began at 02:34.\",\"The reaction followed a large fireball behind the tan armored vehicle.\"],\"tool_information\":[\"note_write created a user-authorized note.\"],\"reasoning\":[\"The viewer requested a timestamped note for loud crowd reactions; the observed reaction and trigger were available at the call time.\"],\"uncertainties\":[\"The exact pyrotechnic mechanism is not confirmed.\"],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"operation\":\"create note\",\"status\":\"completed\",\"evidence\":\"Note stored with title 'Crowd reaction 02:34'.\",\"arguments\":{\"title\":\"Crowd reaction 02:34\",\"content\":\"At 02:34, the crowd gasped and cheered loudly after a large fireball erupted behind the tan armored vehicle on the film set.\"}}],\"artifacts\":[{\"type\":\"note\",\"title\":\"Crowd reaction 02:34\"}]}"
+        },
+        {
+          "role": "assistant",
+          "timestamp": "02:59",
+          "content": "Success: note saved for the 02:34 crowd cheer after the fireball behind the armored vehicle. I'll log later loud reactions similarly.",
+          "outcome": "success"
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "window_start": "00:58",
+      "trigger_time": "00:58",
+      "window_end": "01:02",
+      "response": "Loud crowd laughter begins after the barrier fall.",
+      "trigger_type": "sound",
+      "trigger_type_reason": "The qualifying cue is the audible burst of crowd laughter and cheering; the visible fall identifies what triggered it.",
+      "evidence": [
+        {
+          "time": "00:57",
+          "available_time": "00:58",
+          "fact": "A man in a grey shirt falls backward onto the pavement behind a metal crowd barrier."
+        },
+        {
+          "time": "00:58",
+          "available_time": "00:58",
+          "fact": "Spectators produce a loud burst of laughter and cheering."
+        }
+      ],
+      "details": {
+        "event": "Onset of loud crowd laughter after a barrier fall",
+        "localization": "moment",
+        "start": "00:58",
+        "end": "00:58"
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "crowd-reaction-0058",
+        "confirmed_time": "00:58",
+        "definition": "A loud crowd laugh or cheer is heard immediately after a visible action or pyrotechnic on the street set."
+      }
+    },
+    {
+      "window_start": "02:34",
+      "trigger_time": "02:34",
+      "window_end": "02:40",
+      "response": "Loud crowd cheering begins after the fireball behind the armored vehicle.",
+      "trigger_type": "sound",
+      "trigger_type_reason": "The qualifying cue is the audible crowd gasp and cheer; the visible fireball behind the armored vehicle identifies what triggered it.",
+      "evidence": [
+        {
+          "time": "02:33",
+          "available_time": "02:33",
+          "fact": "A large fireball erupts behind the tan armored vehicle with a loud boom."
+        },
+        {
+          "time": "02:34",
+          "available_time": "02:34",
+          "fact": "The nearby crowd gasps and cheers loudly."
+        }
+      ],
+      "details": {
+        "event": "Onset of loud crowd cheering after a fireball behind an armored vehicle",
+        "localization": "moment",
+        "start": "02:34",
+        "end": "02:34"
+      },
+      "trigger": {
+        "kind": "event",
+        "satisfied": true,
+        "episode_id": "crowd-reaction-0234",
+        "confirmed_time": "02:34",
+        "definition": "A loud crowd laugh or cheer is heard immediately after a visible action or pyrotechnic on the street set."
+      }
+    }
+  ]
+}

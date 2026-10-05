@@ -1,0 +1,343 @@
+{
+  "status": "ok",
+  "question": "As the video goes on, keep me updated on the new people, animals, and handheld or worn items that come into view — tell me what each one is and where it sits in the frame.",
+  "question_time": "00:00",
+  "audio_dependency": "helpful",
+  "vision_dependency": "required",
+  "responses": [
+    {
+      "window_start": "00:00",
+      "trigger_time": "00:00",
+      "window_end": "00:05",
+      "response": "Two young women are right up close to the camera indoors, both under a dog-face filter — the one in front wears a black cap, grey mask and pearl drop earrings, and the one behind at the right wears a pink cap.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The people and their worn items are identified purely from the opening selfie framing.",
+      "evidence": [
+        {
+          "time": "00:00",
+          "available_time": "00:00",
+          "fact": "Two women stand close to the camera under an AR dog-face filter; the foreground woman has a black cap, grey face mask and pearl drop earrings, the second woman behind at right wears a pink baseball cap."
+        }
+      ],
+      "details": {
+        "target": "two women with AR dog filter, black cap / pink cap / grey mask / pearl earrings",
+        "category": "people and worn accessories",
+        "position": "foreground center-left and mid-ground right",
+        "uncertainty": "their relationship is not visible; only clothing and filter are confirmed"
+      }
+    },
+    {
+      "window_start": "00:06",
+      "trigger_time": "00:07",
+      "window_end": "00:14",
+      "response": "The shot cuts outdoors to dozens of tourists in summer clothes crossing the stone plaza and posing near the arched gateway.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The crowd is confirmed by the wide plaza view after the cut.",
+      "evidence": [
+        {
+          "time": "00:06",
+          "available_time": "00:06",
+          "fact": "A wide plaza in front of a red-brick gate tower is filled with many visitors walking and taking photos near the arch."
+        }
+      ],
+      "details": {
+        "target": "tourist crowd",
+        "category": "people",
+        "position": "spread across the lower half of the frame, denser near the arch",
+        "uncertainty": "exact headcount not determinable"
+      }
+    },
+    {
+      "window_start": "00:18",
+      "trigger_time": "00:18",
+      "window_end": "00:20",
+      "response": "Now pedestrians and scooter riders are moving along a shaded, tree-lined street.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The camera pans down from the canopy to reveal walkers and riders on the street.",
+      "evidence": [
+        {
+          "time": "00:18",
+          "available_time": "00:18",
+          "fact": "People walk and ride electric scooters along a sunny pedestrian street lined with old shopfronts."
+        }
+      ],
+      "details": {
+        "target": "pedestrians and scooter riders",
+        "category": "people",
+        "position": "along the street receding into the center of the frame",
+        "uncertainty": "individual identities not resolvable at this distance"
+      }
+    },
+    {
+      "window_start": "00:21",
+      "trigger_time": "00:21",
+      "window_end": "00:22",
+      "response": "Two sealed plastic cups are lifted into the foreground — an orange drink on the left and a purple-pink smoothie on the right — and they clink together as a voice says cheers.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The cups and their colors are seen, and the toast is confirmed by the spoken word at the same moment.",
+      "evidence": [
+        {
+          "time": "00:21",
+          "available_time": "00:21",
+          "fact": "Two hands hold clear plastic cups with straws, orange liquid on the left and purple-pink on the right, tapping them together."
+        },
+        {
+          "time": "00:21",
+          "available_time": "00:21",
+          "fact": "A female voice says 'cheers' over the street ambience."
+        }
+      ],
+      "details": {
+        "target": "two takeaway drink cups",
+        "category": "handheld items",
+        "position": "lower center foreground, orange cup left and purple-pink cup right",
+        "uncertainty": "drink flavors not identifiable beyond color"
+      }
+    },
+    {
+      "window_start": "00:33",
+      "trigger_time": "00:34",
+      "window_end": "00:35",
+      "response": "A brown dog is lying on the ground at the left of the lane, beside a stone trough and potted plants.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The resting animal is confirmed in the downward view of the quiet lane.",
+      "evidence": [
+        {
+          "time": "00:33",
+          "available_time": "00:33",
+          "fact": "A brown dog lies on the paved ground at left next to a low stone trough and plant pots."
+        }
+      ],
+      "details": {
+        "target": "brown dog",
+        "category": "animal",
+        "position": "left side of the frame, on the ground by the trough",
+        "uncertainty": "breed not identifiable; whether it is stray or owned is unknown"
+      }
+    },
+    {
+      "window_start": "00:49",
+      "trigger_time": "00:50",
+      "window_end": "00:51",
+      "response": "A person rides a scooter down the middle of the wider street, past the parked covered three-wheelers.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The rider appears as the route opens onto the broader road.",
+      "evidence": [
+        {
+          "time": "00:49",
+          "available_time": "00:49",
+          "fact": "A scooter rider travels along the center of the road beside parked blue and pink covered e-carts."
+        }
+      ],
+      "details": {
+        "target": "scooter rider",
+        "category": "person",
+        "position": "center of the road, mid-distance",
+        "uncertainty": "rider's appearance not resolvable at this distance"
+      }
+    },
+    {
+      "window_start": "01:03",
+      "trigger_time": "01:04",
+      "window_end": "01:05",
+      "response": "A man in a dark jacket is standing at the curb on the right, next to the row of parked e-scooters.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The standing person is confirmed at the shopfront as the camera passes.",
+      "evidence": [
+        {
+          "time": "01:03",
+          "available_time": "01:03",
+          "fact": "A man wearing a dark navy jacket stands on the sidewalk at the right, beside parked electric scooters in front of a shop with red banners."
+        }
+      ],
+      "details": {
+        "target": "man in dark jacket",
+        "category": "person",
+        "position": "right side of the frame at the curb",
+        "uncertainty": "his role (shop worker or passer-by) is not visible"
+      }
+    },
+    {
+      "window_start": "01:24",
+      "trigger_time": "01:24",
+      "window_end": "01:26",
+      "response": "Looking straight down, the two walkers' shadows fall on the cobblestones by a round manhole cover, and the right-hand shadow lifts an arm into a V sign.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The shadow figures and the gesture are only readable in the downward shot.",
+      "evidence": [
+        {
+          "time": "01:20",
+          "available_time": "01:20",
+          "fact": "Two human shadows are cast on grey cobblestones next to a circular metal manhole cover."
+        },
+        {
+          "time": "01:24",
+          "available_time": "01:24",
+          "fact": "The right-hand shadow raises an arm and forms a two-finger peace sign."
+        }
+      ],
+      "details": {
+        "target": "two shadows, one making a V sign",
+        "category": "people (as shadows)",
+        "position": "lower half of the frame, left shadow and right shadow side by side",
+        "uncertainty": "the shadows are inferred to belong to the two walkers; not directly confirmed"
+      }
+    },
+    {
+      "window_start": "01:41",
+      "trigger_time": "01:42",
+      "window_end": "01:43",
+      "response": "A tiny brown-grey tabby kitten is cradled against a black jacket in the center of the frame while a hand reaches in from the left to stroke its head, and the voices coo over it.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The kitten and the petting hand are seen, and the affectionate exclamations confirm the encounter.",
+      "evidence": [
+        {
+          "time": "01:40",
+          "available_time": "01:40",
+          "fact": "A small striped tabby kitten with pale eyes is held against black fabric, filling the center of the frame."
+        },
+        {
+          "time": "01:41",
+          "available_time": "01:41",
+          "fact": "A hand enters from the left and touches the kitten's head and chin."
+        },
+        {
+          "time": "01:41",
+          "available_time": "01:41",
+          "fact": "Soft female voices coo at the cat in an affectionate tone."
+        }
+      ],
+      "details": {
+        "target": "tabby kitten and petting hand",
+        "category": "animal and handheld contact",
+        "position": "kitten center frame against black jacket; hand entering from left",
+        "uncertainty": "kitten's exact age unknown; the holder's face is out of frame"
+      }
+    },
+    {
+      "window_start": "01:44",
+      "trigger_time": "01:45",
+      "window_end": "01:51",
+      "response": "In the blurred left background, a person in an orange shirt is standing by a doorway while the kitten is still being held.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The background figure becomes distinguishable as the camera angle shifts.",
+      "evidence": [
+        {
+          "time": "01:44",
+          "available_time": "01:44",
+          "fact": "An out-of-focus person in an orange top and light trousers stands near a doorway at the left edge, holding a bag."
+        }
+      ],
+      "details": {
+        "target": "person in orange shirt",
+        "category": "person",
+        "position": "left background, out of focus",
+        "uncertainty": "features not resolvable due to shallow depth of field"
+      }
+    },
+    {
+      "window_start": "01:57",
+      "trigger_time": "01:58",
+      "window_end": "02:03",
+      "response": "Roughly eight to ten people are ringing the circular well, lowering red buckets on ropes and holding white plastic jugs.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The group and their water-drawing equipment are confirmed in the overhead view of the well.",
+      "evidence": [
+        {
+          "time": "01:57",
+          "available_time": "01:57",
+          "fact": "About eight to ten visitors and locals stand around a large round brick-lined well, using red buckets on ropes and white containers to draw water."
+        }
+      ],
+      "details": {
+        "target": "crowd at the well with red buckets and white jugs",
+        "category": "people and handheld items",
+        "position": "clustered around the circular well in the center and lower frame",
+        "uncertainty": "headcount is approximate; purposes of individual visitors not visible"
+      }
+    },
+    {
+      "window_start": "02:10",
+      "trigger_time": "02:10",
+      "window_end": "02:12",
+      "response": "Sneakered feet step along the white-painted hopscotch squares on the pavement.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The walker's feet enter the downward frame on the painted court.",
+      "evidence": [
+        {
+          "time": "02:10",
+          "available_time": "02:10",
+          "fact": "Feet in light-colored sneakers step across the numbered hopscotch grid painted on the stone slabs."
+        }
+      ],
+      "details": {
+        "target": "sneakered feet",
+        "category": "person (partial) and worn footwear",
+        "position": "upper left of the downward frame, moving across the painted squares",
+        "uncertainty": "only the feet are visible; the person's identity is unknown"
+      }
+    },
+    {
+      "window_start": "02:41",
+      "trigger_time": "02:41",
+      "window_end": "02:44",
+      "response": "A hand in a light-blue sleeve enters from the lower right and points at spots on the site map while the two voices plan the route.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The pointing hand is seen on the map board, and the concurrent conversation confirms it is a planning gesture.",
+      "evidence": [
+        {
+          "time": "02:41",
+          "available_time": "02:41",
+          "fact": "An index finger in a light-blue sleeve enters from the lower right and touches labels on the glossy green-line map."
+        },
+        {
+          "time": "02:41",
+          "available_time": "02:41",
+          "fact": "Two female voices talk over the map, discussing where to go."
+        }
+      ],
+      "details": {
+        "target": "pointing hand in light-blue sleeve",
+        "category": "person (partial)",
+        "position": "entering from the lower right of the map board",
+        "uncertainty": "which of the two women owns the hand is not confirmable"
+      }
+    },
+    {
+      "window_start": "03:19",
+      "trigger_time": "03:20",
+      "window_end": "03:24",
+      "response": "A fluffy white plush toy with a blue eye pops into the lower-left foreground as the orange train rolls past the platform.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The handheld plush appears in the foreground only in the final platform shot.",
+      "evidence": [
+        {
+          "time": "03:19",
+          "available_time": "03:19",
+          "fact": "A white fuzzy plush figure with a round blue eye and pink ear rises into the lower-left corner of the frame in front of the passing train."
+        }
+      ],
+      "details": {
+        "target": "white plush toy",
+        "category": "handheld item",
+        "position": "lower-left foreground, partially out of frame",
+        "uncertainty": "species depiction is uncertain — alpaca- or llama-like; holder stays off camera"
+      }
+    }
+  ],
+  "ability": "object_perception",
+  "mode": "rtd",
+  "schema": "omni-interaction-v2",
+  "task": "object_perception_rtd",
+  "video": "video_1.mp4",
+  "generation_context": {
+    "duration_seconds": 208.05,
+    "preferred_modality": "audio",
+    "question_position": "start",
+    "agent_delay_seconds": null,
+    "initial_response_delay_seconds": 0,
+    "sample_type": "positive",
+    "available_tools": [],
+    "required_missing_tool": null
+  }
+}

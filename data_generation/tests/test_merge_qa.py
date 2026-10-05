@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from data_generation.src.merge_qa import build_bundle
+from data_generation.src.application.merge_qa import build_bundle
 from data_generation.tests.fixtures import saved_agent
 
 
@@ -55,3 +55,29 @@ class MergeQaTests(unittest.TestCase):
             (folder / "sample.json").write_text(json.dumps(sample))
             with self.assertRaisesRegex(ValueError, "no video found"):
                 build_bundle(root, root / "videos")
+
+    def test_nested_layout_ignores_summaries_state_and_usage(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            folder = root / "test_video"
+            qa = folder / "qa"
+            qa.mkdir(parents=True)
+            (root / ".state").mkdir()
+            (root / ".state" / "manifest.json").write_text('{}')
+            (folder / "caption.json").write_text('[]')
+            (folder / "all_qa.json").write_text('[{}]')
+            (qa / "sample.json").write_text(json.dumps(saved_agent()))
+            (qa / "sample.usage.json").write_text('{}')
+            bundle = build_bundle(root, root / "videos")
+            self.assertEqual(len(bundle), 1)
+            self.assertEqual(bundle[0]["video_folder"], "test_video")
+
+    def test_legacy_layout_ignores_summaries_and_usage(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            folder = root / "test_video"
+            folder.mkdir()
+            (folder / "sample.json").write_text(json.dumps(saved_agent()))
+            (folder / "sample.usage.json").write_text('{}')
+            (folder / "all_qa.json").write_text('[{}]')
+            self.assertEqual(len(build_bundle(root, root / "videos")), 1)
