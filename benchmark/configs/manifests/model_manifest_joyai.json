@@ -1,0 +1,97 @@
+{
+  "repo": "jdopensource/JoyAI-VL-Interaction",
+  "revision": "86124c620faddd7be7b7f2722f29cd5192f21c38",
+  "model_dir": "/remote-home/yushengliao/speech/jimodels/openmodels/JoyAI-VL-Interaction",
+  "files": [
+    {
+      "name": ".gitattributes",
+      "size": 1570,
+      "hash": "52373fe24473b1aa44333d318f578ae6bf04b49b"
+    },
+    {
+      "name": "README.md",
+      "size": 3349,
+      "hash": "e1e715bffecb5b3d5e49a2f6af6b27daa5779338"
+    },
+    {
+      "name": "added_tokens.json",
+      "size": 756,
+      "hash": "f8666f49eb81db8848517a04add375ea5210d5e0"
+    },
+    {
+      "name": "chat_template.jinja",
+      "size": 5292,
+      "hash": "124386803f142761528f710e77ae483f5f8c4fc4"
+    },
+    {
+      "name": "config.json",
+      "size": 1692,
+      "hash": "2e886ce7a7e827f37a1ecb982e4daee3c8d68a85"
+    },
+    {
+      "name": "generation_config.json",
+      "size": 152,
+      "hash": "85620bababa0c9b8f0067840d0dd693e922f30af"
+    },
+    {
+      "name": "merges.txt",
+      "size": 1671853,
+      "hash": "31349551d90c7606f325fe0f11bbb8bd5fa0d7c7"
+    },
+    {
+      "name": "model-00001-of-00004.safetensors",
+      "size": 4993893168,
+      "hash": "a7e8e8e408da23dfe0459fe4db1cc767abf734b7d4534accf95da1794eda1650"
+    },
+    {
+      "name": "model-00002-of-00004.safetensors",
+      "size": 4970940592,
+      "hash": "f55178b88802f5d201f52dc113fb1abb211555c9d4b886787926bec49eb786bf"
+    },
+    {
+      "name": "model-00003-of-00004.safetensors",
+      "size": 4912761016,
+      "hash": "f3db2fbac47fc21e98c61d4d2c31f024a85280e91829818cb5f282569628223a"
+    },
+    {
+      "name": "model-00004-of-00004.safetensors",
+      "size": 2656744728,
+      "hash": "39e6557c5a404404cb61e0e0cfcde8341b8871e4491d3b596eb4b5530681c50a"
+    },
+    {
+      "name": "model.safetensors.index.json",
+      "size": 67795,
+      "hash": "1459f3e4018dd4c961038178d79d0f31e3477f31"
+    },
+    {
+      "name": "preprocessor_config.json",
+      "size": 782,
+      "hash": "2fa6553554f69b4e3a6b742a75264ff9dff90ad0"
+    },
+    {
+      "name": "special_tokens_map.json",
+      "size": 613,
+      "hash": "ac23c0aaa2434523c494330aeb79c58395378103"
+    },
+    {
+      "name": "tokenizer.json",
+      "size": 11423029,
+      "hash": "eb792ef242cf1089e71642cf59f350c152157b6a47d153c65a20080f6bcc3b79"
+    },
+    {
+      "name": "tokenizer_config.json",
+      "size": 5847,
+      "hash": "bda16ff07ed4c33c6bbac672bb093056cc630ab4"
+    },
+    {
+      "name": "video_preprocessor_config.json",
+      "size": 817,
+      "hash": "e32b1d90356f74457edbfca27aa1e121dab7cdc7"
+    },
+    {
+      "name": "vocab.json",
+      "size": 2776833,
+      "hash": "4783fe10ac3adce15ac8f358ef5462739852c569"
+    }
+  ]
+}

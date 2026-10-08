@@ -1,0 +1,277 @@
+{
+  "repo": "openbmb/MiniCPM-o-4_5",
+  "revision": "503e754207c94da6bb26850b4469f367c9ea3582",
+  "model_dir": "/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5",
+  "files": [
+    {
+      "name": ".gitattributes",
+      "size": 3091,
+      "hash": "03e95844970b6ee1ed98a30d080dc14b40d89cbb"
+    },
+    {
+      "name": ".gitignore",
+      "size": 9,
+      "hash": "496ee2ca6a2f08396a4076fe43dedf3dc0da8b6d"
+    },
+    {
+      "name": "README.md",
+      "size": 85837,
+      "hash": "22e2a0c5d8153f87a554cff11d6da1d7f623e24e"
+    },
+    {
+      "name": "added_tokens.json",
+      "size": 2706,
+      "hash": "e55036c1289fa049c28e238e7c7b051ade0eb4da"
+    },
+    {
+      "name": "assets/HT_ref_audio.wav",
+      "size": 192590,
+      "hash": "cb8f06ba5080cdf548969138881fb8ad8b04e2516108f4e08ba0363b68b613ea"
+    },
+    {
+      "name": "assets/Skiing.mp4",
+      "size": 8534409,
+      "hash": "479ace116d6ac92487ad90f415b3ef817cd019bba4521043ef0d5faaa1a8415d"
+    },
+    {
+      "name": "assets/Trump_WEF_2018_10s.mp3",
+      "size": 161053,
+      "hash": "4fb796c2bb95538eab22d9b68a31add560305b6d5ccbf150c3f96e7671b6db64"
+    },
+    {
+      "name": "assets/audio_cases/assistant_ref.mp4",
+      "size": 65478,
+      "hash": "7e4a56e4418740ee0326f11ca2bd61a54d84e7d23e86a5e030369ee89f8e8390"
+    },
+    {
+      "name": "assets/audio_cases/assistant_response.mp4",
+      "size": 269504,
+      "hash": "d46268e3beb78b4287a896a09b2df0f895629ecbdcdc4cf3c519fe040084860f"
+    },
+    {
+      "name": "assets/audio_cases/elon_musk__000_assistant_audio.wav",
+      "size": 1762604,
+      "hash": "ff6dced2e686b743f39eee36aef1410913c8d31459bb564dbbf8f81ef8a2da88"
+    },
+    {
+      "name": "assets/audio_cases/elon_musk__system_ref_audio.wav",
+      "size": 539032,
+      "hash": "2c4109b2d685e1923ed66433eb08c92047a1f67510629a27edf49af4e5c606dd"
+    },
+    {
+      "name": "assets/audio_cases/elon_musk_ref.mp4",
+      "size": 165179,
+      "hash": "206c48ec4b08898fbfbfb1ea1fec058750c39c97cd2e5088b15b61fb194d6f7e"
+    },
+    {
+      "name": "assets/audio_cases/elon_musk_response.mp4",
+      "size": 388534,
+      "hash": "d83c3a977fd444351710c9ba2c347c90efd49ed990276c5309867374df373a4f"
+    },
+    {
+      "name": "assets/audio_cases/hermione__000_assistant_audio.wav",
+      "size": 1534124,
+      "hash": "cfd18a2ee9e27fdcd65e2d9bf0fe0b3c9ebc28cda6c43279c12e077889c2b88d"
+    },
+    {
+      "name": "assets/audio_cases/hermione__system_ref_audio.wav",
+      "size": 197322,
+      "hash": "46bd82796ce5ebc15b29bc21c1de38284cfa972b2f27cca1f17086516a757dee"
+    },
+    {
+      "name": "assets/audio_cases/minicpm_assistant__000_assistant_audio.wav",
+      "size": 1246124,
+      "hash": "fe3b793a6436682d1e684e0f4c158718208ed38926880e01ee84f5aa61c78331"
+    },
+    {
+      "name": "assets/audio_cases/minicpm_assistant__system_ref_audio.wav",
+      "size": 192556,
+      "hash": "ad576b50fd2f53ad4bb317b97ed33bc7027071e7e0811a2a2110d995614f1f42"
+    },
+    {
+      "name": "assets/audio_cases/paimon__000_assistant_audio.wav",
+      "size": 697004,
+      "hash": "9ddd9d8358950a8dab385b8031cb8371a832460f3db4d91e399373705158f346"
+    },
+    {
+      "name": "assets/audio_cases/paimon__system_ref_audio.wav",
+      "size": 479304,
+      "hash": "b9625e7115ff1f47cf842fecbb31db82057ff1863c080870539c31107aa93b9d"
+    },
+    {
+      "name": "assets/audio_cases/readme.txt",
+      "size": 57,
+      "hash": "e5364e8ddd7b78003689302b84b2d155bdd3f8be"
+    },
+    {
+      "name": "assets/bajie.wav",
+      "size": 636512,
+      "hash": "16aa8ca3da7dad53680bac68cfde569e11e2f9ef5387b3ae60d68626e94db9d7"
+    },
+    {
+      "name": "assets/fossil.png",
+      "size": 465898,
+      "hash": "b8b3f1668da6e2b503ecea5a6fd40c1a2a666b4bd07b903ba0728fd2fc9f74fb"
+    },
+    {
+      "name": "assets/haimianbaobao.wav",
+      "size": 343120,
+      "hash": "27405cf5977f04d3f248693f9b978654fad4f02f931d9746006bffb0ed7b66e1"
+    },
+    {
+      "name": "assets/highway.png",
+      "size": 840874,
+      "hash": "87c32da6ee77730423ec5fc29d7110878ab18a35791eb11a803088976c3b1f76"
+    },
+    {
+      "name": "assets/nezha.wav",
+      "size": 457802,
+      "hash": "fe5d8932013ff30a9d8114a6d62e5342999d8c2ddf8509ecfeb1ead71cacf432"
+    },
+    {
+      "name": "assets/omni_duplex1.mp4",
+      "size": 7295040,
+      "hash": "31622e1efd9a7b197a340266037b45aeec13b3b27f010f1ea1d22d9c6e69405f"
+    },
+    {
+      "name": "assets/omni_duplex2.mp4",
+      "size": 29285216,
+      "hash": "c04eaef27a821e18db3686fdcc9d4b1dafd441e08f6a0e12d4075b81cb04517e"
+    },
+    {
+      "name": "assets/sunwukong.wav",
+      "size": 644650,
+      "hash": "3bdb6c175bd3b2bb02fe7a8cf0ced847d41ab552b2e318bc3c26ee477255eff7"
+    },
+    {
+      "name": "assets/system_ref_audio.wav",
+      "size": 539032,
+      "hash": "2c4109b2d685e1923ed66433eb08c92047a1f67510629a27edf49af4e5c606dd"
+    },
+    {
+      "name": "assets/system_ref_audio_2.wav",
+      "size": 341192,
+      "hash": "4a65d17099239711601cb17e28b7aa7b6149acd153b92fd0366c23902bd4f687"
+    },
+    {
+      "name": "assets/token2wav/campplus.onnx",
+      "size": 28303423,
+      "hash": "a6ac6a63997761ae2997373e2ee1c47040854b4b759ea41ec48e4e42df0f4d73"
+    },
+    {
+      "name": "assets/token2wav/flow.pt",
+      "size": 623466603,
+      "hash": "15ccff24256ff61537c7f8b51e025116b83405f3fb017b54b008fc97da115446"
+    },
+    {
+      "name": "assets/token2wav/flow.yaml",
+      "size": 1099,
+      "hash": "8638dca97881751e50c132498acbfa41ecf74d6f"
+    },
+    {
+      "name": "assets/token2wav/hift.pt",
+      "size": 83390254,
+      "hash": "3386cc880324d4e98e05987b99107f49e40ed925b8ecc87c1f4939432d429879"
+    },
+    {
+      "name": "assets/token2wav/speech_tokenizer_v2_25hz.onnx",
+      "size": 496082973,
+      "hash": "d43342aa12163a80bf07bffb94c9de2e120a8df2f9917cd2f642e7f4219c6f71"
+    },
+    {
+      "name": "config.json",
+      "size": 6439,
+      "hash": "e432e235513e707b58c4e2055b9d6dc94fc1b22d"
+    },
+    {
+      "name": "configuration_minicpmo.py",
+      "size": 10135,
+      "hash": "5bd97d9b4d6aadb1adb9757a107484e8ee6b9ea2"
+    },
+    {
+      "name": "generation_config.json",
+      "size": 178,
+      "hash": "6e2cfc9f6f67a9cb1ede9375dc2abf42df55f84b"
+    },
+    {
+      "name": "merges.txt",
+      "size": 1402109,
+      "hash": "90d3d82d027eadcc6a5e77c38eb82d43fc51b53b"
+    },
+    {
+      "name": "model-00001-of-00004.safetensors",
+      "size": 5273477136,
+      "hash": "30c40b9a10386c1bc404568d8829e5aada2e3501d9de6fb46ff80451aff7e077"
+    },
+    {
+      "name": "model-00002-of-00004.safetensors",
+      "size": 5301855080,
+      "hash": "fe0faef420aca8f771bec1f9fcfaae01206c56b8e64e4429a1ff500c962fbf96"
+    },
+    {
+      "name": "model-00003-of-00004.safetensors",
+      "size": 5301855048,
+      "hash": "5d0b20153f9bfa88ebcd1cb6bbd5b7cac4c217b3cafb137a291a1b380d8b7821"
+    },
+    {
+      "name": "model-00004-of-00004.safetensors",
+      "size": 2866549964,
+      "hash": "f61addf4747c94fedcaee059e5d9918ed15543beec494404139a99f2f86c9b31"
+    },
+    {
+      "name": "model.safetensors.index.json",
+      "size": 117202,
+      "hash": "0a6db9f6fae3c752056ffa2a42991d6e6e5b9cb1"
+    },
+    {
+      "name": "modeling_minicpmo.py",
+      "size": 214356,
+      "hash": "e9f61c093d6711793dfb629634cdca9fb900b2d0"
+    },
+    {
+      "name": "modeling_navit_siglip.py",
+      "size": 42559,
+      "hash": "58b991de066008f5dbf873e80e23e15fd5ddde2d"
+    },
+    {
+      "name": "preprocessor_config.json",
+      "size": 842,
+      "hash": "c56a32b8f1ad1afb2fb17dce37e4e64e99ef7e6e"
+    },
+    {
+      "name": "processing_minicpmo.py",
+      "size": 67284,
+      "hash": "e05383bf2541109661ffd7ce09f3d69ec51f4746"
+    },
+    {
+      "name": "special_tokens_map.json",
+      "size": 12002,
+      "hash": "5365eeae71bc6006003c7c981576ced10d8ec59d"
+    },
+    {
+      "name": "tokenization_minicpmo_fast.py",
+      "size": 3249,
+      "hash": "5aa9932fdb825beaa25c1dddd59da426d4acfd63"
+    },
+    {
+      "name": "tokenizer.json",
+      "size": 11437712,
+      "hash": "6d55eb34389b8c87403763cc1d80447d91c85c7cd39cd5e3c0dc2d49edad989d"
+    },
+    {
+      "name": "tokenizer_config.json",
+      "size": 101726,
+      "hash": "d747bccb54853d1298ba1a6a52a3625f26ccdb65"
+    },
+    {
+      "name": "utils.py",
+      "size": 95702,
+      "hash": "d68e1a82d022f885d7d2c88da9939aa14eea4e61"
+    },
+    {
+      "name": "vocab.json",
+      "size": 2776833,
+      "hash": "4783fe10ac3adce15ac8f358ef5462739852c569"
+    }
+  ]
+}

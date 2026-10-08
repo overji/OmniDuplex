@@ -1,0 +1,87 @@
+{
+  "repo": "wangyueqian/MMDuet2",
+  "revision": "3224235ebb6256e2af7c196f2c265d6cf20c311a",
+  "model_dir": "/remote-home/yushengliao/speech/jimodels/openmodels/MMDuet2",
+  "files": [
+    {
+      "name": ".gitattributes",
+      "size": 101,
+      "hash": "0fd17d2f7c330afce8bc2b472393143fa66f68a1"
+    },
+    {
+      "name": "LICENSE",
+      "size": 7387,
+      "hash": "87f48cf86671d627b4dd4b8e5189b8e32ae11dd8"
+    },
+    {
+      "name": "README.md",
+      "size": 1658,
+      "hash": "03a7370234a1ec2d6988952f989f523d86157040"
+    },
+    {
+      "name": "added_tokens.json",
+      "size": 605,
+      "hash": "482ced4679301bf287ebb310bdd1790eb4514232"
+    },
+    {
+      "name": "chat_template.json",
+      "size": 1049,
+      "hash": "13303be6f396b038cf397b34a8096819d403836b"
+    },
+    {
+      "name": "config.json",
+      "size": 1190,
+      "hash": "1b6668b40ab9b004c7b0383b0d83726714e2b105"
+    },
+    {
+      "name": "generation_config.json",
+      "size": 214,
+      "hash": "e12b3adf2f8440f022271e068a24bad635ab7e7e"
+    },
+    {
+      "name": "merges.txt",
+      "size": 1671853,
+      "hash": "31349551d90c7606f325fe0f11bbb8bd5fa0d7c7"
+    },
+    {
+      "name": "model-00001-of-00002.safetensors",
+      "size": 4839342816,
+      "hash": "234fda3aa81fb70803a967c215ad06c8f6fb41907befe201652a140c329f8d81"
+    },
+    {
+      "name": "model-00002-of-00002.safetensors",
+      "size": 3292325160,
+      "hash": "2644e9ee476a4bb0973a0cc892a20a33603fe6f5d3de3baeafceee581e5d16d6"
+    },
+    {
+      "name": "model.safetensors.index.json",
+      "size": 65506,
+      "hash": "177075e5ebc2e7708259c022f480cb7a7e84a2ae"
+    },
+    {
+      "name": "preprocessor_config.json",
+      "size": 575,
+      "hash": "ee08cdd031dd2f138ce236b0c995b34b4b34a6a4"
+    },
+    {
+      "name": "special_tokens_map.json",
+      "size": 613,
+      "hash": "ac23c0aaa2434523c494330aeb79c58395378103"
+    },
+    {
+      "name": "tokenizer.json",
+      "size": 11421896,
+      "hash": "9c5ae00e602b8860cbd784ba82a8aa14e8feecec692e7076590d014d7b7fdafa"
+    },
+    {
+      "name": "tokenizer_config.json",
+      "size": 5776,
+      "hash": "a2631ad3ed255e1c20d0639115a97752819452f4"
+    },
+    {
+      "name": "vocab.json",
+      "size": 2776833,
+      "hash": "4783fe10ac3adce15ac8f358ef5462739852c569"
+    }
+  ]
+}

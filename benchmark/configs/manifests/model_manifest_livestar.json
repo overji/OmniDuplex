@@ -1,0 +1,42 @@
+{
+  "repo": "yzy666/LiveStar_8B",
+  "revision": "fe12f966639ace9562a6db8843dfa5733ccc0d24",
+  "model_dir": "/remote-home/yushengliao/speech/jimodels/openmodels/LiveStar-8B",
+  "files": [
+    {
+      "name": ".gitattributes",
+      "size": 1519,
+      "hash": "a6344aac8c09253b3b630fb776ae94478aa0275b"
+    },
+    {
+      "name": "README.md",
+      "size": 31,
+      "hash": "7b95401dc46245ac339fc25059d4a56d90b4cde5"
+    },
+    {
+      "name": "config.json",
+      "size": 5626,
+      "hash": "c073c1072953868029856e93baadb86f079bf980"
+    },
+    {
+      "name": "model-00001-of-00004.safetensors",
+      "size": 4940001680,
+      "hash": "0aa85dff13195c1159afa33c946903162ed5e3d530e090691353266465d80a54"
+    },
+    {
+      "name": "model-00002-of-00004.safetensors",
+      "size": 4915914584,
+      "hash": "360fe60497b04a1b44587d0700f9943a489b9eefdb5f65aedfbfde91781edf1d"
+    },
+    {
+      "name": "model-00003-of-00004.safetensors",
+      "size": 4915914592,
+      "hash": "c5edc11d25557d1cf3979222d90bef22db592b2c80fda53b32ead323d03ed874"
+    },
+    {
+      "name": "model-00004-of-00004.safetensors",
+      "size": 1379084264,
+      "hash": "c2b727d1c25d196af7a0d8ba9b4e83770716fa879a363231932ff61471597904"
+    }
+  ]
+}

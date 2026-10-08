@@ -1,0 +1,97 @@
+{
+  "repo": "EurekaTian/ROMA",
+  "revision": "cc245ea5dab25a39fa6a12a7e6dc7405eebd9254",
+  "model_dir": "/remote-home/yushengliao/speech/jimodels/openmodels/ROMA",
+  "files": [
+    {
+      "name": ".gitattributes",
+      "size": 1623,
+      "hash": "4e15071848563bd91dda5fbe63f2875092faaa03"
+    },
+    {
+      "name": "README.md",
+      "size": 1647,
+      "hash": "a17280d09ae6449cccf85d8a8c340e24d66233d7"
+    },
+    {
+      "name": "added_tokens.json",
+      "size": 579,
+      "hash": "4562256351969d3b68f81fd5623ae42a9c7fbb25"
+    },
+    {
+      "name": "architecture.png",
+      "size": 497015,
+      "hash": "8d90536222ee53935ef83dd06081244b04ff133c3fc956dfc6dcf28d2af798fd"
+    },
+    {
+      "name": "chat_template.json",
+      "size": 1313,
+      "hash": "e696060ab7ab6e20f60e4e09b18e5da4c1830000"
+    },
+    {
+      "name": "config.json",
+      "size": 15249,
+      "hash": "873c0c305d471a73c67239d119095f6c1d9799f6"
+    },
+    {
+      "name": "generation_config.json",
+      "size": 74,
+      "hash": "1c1ac9d737684b833c80a438e30fc3ba53e89bd4"
+    },
+    {
+      "name": "merges.txt",
+      "size": 1671853,
+      "hash": "31349551d90c7606f325fe0f11bbb8bd5fa0d7c7"
+    },
+    {
+      "name": "model-00001-of-00003.safetensors",
+      "size": 9976552400,
+      "hash": "cb2fde7effdd2d54f8c99a60541bc441028c9459aba0f5217bb7aabf43ff4b66"
+    },
+    {
+      "name": "model-00002-of-00003.safetensors",
+      "size": 9967420804,
+      "hash": "e6c7e32f57c60e0476a6c4ca59b31f3b14dce6e202011d5080a54d15071d07d9"
+    },
+    {
+      "name": "model-00003-of-00003.safetensors",
+      "size": 2425322192,
+      "hash": "19ac6c0769f8f6a9ffe25540f79d16b8fcb26ac40902c6e5a0ecade50554d635"
+    },
+    {
+      "name": "model.safetensors.index.json",
+      "size": 233664,
+      "hash": "45b34de85d4ab5a9684e6ff347b55c57f2bceeb5"
+    },
+    {
+      "name": "preprocessor_config.json",
+      "size": 667,
+      "hash": "63c79f1c43bce173ab13d94096dea54b3688436f"
+    },
+    {
+      "name": "special_tokens_map.json",
+      "size": 833,
+      "hash": "9c74ed4d342d5579edf7d84a78f79c0c18cfd065"
+    },
+    {
+      "name": "spk_dict.pt",
+      "size": 259544,
+      "hash": "6a05609b28f5d42b7b748f0f07592545c8f1f6885b9ae8fff64baf56e86b2a18"
+    },
+    {
+      "name": "tokenizer.json",
+      "size": 11421870,
+      "hash": "8441917e39ae0244e06d704b95b3124795cec478e297f9afac39ba670d7e9d99"
+    },
+    {
+      "name": "tokenizer_config.json",
+      "size": 6470,
+      "hash": "cdbb1ffcbe8c71f15846726f7adeca093dce23a1"
+    },
+    {
+      "name": "vocab.json",
+      "size": 2776833,
+      "hash": "4783fe10ac3adce15ac8f358ef5462739852c569"
+    }
+  ]
+}

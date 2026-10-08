@@ -1,0 +1,6 @@
+{
+  "source": "/root/jimodels/OmniDuplex/data_generation/data/qwen3.8_omni_flash_44/all_qa.json",
+  "benchmark": "all_qa.json",
+  "sha256": "5dade2e41420dad1426d4e21358e60dc69bbef7b9ba3ad6591d7483691d808b4",
+  "samples": 44
+}
