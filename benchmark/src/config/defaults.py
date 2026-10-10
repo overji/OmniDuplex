@@ -30,6 +30,8 @@ DEFAULTS = {
     },
     'mmduet2': {
         **COMMON,
+        'logits_mode': 'full',
+        'mlp_chunk_tokens': 0,
         'cache_dir': CACHE,
         'output_dir': RESULTS / "mmduet2",
         'device': "cuda:0",

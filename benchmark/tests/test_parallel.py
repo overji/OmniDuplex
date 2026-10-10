@@ -61,7 +61,7 @@ class ParallelTests(unittest.TestCase):
                                     model_path=root / 'model', output_dir=root / 'result',
                                     max_samples=0)
 
-    def run_workers(self):
+    def run_workers(self, **controls):
         original = parallel.worker_command
         def command(*args, **kwargs):
             native = original(*args, **kwargs)
@@ -69,7 +69,28 @@ class ParallelTests(unittest.TestCase):
         with patch.object(parallel, 'worker_command', side_effect=command), \
                 contextlib.redirect_stdout(io.StringIO()):
             return parallel.run_parallel(self.args, 'fake', ['4', '5', '6', '7'],
-                                         poll_seconds=0.01)
+                                         poll_seconds=0.01, **controls)
+
+    def test_selected_original_indices_keep_identity_and_balance_work(self):
+        self.assertEqual(parallel.assignments(self.samples, self.args, 4, [1, 2, 4, 5, 6]),
+                         [[1, 6], [2], [4], [5]])
+        for invalid in ([1, 1], [-1], [7], [True], {"indices": [1]}):
+            with self.assertRaisesRegex(ValueError, "sample-indices"):
+                parallel.assignments(self.samples, self.args, 4, invalid)
+        self.assertEqual(parallel.assignments(self.samples, self.args, 4, []), [[], [], [], []])
+
+    def test_selected_indices_run_without_renumbering_and_resume(self):
+        selection = Path(self.temp.name) / 'indices.json'
+        selection.write_text(json.dumps([1, 2, 4, 5, 6]))
+        self.assertEqual(self.run_workers(sample_indices=selection), 0)
+        predictions = read_jsonl(self.args.output_dir / 'predictions.jsonl')
+        self.assertEqual([row['sample_index'] for row in predictions], [1, 2, 4, 5, 6])
+        state = json.loads((self.args.output_dir / 'parallel_status.json').read_text())
+        self.assertEqual(state['expected_samples'], 5)
+        self.assertEqual(state['status'], 'complete')
+        before = (self.args.output_dir / 'predictions.jsonl').read_bytes()
+        self.assertEqual(self.run_workers(sample_indices=selection), 0)
+        self.assertEqual((self.args.output_dir / 'predictions.jsonl').read_bytes(), before)
 
     def test_fixed_partition_limits_and_shards(self):
         shards = parallel.assignments(self.samples, self.args, 4)

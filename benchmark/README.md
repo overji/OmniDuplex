@@ -9,7 +9,7 @@ been replaced by a single entrypoint:
 ```bash
 python -m benchmark --help
 python -m benchmark run minicpmo --help
-python -m benchmark compare benchmark/results/minicpmo45_realtime benchmark/results/mmduet2
+python -m benchmark compare benchmark/results/data_parallel_4567_20261007/minicpmo benchmark/results/remaining_4567_20261008T022841Z/joyai
 python -m benchmark download --repo openbmb/MiniCPM-o-4_5 --revision REVISION \
   --model-dir /remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5
 ```
@@ -215,8 +215,8 @@ therefore receive a timing hit. Content needs separate human evaluation.
 - Timing precision: matched responses / all predicted responses.
 - Timing F1: harmonic mean of the two.
 
-`results/minicpmo45_realtime/predictions.jsonl` contains generated response text
-and onset times; `sample_NNN.chunks.jsonl` preserves every native decision and
+`results/data_parallel_4567_20261007/minicpmo/predictions.jsonl` contains generated response text
+and onset times; worker `sample_NNN.chunks.jsonl` files preserve every native decision and
 chunk timing. `metrics.json` is updated after each sample and includes matches
 and mode/ability breakdowns. A partial smoke run's metrics cover evaluated
 samples' full reference windows, so they are not a complete benchmark result.
@@ -229,20 +229,29 @@ Official model and realtime examples:
 https://huggingface.co/openbmb/MiniCPM-o-4_5
 https://github.com/OpenBMB/MiniCPM-o
 
-The current full evaluation uses `initial_sample` (sample 0) plus three foreground
-shards (`shard_1`, `shard_2`, `shard_3`, start indices 1/2/3 and step 3).
-To refresh their combined metrics and readable output report:
+## Retained experiment results
 
-```bash
-benchmark/.venv/bin/python -m benchmark collect \
-  benchmark/results/initial_sample benchmark/results/shard_1 \
-  benchmark/results/shard_2 benchmark/results/shard_3
-```
+The latest audited comparison is
+[`results/experiment_summary_20261008/report.md`](results/experiment_summary_20261008/report.md).
+MiniCPM-o-4.5, LiveStar and ROMA completed 44 samples under
+`results/data_parallel_4567_20261007/`; JoyAI completed 44 under
+`results/remaining_4567_20261008T022841Z/joyai/`. Their worker directories retain
+raw outputs, prompts and configuration snapshots. ROMA's gate-score AUC diagnostic
+remains in `results/data_parallel_4567_20261007/roma/auc_diagnostic/`.
 
-The combined `report.md` lists every generated reply, its onset, reference windows,
-and timing matches. `collection_config.json` lists missing sample indices.
+MMDuet2 was stopped at the user's request with 32 of 44 samples complete. Its
+combined predictions and report remain under
+`results/mmduet2_recovery_20261008T062632Z/mmduet2_combined/`; source workers remain
+in the two original experiment directories. Its partial results must not be
+treated as a complete 44-sample score. Failed recovery records retain the CUDA
+error evidence and memory-optimization configuration.
 
-## Completed baseline result
+Old smoke runs, prompt-debug runs, early standalone shards and failed JoyAI startup
+experiments were removed. `results/cleanup_20261008.json` records the removed files.
+The combined `report.md` files list generated replies, onsets, reference windows
+and matches; `collection_config.json` files record source runs and missing indices.
+
+## Historical baseline result
 
 All 44 samples completed, with 112 generated response events. The 157 scored
 windows received 36 hits: **22.93% window hit rate**, **32.14% timing precision**,
@@ -250,8 +259,10 @@ and **26.77% timing F1**. The 32 references without windows were excluded.
 Window hit rates by mode: RTD 18.00%, PR 36.67%, agent 25.93%.
 
 The run uses model revision `503e754207c94da6bb26850b4469f367c9ea3582`.
-Detailed text and matches are in `results/minicpmo45_realtime/report.md`;
-raw predictions and full chunk decisions remain in their result directories.
+Detailed text and matches are in `results/minicpmo45_realtime/report.md`.
+This older prompt condition is retained separately from the current comparison:
+combined predictions, scores, verification and source configuration snapshots
+remain, while its early shards and raw chunk records were removed during cleanup.
 `verification.json` records completeness checks. All 44 videos reached their
 actual endpoints, sample indices are unique and complete, and the original timing checks passed at collection time.
 
@@ -259,3 +270,23 @@ Observed outputs include correct small-cat and reed-cover alerts, but also late
 or premature responses, incomplete text, repeated alerts, and claims of tool
 completion despite no tool execution. These are qualitative examples, not an
 additional content-correctness score.
+
+## Running selected unfinished samples
+
+`parallel --sample-indices FILE.json` accepts a JSON array of original dataset
+indices. The selected samples are balanced across GPUs without renumbering or
+modifying the dataset; the exact selection is saved in the immutable parallel plan.
+Use a new output directory, then `collect` the prior predictions and new run to
+produce a complete report without duplicate indices.
+
+MMDuet2 also supports `--mlp-chunk-tokens N` (default `0`, disabled). During
+inference this computes decoder MLPs in token chunks, bounding their intermediate
+activations while retaining the complete sequence and attention context. The
+chunk size is recorded in `run_config.json`. Different matrix kernel shapes can
+introduce floating-point rounding differences. This option does not support training.
+
+MMDuet2 supports `--logits-mode last` as an explicit memory optimization for the
+native generation path, which consumes only the last-position logits. It leaves
+transformer inputs, token dropping, KV context, FPS and generation settings intact.
+The default remains `full`. Projection kernels may have small floating-point
+rounding differences; the selected mode is recorded in `run_config.json`.

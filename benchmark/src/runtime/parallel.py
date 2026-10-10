@@ -16,25 +16,30 @@ from benchmark.data.paths import ROOT
 from benchmark.evaluation.collection import collect
 
 
-def assignments(samples, args, count):
+def assignments(samples, args, count, sample_indices=None):
     if count < 1 or args.max_samples < 0:
         raise ValueError("Worker count must be positive and max-samples nonnegative")
     start, step = getattr(args, "sample_start", 0), getattr(args, "sample_step", 1)
     if start < 0 or step < 1:
         raise ValueError("sample-start must be nonnegative and sample-step positive")
-    indices = list(range(len(samples)))[start::step]
+    if sample_indices is not None and (
+            not isinstance(sample_indices, list) or
+            any(type(index) is not int or not 0 <= index < len(samples) for index in sample_indices) or
+            len(set(sample_indices)) != len(sample_indices)):
+        raise ValueError("sample-indices must contain unique valid original indices")
+    indices = (list(range(len(samples))) if sample_indices is None else sample_indices)[start::step]
     if args.max_samples:
         indices = indices[:args.max_samples]
     return [indices[rank::count] for rank in range(count)]
 
 
-def prepare_plan(args, model, gpus, worker_python, services=None):
+def prepare_plan(args, model, gpus, worker_python, services=None, sample_indices=None):
     if not gpus or len(set(gpus)) != len(gpus) or any(not str(g).isdigit() for g in gpus):
         raise ValueError("Specify distinct numeric GPU indices")
     if hasattr(args, "device") and args.device not in ("cuda", "cuda:0"):
         raise ValueError("Parallel workers use local cuda:0; select physical GPUs with --gpus")
     samples = json.loads(args.data.read_text())
-    shards = assignments(samples, args, len(gpus))
+    shards = assignments(samples, args, len(gpus), sample_indices)
     config = {
         "model": model, "gpus": [str(g) for g in gpus],
         "worker_python": str(Path(worker_python).absolute()),
@@ -45,6 +50,8 @@ def prepare_plan(args, model, gpus, worker_python, services=None):
         "assignments": shards,
         "services": services,
     }
+    if sample_indices is not None:
+        config["sample_indices"] = sample_indices
     plan_path = args.output_dir / "parallel_plan.json"
     if not plan_path.exists() and (
             (args.output_dir / "predictions.jsonl").exists() or
@@ -91,7 +98,7 @@ def terminate_owned(processes, grace_seconds=10):
 
 
 def run_parallel(args, model, gpus, *, worker_python=None, poll_seconds=10,
-                 services=None):
+                 services=None, sample_indices=None):
     worker_python = worker_python or sys.executable
     if not Path(worker_python).is_file():
         raise FileNotFoundError(worker_python)
@@ -100,13 +107,14 @@ def run_parallel(args, model, gpus, *, worker_python=None, poll_seconds=10,
     args.output_dir.mkdir(parents=True, exist_ok=True)
     with (args.output_dir / ".parallel.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        return _supervise(args, model, gpus, worker_python, poll_seconds, services)
+        selected = json.loads(Path(sample_indices).read_text()) if sample_indices is not None else None
+        return _supervise(args, model, gpus, worker_python, poll_seconds, services, selected)
 
 
-def _supervise(args, model, gpus, worker_python, poll_seconds, services):
+def _supervise(args, model, gpus, worker_python, poll_seconds, services, sample_indices=None):
     if model == "joyai" and services is None:
         raise ValueError("JoyAI data parallel requires --joyai-services for independent backends")
-    samples, plan = prepare_plan(args, model, gpus, worker_python, services)
+    samples, plan = prepare_plan(args, model, gpus, worker_python, services, sample_indices)
     plan_path = args.output_dir / "parallel_plan.json"
     shard_dirs = [args.output_dir / f"worker_{rank}" for rank in range(len(gpus))]
     expected = sorted(index for shard in plan["assignments"] for index in shard)

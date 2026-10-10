@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import snapshot from 'virtual:gallery-snapshot'
+import { flattenSamples, firstIncomplete, isComplete } from './annotation-state.mjs'
+import { useAnnotations } from './use-annotations.jsx'
+import { ResponseRating, AnnotationSummary } from './annotation-controls.jsx'
 
 import { parseTime, formatTime, sampleKind, decodeJSON, reviewRecords, isActiveWindow, windowLanes, matchesFilters, initialFile } from './review-model.mjs'
 function getVideoUrl(videoName) {
@@ -37,9 +40,9 @@ function TimeButton({ label, seconds, onSeek }) {
   return <button className="time-button" type="button" disabled={seconds === null} onClick={() => onSeek(seconds)}>{label} <strong>{formatTime(seconds)}</strong></button>
 }
 
-function EventCard({ event, index, isActive, onSeek, cardRef }) {
+function EventCard({ event, index, isActive, onSeek, cardRef, annotation }) {
   const body = event.role === 'tool' ? decodeJSON(event.response) : event.response
-  return <article ref={cardRef} className={`event-card${isActive ? ' event-card--active' : ''}${event.track === 'annotations' ? ' event-card--annotation' : ''}`} aria-current={isActive ? 'true' : undefined}>
+  return <article ref={cardRef} className={`event-card${isActive ? ' event-card--active' : ''}${event.track === 'annotations' ? ' event-card--annotation' : ''}${annotation?.selected ? ' event-card--selected' : ''}`} aria-current={isActive ? 'true' : undefined}>
     <button className="event-card__button" type="button" disabled={event.seconds === null} onClick={() => onSeek(event.seconds)}>
       <span className="event-card__rail"><span className="event-card__dot" /></span>
       <span className="event-card__content">
@@ -61,6 +64,12 @@ function EventCard({ event, index, isActive, onSeek, cardRef }) {
       {event.tool_calls?.map((call, i) => <details key={i}><summary>Tool call · {call.function?.name || call.name}</summary><ValueView value={decodeJSON(call.function?.arguments ?? call.arguments)} /></details>)}
       {event.role === 'tool' && <details><summary>Simulated backend result</summary><ValueView value={body} /></details>}
       {event.outcome && <p>Outcome: <strong>{event.outcome}</strong></p>}
+      {annotation && <>
+        <button className="time-button" type="button" disabled={annotation.disabled} onClick={annotation.onSelect}>
+          {annotation.selected ? 'Current response' : 'Review this response'} · {isComplete(annotation.record) ? 'Complete' : 'Unfinished'}
+        </button>
+        <ResponseRating record={annotation.record} disabled={annotation.disabled} onRate={annotation.onRate} />
+      </>}
     </div>
   </article>
 }
@@ -99,7 +108,7 @@ function WindowTimeline({ events, currentTime, duration, questionSeconds, onSeek
   </>
 }
 
-function SampleReview({ sampleData }) {
+function SampleReview({ sampleData, annotation }) {
   const videoName = typeof sampleData.video === 'string' && sampleData.video.trim() ? sampleData.video.trim() : ''
   const videoUrl = getVideoUrl(videoName)
   const videoRef = useRef(null)
@@ -114,10 +123,18 @@ function SampleReview({ sampleData }) {
   const activeIndex = events.findIndex(event => isActiveWindow(event, currentTime))
 
   useEffect(() => {
-    if (activeIndex < 0) return
+    if (annotation || activeIndex < 0) return
     const card = cardRefs.current.get(activeIndex)
     if (card) card.parentElement.scrollTo({ top: card.offsetTop, behavior: 'smooth' })
   }, [activeIndex, activeIds])
+
+  useEffect(() => {
+    if (!annotation?.activeKey) return
+    const index = events.findIndex(event => event.track === 'responses' && `${annotation.sampleIndex}:${event.originalIndex}` === annotation.activeKey)
+    const card = cardRefs.current.get(index)
+    if (card) card.parentElement.scrollTo({ top: card.offsetTop, behavior: 'smooth' })
+    if (index >= 0 && videoRef.current?.readyState > 0) seekTo(events[index].seconds)
+  }, [annotation?.activeKey])
 
   function seekTo(seconds) {
     if (seconds === null || !videoRef.current || videoError) return
@@ -187,6 +204,10 @@ function SampleReview({ sampleData }) {
                 const value = event.currentTarget.duration
                 setDuration(Number.isFinite(value) && value > 0 ? value : duration)
                 setVideoError(false)
+                if (annotation?.activeKey) {
+                  const event = events.find(item => item.track === 'responses' && `${annotation.sampleIndex}:${item.originalIndex}` === annotation.activeKey)
+                  if (event) seekTo(event.seconds)
+                }
               }}
               onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
               onPlay={() => setIsPlaying(true)}
@@ -229,6 +250,13 @@ function SampleReview({ sampleData }) {
                 index={index}
                 isActive={isActiveWindow(event, currentTime)}
                 onSeek={seekTo}
+                annotation={annotation && event.track === 'responses' ? {
+                  selected: annotation.activeKey === `${annotation.sampleIndex}:${event.originalIndex}`,
+                  record: annotation.records[`${annotation.sampleIndex}:${event.originalIndex}`],
+                  disabled: annotation.disabled,
+                  onSelect: () => annotation.onSelect(event.originalIndex),
+                  onRate: (dimension, score) => annotation.onRate(event.originalIndex, dimension, score),
+                } : null}
                 cardRef={(node) => node ? cardRefs.current.set(index, node) : cardRefs.current.delete(index)}
               />
             )) : (
@@ -302,11 +330,16 @@ export default function App() {
   const [files, setFiles] = useState([])
   const [file, setFile] = useState('')
   const [points, setPoints] = useState([])
+  const [fingerprints, setFingerprints] = useState([])
+  const [mode, setMode] = useState('browse')
+  const [annotator, setAnnotator] = useState('A')
+  const [activeKey, setActiveKey] = useState(null)
   const [point, setPoint] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [filters, setFilters] = useState({ ability: '', mode: '', kind: '', video: '' })
   const [offline, setOffline] = useState(location.protocol === 'file:')
+  const annotations = useAnnotations(file, mode === 'annotate' && !offline && !loading && !error)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -344,6 +377,7 @@ export default function App() {
     setLoading(true)
     setError('')
     setPoints([])
+    setFingerprints([])
     async function load() {
       try {
         const result = offline ? snapshot[file] : await getJSON(`./api/data?file=${encodeURIComponent(file)}`, controller.signal)
@@ -353,6 +387,7 @@ export default function App() {
         const remembered = readSelection()
         const selected = remembered.file === file && Number.isInteger(remembered.point) && remembered.point >= 0 && remembered.point < entries.length ? remembered.point : 0
         setPoints(entries)
+        setFingerprints(result.fingerprints || [])
         setPoint(selected)
         saveSelection(file, selected)
       } catch (err) { if (!controller.signal.aborted) setError(err.message) }
@@ -371,7 +406,44 @@ export default function App() {
   }
 
   const visiblePoints = points.map((entry, index) => ({ entry, index })).filter(({ entry }) => matchesFilters(entry, filters))
-  const selectedPoint = visiblePoints.some(item => item.index === point) ? point : visiblePoints[0]?.index
+  const items = useMemo(() => flattenSamples(points, fingerprints), [points, fingerprints])
+  const visibleItems = useMemo(() => items.filter(item => matchesFilters(item.sample, filters)), [items, filters])
+  const annotationPoint = activeKey === null ? undefined : Number(activeKey.split(':')[0])
+  const targetPoint = mode === 'annotate' ? annotationPoint : point
+  const selectedPoint = visiblePoints.some(item => item.index === targetPoint) ? targetPoint : visiblePoints[0]?.index
+  const complete = annotations.ready && firstIncomplete(visibleItems, annotations.groups[annotator]) < 0
+
+  useEffect(() => {
+    if (mode !== 'annotate' || !annotations.ready) { setActiveKey(null); return }
+    const index = firstIncomplete(visibleItems, annotations.groups[annotator])
+    setActiveKey(index < 0 ? null : visibleItems[index].key)
+  }, [mode, file, annotator, filters, annotations.ready])
+
+  function selectSample(index) {
+    if (mode === 'browse') { setPoint(index); saveSelection(file, index); return }
+    const candidates = visibleItems.filter(item => item.sampleIndex === index)
+    const next = firstIncomplete(candidates, annotations.groups[annotator])
+    setActiveKey(candidates[next < 0 ? 0 : next]?.key || null)
+  }
+
+  async function rateResponse(responseIndex, dimension, score) {
+    const item = items.find(entry => entry.sampleIndex === selectedPoint && entry.responseIndex === responseIndex)
+    if (!item) return
+    setActiveKey(item.key)
+    const updated = await annotations.save(annotator, item, dimension, score)
+    if (updated && isComplete(updated[item.key])) {
+      const next = firstIncomplete(visibleItems, updated)
+      setActiveKey(next < 0 ? null : visibleItems[next].key)
+    }
+  }
+
+  async function retrySave() {
+    const updated = await annotations.retry?.()
+    if (updated && isComplete(updated[activeKey])) {
+      const next = firstIncomplete(visibleItems, updated)
+      setActiveKey(next < 0 ? null : visibleItems[next].key)
+    }
+  }
   const selected = points[selectedPoint]
   const reviewData = selected && typeof selected === 'object' && !Array.isArray(selected) ? selected : null
   return <div className="gallery-layout">
@@ -380,28 +452,47 @@ export default function App() {
       <h1>Data files <span>{files.length}</span></h1>
       <p className="source-label">data_generation/data</p>
       <p className="source-label">{offline ? 'Offline snapshot · rebuild to update' : 'Live directory · refresh to update'}</p>
-      <nav>{files.map(name => <button type="button" key={name} className={`file-button${file === name ? ' is-selected' : ''}`} aria-current={file === name ? 'true' : undefined} onClick={() => selectFile(name)}>{name}</button>)}</nav>
+      <nav>{files.map(name => <button type="button" key={name} disabled={annotations.saving} className={`file-button${file === name ? ' is-selected' : ''}`} aria-current={file === name ? 'true' : undefined} onClick={() => selectFile(name)}>{name}</button>)}</nav>
     </aside>
     <main className="gallery-main">
       <header className="point-picker">
         <h2>{file || 'Gallery'} <span>{points.length} samples</span></h2>
+        <div className="annotation-toolbar">
+          <div role="group" aria-label="Gallery mode">{['browse', 'annotate'].map(value => <button type="button" key={value}
+            aria-pressed={mode === value} disabled={annotations.saving || (value === 'annotate' && offline)}
+            onClick={() => setMode(value)}>{value === 'browse' ? 'Browse' : 'Annotate'}</button>)}</div>
+          {mode === 'annotate' && <label>Annotator <select aria-label="Annotator" disabled={annotations.saving}
+            value={annotator} onChange={event => setAnnotator(event.target.value)}><option>A</option><option>B</option></select></label>}
+          <span role="status">{offline ? 'Annotation requires the live gallery server' : mode === 'annotate' ? annotations.status || (annotations.ready ? 'Synced' : 'Loading scores…') : ''}</span>
+        </div>
         <div className="sample-filters">
-          {['ability', 'mode', 'kind', 'video'].map(field => <label key={field}>{field === 'kind' ? 'Sample type' : field}<select aria-label={`Filter ${field}`} value={filters[field]} onChange={e => setFilters({ ...filters, [field]: e.target.value })}><option value="">All</option>{[...new Set(points.map(entry => field === 'kind' ? sampleKind(entry) : entry?.[field]).filter(Boolean))].sort().map(value => <option key={value} value={value}>{value}</option>)}</select></label>)}
+          {['ability', 'mode', 'kind', 'video'].map(field => <label key={field}>{field === 'kind' ? 'Sample type' : field}<select aria-label={`Filter ${field}`} disabled={annotations.saving} value={filters[field]} onChange={e => setFilters({ ...filters, [field]: e.target.value })}><option value="">All</option>{[...new Set(points.map(entry => field === 'kind' ? sampleKind(entry) : entry?.[field]).filter(Boolean))].sort().map(value => <option key={value} value={value}>{value}</option>)}</select></label>)}
           <span>{visiblePoints.length} / {points.length} samples</span>
         </div>
         <div className="point-buttons" aria-label="Data points">{visiblePoints.map(({ entry, index }) => {
           const title = entry?.question || entry?.name || entry?.id || entry?.video_summary?.main_content_summary
-          return <button type="button" key={index} aria-pressed={selectedPoint === index} title={title ? String(title) : `Sample ${index + 1}`} onClick={() => { setPoint(index); saveSelection(file, index) }}>
+          return <button type="button" key={index} disabled={annotations.saving} aria-pressed={selectedPoint === index} title={title ? String(title) : `Sample ${index + 1}`} onClick={() => selectSample(index)}>
             <strong>{String(index + 1).padStart(2, '0')}</strong><span>{entry?.ability || entry?.task} · {entry?.mode} · {sampleKind(entry)}{sampleKind(entry) === 'negative' ? ` (${entry.sample_type})` : ''}<br />{title ? String(title) : `Sample ${index + 1}`}</span>
           </button>
         })}</div>
       </header>
+      {mode === 'annotate' && !loading && !error && <>
+        {annotations.error && <p className="gallery-message" role="alert">{annotations.error}. {annotations.retry
+          ? <button className="time-button" type="button" disabled={annotations.saving} onClick={retrySave}>Retry save</button>
+          : 'Scores will retry loading automatically. Reload if source data changed.'}</p>}
+        {annotations.ready && <AnnotationSummary items={visibleItems} groups={annotations.groups} annotator={annotator} />}
+        {complete && <p className="gallery-message" role="status">All responses in this file and filter selection are complete for annotator {annotator}. Select any response to edit its scores.</p>}
+      </>}
       {loading ? <p className="gallery-message" role="status">Loading data…</p>
         : error ? <p className="gallery-message" role="alert">{error}</p>
         : !files.length ? <p className="gallery-message">No JSON files found in data_generation/data.</p>
         : !points.length ? <p className="gallery-message">This file contains no samples.</p>
         : !visiblePoints.length ? <p className="gallery-message">No samples match these filters.</p>
-        : reviewData ? <SampleReview key={`${file}:${selectedPoint}`} sampleData={reviewData} />
+        : reviewData ? <SampleReview key={`${file}:${selectedPoint}`} sampleData={reviewData} annotation={mode === 'annotate' ? {
+            sampleIndex: selectedPoint, activeKey, records: annotations.groups[annotator],
+            disabled: annotations.saving || !annotations.ready,
+            onSelect: responseIndex => setActiveKey(`${selectedPoint}:${responseIndex}`), onRate: rateResponse,
+          } : null} />
         : <DataSections data={selected} onSeek={() => {}} />}
     </main>
   </div>

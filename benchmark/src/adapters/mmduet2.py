@@ -23,10 +23,42 @@ def run_config(a, base):
         'official_code': str(a.official_code),
         'data_sha256': hashlib.sha256(a.data.read_bytes()).hexdigest(),
     }
+    if getattr(a, "logits_mode", "full") == "last":
+        config["logits_mode"] = "last_token_projection"
+    if getattr(a, "mlp_chunk_tokens", 0):
+        config["mlp_chunk_tokens"] = a.mlp_chunk_tokens
     return config
 
 
+def last_token_projection(module, inputs):
+    """Generation consumes logits[:, -1, :]; retain the full transformer context."""
+    return (inputs[0][:, -1:, :], *inputs[1:])
+
+
+def chunk_mlp_forward(original, chunk_tokens):
+    """Bound transient MLP activations without changing sequence attention."""
+    if chunk_tokens <= 0:
+        raise ValueError("MLP chunk size must be positive")
+
+    def forward(hidden_states):
+        import torch
+        if hidden_states.shape[-2] <= chunk_tokens:
+            return original(hidden_states)
+        if torch.is_grad_enabled():
+            raise RuntimeError("Chunked MMDuet2 MLP requires inference mode")
+        output = torch.empty_like(hidden_states)
+        for start in range(0, hidden_states.shape[-2], chunk_tokens):
+            stop = start + chunk_tokens
+            output[..., start:stop, :] = original(hidden_states[..., start:stop, :])
+        return output
+
+    return forward
+
+
 def load(a):
+    chunk_tokens = getattr(a, "mlp_chunk_tokens", 0)
+    if chunk_tokens < 0:
+        raise ValueError("mlp-chunk-tokens must be nonnegative")
     os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
     sys.path.insert(0, str(a.official_code))
     spec = importlib.util.spec_from_file_location("mmduet_inference", a.official_code / "inference.py")
@@ -39,6 +71,11 @@ def load(a):
     model_cls = module.Qwen2_5_VLForConditionalGeneration
     model = model_cls.from_pretrained(str(a.model_path), torch_dtype=torch.bfloat16,
         attn_implementation="flash_attention_2").eval().to(a.device)
+    if getattr(a, "logits_mode", "full") == "last":
+        model.lm_head.register_forward_pre_hook(last_token_projection)
+    if chunk_tokens:
+        for layer in model.model.layers:
+            layer.mlp.forward = chunk_mlp_forward(layer.mlp.forward, chunk_tokens)
     processor = AutoProcessor.from_pretrained(str(a.model_path))
     return SimpleNamespace(module=module, model=model, processor=processor)
 

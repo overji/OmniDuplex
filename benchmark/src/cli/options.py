@@ -33,6 +33,10 @@ def configure_minicpmo(parser):
 
 def configure_mmduet2(p):
     _configure_common(p, 'mmduet2')
+    p.add_argument("--logits-mode", choices=["full", "last"], default=DEFAULTS["mmduet2"]["logits_mode"],
+                   help="Last computes only the next-token vocabulary projection during generation")
+    p.add_argument("--mlp-chunk-tokens", type=int, default=DEFAULTS["mmduet2"]["mlp_chunk_tokens"],
+                   help="Inference-only tokenwise decoder MLP chunking; 0 disables it")
     p.add_argument("--cache-dir", type=Path, default=DEFAULTS["mmduet2"]["cache_dir"])
     p.add_argument("--official-code", type=Path, required=True,
                    help="Pinned MMDuet2 checkout's proactive_eval directory")
@@ -78,6 +82,8 @@ def configure_download(parser):
 
 
 def configure_parallel(parser, *, joyai=False):
+    parser.add_argument("--sample-indices", type=Path,
+                        help="JSON array of original sample indices to benchmark")
     parser.add_argument("--gpus", nargs="+", required=True)
     parser.add_argument("--worker-python", type=Path,
                         help="Worker interpreter; defaults to the current Python")

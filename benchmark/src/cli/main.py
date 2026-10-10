@@ -41,7 +41,7 @@ def main(argv=None):
         from benchmark.runtime.parallel import run_parallel
         model = vars(args).pop("adapter_name")
         controls = {key: vars(args).pop(key) for key in (
-            "gpus", "worker_python", "poll_seconds")}
+            "gpus", "worker_python", "poll_seconds", "sample_indices")}
         services = None
         if model == "joyai":
             services = vars(args).pop("joyai_services")

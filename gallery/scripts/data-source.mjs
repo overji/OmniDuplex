@@ -1,7 +1,11 @@
 import { readdir, readFile, realpath, copyFile } from 'node:fs/promises'
 import path from 'node:path'
+import { responseFingerprints } from './annotation-records.mjs'
 
-export const dataDir = path.resolve(import.meta.dirname, '../../data_generation/data')
+export const dataDir = path.resolve(process.env.ANNOTATION_DATA_DIR || path.join(import.meta.dirname, '../../data_generation/data'))
+export const videoDirs = process.env.ANNOTATION_VIDEO_DIR
+  ? [path.resolve(process.env.ANNOTATION_VIDEO_DIR)]
+  : [path.resolve(import.meta.dirname, '../../videos'), path.resolve(import.meta.dirname, '../../data_generation/videos')]
 
 export async function listFiles(root = dataDir) {
   try {
@@ -40,10 +44,14 @@ export function isFinalTaskResult(data) {
   )
 }
 
-export async function readData(name, root = dataDir) {
-  if (!name || path.isAbsolute(name) || name.includes('\\') || name.split('/').some(part => !part || part === '.' || part === '..') || !name.endsWith('.json')) {
+export function validateDataName(name) {
+  if (typeof name !== 'string' || !name || path.isAbsolute(name) || name.includes('\\') || name.split('/').some(part => !part || part === '.' || part === '..') || !name.endsWith('.json')) {
     throw Object.assign(new Error('Invalid file name'), { status: 400 })
   }
+}
+
+export async function readData(name, root = dataDir) {
+  validateDataName(name)
   const resolvedRoot = await realpath(root)
   const file = await realpath(path.join(root, name))
   const relative = path.relative(resolvedRoot, file)
@@ -64,7 +72,10 @@ export function dataMiddleware(root = dataDir) {
       if (req.method !== 'GET') throw Object.assign(new Error('Method not allowed'), { status: 405 })
       let result
       if (url.pathname === '/api/files') result = { files: await listFiles(root) }
-      else if (url.pathname === '/api/data') result = { data: await readData(url.searchParams.get('file'), root) }
+      else if (url.pathname === '/api/data') {
+        const data = await readData(url.searchParams.get('file'), root)
+        result = { data, fingerprints: responseFingerprints(data) }
+      }
       else throw Object.assign(new Error('Not found'), { status: 404 })
       res.end(JSON.stringify(result))
     } catch (error) {
@@ -85,7 +96,7 @@ export function galleryDataPlugin() {
         try {
           const name = decodeURIComponent(new URL(req.url, 'http://localhost').pathname).slice(1)
           if (name && name === path.basename(name) && !name.includes('\\') && name.endsWith('.mp4')) {
-            for (const root of [path.resolve(dataDir, '../../videos'), path.resolve(dataDir, '../videos')]) {
+            for (const root of videoDirs) {
               try {
                 await realpath(path.join(root, name))
                 req.url = `/@fs/${path.join(root, name)}`
@@ -123,7 +134,7 @@ export function galleryDataPlugin() {
       }
       for (const name of videos) {
         let source
-        for (const root of [path.resolve(dataDir, '../../videos'), path.resolve(dataDir, '../videos')]) {
+        for (const root of videoDirs) {
           try { source = await realpath(path.join(root, name)); break } catch (error) { if (error.code !== 'ENOENT') throw error }
         }
         if (source) await copyFile(source, path.resolve(config.root, config.build.outDir, name))
