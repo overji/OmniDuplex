@@ -48,11 +48,33 @@ test('filtered resume retains source indices and observation annotations are exc
   const { matchesFilters } = await import('../src/review-model.mjs')
   const data = [
     { mode: 'rtd', responses: [{}, {}], annotations: [{}] },
-    { mode: 'agent', responses: [{ role: 'tool' }, {}] },
+    { mode: 'agent', responses: [{ role: 'tool' },
+      { role: 'assistant', tool_calls: [{ function: { name: 'agent_call' } }] },
+      { role: 'assistant', tool_calls: [{ function: { name: 'agent_call' } }] }] },
   ]
-  const items = flattenSamples(data, [['a', 'b'], ['c', 'd']]).filter(item => matchesFilters(item.sample, { mode: 'agent' }))
-  assert.deepEqual(items.map(item => item.key), ['1:0', '1:1'])
-  const a = { '1:0': { timeScore: 1, contentScore: 0 } }
+  const items = flattenSamples(data, [['a', 'b'], ['c', 'd', 'e']]).filter(item => matchesFilters(item.sample, { mode: 'agent' }))
+  assert.deepEqual(items.map(item => item.key), ['1:1', '1:2'])
+  const a = { '1:1': { timeScore: 1, contentScore: 0 } }
   assert.equal(firstIncomplete(items, a), 1)
   assert.equal(firstIncomplete(items, {}), 0)
+})
+
+test('Agent scoring restores completion replies and excludes only tool inputs', async () => {
+  const { agreement } = await import('../src/annotation-state.mjs')
+  const call = { role: 'assistant', tool_calls: [{ function: { name: 'agent_call' } }] }
+  const data = [
+    { mode: 'agent', responses: [call, { role: 'tool' }, { role: 'assistant', outcome: 'success' }, call] },
+    { mode: 'agent', sample_type: 'missing_tool', responses: [{ response: 'Cannot do that' }] },
+    { mode: 'agent', generation_context: { sample_type: 'no_context' }, responses: [{}] },
+    { mode: 'rtd', responses: [{}] }, { mode: 'pr', responses: [{}] },
+  ]
+  const items = flattenSamples(data, [['a', 'b', 'c', 'd'], ['e'], ['f'], ['g'], ['h']])
+  assert.deepEqual(items.map(item => item.key), ['0:0', '0:2', '0:3', '1:0', '2:0', '3:0', '4:0'])
+  assert.equal(items[1].fingerprint, 'c')
+  const records = { '0:0': { timeScore: 1, contentScore: 1 },
+    '0:1': { timeScore: 0, contentScore: 0 }, '0:2': { timeScore: 0, contentScore: 0 } }
+  assert.equal(firstIncomplete(items, records), 2)
+  assert.equal(progress(items, records).total, 7)
+  assert.equal(progress(items, records).timeRated, 2)
+  assert.equal(agreement(items, records, records, 'time').n, 2)
 })

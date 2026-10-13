@@ -62,7 +62,33 @@ Current data: `all_qa.json`, copied byte-for-byte from
 `data_generation/data/qwen3.8_omni_flash_44/all_qa.json`.
 `configs/manifests/data_manifest.json` records the source and SHA-256. There are 44 samples,
 189 reference responses, and 157 responses with timing windows. The other
-32 references are not scored because they have no window.
+32 references are not scored because they have no window. Agent assistant
+delegations and completion replies are scored when they have existing windows;
+simulated tool results are timed text inputs and are never scored as outputs.
+Completion onsets must be strictly later than the preceding tool-result timestamp.
+No windows are synthesized for completion replies that lack them.
+Agent negative refusal responses (`missing_tool` / `no_context`) remain scored.
+All predicted onsets still count toward timing precision and extra predictions.
+`excluded_agent_non_trigger_responses` reports excluded Agent tool references; this
+count can overlap `excluded_reference_responses_without_windows`.
+
+Agent result text is inserted before processing the one-second interval beginning
+at its timestamp, and is first available to generation after that interval. Only
+tool-result text is provided; reference assistant text and future tool results are
+never included in the model prompt. MiniCPM, MMDuet2 and ROMA use their existing
+end-of-interval clocks. For JoyAI and LiveStar,
+output clocks use the frame interval end (`frame time + 1`, capped at video
+duration) for every task; their original frame clocks remain in raw records.
+User requests and Agent results are text prefills, never standalone generation
+triggers: generation follows the current second's media input. MiniCPM and ROMA
+consume audiovisual input; MMDuet2, LiveStar and JoyAI consume their native visual
+inputs and do not receive audio. Native speak/listen policies remain active;
+receiving a result does not force generation.
+
+The input protocol is recorded as `agent_input_protocol` in run and parallel
+configuration. Use new output directories: old predictions were generated without
+these inputs and cannot be resumed as this protocol. Saved historical results
+are not rewritten or rescored automatically. Raw records log each delivered input.
 
 The model is installed at
 `/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5`.

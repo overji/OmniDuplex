@@ -279,3 +279,15 @@ button:disabled, select:disabled { opacity: .5; cursor: default; }
 .response-rating fieldset > span { color: var(--muted); font-size: 11px; }
 .response-rating fieldset > div { display: flex; gap: 8px; margin-top: 10px; }
 .event-card--selected { outline: 1px solid #aebdff; outline-offset: -1px; background: #1b233c; }
+
+.model-outputs { margin: 0 0 1.2rem; padding: 1.1rem; border: 1px solid var(--line); border-radius: 6px; background: var(--panel-strong); }
+.model-outputs h2 { margin: 0 0 .8rem; font-size: 1.1rem; }
+.model-outputs select { max-width: 100%; padding: .5rem; border: 1px solid var(--line); border-radius: 4px; color: #e1e7ff; background: #181c29; }
+.model-outputs p, .model-score-summary { font-size: .85rem; line-height: 1.5; }
+.model-score-summary { display: flex; flex-wrap: wrap; gap: .4rem 1rem; margin-bottom: .8rem; }
+.model-predictions { max-height: 55vh; overflow: auto; }
+.model-prediction { padding: .8rem; margin-top: .6rem; border: 1px solid var(--line); border-left: 3px solid #ffaf55; border-radius: 4px; background: var(--panel); }
+.model-prediction.is-matched { border-left-color: var(--cyan); }
+.model-match-label { display: block; margin-top: .4rem; font-size: .8rem; font-weight: 600; }
+.model-prediction-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.window-track--predictions .message-marker { background: #7a50a3; }

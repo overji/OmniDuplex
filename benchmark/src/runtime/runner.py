@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from benchmark.data.files import append_jsonl, read_jsonl, recover_jsonl_tail, write_json
+from benchmark.data.agent_inputs import AGENT_INPUT_PROTOCOL, agent_results
 from benchmark.data.prompts import build_system_prompt
 from benchmark.data.types import SampleResult
 from benchmark.evaluation.timing import write_metrics
@@ -51,8 +52,13 @@ def run(args, adapter, *, assignment=None):
     if hasattr(args, "cache_dir"):
         args.cache_dir.mkdir(parents=True, exist_ok=True)
     config = adapter.run_config(args, base_prompt)
+    config["agent_input_protocol"] = AGENT_INPUT_PROTOCOL
     config_path = args.output_dir / "run_config.json"
     strict = getattr(adapter, "STRICT_CONFIG", False)
+    if (args.output_dir / "predictions.jsonl").exists():
+        previous = json.loads(config_path.read_text()) if config_path.exists() else {}
+        if previous.get("agent_input_protocol") != AGENT_INPUT_PROTOCOL:
+            raise ValueError("Agent input protocol changed; use a new output directory")
     if strict and config_path.exists() and json.loads(config_path.read_text()) != config:
         raise ValueError("Run configuration changed; use a new output directory")
     write_json(config_path, config)
@@ -77,6 +83,7 @@ def run(args, adapter, *, assignment=None):
             "id", "task", "video", "question", "question_time", "available_tools",
             "frontend_context", "sample_type", "mode", "ability",
         ) if key in sample}
+        model_sample["agent_results"] = agent_results(sample)
         context = SampleContext(index, model_sample, base_prompt, args.output_dir,
                                 started=time.perf_counter())
         result: SampleResult = adapter.run_sample(args, state, context)

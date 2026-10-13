@@ -12,6 +12,7 @@ import sys
 import time
 
 from benchmark.data.files import read_jsonl, write_json
+from benchmark.data.agent_inputs import AGENT_INPUT_PROTOCOL
 from benchmark.data.paths import ROOT
 from benchmark.evaluation.collection import collect
 
@@ -41,6 +42,7 @@ def prepare_plan(args, model, gpus, worker_python, services=None, sample_indices
     samples = json.loads(args.data.read_text())
     shards = assignments(samples, args, len(gpus), sample_indices)
     config = {
+        "agent_input_protocol": AGENT_INPUT_PROTOCOL,
         "model": model, "gpus": [str(g) for g in gpus],
         "worker_python": str(Path(worker_python).absolute()),
         "arguments": {key: str(value) if isinstance(value, Path) else value

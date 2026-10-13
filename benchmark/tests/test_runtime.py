@@ -92,6 +92,26 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(adapter.loaded, 0)
         self.assertEqual((self.args.output_dir / 'predictions.jsonl').read_bytes(), original)
 
+    def test_only_agent_tool_results_reach_model_context_and_old_protocol_cannot_resume(self):
+        self.samples[0]['responses'].extend([
+            {'role': 'tool', 'trigger_time': '00:03', 'response': 'recorded result'},
+            {'role': 'assistant', 'trigger_time': '00:03', 'response': 'secret final answer'},
+        ])
+        self.args.data.write_text(json.dumps(self.samples))
+        adapter = FakeAdapter()
+        self.execute(adapter)
+        context = adapter.contexts[0]
+        self.assertEqual(context.sample['agent_results'][0]['text'], 'recorded result')
+        self.assertNotIn('secret', json.dumps(context.sample))
+        config_path = self.args.output_dir / 'run_config.json'
+        config = json.loads(config_path.read_text())
+        config.pop('agent_input_protocol')
+        config_path.write_text(json.dumps(config))
+        original = config_path.read_bytes()
+        with self.assertRaisesRegex(ValueError, 'protocol changed'):
+            self.execute(FakeAdapter())
+        self.assertEqual(config_path.read_bytes(), original)
+
     def test_interrupted_sample_restarts_and_completed_predictions_are_preserved(self):
         with self.assertRaisesRegex(RuntimeError, 'Interrupted'):
             self.execute(FakeAdapter(fail_index=1))

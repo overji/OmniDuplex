@@ -10,6 +10,7 @@ from types import SimpleNamespace
 
 from benchmark.config.models import MODEL_SETTINGS, NATIVE_SETTINGS
 from benchmark.data.prompts import user_request
+from benchmark.data.agent_inputs import AgentInputs
 from benchmark.config.paths import CACHE
 from benchmark.data.media import media_cache
 from benchmark.data.types import SampleResult
@@ -86,10 +87,13 @@ def run_sample(a, state, context):
     rope_delta = None
     events, raw = [], []
     qframe = math.ceil(qtime)
+    agent_inputs = AgentInputs(sample)
     for i, source_chunk in enumerate(chunks):
         chunk = list(source_chunk)
         if i == qframe:
             chunk.extend(tokenizer.encode(user_request(sample), add_special_tokens=False))
+        for text in agent_inputs.take(float(i)):
+            chunk.extend(tokenizer.encode(text, add_special_tokens=False))
         input_ids.extend(chunk)
         old_video_tokens = video_tokens
         video_tokens += chunk.count(151656)
@@ -152,5 +156,6 @@ def run_sample(a, state, context):
             input_ids.extend(user_prefix)
         raw.append(event)
     with context.open_raw(".json") as f:
-        json.dump({"sample_index": index, "decisions": raw}, f, ensure_ascii=False, indent=2)
+        json.dump({"sample_index": index, "decisions": raw,
+                   "agent_inputs": agent_inputs.delivered}, f, ensure_ascii=False, indent=2)
     return SampleResult(events=events, observed_seconds=duration)

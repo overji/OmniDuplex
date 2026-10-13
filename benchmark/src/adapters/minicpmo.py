@@ -14,6 +14,7 @@ from types import SimpleNamespace
 from benchmark.data.timestamps import seconds
 from benchmark.config.models import MODEL_SETTINGS
 from benchmark.data.prompts import user_request
+from benchmark.data.agent_inputs import AgentInputs
 from benchmark.config.paths import MANIFESTS
 from benchmark.data.media import media_cache
 from benchmark.data.types import SampleResult
@@ -103,6 +104,7 @@ def run_sample(args, state, context):
         events = []
         active_event = None
         question_sent = False
+        agent_inputs = AgentInputs(sample)
         print(f"START sample={sample_index} task={sample['task']} duration={stop:.3f}s question={question_time}s", flush=True)
         with context.open_raw(".chunks.jsonl") as raw:
             def record_result(result, clock, kind, prefill_seconds):
@@ -128,15 +130,16 @@ def run_sample(args, state, context):
                 end = min(start + 1, stop)
                 if not question_sent and start >= question_time:
                     question_sent = True
-                    then = time.perf_counter()
                     prefill = model.streaming_prefill(text_list=[user_request(sample)])
                     if not prefill["success"]:
                         raise RuntimeError(prefill)
-                    prefill_seconds = time.perf_counter() - then
-                    result = model.streaming_generate(decode_mode=args.decode_mode,
-                        max_new_speak_tokens_per_chunk=args.max_speak_tokens)
-                    record_result(result, question_time, "question", prefill_seconds)
+                    # Text alone must not trigger generation. The current second's
+                    # audiovisual prefill below always precedes the next output.
                 frame_index = bisect.bisect_left(metadata["frame_times"], end) - 1
+                for text in agent_inputs.take(start):
+                    prefill = model.streaming_prefill(text_list=[text])
+                    if not prefill["success"]:
+                        raise RuntimeError(prefill)
                 frame_list = []
                 if frame_index >= 0:
                     with Image.open(target / metadata["frames"][frame_index]) as image:
@@ -157,6 +160,9 @@ def run_sample(args, state, context):
                     print(f"PROGRESS sample={sample_index} video={end:.0f}/{stop:.0f}s wall={time.perf_counter()-started:.1f}s", flush=True)
         if active_event is not None:
             events.append(active_event)
+        if sample.get("agent_results"):
+            with context.open_raw(".agent_inputs.json") as stream:
+                json.dump(agent_inputs.delivered, stream, ensure_ascii=False, indent=2)
         return SampleResult(events=events, observed_seconds=stop,
                             status="partial" if stop < duration else "complete",
                             include_sample_type=False)

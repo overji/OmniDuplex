@@ -21,6 +21,13 @@ Segment guidelines:
   appearing or leaving, an audio event (music change, sound
   effect, silence), or any notable visual change.
 
+Segment start/end values indicate coverage only. A segment may contain multiple
+events at different times; do not imply that every event occurs at its start.
+When you can confirm an event's time, describe its absolute video time in the
+existing text fields. Never guess a time from segment boundaries or use a
+segment-relative offset as an absolute timestamp. Downstream generators must
+verify event times from the original video.
+
 For each segment, provide:
 
 1. caption: A detailed, information-dense paragraph integrating

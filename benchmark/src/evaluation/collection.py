@@ -1,7 +1,7 @@
 """Combine completed realtime shards and recompute timing metrics."""
 import json
 
-from benchmark.evaluation.timing import write_metrics
+from benchmark.evaluation.timing import reference_windows, write_metrics
 from benchmark.data.files import atomic_write_text, read_jsonl
 
 
@@ -53,8 +53,7 @@ def collect(samples, runs, output_dir, *, live=False, expected_indices=None):
                        f"Video: {sample['video']}; question time: {sample['question_time']}; "
                        f"hits: {score['hits']}/{score['windows']}.", "",
                        "Reference windows: " + "; ".join(
-                           f"{r['window_start']}–{r['window_end']}" for r in sample['responses']
-                           if 'window_start' in r and 'window_end' in r), "",
+                           f"{r['window_start']}–{r['window_end']}" for _, r in reference_windows(sample)), "",
                        "| Onset (s) | Window match | Generated text |", "| ---: | --- | --- |"])
         for event_index, event in enumerate(prediction['events']):
             text = event['text'].strip().replace("|", "\\|").replace("\n", " ")

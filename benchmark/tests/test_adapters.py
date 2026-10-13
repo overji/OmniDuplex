@@ -48,14 +48,23 @@ class AdapterTests(unittest.TestCase):
             dict(text='', is_listen=True, end_of_turn=True),
             dict(text='A', is_listen=False, end_of_turn=False),
             dict(text='B', is_listen=False, end_of_turn=True),
-            dict(text='', is_listen=True, end_of_turn=True),
         ])
         def prefill(**kwargs):
             calls.append(kwargs)
             return {'success': True}
 
+        generated_after = []
+        def generate(**kwargs):
+            # Every generation must follow a fresh audiovisual prefill,
+            # including the first response to the user request.
+            self.assertIn('audio_waveform', calls[-1])
+            self.assertIn('frame_list', calls[-1])
+            self.assertNotIn(len(calls), generated_after)
+            generated_after.append(len(calls))
+            return next(replies)
+
         model = SimpleNamespace(prepare=Mock(), streaming_prefill=prefill,
-                                streaming_generate=lambda **kw: next(replies))
+                                streaming_generate=generate)
         modules = {
             'torch': SimpleNamespace(inference_mode=contextlib.nullcontext),
             'numpy': SimpleNamespace(pad=lambda values, widths: values + [0.0] * widths[1]),
@@ -72,12 +81,14 @@ class AdapterTests(unittest.TestCase):
         self.assertIn('audio_waveform', calls[0])
         self.assertIn('text_list', calls[1])
         self.assertEqual(len(calls[-1]['audio_waveform']), 16000)
-        self.assertEqual(result.events, [dict(onset_seconds=1.0, text='AB', last_text_seconds=2.0)])
+        self.assertEqual(result.events, [dict(onset_seconds=2.0, text='AB', last_text_seconds=2.5)])
         self.assertEqual(result.observed_seconds, 2.5)
         self.assertFalse(result.include_sample_type)
         raw = [json.loads(line) for line in
                (self.root / 'sample_000.chunks.jsonl').read_text().splitlines()]
-        self.assertEqual([entry['video_time_seconds'] for entry in raw], [1.0, 1.0, 2.0, 2.5])
+        self.assertEqual([entry['video_time_seconds'] for entry in raw], [1.0, 2.0, 2.5])
+        self.assertEqual([entry['kind'] for entry in raw], ['video_audio'] * 3)
+        self.assertEqual(len(generated_after), 3)
 
     def test_joyai_native_silence_reset_and_question_injection(self):
         calls = []
@@ -98,7 +109,7 @@ class AdapterTests(unittest.TestCase):
         contents = [call[1]['json']['messages'][1]['content'] for call in calls[1:]]
         self.assertEqual([sum(item['type'] == 'text' for item in content)
                           for content in contents], [0, 1, 0])
-        self.assertEqual(result.events, [dict(onset_seconds=2.0, text='Reply')])
+        self.assertEqual(result.events, [dict(onset_seconds=2.5, text='Reply')])
         self.assertEqual(len(json.loads((self.root / 'sample_000.json').read_text())['turns']), 3)
 
 

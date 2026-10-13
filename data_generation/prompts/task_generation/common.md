@@ -7,6 +7,15 @@ moment; never derive, copy, interpolate, or round an event time from caption
 start/end values. A caption segment can summarize events that occur later within
 that segment. Its text does not establish what is known at its start. A trigger
 may coincide with a caption boundary only if independently confirmed in the video.
+For example, a caption covering 00:10-00:30 may describe a hand reaching at
+00:15 and a cup breaking at 00:23. Neither event is established at 00:10 simply
+because that is the segment start. Confirm each event separately in the original
+video; the breaking event must not be timestamped 00:10 or at a guessed offset.
+Use absolute timestamps from the beginning of the video, not segment-relative
+seconds. Segment boundaries describe coverage, not every event's onset,
+completion, or evidence availability. Set trigger_time, evidence time and
+available_time, and window boundaries from independently observed cues; do not
+snap them to a caption boundary or spread multiple events evenly across a segment.
 If the video cannot be inspected or the trigger cannot be confirmed from it,
 return {"status":"skip","reason":"..."}; never substitute caption-based timing.
 
@@ -29,6 +38,24 @@ to the evidence available at the call, even though the result is delivered later
 For capability-negative samples, each separate annotation obeys these rules at its
 own trigger_time; the refusal uses only information available at question_time.
 
+This prefix-only rule is mandatory for every ability and every mode: RTD, PR,
+positive Agent episodes, and the real-trigger annotations of capability negatives.
+For each trigger, treat the video as if playback stops at the FINAL output
+trigger_time. Every factual clause in the response must be observable or reasonably
+inferable from frames and audio already available by that cutoff, together with
+the user's instruction and permitted context. No later video or caption information
+may help resolve ambiguity, identify a person or object, explain a cause, confirm
+an outcome, complete an action, or determine a count. Label inferences as uncertain;
+knowing the eventual result from the full video is not evidence for a prediction.
+For example, if someone reaches for a cup at 00:10 and only drinks at 00:12,
+a response at 00:10 may describe reaching but must not say they have drunk.
+Before returning each response, check every factual clause and its supporting
+cue against the prefix ending at the final output trigger_time. Remove unsupported
+clauses, describe only the currently supported state, or select a later valid
+response window when the required evidence has actually become available.
+If no valid candidate remains, return skip. After the full-video coverage pass,
+repeat this prefix-only check so later discoveries cannot backfill earlier replies.
+
 The user is an outside viewer watching the video, not a person in the footage.
 Every question must use this viewer perspective. Refer to on-screen people in
 the third person, using observable descriptions such as "the person in the video"
@@ -44,7 +71,24 @@ refers to, and rewrite any wording that confuses the viewer with a video partici
 Write a natural standing instruction with a specific focus, no spoilers or supplied
 answers. A question may refer to a previously observed target and specify user
 preferences, but cannot reveal future video facts. All prose is concise English.
-Use MM:SS timestamps. Return raw JSON only. If no suitable real evidence exists,
+Use MM:SS timestamps with whole-second precision. When an observed trigger falls
+within a second, truncate the subsecond component; never round to the next second.
+For example, 02:23.33 (also displayed as 02:23:33 in minute:second:subsecond
+notation) must produce trigger_time="02:23", not "02:24" or "02:23:33".
+The FINAL output MM:SS is the exact playback cutoff, not permission to inspect
+the remainder of that second. After truncation, recheck the reply against that
+cutoff: trigger_time="02:23" cannot use any cue first available at 02:23.33.
+If truncation would place the response before its required evidence, reject that
+candidate time and select a later valid whole-second window_start and trigger_time
+when all necessary evidence is already available, or return skip. This selects a
+supported response time; it does not round the observed event time. Truncating an
+evidence timestamp must never make its actual availability earlier. Never derive
+event times from caption boundaries or backdate evidence to satisfy formatting.
+Apply the same whole-second formatting consistently to all output time fields,
+including response windows, evidence times, confirmed_time and Agent message
+timestamps. The immediate Agent acknowledgement and agent_call must use the same
+truncated trigger_time. Preserve the required temporal ordering and sampled delays.
+Return raw JSON only. If no suitable real evidence exists,
 return {"status":"skip","reason":"..."}. Do not generate all-video no-trigger
 silence samples, including in Agent capability-negative branches.
 

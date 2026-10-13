@@ -103,3 +103,52 @@ test('save failure returns an error without modifying the input QA', async () =>
     await rm(root, { recursive: true, force: true })
   }
 })
+
+test('Agent completion ratings can be updated while tool inputs and source are preserved', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'agent-annotation-'))
+  const dataDir = path.join(root, 'data')
+  const outputDir = path.join(root, 'annotations')
+  await mkdir(dataDir)
+  await mkdir(path.join(outputDir, 'A'), { recursive: true })
+  const source = [
+    { mode: 'agent', responses: [
+      { role: 'assistant', tool_calls: [{ function: { name: 'agent_call' } }] },
+      { role: 'tool', response: '{}' }, { role: 'assistant', outcome: 'success' },
+    ] },
+    { mode: 'agent', sample_type: 'missing_tool', responses: [{ response: 'Cannot call tool' }] },
+    { mode: 'agent', sample_type: 'no_context', responses: [{ response: 'No tools' }] },
+  ]
+  const input = path.join(dataDir, 'sample.json')
+  const raw = JSON.stringify(source)
+  await writeFile(input, raw)
+  const { responseFingerprints } = await import('./annotation-records.mjs')
+  const fingerprints = responseFingerprints(source)
+  const legacy = { version: 1, records: { '0:2': { fingerprint: fingerprints[0][2], timeScore: 0, contentScore: 1 } } }
+  const annotationPath = path.join(outputDir, 'A/sample.json.annotations.json')
+  const legacyRaw = JSON.stringify(legacy)
+  await writeFile(annotationPath, legacyRaw)
+  const middleware = annotationMiddleware({ dataDir, outputDir })
+  const server = createServer((req, res) => middleware(req, res, () => { res.statusCode = 404; res.end() }))
+  try {
+    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+    const base = `http://127.0.0.1:${server.address().port}`
+    const rate = (sampleIndex, responseIndex) => fetch(base + '/api/annotations', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: 'sample.json', annotator: 'A', sampleIndex, responseIndex,
+        fingerprint: fingerprints[sampleIndex][responseIndex], dimension: 'time', score: 1 }),
+    })
+    assert.equal((await rate(0, 1)).status, 400)
+    assert.equal(await readFile(annotationPath, 'utf8'), legacyRaw)
+    assert.equal((await rate(0, 2)).status, 200)
+    for (const sampleIndex of [0, 1, 2]) assert.equal((await rate(sampleIndex, 0)).status, 200)
+    const current = await (await fetch(base + '/api/annotations?file=sample.json&annotator=A')).json()
+    assert.equal(current.records['0:2'].timeScore, 1)
+    assert.equal(current.records['0:2'].contentScore, 1)
+    assert.equal(current.records['0:2'].fingerprint, fingerprints[0][2])
+    assert.equal(current.records['0:0'].timeScore, 1)
+    assert.equal(await readFile(input, 'utf8'), raw)
+  } finally {
+    await new Promise(resolve => server.close(resolve))
+    await rm(root, { recursive: true, force: true })
+  }
+})

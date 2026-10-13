@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import path from 'node:path'
 import { galleryDataPlugin, videoDirs } from './scripts/data-source.mjs'
 import { annotationMiddleware } from './scripts/annotation-api.mjs'
+import { modelOutputsPlugin } from './scripts/model-outputs.mjs'
 
 const middleware = annotationMiddleware()
 const annotations = {
@@ -17,7 +18,7 @@ export default defineConfig({
   base: './',
   // The data plugin serves and copies only the videos referenced by samples.
   publicDir: false,
-  plugins: [react(), annotations, galleryDataPlugin()],
+  plugins: [react(), annotations, modelOutputsPlugin(), galleryDataPlugin()],
   server: {
     fs: {
       allow: [path.resolve(import.meta.dirname, '..'), ...videoDirs],

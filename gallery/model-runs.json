@@ -1,0 +1,10 @@
+{
+  "dataset": "../benchmark/all_qa.json",
+  "runs": [
+    { "id": "minicpmo", "name": "MiniCPM-o-4.5", "path": "../benchmark/results/data_parallel_4567_20261007/minicpmo" },
+    { "id": "livestar", "name": "LiveStar", "path": "../benchmark/results/data_parallel_4567_20261007/livestar" },
+    { "id": "roma", "name": "ROMA", "path": "../benchmark/results/data_parallel_4567_20261007/roma" },
+    { "id": "joyai", "name": "JoyAI-VL-Interaction", "path": "../benchmark/results/remaining_4567_20261008T022841Z/joyai" },
+    { "id": "mmduet2", "name": "MMDuet2", "path": "../benchmark/results/mmduet2_recovery_20261008T062632Z/mmduet2_combined" }
+  ]
+}

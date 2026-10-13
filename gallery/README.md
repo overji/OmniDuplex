@@ -40,8 +40,14 @@ for that file without preventing selection of another file.
 Use **Browse / Annotate** above the existing sample filters. Browse restores its
 selected sample. Annotate selects the first response missing either score in the
 current file and filter scope, in original sample/response order. Select annotator
-**A** or **B**; each has independent scores and progress. Tool responses are scored
-alongside other responses. Observation `annotations` remain visible without ratings.
+**A** or **B**; each has independent scores and progress. Agent assistant delegation
+and completion replies can both be rated. Simulated tool results are inputs and
+remain visible without ratings.
+Agent negative samples (`missing_tool` and `no_context`) still score refusal responses.
+RTD/PR scoring is unchanged. Observation `annotations` remain visible without ratings.
+Excluded responses do not contribute to progress or agreement statistics; their
+existing saved scores are preserved. Original response indices and fingerprints
+remain unchanged.
 
 Each response card accepts **Pass (1) / Fail (0)** for timing and content. Each
 click saves immediately to the server. After both scores save, the next unfinished
@@ -123,3 +129,32 @@ its data; only the live service can read changes in the source directory.
 npm test
 npm run build
 ```
+
+## View model outputs
+
+Select **Model outputs**, choose a sample and a model. The reference responses
+remain visible alongside read-only predictions, including unmatched replies.
+Prediction cards and a separate timeline track seek to the original fractional
+video onset. Scores use the benchmark's official timing matching, not semantic
+correctness. Missing samples, unavailable matches and evaluated samples with no
+response are shown separately. Offline snapshots do not include this feature.
+
+Export the configured five model runs before starting the live gallery:
+
+```bash
+python scripts/export-model-outputs.py
+```
+
+`model-runs.json` configures the dataset and experiment directories; paths are
+relative to that configuration file. The script supports `--config` and
+`--output-dir`. Generated `model_outputs/results.json` contains original
+predictions and official scores, without modifying source predictions. Upload
+this directory alongside the app for remote viewing; Python and original
+benchmark directories are needed only when exporting, not for serving.
+
+`MODEL_OUTPUT_DIR` overrides the server's default `gallery/model_outputs` directory.
+The read-only `/api/model-outputs?file=…&sampleIndex=…` endpoint matches samples by
+video, task, question, question time and reference responses. Reordered or single
+sample files therefore retain the correct outputs; changed or ambiguous samples
+are not matched. Export again when results change. Model outputs never write to
+`annotations/` or contribute to human annotation statistics.

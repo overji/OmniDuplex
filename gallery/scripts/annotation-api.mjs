@@ -3,6 +3,7 @@ import { mkdir, readFile, realpath, rename, rm, writeFile } from 'node:fs/promis
 import path from 'node:path'
 import { readData, validateDataName, dataDir as defaultDataDir } from './data-source.mjs'
 import { responseFingerprints, currentAnnotations } from './annotation-records.mjs'
+import { isScorableResponse } from '../src/annotation-state.mjs'
 
 const fail = (status, message) => Object.assign(new Error(message), { status })
 export const outputDir = path.resolve(process.env.ANNOTATION_OUTPUT_DIR || path.join(import.meta.dirname, '../annotations'))
@@ -78,10 +79,15 @@ export function annotationMiddleware({ dataDir = defaultDataDir, outputDir: root
         if (!Number.isInteger(sampleIndex) || sampleIndex < 0 || !Number.isInteger(responseIndex) || responseIndex < 0 ||
             !['time', 'content'].includes(dimension) || ![0, 1].includes(score) || typeof body.fingerprint !== 'string') throw fail(400, 'Invalid annotation')
         const save = async () => {
-          const fingerprints = responseFingerprints(await readData(file, dataDir))
+          const data = await readData(file, dataDir)
+          const samples = Array.isArray(data) ? data : [data]
+          const fingerprints = responseFingerprints(data)
           const expected = fingerprints[sampleIndex]?.[responseIndex]
           if (!expected) throw fail(404, 'Response not found')
           if (expected !== body.fingerprint) throw fail(409, 'Source response changed; reload the file')
+          if (!isScorableResponse(samples[sampleIndex], samples[sampleIndex].responses[responseIndex])) {
+            throw fail(400, 'Agent tool results are inputs and are not scored')
+          }
           const stored = await readAnnotations(root, annotator, file)
           const key = `${sampleIndex}:${responseIndex}`
           const previous = stored.records[key]?.fingerprint === expected ? stored.records[key] : {}

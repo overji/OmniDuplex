@@ -1,3 +1,8 @@
+export function isScorableResponse(sample, response) {
+  if (sample?.mode !== 'agent') return true
+  return response?.role !== 'tool'
+}
+
 export function flattenSamples(data, fingerprints) {
   const samples = Array.isArray(data) ? data : [data]
   return samples.flatMap((sample, sampleIndex) => (Array.isArray(sample?.responses) ? sample.responses : []).map(
@@ -9,7 +14,7 @@ export function flattenSamples(data, fingerprints) {
       response,
       fingerprint: fingerprints[sampleIndex]?.[responseIndex],
     }),
-  ))
+  ).filter(item => isScorableResponse(item.sample, item.response)))
 }
 
 export function isComplete(record) {

@@ -11,6 +11,7 @@ from types import SimpleNamespace
 
 from benchmark.config.models import MODEL_SETTINGS, NATIVE_SETTINGS
 from benchmark.data.prompts import user_request
+from benchmark.data.agent_inputs import AgentInputs
 from benchmark.data.media import media_cache
 from benchmark.data.types import SampleResult
 from benchmark.data.timestamps import seconds
@@ -104,10 +105,14 @@ def run_sample(a, state, context):
     frame_files = meta["frames"]
     from PIL import Image
     inserted_question = False
+    agent_inputs = AgentInputs(sample)
     for frame_time, relative in zip(meta["frame_times"], frame_files):
         if not inserted_question and frame_time >= qtime:
-            conversation.append({"role": "user", "content": user_request(sample)})
+            conversation.append({"role": "user", "content": user_request(sample),
+                                 "skip_inference": True})
             inserted_question = True
+        for text in agent_inputs.take(frame_time):
+            conversation.append({"role": "user", "content": text, "skip_inference": True})
         image_path = cache / relative
         with Image.open(image_path) as img:
             image = img.convert("RGB")
@@ -117,7 +122,7 @@ def run_sample(a, state, context):
             turn["skip_inference"] = True
         conversation.append(turn)
     if not inserted_question:
-        conversation.append({"role": "user", "content": user_request(sample)})
+        raise RuntimeError(f"question_time {qtime} exceeds last observed frame for sample {index}")
     client.input_query_stream(conversation)
     with torch.inference_mode():
         result = client.inference()
@@ -136,5 +141,6 @@ def run_sample(a, state, context):
                 question_replied = True
             events.append({"onset_seconds": at, "text": text})
     with context.open_raw(".json") as f:
-        json.dump({"sample_index": index, "conversation": raw}, f, ensure_ascii=False, indent=2)
+        json.dump({"sample_index": index, "conversation": raw,
+                   "agent_inputs": agent_inputs.delivered}, f, ensure_ascii=False, indent=2)
     return SampleResult(events=events, observed_seconds=meta["duration"])

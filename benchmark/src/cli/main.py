@@ -55,10 +55,12 @@ def main(argv=None):
         rank = vars(args).pop("internal_rank")
         assignment = None
         if plan_path is not None:
+            from benchmark.data.agent_inputs import AGENT_INPUT_PROTOCOL
             import hashlib
             import json
             plan = json.loads(plan_path.read_text())
             if (rank is None or not 0 <= rank < len(plan["assignments"]) or
+                    plan.get("agent_input_protocol") != AGENT_INPUT_PROTOCOL or
                     plan["model"] != adapter_name or
                     plan["data_sha256"] != hashlib.sha256(args.data.read_bytes()).hexdigest() or
                     plan["prompt_sha256"] != hashlib.sha256(args.system_prompt.read_bytes()).hexdigest()):

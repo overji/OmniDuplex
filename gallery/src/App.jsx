@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import snapshot from 'virtual:gallery-snapshot'
-import { flattenSamples, firstIncomplete, isComplete } from './annotation-state.mjs'
+import { flattenSamples, firstIncomplete, isComplete, isScorableResponse } from './annotation-state.mjs'
 import { useAnnotations } from './use-annotations.jsx'
 import { ResponseRating, AnnotationSummary } from './annotation-controls.jsx'
+import { ModelOutputs, useModelOutputs } from './model-outputs.jsx'
+import { predictionRecords } from './model-output-state.mjs'
 
 import { parseTime, formatTime, sampleKind, decodeJSON, reviewRecords, isActiveWindow, windowLanes, matchesFilters, initialFile } from './review-model.mjs'
 function getVideoUrl(videoName) {
@@ -85,7 +87,7 @@ function WindowTimeline({ events, currentTime, duration, questionSeconds, onSeek
       {questionSeconds !== null && <div className="question-marker" style={{ left: position(questionSeconds) }} title={`Question time ${formatTime(questionSeconds)}`}><span>QUESTION</span></div>}
       <input aria-label="Video timeline" type="range" min="0" max={duration} step="0.1" value={Math.min(currentTime, duration)} onChange={e => onSeek(Number(e.target.value))} />
     </div>
-    {['responses', 'annotations'].map(track => {
+    {['responses', 'annotations', 'predictions'].map(track => {
       const records = events.filter(event => event.track === track)
       if (!records.length) return null
       const bands = windows.filter(event => event.track === track)
@@ -94,7 +96,7 @@ function WindowTimeline({ events, currentTime, duration, questionSeconds, onSeek
       const messageLanes = messages.map((event, index) => messages.slice(0, index).filter(previous => previous.seconds === event.seconds).length)
       const messageLaneCount = messages.length ? Math.max(...messageLanes) + 1 : 0
       return <div className={`window-track window-track--${track}`} key={track}>
-        <span>{track === 'annotations' ? 'Observation annotations · not Agent actions' : 'Responses / messages'}</span>
+        <span>{track === 'annotations' ? 'Observation annotations · not Agent actions' : track === 'predictions' ? 'Model predictions' : 'Responses / messages'}</span>
         <div className="window-track__lanes" style={{ height: `${Math.max(1, laneCount + messageLaneCount) * 26}px` }}>
           {bands.map(event => <div key={event.id} className={`window-band${isActiveWindow(event, currentTime) ? ' is-active' : ''}`} style={{ left: position(event.start), width: `${Math.max(0, Math.min(event.end, duration) - Math.min(event.start, duration)) / duration * 100}%`, top: `${event.lane * 26 + 6}px` }}>
             <button className="window-band__hit" type="button" aria-label={`Window ${event.id}: ${formatTime(event.start)} to ${formatTime(event.end)}`} title={`${event.label}: ${formatTime(event.start)} → ${formatTime(event.end)}`} onClick={() => onSeek(event.start)} />
@@ -108,7 +110,7 @@ function WindowTimeline({ events, currentTime, duration, questionSeconds, onSeek
   </>
 }
 
-function SampleReview({ sampleData, annotation }) {
+function SampleReview({ sampleData, annotation, modelOutputs }) {
   const videoName = typeof sampleData.video === 'string' && sampleData.video.trim() ? sampleData.video.trim() : ''
   const videoUrl = getVideoUrl(videoName)
   const videoRef = useRef(null)
@@ -119,6 +121,8 @@ function SampleReview({ sampleData, annotation }) {
   const [isPlaying, setIsPlaying] = useState(false)
 
   const events = useMemo(() => reviewRecords(sampleData), [sampleData])
+  const outputModel = modelOutputs?.state.models.find(model => model.id === modelOutputs.modelId) || modelOutputs?.state.models[0]
+  const timelineEvents = modelOutputs ? [...events, ...predictionRecords(outputModel)] : events
   const activeIds = events.filter(event => isActiveWindow(event, currentTime)).map(event => event.id).join('|')
   const activeIndex = events.findIndex(event => isActiveWindow(event, currentTime))
 
@@ -233,7 +237,7 @@ function SampleReview({ sampleData, annotation }) {
               <span><strong>{formatTime(currentTime)}</strong> / {formatTime(duration)}</span>
               <span>{events.length} RECORDS</span>
             </div>
-            <WindowTimeline events={events} currentTime={currentTime} duration={duration} questionSeconds={questionSeconds} onSeek={seekTo} />
+            <WindowTimeline events={timelineEvents} currentTime={currentTime} duration={duration} questionSeconds={questionSeconds} onSeek={seekTo} />
           </div>
         </div>
 
@@ -242,6 +246,7 @@ function SampleReview({ sampleData, annotation }) {
             <div><span className="section-heading__number">02</span><h2>Responses & Annotations</h2></div>
             <span className="event-count">{String(events.length).padStart(2, '0')}</span>
           </div>
+          {modelOutputs && <ModelOutputs state={modelOutputs.state} model={outputModel} modelId={modelOutputs.modelId} onModelChange={modelOutputs.onModelChange} onSeek={seekTo} />}
           <div className="events-list">
             {events.length ? events.map((event, index) => (
               <EventCard
@@ -250,7 +255,7 @@ function SampleReview({ sampleData, annotation }) {
                 index={index}
                 isActive={isActiveWindow(event, currentTime)}
                 onSeek={seekTo}
-                annotation={annotation && event.track === 'responses' ? {
+                annotation={annotation && event.track === 'responses' && isScorableResponse(sampleData, event) ? {
                   selected: annotation.activeKey === `${annotation.sampleIndex}:${event.originalIndex}`,
                   record: annotation.records[`${annotation.sampleIndex}:${event.originalIndex}`],
                   disabled: annotation.disabled,
@@ -332,6 +337,7 @@ export default function App() {
   const [points, setPoints] = useState([])
   const [fingerprints, setFingerprints] = useState([])
   const [mode, setMode] = useState('browse')
+  const [modelId, setModelId] = useState('minicpmo')
   const [annotator, setAnnotator] = useState('A')
   const [activeKey, setActiveKey] = useState(null)
   const [point, setPoint] = useState(0)
@@ -420,7 +426,7 @@ export default function App() {
   }, [mode, file, annotator, filters, annotations.ready])
 
   function selectSample(index) {
-    if (mode === 'browse') { setPoint(index); saveSelection(file, index); return }
+    if (mode !== 'annotate') { setPoint(index); saveSelection(file, index); return }
     const candidates = visibleItems.filter(item => item.sampleIndex === index)
     const next = firstIncomplete(candidates, annotations.groups[annotator])
     setActiveKey(candidates[next < 0 ? 0 : next]?.key || null)
@@ -444,6 +450,7 @@ export default function App() {
       setActiveKey(next < 0 ? null : visibleItems[next].key)
     }
   }
+  const modelResults = useModelOutputs(file, selectedPoint, mode === 'models' && !offline && !loading && !error)
   const selected = points[selectedPoint]
   const reviewData = selected && typeof selected === 'object' && !Array.isArray(selected) ? selected : null
   return <div className="gallery-layout">
@@ -458,12 +465,12 @@ export default function App() {
       <header className="point-picker">
         <h2>{file || 'Gallery'} <span>{points.length} samples</span></h2>
         <div className="annotation-toolbar">
-          <div role="group" aria-label="Gallery mode">{['browse', 'annotate'].map(value => <button type="button" key={value}
-            aria-pressed={mode === value} disabled={annotations.saving || (value === 'annotate' && offline)}
-            onClick={() => setMode(value)}>{value === 'browse' ? 'Browse' : 'Annotate'}</button>)}</div>
+          <div role="group" aria-label="Gallery mode">{['browse', 'annotate', 'models'].map(value => <button type="button" key={value}
+            aria-pressed={mode === value} disabled={annotations.saving || (value !== 'browse' && offline)}
+            onClick={() => setMode(value)}>{value === 'browse' ? 'Browse' : value === 'annotate' ? 'Annotate' : 'Model outputs'}</button>)}</div>
           {mode === 'annotate' && <label>Annotator <select aria-label="Annotator" disabled={annotations.saving}
             value={annotator} onChange={event => setAnnotator(event.target.value)}><option>A</option><option>B</option></select></label>}
-          <span role="status">{offline ? 'Annotation requires the live gallery server' : mode === 'annotate' ? annotations.status || (annotations.ready ? 'Synced' : 'Loading scores…') : ''}</span>
+          <span role="status">{offline ? 'Annotation and model outputs require the live gallery server' : mode === 'annotate' ? annotations.status || (annotations.ready ? 'Synced' : 'Loading scores…') : ''}</span>
         </div>
         <div className="sample-filters">
           {['ability', 'mode', 'kind', 'video'].map(field => <label key={field}>{field === 'kind' ? 'Sample type' : field}<select aria-label={`Filter ${field}`} disabled={annotations.saving} value={filters[field]} onChange={e => setFilters({ ...filters, [field]: e.target.value })}><option value="">All</option>{[...new Set(points.map(entry => field === 'kind' ? sampleKind(entry) : entry?.[field]).filter(Boolean))].sort().map(value => <option key={value} value={value}>{value}</option>)}</select></label>)}
@@ -488,7 +495,7 @@ export default function App() {
         : !files.length ? <p className="gallery-message">No JSON files found in data_generation/data.</p>
         : !points.length ? <p className="gallery-message">This file contains no samples.</p>
         : !visiblePoints.length ? <p className="gallery-message">No samples match these filters.</p>
-        : reviewData ? <SampleReview key={`${file}:${selectedPoint}`} sampleData={reviewData} annotation={mode === 'annotate' ? {
+        : reviewData ? <SampleReview key={`${file}:${selectedPoint}`} sampleData={reviewData} modelOutputs={mode === 'models' ? { state: modelResults, modelId, onModelChange: setModelId } : null} annotation={mode === 'annotate' ? {
             sampleIndex: selectedPoint, activeKey, records: annotations.groups[annotator],
             disabled: annotations.saving || !annotations.ready,
             onSelect: responseIndex => setActiveKey(`${selectedPoint}:${responseIndex}`), onRate: rateResponse,

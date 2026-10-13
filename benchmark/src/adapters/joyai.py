@@ -10,6 +10,7 @@ from urllib.parse import quote
 
 from benchmark.config.models import MODEL_SETTINGS
 from benchmark.data.prompts import user_request
+from benchmark.data.agent_inputs import AgentInputs
 from benchmark.data.media import media_cache
 from benchmark.data.types import SampleResult
 from benchmark.data.timestamps import seconds
@@ -49,12 +50,15 @@ def run_sample(a, state, context):
         json={}, headers={"x-streaming-session": session}, timeout=60).raise_for_status()
     raw, events = [], []
     inserted_query = False
+    agent_inputs = AgentInputs(sample)
     for frame_time, relative in zip(meta["frame_times"], meta["frames"]):
         frame_path = (cache / relative).resolve()
         content = []
         if not inserted_query and frame_time >= qtime:
             content.append({"type": "text", "text": user_request(sample)})
             inserted_query = True
+        content.extend({"type": "text", "text": text}
+                       for text in agent_inputs.take(frame_time))
         frame_uri = "file://" + quote(str(frame_path))
         content.append({"type": "image_url", "image_url": {"url": frame_uri}})
         payload = {"model": a.model, "messages": [
@@ -66,16 +70,20 @@ def run_sample(a, state, context):
         body = response.json()
         message = body["choices"][0]["message"].get("content", "")
         raw_text = body.get("streamingharness", {}).get("raw_content", message)
-        at = float(frame_time)
-        item = {"video_time_seconds": at, "content": message, "raw_content": raw_text,
+        # Text and this frame are supplied together before generation. Record
+        # the interval end for every task, including the initial user request.
+        at = min(float(frame_time) + 1, meta["duration"])
+        item = {"video_time_seconds": at, "frame_time_seconds": float(frame_time),
+                "content": message, "raw_content": raw_text,
                 "timing": body.get("streamingharness", {}).get("timing")}
         raw.append(item)
-        if at >= qtime:
+        if inserted_query and frame_time >= qtime:
             match = re.search(r"</response>\s*(.*?)(?:</|$)", raw_text, flags=re.S)
             if match and match.group(1).strip():
                 events.append({"onset_seconds": at, "text": match.group(1).strip()})
     if not inserted_query:
         raise RuntimeError(f"question_time {qtime} exceeds last observed frame for sample {index}")
     with context.open_raw(".json") as f:
-        json.dump({"sample_index": index, "turns": raw}, f, ensure_ascii=False, indent=2)
+        json.dump({"sample_index": index, "turns": raw,
+                   "agent_inputs": agent_inputs.delivered}, f, ensure_ascii=False, indent=2)
     return SampleResult(events=events, observed_seconds=meta["duration"])
