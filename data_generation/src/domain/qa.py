@@ -33,6 +33,8 @@ def adapt_responses(responses: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 key: value for key, value in message.items()
                 if key not in {"timestamp", "content"}
             })
+            if index == 2 and message.get("role") == "assistant":
+                entry["agent_result_time"] = messages[1]["timestamp"]
             adapted.append(entry)
     return sorted(adapted, key=lambda item: timestamp_seconds(item["trigger_time"]))
 

@@ -5,7 +5,7 @@ from .video_caption import load_caption
 from .registry import get_task
 
 
-def build_task_request(name, path, video_path):
+def build_task_request(name, path, video_path, *, agent_sample_type=None):
     video = video_path.expanduser().resolve()
     duration = probe_video_duration(video)
     caption = load_caption(path, duration)
@@ -15,5 +15,6 @@ def build_task_request(name, path, video_path):
         return task.build_request(video, duration, caption, prompt)
     root = PROMPT_ROOT / "task_generation"
     mode_path = root / ("agent/generation.md" if task.mode == "agent" else f"{task.mode}.md")
+    kwargs = {"sample_type": agent_sample_type} if agent_sample_type is not None else {}
     return task.build_request(video, duration, caption,
-                              (root / "common.md").read_text(), mode_path.read_text())
+                              (root / "common.md").read_text(), mode_path.read_text(), **kwargs)

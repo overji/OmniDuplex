@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass
 from typing import Any
 
 from ..agent_tools import TOOLS, WRITE_TOOLS, describe_tool, validate_arguments
 from ..common import timestamp_seconds
+from ..config import AGENT_REFUSAL_WINDOW_SECONDS
 from . import _shared
 
 
@@ -40,7 +42,8 @@ def _tool_list(value: Any, label: str) -> set[str]:
     return set(value)
 
 
-def validate_result(result: dict[str, Any], context: GenerationContext, capabilities_template: str) -> dict[str, Any]:
+def validate_result(result: dict[str, Any], context: GenerationContext, capabilities_template: str,
+                    *, allow_legacy_agent_windows=False) -> dict[str, Any]:
     if not isinstance(result, dict):
         raise ValueError("agent result must be an object")
     available = set(context.available_tools)
@@ -95,8 +98,12 @@ def validate_result(result: dict[str, Any], context: GenerationContext, capabili
             raise ValueError("refusal must not contain calls, results, or video-event claims")
         if _shared.checked_time(refusal["trigger_time"], context, "refusal time") != question:
             raise ValueError("refusal must occur immediately at question_time")
-        if any(_shared.checked_time(refusal[key], context, key) != question for key in ("window_start", "window_end")):
-            raise ValueError("refusal window must equal question_time")
+        start = _shared.checked_time(refusal["window_start"], context, "window_start")
+        end = _shared.checked_time(refusal["window_end"], context, "window_end")
+        legacy = allow_legacy_agent_windows and start == end == question
+        if not legacy and (start != question or end != question + AGENT_REFUSAL_WINDOW_SECONDS
+                           or end > math.floor(context.duration_seconds)):
+            raise ValueError("refusal window must span question_time through question_time + 3 within video")
         _shared.require_text(refusal["response"], "refusal response")
         _shared.require_text(refusal["refusal_reason"], "refusal_reason")
         if _tool_list(refusal["missing_tools"], "missing_tools") != required - available:
@@ -106,7 +113,7 @@ def validate_result(result: dict[str, Any], context: GenerationContext, capabili
     else:
         if not required <= available:
             raise ValueError("positive task requires unavailable tools")
-        _shared.validate_agent_result(result, context)
+        _shared.validate_agent_result(result, context, allow_legacy_agent_windows=allow_legacy_agent_windows)
         for response in result["responses"]:
             call = response["messages"][0]["tool_calls"][0]
             arguments = json.loads(call["function"]["arguments"])

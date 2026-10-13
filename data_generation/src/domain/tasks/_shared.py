@@ -127,7 +127,7 @@ def validate_common(
 
 
 def validate_agent_result(
-    result: dict[str, Any], context: GenerationContext
+    result: dict[str, Any], context: GenerationContext, *, allow_legacy_agent_windows=False
 ) -> dict[str, Any]:
     if result.get("status") == "skip":
         reason = require_text(result.get("reason"), "reason")
@@ -136,11 +136,12 @@ def validate_agent_result(
         raise ValueError("video has no legal duration-based backend delay; return skip")
     validate_common(result, context, min_responses=1)
     for response in result["responses"]:
-        validate_agent_response(response, context)
+        validate_agent_response(response, context, allow_legacy_agent_windows=allow_legacy_agent_windows)
     return result
 
 
-def validate_agent_response(response: dict[str, Any], context: GenerationContext) -> None:
+def validate_agent_response(response: dict[str, Any], context: GenerationContext,
+                            *, allow_legacy_agent_windows=False) -> None:
     trigger_seconds = timestamp_seconds(response["trigger_time"])
     messages = response.get("messages")
     if not isinstance(messages, list) or len(messages) != 3:
@@ -148,10 +149,12 @@ def validate_agent_response(response: dict[str, Any], context: GenerationContext
     assistant_call, tool_result, assistant_final = messages
     if not all(isinstance(message, dict) for message in messages):
         raise ValueError("agent messages must be objects")
+    legacy_final = (allow_legacy_agent_windows and "window_start" not in assistant_final
+                    and "window_end" not in assistant_final)
     for message, allowed in zip(messages, (
         {"role", "timestamp", "content", "tool_calls"},
         {"role", "name", "timestamp", "content"},
-        {"role", "timestamp", "content", "outcome"},
+        {"role", "timestamp", "content", "outcome"} | (set() if legacy_final else {"window_start", "window_end"}),
     )):
         if set(message) != allowed:
             raise ValueError("agent message fields must match its role")
@@ -246,8 +249,17 @@ def validate_agent_response(response: dict[str, Any], context: GenerationContext
 
     if assistant_final.get("role") != "assistant":
         raise ValueError("third message must be the frontend assistant result")
-    if checked_time(assistant_final.get("timestamp"), context, "final timestamp") != result_seconds:
-        raise ValueError("frontend final must coincide with the tool result")
+    final_time = checked_time(assistant_final.get("timestamp"), context, "final timestamp")
+    if legacy_final:
+        if final_time != result_seconds:
+            raise ValueError("legacy frontend final must coincide with the tool result")
+    else:
+        start = checked_time(assistant_final["window_start"], context, "final window_start")
+        end = checked_time(assistant_final["window_end"], context, "final window_end")
+        if not result_seconds + 1 <= start <= final_time <= end <= int(context.duration_seconds):
+            raise ValueError("frontend final must lie in its own window strictly after the tool result")
+        if timestamp_seconds(response["window_end"]) + context.agent_delay_seconds + 1 > int(context.duration_seconds):
+            raise ValueError("latest eligible call must leave time for a post-result reply")
     frontend_final = require_text(assistant_final.get("content"), "frontend final")
     if len(frontend_final.split()) > 40:
         raise ValueError("frontend final must be at most 40 words")

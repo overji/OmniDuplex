@@ -164,8 +164,9 @@ trigger_time <= window_end. If later evidence is necessary, re-evaluate the enti
 window and, for PR/Agent, confirmed_time; do not extend window_end mechanically.
 If no useful, evidence-supported window exists, redesign the candidate or return
 skip rather than inventing timing. This evidence rule applies to audiovisual
-observations; capability-negative refusals still use question_time for all three
-timing fields, with real event timing confined to their separate annotations.
+observations; capability-negative refusals use window_start=trigger_time=question_time
+and window_end=question_time+3 seconds, entirely within the video. Real event timing
+is confined to their separate annotations.
 The ability and mode identifiers are program-controlled and must not be changed.
 
 For PR/Agent annotations also supply:

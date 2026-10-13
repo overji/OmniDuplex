@@ -141,10 +141,16 @@ Return one JSON object with:
      and only available tools. All call fields must be self-contained.
   2. role="tool", name="agent_call", timestamp=trigger_time + the specified delay,
      content="<JSON string of the simulated backend envelope below>".
-  3. role="assistant", timestamp=same as tool result, content=concise final answer
+  3. role="assistant", window_start, timestamp, window_end, content=concise final answer
      (<=40 words), no tool_calls. Distinguish failures, unconfirmed work and success.
+     Choose a natural usefulness window as in PR: earliest supportable reporting
+     time through the latest time the same result remains timely and useful.
+     window_start must be at least one whole second after the tool-result timestamp,
+     and window_start <= timestamp <= window_end <= floor(video duration).
+     Do not impose a fixed three-second window on positive completion replies.
 All messages remain within the video duration. The latest eligible call time
-window_end must also leave enough time for the sampled backend delay; if no valid
+window_end must also leave enough time for the sampled backend delay plus at least
+one second to report its result; if no valid
 window remains for any matching episode, skip instead of omitting that episode.
 
 Backend envelope: {"simulated":true,"status":"success|needs_confirmation|failed",
@@ -167,8 +173,11 @@ requested work, naming the relevant activity rather than its implementation.
 Use only the user's instruction and frontend capabilities at that moment. Do not
 cite future video, fabricate completion, invoke agent_call, or emit a backend result.
 No silent interval or backend delay applies to the refusal itself. The responses
-array contains exactly one refusal. Its window_start, trigger_time, and window_end
-must ALL equal question_time exactly, not an event's timing or a later endpoint.
+array contains exactly one refusal. Its window_start and trigger_time must equal
+question_time; window_end must equal question_time+3 seconds. This is a closed
+three-second reply window, not an event's timing. Choose question_time to leave
+all three seconds within floor(video duration), or return skip. The refusal text
+uses only facts available at question_time, not later facts in this window.
 The user-facing response itself must clearly say the requested work cannot be
 performed because the needed capability is unavailable. A refusal_reason field
 does not turn an acknowledgement into a refusal.
@@ -204,7 +213,7 @@ and common annotation contracts, and include every matching annotation:
   "responses": [{
     "window_start": "<same value as question_time>",
     "trigger_time": "<same value as question_time>",
-    "window_end": "<same value as question_time>",
+    "window_end": "<question_time plus 3 seconds>",
     "response": "I don't have the ability to <requested activity>.",
     "refusal_reason": "<annotation-only technical capability limitation>",
     "missing_tools": ["<all required but unavailable tools>"]
@@ -233,8 +242,8 @@ annotation-only future records: NEVER include them in the refusal or frontend_co
 An annotation's response records what happened in the video; it is not a second
 assistant reply and must not be copied into responses. Before returning, verify
 the exact annotations key, the single explicit capability-based refusal without
-tool or implementation references in response, and equality of all three
-refusal timestamps with question_time. Annotation timestamps follow the observed
+tool or implementation references in response, window_start=trigger_time=question_time
+and window_end=question_time+3. Annotation timestamps follow the observed
 events independently and must not be copied into the refusal window.
 Program-controlled sample_type, available_tools and frontend_context are attached
 by the program; do not generate or modify these fields.

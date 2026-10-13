@@ -64,7 +64,7 @@ def agent_sample(task="event_understanding_agent", sample_type="positive", work_
     item = observation(ability, "agent")
     if sample_type != "positive":
         result["annotations"] = [item]
-        result["responses"] = [{"window_start": "00:00", "trigger_time": "00:00", "window_end": "00:00", "response": "I cannot create todos with my available tools.",
+        result["responses"] = [{"window_start": "00:00", "trigger_time": "00:00", "window_end": "00:03", "response": "I cannot create todos with my available tools.",
                                 "refusal_reason": "Todo creation is unavailable.", "missing_tools": ["todo_create"]}]
         return result, context
     arguments = {
@@ -85,7 +85,8 @@ def agent_sample(task="event_understanding_agent", sample_type="positive", work_
         {"role": "assistant", "timestamp": "00:20", "content": "I will handle it.",
          "tool_calls": [{"type": "function", "function": {"name": "agent_call", "arguments": json.dumps(arguments)}}]},
         {"role": "tool", "name": "agent_call", "timestamp": "00:40", "content": json.dumps(envelope)},
-        {"role": "assistant", "timestamp": "00:40", "content": "The task is handled.", "outcome": "success"},
+        {"role": "assistant", "timestamp": "00:41", "window_start": "00:41", "window_end": "00:48",
+         "content": "The task is handled.", "outcome": "success"},
     ]
     item["response"] = item["messages"][0]["content"]
     result["responses"] = [item]

@@ -22,6 +22,7 @@ class GenerationOptions(APIOptions):
     input: Path | None = None
     video_url: str | None = None
     usage_output: Path | None = None
+    agent_sample_type: str | None = None
 
 
 @dataclass(kw_only=True)
@@ -32,6 +33,16 @@ class BatchOptions(APIOptions):
     samples_per_task: int
     seed: int
     resume: bool
+
+
+@dataclass(kw_only=True)
+class PipelineOptions(BatchOptions):
+    video: Path | None = None
+    num_attempts: int | None = None
+    video_url_map: Path | None = None
+    agent_probability: float = 0.75
+    agent_positive_probability: float = 0.7
+    pr_probability: float = 0.5
 
 
 @dataclass

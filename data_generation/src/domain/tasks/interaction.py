@@ -54,8 +54,10 @@ class InteractionTask:
         self.name = name
         self.ability, self.mode = split_task(name)
 
-    def build_request(self, video, duration, caption, common_template, mode_template):
-        sample_type = config.choose_agent_sample_type() if self.mode == "agent" else "positive"
+    def build_request(self, video, duration, caption, common_template, mode_template, *, sample_type=None):
+        if sample_type is not None and (self.mode != "agent" or sample_type not in {"positive", "no_context", "missing_tool"}):
+            raise ValueError("invalid explicit Agent sample type")
+        sample_type = sample_type or (config.choose_agent_sample_type() if self.mode == "agent" else "positive")
         missing = random.choice(tuple(TOOLS)) if sample_type != "positive" else None
         available = tuple(t for t in TOOLS if t != missing) if self.mode == "agent" and sample_type != "no_context" else ()
         context = GenerationContext(
@@ -82,7 +84,7 @@ class InteractionTask:
                 system += f"\nThe requested work MUST genuinely require missing tool {missing}. Do not substitute reasoning or another tool."
         return GenerationRequest(system, json.dumps(user, ensure_ascii=False, indent=2), context, video)
 
-    def validate_result(self, result, context):
+    def validate_result(self, result, context, *, allow_legacy_agent_windows=False):
         validate_context(context, self.mode)
         if not isinstance(result, dict):
             raise ValueError("sample must be an object")
@@ -92,7 +94,8 @@ class InteractionTask:
         if self.mode != "agent" and any(key in result for key in ("annotation", "annotations", "frontend_context", "required_tools", "available_tools", "work_type", "sample_type")):
             raise ValueError("non-agent samples cannot carry Agent execution metadata")
         if self.mode == "agent":
-            result = _agent.validate_result(result, context, self.capabilities_template)
+            result = _agent.validate_result(result, context, self.capabilities_template,
+                                           allow_legacy_agent_windows=allow_legacy_agent_windows)
         if result.get("status") == "skip":
             return {"status": "skip", "reason": _shared.require_text(result.get("reason"), "reason"),
                     "ability": self.ability, "mode": self.mode}

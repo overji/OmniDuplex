@@ -76,6 +76,12 @@ def chat_completion(
     upload_url: str | None = None,
     usage_callback=None,
 ) -> str:
+    if provider == "gemini":
+        from .gemini import completion
+        return completion(system_prompt, user_prompt, video_path=video_path,
+                          api_key=api_key, base_url=base_url, model=model,
+                          timeout=timeout, retries=retries, usage_callback=usage_callback,
+                          video_url=video_url)
     if provider not in {"openai", "qwen"}:
         raise ValueError(f"unsupported provider: {provider}")
     if video_url is not None:

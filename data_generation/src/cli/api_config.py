@@ -10,11 +10,11 @@ QWEN_BASE_URL = "https://maas.qianwenaiapi.com/compatible-mode/v1"
 
 
 def add_api_arguments(parser):
-    parser.add_argument("--provider", choices=("openai", "qwen"), default="openai")
+    parser.add_argument("--provider", choices=("openai", "qwen", "gemini"), default="openai")
     parser.add_argument("--env-file", type=Path, default=DEFAULT_ENV_FILE,
-                        help="Qwen dotenv file (default: repository .env)")
+                        help="Provider dotenv file (default: repository .env)")
     parser.add_argument("--model", help="model name")
-    parser.add_argument("--base-url", help="OpenAI-compatible API base URL")
+    parser.add_argument("--base-url", help="API base URL (native Gemini URL for --provider gemini)")
     parser.add_argument("--api-key", help="API key (prefer environment or .env)")
     parser.add_argument("--upload-url", help="Qwen upload policy endpoint (default: inferred from API region)")
     parser.add_argument("--timeout", type=float, default=120.0)
@@ -22,7 +22,7 @@ def add_api_arguments(parser):
 
 
 def resolve_api_arguments(args):
-    if args.provider == "qwen":
+    if args.provider in {"qwen", "gemini"}:
         from dotenv import dotenv_values
 
         # Read configuration without exporting secrets or overriding process env.
@@ -33,6 +33,13 @@ def resolve_api_arguments(args):
             "api_key": environment.get("QWEN_API_KEY"),
             "upload_url": environment.get("QWEN_UPLOAD_URL"),
         }
+        if args.provider == "gemini":
+            defaults = {
+                "model": environment.get("GEMINI_MODEL"),
+                "base_url": environment.get("GEMINI_BASE_URL") or "https://generativelanguage.googleapis.com",
+                "api_key": environment.get("GEMINI_API_KEY"),
+                "upload_url": None,
+            }
     else:
         defaults = {
             "model": os.getenv("OPENAI_MODEL"),

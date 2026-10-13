@@ -34,7 +34,7 @@ def load_sample(source: Path, videos_dir: Path) -> dict[str, Any] | None:
         context = task.GenerationContext(**raw_context)
     except TypeError as exc:
         raise ValueError(f"invalid generation_context: {source}") from exc
-    data = task.validate_result(data, context)
+    data = task.validate_result(data, context, allow_legacy_agent_windows=True)
     if data.get("status") == "skip":
         return None
     result = dict(data)

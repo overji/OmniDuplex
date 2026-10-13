@@ -89,13 +89,14 @@ class AgentTests(unittest.TestCase):
 
     def test_every_agent_episode_is_validated_and_merged_in_time_order(self):
         sample, context = agent_sample()
-        second = json.loads(json.dumps(sample["responses"][0]).replace("00:20", "00:30").replace("00:40", "00:50"))
+        second = json.loads(json.dumps(sample["responses"][0]).replace("00:20", "00:30")
+                            .replace("00:40", "00:50").replace("00:41", "00:51").replace("00:48", "00:58"))
         second["trigger"]["episode_id"] = "event-30"
         sample["responses"].append(second)
         result = validate(sample, context)
         merged = adapt_responses(result["responses"])
         self.assertEqual([r["trigger_time"] for r in merged],
-                         ["00:20", "00:30", "00:40", "00:40", "00:50", "00:50"])
+                         ["00:20", "00:30", "00:40", "00:41", "00:50", "00:51"])
         self.assertEqual([r["source_trigger_time"] for r in merged if "source_trigger_time" in r],
                          ["00:20", "00:30"])
         for mutate in (
@@ -131,8 +132,8 @@ class AgentTests(unittest.TestCase):
         response = sample["responses"][0]
         response.update(trigger_time="00:22", window_end="00:25")
         response["messages"][0]["timestamp"] = "00:22"
-        for message in response["messages"][1:]:
-            message["timestamp"] = "00:42"
+        response["messages"][1]["timestamp"] = "00:42"
+        response["messages"][2].update(timestamp="00:43", window_start="00:43", window_end="00:48")
         validate(sample, context)
         response["window_end"] = "01:41"
         with self.assertRaisesRegex(ValueError, "latest eligible call"):
@@ -141,6 +142,35 @@ class AgentTests(unittest.TestCase):
         sample["responses"][0]["window_end"] = "00:01"
         with self.assertRaisesRegex(ValueError, "refusal window"):
             validate(sample, context)
+
+    def test_completion_windows_are_required_and_natural_not_fixed_three_seconds(self):
+        sample, context = agent_sample()
+        final = sample["responses"][0]["messages"][2]
+        final.update(window_end="01:00", timestamp="00:48")
+        validate(sample, context)
+        merged = adapt_responses(sample["responses"])
+        self.assertEqual(merged[2]["window_end"], "01:00")
+        self.assertEqual(merged[2]["agent_result_time"], "00:40")
+        for fields in ({"timestamp": "00:40"}, {"window_start": "00:40"},
+                       {"window_end": "02:01"}):
+            broken = copy.deepcopy(sample)
+            broken["responses"][0]["messages"][2].update(fields)
+            with self.assertRaises(ValueError):
+                validate(broken, context)
+        final.pop("window_start")
+        with self.assertRaises(ValueError):
+            validate(sample, context)
+
+    def test_negative_window_is_exactly_three_seconds_and_fits_video(self):
+        sample, context = agent_sample(sample_type="no_context")
+        validate(sample, context)
+        for end in ["00:00", "00:02", "00:04"]:
+            broken = copy.deepcopy(sample)
+            broken["responses"][0]["window_end"] = end
+            with self.assertRaises(ValueError):
+                validate(broken, context)
+        with self.assertRaises(ValueError):
+            validate(sample, replace(context, duration_seconds=2.9))
 
     def test_delegation_cannot_invent_tools_or_future_parameters(self):
         for change in ({"suggested_capabilities": ["invented_tool"]}, {"suggested_capabilities": []},
