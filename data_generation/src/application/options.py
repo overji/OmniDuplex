@@ -38,6 +38,7 @@ class BatchOptions(APIOptions):
 @dataclass(kw_only=True)
 class PipelineOptions(BatchOptions):
     video: Path | None = None
+    split: str | None = None
     num_attempts: int | None = None
     video_url_map: Path | None = None
     agent_probability: float = 0.75

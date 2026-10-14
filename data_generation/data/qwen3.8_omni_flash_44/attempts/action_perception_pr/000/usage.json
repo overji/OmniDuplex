@@ -3,7 +3,7 @@
   "provider": "qwen",
   "model": "qwen3.8-omni-flash",
   "task": "action_perception_pr",
-  "video": "video_152.mp4",
+  "video": "f2149405-8494-557b-b218-12a638240089.mp4",
   "recorded_at": "2026-10-04T02:55:24.241532+00:00",
   "status": "measured",
   "input_tokens": 134885,

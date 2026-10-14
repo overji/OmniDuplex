@@ -1,6 +1,6 @@
 {
   "task": "event_understanding_rtd",
-  "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/video_149.mp4",
+  "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/2800df63-1e2e-5138-b52c-a615e6aadedf.mp4",
   "context": {
     "duration_seconds": 212.068,
     "preferred_modality": "audio",

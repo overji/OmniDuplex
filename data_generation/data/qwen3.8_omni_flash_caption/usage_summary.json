@@ -5,12 +5,12 @@
   "currency": "CNY",
   "historical_note": "These six captions were generated before API usage capture was enabled. The provider token usage was not saved, so historical token totals and charges cannot be recovered from caption.json.",
   "calls": [
-    {"video": "video_1.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
-    {"video": "video_101.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "21f105a0-63a0-5565-ae2b-2a77e628a368.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "b364982f-fb37-5e7c-b6a3-844f771024d7.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
     {"video": "video_103.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
-    {"video": "video_11.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
-    {"video": "video_149.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
-    {"video": "video_152.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null}
+    {"video": "a5736cff-92b4-5955-bff5-9a78475760cc.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "2800df63-1e2e-5138-b52c-a615e6aadedf.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null},
+    {"video": "f2149405-8494-557b-b218-12a638240089.mp4", "status": "unavailable_historical", "input_tokens": null, "output_tokens": null, "total_tokens": null, "estimated_cost_cny": null}
   ],
   "totals": {
     "calls": 6,

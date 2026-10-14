@@ -198,7 +198,7 @@
   "mode": "agent",
   "schema": "omni-interaction-v2",
   "task": "object_perception_agent",
-  "video": "video_1.mp4",
+  "video": "21f105a0-63a0-5565-ae2b-2a77e628a368.mp4",
   "generation_context": {
     "duration_seconds": 208.05,
     "preferred_modality": "vision",

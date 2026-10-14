@@ -3,7 +3,7 @@
   "provider": "qwen",
   "model": "qwen3.8-omni-flash",
   "task": "grounding_pr",
-  "video": "video_11.mp4",
+  "video": "a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
   "recorded_at": "2026-10-04T02:32:13.166939+00:00",
   "status": "measured",
   "input_tokens": 145380,

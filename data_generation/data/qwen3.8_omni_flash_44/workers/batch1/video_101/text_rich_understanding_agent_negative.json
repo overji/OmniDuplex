@@ -172,7 +172,7 @@
   "mode": "agent",
   "schema": "omni-interaction-v2",
   "task": "text_rich_understanding_agent",
-  "video": "video_101.mp4",
+  "video": "b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
   "generation_context": {
     "duration_seconds": 233.484,
     "preferred_modality": "vision",

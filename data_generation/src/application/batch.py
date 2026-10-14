@@ -16,10 +16,11 @@ from .merge_qa import load_sample
 from .registry import get_task
 
 
-def run(args: BatchOptions, *, progress: Callable[[str, bool], None] | None = None):
+def run(args: BatchOptions, *, progress: Callable[[str, bool], None] | None = None, videos=None):
     single_video = getattr(args, "video", None)
     is_pipeline = isinstance(args, PipelineOptions)
-    videos = [single_video] if single_video is not None else sorted(p for p in args.videos_dir.rglob("*") if p.is_file() and p.suffix.lower() in {".mp4", ".mov", ".mkv", ".webm", ".avi"})
+    if videos is None:
+        videos = [single_video] if single_video is not None else sorted(p for p in args.videos_dir.rglob("*") if p.is_file() and p.suffix.lower() in {".mp4", ".mov", ".mkv", ".webm", ".avi"})
     if not videos:
         raise ValueError("no source videos found")
     if args.resume:
@@ -60,6 +61,7 @@ def run(args: BatchOptions, *, progress: Callable[[str, bool], None] | None = No
         settings["sources"] = [[str(video.relative_to(args.videos_dir)), file_digest(video)] for video in videos]
         settings["videos_dir"] = str(args.videos_dir.resolve())
         settings["num_attempts"] = args.num_attempts
+        settings["split"] = args.split
         settings["url_mapping_hash"] = digest(urls)
         if args.resume and manifest.get("pipeline_settings") != settings:
             raise ValueError("pipeline settings or implementation changed; create a new run instead of resuming")

@@ -3,7 +3,7 @@
   "provider": "qwen",
   "model": "qwen3.8-omni-flash",
   "task": "object_counting_agent",
-  "video": "video_1.mp4",
+  "video": "21f105a0-63a0-5565-ae2b-2a77e628a368.mp4",
   "recorded_at": "2026-10-04T02:16:01.461155+00:00",
   "status": "measured",
   "input_tokens": 136895,

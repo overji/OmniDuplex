@@ -252,7 +252,7 @@
   "mode": "agent",
   "schema": "omni-interaction-v2",
   "task": "grounding_agent",
-  "video": "video_11.mp4",
+  "video": "a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
   "generation_context": {
     "duration_seconds": 229.762,
     "preferred_modality": "audio",

@@ -1,0 +1,1031 @@
+[
+  {
+    "status": "ok",
+    "question": "Keep me updated on the hand gestures and movements of the woman in the video.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:02",
+        "trigger_time": "00:02",
+        "window_end": "00:06",
+        "response": "The woman is gesturing with her right hand as she speaks.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman's hand gestures are visible.",
+        "evidence": [
+          {
+            "time": "00:02",
+            "available_time": "00:02",
+            "fact": "The woman is moving her right hand while talking."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "gesturing with right hand",
+          "phase": "ongoing",
+          "uncertainty": "low"
+        }
+      },
+      {
+        "window_start": "00:08",
+        "trigger_time": "00:08",
+        "window_end": "00:09",
+        "response": "She is now gesturing outwards with both hands.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman is seen using both hands to gesture.",
+        "evidence": [
+          {
+            "time": "00:08",
+            "available_time": "00:08",
+            "fact": "The woman moves both hands outwards."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "gesturing with both hands",
+          "phase": "onset",
+          "uncertainty": "low"
+        }
+      },
+      {
+        "window_start": "00:11",
+        "trigger_time": "00:11",
+        "window_end": "00:12",
+        "response": "She has clasped her hands together in front of her.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman's hands are visibly clasped.",
+        "evidence": [
+          {
+            "time": "00:11",
+            "available_time": "00:11",
+            "fact": "The woman brings her hands together and clasps them."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "clasping hands",
+          "phase": "onset",
+          "uncertainty": "low"
+        }
+      },
+      {
+        "window_start": "00:14",
+        "trigger_time": "00:14",
+        "window_end": "00:16",
+        "response": "She is touching her hair and ear with her right hand.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman is seen touching her hair and ear.",
+        "evidence": [
+          {
+            "time": "00:14",
+            "available_time": "00:14",
+            "fact": "The woman raises her right hand to her hair and ear."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "touching hair and ear",
+          "phase": "onset",
+          "uncertainty": "low"
+        }
+      },
+      {
+        "window_start": "00:20",
+        "trigger_time": "00:20",
+        "window_end": "00:22",
+        "response": "She is now touching her face and neck with her right hand.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman is seen touching her face and neck.",
+        "evidence": [
+          {
+            "time": "00:20",
+            "available_time": "00:20",
+            "fact": "The woman places her right hand on her cheek and neck."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "touching face and neck",
+          "phase": "onset",
+          "uncertainty": "low"
+        }
+      }
+    ],
+    "ability": "action_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "action_perception_rtd",
+    "video": "1d42c90c-cb11-5f12-91ec-3a4204348a7d.mp4",
+    "generation_context": {
+      "duration_seconds": 21.618,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p01"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever the handler successfully gets the owl to vocalize, please add a note to my animal behavior log describing the interaction.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "work_type": "tools",
+    "required_tools": [
+      "note_write"
+    ],
+    "responses": [
+      {
+        "trigger_time": "00:10",
+        "source_trigger_time": "00:10",
+        "window_start": "00:10",
+        "window_end": "00:14",
+        "response": "I'll log this successful owl vocalization.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "Requires seeing the handler interact with the owl and hearing the owl's vocalization.",
+        "evidence": [
+          {
+            "time": "00:05",
+            "available_time": "00:07",
+            "fact": "The handler makes 'psss' sounds to prompt the owl."
+          },
+          {
+            "time": "00:07",
+            "available_time": "00:10",
+            "fact": "The owl responds with a rapid chattering sound."
+          }
+        ],
+        "details": {
+          "event": "The handler prompts the owl and it vocalizes in response.",
+          "participants": "The handler and the barn owl.",
+          "relations": "The handler is holding and prompting the owl; the owl is responding to the handler."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "owl_vocalization_1",
+          "confirmed_time": "00:10",
+          "definition": "The handler successfully prompts the owl to vocalize."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Add a note to the animal behavior log describing the successful interaction where the handler prompted the owl to vocalize.\",\"observed_context\":\"At 00:05, the handler made 'psss' sounds. At 00:07 to 00:10, the owl responded with a chattering sound.\",\"user_goal\":\"Log successful owl vocalization interactions.\",\"constraints_and_authorization\":\"Authorized to write to the user's notes.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"A successful note creation action.\",\"extracted_parameters\":[{\"name\":\"title\",\"value\":\"Animal behavior log\",\"evidence_time\":\"00:10\",\"evidence\":\"User requested logging to the animal behavior log.\"},{\"name\":\"content\",\"value\":\"The handler made 'psss' sounds and the barn owl responded with a rapid chattering sound.\",\"evidence_time\":\"00:10\",\"evidence\":\"The handler prompted the owl and it vocalized.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "00:19",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Added the interaction to the animal behavior log.\",\"observed_facts\":[\"The handler prompted the owl with 'psss' sounds.\",\"The owl responded with a chattering sound.\"],\"tool_information\":[\"Note successfully created.\"],\"reasoning\":[\"The interaction was successful, so it should be logged as requested.\"],\"uncertainties\":[],\"sources\":[],\"actions\":[{\"tool\":\"note_write\",\"arguments\":{\"title\":\"Animal behavior log\",\"content\":\"The handler made 'psss' sounds and the barn owl responded with a rapid chattering sound.\"},\"operation\":\"write\",\"status\":\"completed\",\"evidence\":\"Note 'Animal behavior log' updated with the interaction.\"}],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:20",
+        "response": "I've added the successful vocalization interaction to your animal behavior log.",
+        "role": "assistant",
+        "window_start": "00:20",
+        "window_end": "00:24",
+        "outcome": "success",
+        "agent_result_time": "00:19"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "event_understanding",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "event_understanding_agent",
+    "video": "d82e908c-1f27-5103-9f27-6b3b57950224.mp4",
+    "generation_context": {
+      "duration_seconds": 24.155,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": 9,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "p02"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on the different people shown in the video, including their roles or activities, what they are wearing, and where they are.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:01",
+        "window_end": "00:03",
+        "response": "A young man wearing a beige hoodie is shown close up, eating a sandwich outdoors.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The person's appearance, clothing, and activity are visible.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "A young man in a beige hoodie is eating a sandwich."
+          }
+        ],
+        "details": {
+          "target": "young man",
+          "category": "person",
+          "position": "center frame, close up",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:04",
+        "trigger_time": "00:04",
+        "window_end": "00:05",
+        "response": "Several workers in black t-shirts are now visible behind a counter inside the shop, preparing food.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The workers, their clothing, and their location are visible.",
+        "evidence": [
+          {
+            "time": "00:04",
+            "available_time": "00:04",
+            "fact": "Workers in black t-shirts are preparing food behind a counter."
+          }
+        ],
+        "details": {
+          "target": "workers",
+          "category": "people",
+          "position": "behind counter, midground",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:05",
+        "trigger_time": "00:06",
+        "window_end": "00:07",
+        "response": "A large crowd of people in casual clothing is waiting in a narrow street outside.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The crowd and their location are visible.",
+        "evidence": [
+          {
+            "time": "00:05",
+            "available_time": "00:05",
+            "fact": "A crowd of people is standing in a street."
+          }
+        ],
+        "details": {
+          "target": "crowd",
+          "category": "people",
+          "position": "street, background",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:08",
+        "trigger_time": "00:08",
+        "window_end": "00:09",
+        "response": "A security guard wearing a black t-shirt, jeans, and a cap is standing outside the shop entrance.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The security guard, his clothing, and his location are visible.",
+        "evidence": [
+          {
+            "time": "00:08",
+            "available_time": "00:08",
+            "fact": "A security guard in a black t-shirt and cap is standing outside."
+          }
+        ],
+        "details": {
+          "target": "security guard",
+          "category": "person",
+          "position": "shop entrance, center frame",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:10",
+        "trigger_time": "00:10",
+        "window_end": "00:11",
+        "response": "A worker wearing a black t-shirt and black gloves is operating a meat slicer inside the shop.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The worker, his clothing, and his activity are visible.",
+        "evidence": [
+          {
+            "time": "00:10",
+            "available_time": "00:10",
+            "fact": "A worker in a black t-shirt and gloves is using a meat slicer."
+          }
+        ],
+        "details": {
+          "target": "worker",
+          "category": "person",
+          "position": "at meat slicer, center frame",
+          "uncertainty": "none"
+        }
+      }
+    ],
+    "ability": "object_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "object_perception_rtd",
+    "video": "fc2c9ecf-18c9-5943-b0ee-eb195bed8af1.mp4",
+    "generation_context": {
+      "duration_seconds": 24.172,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p03"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know whenever the woman in the video begins performing barbell rows.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:24",
+        "trigger_time": "00:24",
+        "window_end": "00:27",
+        "response": "The woman has just started performing barbell rows.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The action of the woman performing barbell rows is clearly visible.",
+        "evidence": [
+          {
+            "time": "00:24",
+            "available_time": "00:24",
+            "fact": "The scene cuts to the woman bent over, holding a barbell and pulling it towards her torso."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "barbell rows",
+          "phase": "onset",
+          "uncertainty": "low"
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "barbell_rows_onset_1",
+          "confirmed_time": "00:24",
+          "definition": "The woman begins performing barbell rows."
+        }
+      }
+    ],
+    "ability": "action_perception",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "action_perception_pr",
+    "video": "bf220cab-61e1-55a8-b1ac-81c8a252ab98.mp4",
+    "generation_context": {
+      "duration_seconds": 31.115,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p04"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on what the woman in the video is wearing.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:01",
+        "trigger_time": "00:02",
+        "window_end": "00:08",
+        "response": "The woman is currently wearing a white sleeveless top.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman's clothing is clearly visible.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:01",
+            "fact": "The woman is seen wearing a white sleeveless top."
+          }
+        ],
+        "details": {
+          "target": "the woman",
+          "attributes": "white sleeveless top",
+          "uncertainty": "None."
+        }
+      },
+      {
+        "window_start": "00:09",
+        "trigger_time": "00:10",
+        "window_end": "00:15",
+        "response": "She is now wearing a white quilted jacket.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman's new clothing is visible in the new scene.",
+        "evidence": [
+          {
+            "time": "00:08",
+            "available_time": "00:09",
+            "fact": "The woman is seen wearing a white quilted jacket."
+          }
+        ],
+        "details": {
+          "target": "the woman",
+          "attributes": "white quilted jacket",
+          "uncertainty": "None."
+        }
+      },
+      {
+        "window_start": "00:27",
+        "trigger_time": "00:28",
+        "window_end": "00:32",
+        "response": "She is now wearing a white t-shirt and dark pants.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman's clothing has changed again in the latest scene.",
+        "evidence": [
+          {
+            "time": "00:26",
+            "available_time": "00:27",
+            "fact": "The woman is seen wearing a white t-shirt and dark pants."
+          }
+        ],
+        "details": {
+          "target": "the woman",
+          "attributes": "white t-shirt, dark pants",
+          "uncertainty": "None."
+        }
+      }
+    ],
+    "ability": "attribute_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "attribute_perception_rtd",
+    "video": "6f5039cd-0d3e-5f60-9a3b-d4d17d562c70.mp4",
+    "generation_context": {
+      "duration_seconds": 32.276,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p05"
+  },
+  {
+    "status": "ok",
+    "question": "I'm listening to the broadcast. Let me know as soon as the 200m race finishes.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "00:26",
+        "trigger_time": "00:26",
+        "window_end": "00:30",
+        "response": "The 200m race has just concluded.",
+        "trigger_type": "visual+sound+speech",
+        "trigger_type_reason": "The starting gun marks the beginning, the visual of runners crossing the finish line marks the end, and the commentator's speech confirms the completion.",
+        "evidence": [
+          {
+            "time": "00:08",
+            "available_time": "00:08",
+            "fact": "A starting gun is heard, marking the onset of the race."
+          },
+          {
+            "time": "00:24",
+            "available_time": "00:24",
+            "fact": "The runners are seen crossing the finish line."
+          },
+          {
+            "time": "00:26",
+            "available_time": "00:26",
+            "fact": "The commentator says 'and he does it', confirming the race is over."
+          }
+        ],
+        "details": {
+          "event": "The 200m men's race",
+          "localization": "span",
+          "start": "00:08",
+          "end": "00:24"
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "race_completion_1",
+          "confirmed_time": "00:26",
+          "definition": "The 200m race finishes."
+        }
+      }
+    ],
+    "ability": "grounding",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "grounding_pr",
+    "video": "9dff8857-6ea6-5f4b-953b-7b36f0474ab5.mp4",
+    "generation_context": {
+      "duration_seconds": 36.0,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p06"
+  },
+  {
+    "status": "ok",
+    "question": "Please keep me updated on the progression of the race, from its start to its conclusion.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:05",
+        "trigger_time": "00:05",
+        "window_end": "00:10",
+        "response": "The race has just started, with the athletes sprinting out of their starting blocks.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The athletes' initial forward movement from the starting blocks is clearly visible.",
+        "evidence": [
+          {
+            "time": "00:05",
+            "available_time": "00:05",
+            "fact": "The athletes leave the starting blocks and begin running."
+          }
+        ],
+        "details": {
+          "actor": "the athletes",
+          "action": "running a race",
+          "phase": "onset",
+          "uncertainty": "low"
+        }
+      },
+      {
+        "window_start": "00:15",
+        "trigger_time": "00:15",
+        "window_end": "00:25",
+        "response": "The race is ongoing, and the athletes are currently navigating the hurdles around the curve.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The athletes are seen continuously running and jumping over hurdles.",
+        "evidence": [
+          {
+            "time": "00:15",
+            "available_time": "00:15",
+            "fact": "The athletes are running on the track and jumping over hurdles."
+          }
+        ],
+        "details": {
+          "actor": "the athletes",
+          "action": "running a race",
+          "phase": "ongoing",
+          "uncertainty": "low"
+        }
+      },
+      {
+        "window_start": "00:30",
+        "trigger_time": "00:30",
+        "window_end": "00:35",
+        "response": "The race has ended as the leading athlete crosses the finish line.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The leading athlete is seen crossing the finish line, marking the end of the race.",
+        "evidence": [
+          {
+            "time": "00:30",
+            "available_time": "00:30",
+            "fact": "The leading athlete crosses the finish line."
+          }
+        ],
+        "details": {
+          "actor": "the athletes",
+          "action": "running a race",
+          "phase": "end",
+          "uncertainty": "low"
+        }
+      }
+    ],
+    "ability": "action_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "action_perception_rtd",
+    "video": "f7f2d3eb-0ab5-5fae-a286-34f2c2cf29be.mp4",
+    "generation_context": {
+      "duration_seconds": 38.9,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p07"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know whenever the woman in the video starts petting the tiger.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:15",
+        "trigger_time": "00:15",
+        "window_end": "00:18",
+        "response": "The woman has started petting the tiger.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The woman's hand movements on the tiger's back are visible.",
+        "evidence": [
+          {
+            "time": "00:14",
+            "available_time": "00:15",
+            "fact": "The woman places her hand on the tiger's back and begins to stroke its fur."
+          }
+        ],
+        "details": {
+          "actor": "the woman in the video",
+          "action": "petting the tiger",
+          "phase": "onset",
+          "uncertainty": "low"
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "petting_onset_1",
+          "confirmed_time": "00:15",
+          "definition": "The woman in the video starts petting the tiger."
+        }
+      }
+    ],
+    "ability": "action_perception",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "action_perception_pr",
+    "video": "6a6f74b7-b325-5ed0-aa7c-f3bed4a8c213.mp4",
+    "generation_context": {
+      "duration_seconds": 40.109,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p08"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on the on-screen graphics and what they reveal about the ski jumping competition.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:02",
+        "trigger_time": "00:03",
+        "window_end": "00:05",
+        "response": "The graphics show this is the individual final round. The target distance to beat is 231.0 meters, and the jumper's speed is 103.1 kilometers per hour.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The information is provided entirely by on-screen text graphics.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "On-screen text reads 'TO BEAT 231.0 M' and 'INDIVIDUAL FINAL ROUND'."
+          },
+          {
+            "time": "00:01",
+            "available_time": "00:01",
+            "fact": "An on-screen graphic displays a speed of '103.1 KM/H'."
+          }
+        ],
+        "details": {
+          "text": "TO BEAT 231.0 M, INDIVIDUAL FINAL ROUND, 103.1 KM/H",
+          "text_source": "screen",
+          "interpretation": "The jumper is competing in the final round, needs to surpass 231.0 meters to take the lead, and is traveling at 103.1 km/h during the jump.",
+          "uncertainty": "None, the text is clearly legible."
+        }
+      },
+      {
+        "window_start": "00:35",
+        "trigger_time": "00:36",
+        "window_end": "00:38",
+        "response": "A new graphic identifies the jumper as Domen Prevc from Slovenia. He achieved distances of 245.0 and 254.5 meters, earning a total score of 475.0 and taking first place.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The jumper's identity, scores, and ranking are displayed in an on-screen graphic.",
+        "evidence": [
+          {
+            "time": "00:34",
+            "available_time": "00:34",
+            "fact": "An on-screen graphic appears showing '21 DOMEN PREVC SLO 245.0m 254.5m 1 475.0'."
+          }
+        ],
+        "details": {
+          "text": "21 DOMEN PREVC SLO 245.0m 254.5m 1 475.0",
+          "text_source": "screen",
+          "interpretation": "The jumper is Domen Prevc from Slovenia. His two jump distances were 245.0m and 254.5m, resulting in a total score of 475.0, which places him in 1st position.",
+          "uncertainty": "None, the text is clearly legible."
+        }
+      }
+    ],
+    "ability": "text_rich_understanding",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "text_rich_understanding_rtd",
+    "video": "5ee1a38b-aa7f-5e17-b170-1990dd67d2af.mp4",
+    "generation_context": {
+      "duration_seconds": 41.234,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p09"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on how the man in the tan hoodie and grey beanie seems to be feeling.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:02",
+        "trigger_time": "00:05",
+        "window_end": "00:18",
+        "response": "The man in the tan hoodie is dancing energetically in the background, appearing happy and playful.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "His energetic dancing and body language indicate a playful mood.",
+        "evidence": [
+          {
+            "time": "00:02",
+            "available_time": "00:02",
+            "fact": "The man in the tan hoodie is dancing enthusiastically behind the main singer."
+          }
+        ],
+        "details": {
+          "subject": "the man in the tan hoodie and grey beanie",
+          "emotion": "happy and playful",
+          "basis": "energetic dancing in the background",
+          "confidence": 0.8,
+          "claim_type": "inference"
+        }
+      },
+      {
+        "window_start": "00:21",
+        "trigger_time": "00:21",
+        "window_end": "00:25",
+        "response": "He has now stepped up to the microphone, looking confident and engaged as he lip-syncs.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "His expressive gestures and focus on the microphone suggest confidence.",
+        "evidence": [
+          {
+            "time": "00:19",
+            "available_time": "00:19",
+            "fact": "The man in the tan hoodie takes over the microphone and begins lip-syncing."
+          },
+          {
+            "time": "00:21",
+            "available_time": "00:21",
+            "fact": "He is gesturing expressively while holding the microphone stand."
+          }
+        ],
+        "details": {
+          "subject": "the man in the tan hoodie and grey beanie",
+          "emotion": "confident and engaged",
+          "basis": "stepping up to the microphone and lip-syncing with expressive gestures",
+          "confidence": 0.9,
+          "claim_type": "inference"
+        }
+      },
+      {
+        "window_start": "00:30",
+        "trigger_time": "00:30",
+        "window_end": "00:41",
+        "response": "He is back to dancing, but his movements are now highly exaggerated and frantic, suggesting a silly and joyful mood.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "His frantic jumping and arm flailing indicate a highly energetic and joyful state.",
+        "evidence": [
+          {
+            "time": "00:26",
+            "available_time": "00:26",
+            "fact": "He steps away from the microphone and resumes dancing as the chorus begins."
+          },
+          {
+            "time": "00:30",
+            "available_time": "00:30",
+            "fact": "He is performing deep squats and flailing his arms enthusiastically."
+          }
+        ],
+        "details": {
+          "subject": "the man in the tan hoodie and grey beanie",
+          "emotion": "silly and joyful",
+          "basis": "frantic, exaggerated dancing and jumping",
+          "confidence": 0.8,
+          "claim_type": "inference"
+        }
+      },
+      {
+        "window_start": "00:42",
+        "trigger_time": "00:43",
+        "window_end": "00:44",
+        "response": "He has dramatically collapsed onto his back, appearing playfully exhausted at the end of the performance.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "His dramatic fall to the floor suggests playful exhaustion.",
+        "evidence": [
+          {
+            "time": "00:42",
+            "available_time": "00:42",
+            "fact": "The man in the tan hoodie drops to the floor and lies spread-eagle on his back."
+          }
+        ],
+        "details": {
+          "subject": "the man in the tan hoodie and grey beanie",
+          "emotion": "playfully exhausted",
+          "basis": "dramatically collapsing to the floor spread-eagle",
+          "confidence": 0.8,
+          "claim_type": "inference"
+        }
+      }
+    ],
+    "ability": "emotion_recognition",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "emotion_recognition_rtd",
+    "video": "63e538b2-8685-5363-8a8d-b8f60400a36a.mp4",
+    "generation_context": {
+      "duration_seconds": 43.606,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p10"
+  }
+]

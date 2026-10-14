@@ -115,6 +115,10 @@ class DirectoryPipelineTests(unittest.TestCase):
                 self.assertEqual(pipeline.run(args), 0)
                 first_run = next(args.output_dir.iterdir())
                 self.assertEqual(json.loads((first_run/'coverage.json').read_text())['accepted'], 8)
+                for index in (2, 3):
+                    folder = args.videos_dir / str(index)
+                    folder.mkdir()
+                    (folder / 'same.mp4').write_bytes(f'video-{index}'.encode())
                 self.assertEqual(pipeline.run(args), 0)
                 run = next(path for path in args.output_dir.iterdir() if path != first_run)
             manifest = json.loads((run/'.state/manifest.json').read_text())
@@ -260,3 +264,70 @@ class DirectoryPipelineTests(unittest.TestCase):
             self.assertEqual(result.returncode,0,result.stderr)
         with contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
             parse_args(['--videos-dir','videos','--output-dir','out','--num-attempts','0'])
+
+    def test_split_selects_metadata_videos_and_skips_saved_qa_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            dataset = root / 'dataset'
+            for split in ('A', 'B'):
+                videos = dataset / split / 'videos'
+                videos.mkdir(parents=True)
+                names = [f'{split}-{index}.mp4' for index in range(2)]
+                for name in names:
+                    (videos / name).write_bytes(name.encode())
+                (dataset / split / 'video_metadata.json').write_text(json.dumps({
+                    'video_count': 2, 'videos': [{'file': name} for name in names],
+                }))
+            data = root / 'data'
+            data.mkdir()
+            (data / 'all_qa.json').write_text(json.dumps([{
+                'schema': 'omni-interaction-v2', 'status': 'ok', 'video': 'A-0.mp4',
+                'responses': [{'response': 'already generated'}],
+            }]))
+            diagnostic = data / 'attempts'
+            diagnostic.mkdir()
+            (diagnostic / 'sample.json').write_text(json.dumps({
+                'schema': 'omni-interaction-v2', 'status': 'ok', 'video': 'A-1.mp4',
+                'responses': [{'response': 'unfinished attempt'}],
+            }))
+            raw_qa = data / 'runs' / 'incomplete' / 'qa'
+            raw_qa.mkdir(parents=True)
+            (raw_qa / 'task.json').write_text(json.dumps({
+                'schema': 'omni-interaction-v2', 'status': 'ok', 'video': 'A-1.mp4',
+                'responses': [{'response': 'unmerged task'}],
+            }))
+            args = application_options(PipelineOptions, parse_args([
+                '--dataset-dir', str(dataset), '--split', 'A', '--output-dir', str(data / 'runs' / 'A'),
+                '--num-attempts', '2', '--provider', 'gemini', '--api-key', 'test', '--model', 'test',
+            ]))
+            with patch.object(pipeline, 'DATA_ROOT', data), patch.object(pipeline.batch, 'run', return_value=0) as run:
+                self.assertEqual(pipeline.run(args), 0)
+                self.assertEqual([p.name for p in run.call_args.kwargs['videos']], ['A-1.mp4'])
+                args.split = 'B'
+                args.videos_dir = dataset / 'B' / 'videos'
+                self.assertEqual(pipeline.run(args), 0)
+                self.assertEqual([p.name for p in run.call_args.kwargs['videos']], ['B-0.mp4', 'B-1.mp4'])
+                (data / 'all_qa.json').write_text('[]')
+                args.split = 'A'
+                args.videos_dir = dataset / 'A' / 'videos'
+                self.assertEqual(pipeline.run(args), 0)
+                self.assertEqual([p.name for p in run.call_args.kwargs['videos']], ['A-0.mp4', 'A-1.mp4'])
+
+    def test_split_requires_dataset_dir_and_complete_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                parse_args(['--videos-dir', str(root), '--split', 'A', '--output-dir', str(root/'out'),
+                            '--num-attempts', '1'])
+            videos = root / 'A' / 'videos'
+            videos.mkdir(parents=True)
+            (videos / 'one.mp4').write_bytes(b'video')
+            (root / 'A' / 'video_metadata.json').write_text(json.dumps({
+                'video_count': 2, 'videos': [{'file': 'one.mp4'}, {'file': 'missing.mp4'}],
+            }))
+            args = application_options(PipelineOptions, parse_args([
+                '--dataset-dir', str(root), '--split', 'A', '--output-dir', str(root/'out'),
+                '--num-attempts', '1', '--provider', 'gemini', '--api-key', 'test', '--model', 'test',
+            ]))
+            with self.assertRaisesRegex(ValueError, 'do not match'):
+                pipeline.source_videos(args)

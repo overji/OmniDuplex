@@ -21,6 +21,15 @@ Independent operations retain their existing defaults through `sample`, `batch`,
 --help` for the command list, and add a subcommand plus `--help` for its options.
 The `--video` pipeline option remains available for single-video runs.
 
+For OmniInteractionDataset, pass `--dataset-dir /path/to/OmniInteractionDataset`
+with `--split A` or `--split B`. The pipeline reads only that split's `videos/`
+directory and checks its `video_metadata.json` against the downloaded videos.
+Use separate output parents, such as `data_generation/data/pipeline_runs/A` and
+`data_generation/data/pipeline_runs/B`. Before a new run, videos with accepted,
+nonempty QA records in the repository's `data_generation/data` or the selected
+output parent are skipped. Empty bundles and failed or skipped attempts do not
+count as generated data. Resume retains the original run's video selection.
+
 For each video, the program selects **1–8 distinct suitable abilities**. The
 probabilities for counts 1–8 are 15%, 40%, 30%, 8%, 3%, 2%, 1% and 1%, giving a
 theoretical mean of **2.59 abilities** when enough suitable candidates exist.

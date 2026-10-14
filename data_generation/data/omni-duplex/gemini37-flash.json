@@ -1,0 +1,1006 @@
+[
+  {
+    "status": "ok",
+    "question": "Please keep me updated on what the woman in the video is doing.",
+    "question_time": "00:00",
+    "vision_dependency": "required",
+    "audio_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "00:02",
+        "trigger_time": "00:02",
+        "window_end": "00:05",
+        "response": "The woman is sitting and speaking directly to the camera while gesturing with her hands.",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "She is seen sitting in front of the camera and gesturing while talking.",
+        "evidence": [
+          {
+            "time": "00:01",
+            "available_time": "00:02",
+            "fact": "The woman sits facing the camera, talking and making expressive hand gestures."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "gesturing with her hands while speaking to the camera",
+          "phase": "ongoing",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:18",
+        "trigger_time": "00:18",
+        "window_end": "00:20",
+        "response": "She has picked up the camera and is panning it around to show her studio apartment.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "She extends her arm, holds the camera, and sweeps it around the room.",
+        "evidence": [
+          {
+            "time": "00:17",
+            "available_time": "00:18",
+            "fact": "The woman reaches forward, lifts the camera, and maneuvers it to display the apartment floor and furniture."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "holding and panning the camera around her room",
+          "phase": "onset",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:20",
+        "trigger_time": "00:21",
+        "window_end": "00:21",
+        "response": "She points the camera back at her face and touches her cheek as she continues talking.",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "The camera frame returns to her face while she places her hand on her cheek and speaks.",
+        "evidence": [
+          {
+            "time": "00:20",
+            "available_time": "00:20",
+            "fact": "She turns the camera back onto her face and touches her cheek with her hand."
+          }
+        ],
+        "details": {
+          "actor": "the woman",
+          "action": "pointing the camera back at her face and touching her cheek",
+          "phase": "onset",
+          "uncertainty": "none"
+        }
+      }
+    ],
+    "ability": "action_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "action_perception_rtd",
+    "video": "1d42c90c-cb11-5f12-91ec-3a4204348a7d.mp4",
+    "generation_context": {
+      "duration_seconds": 21.618,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p01"
+  },
+  {
+    "status": "ok",
+    "question": "Whenever a wildlife educator begins an educational demonstration with an animal, search online for the facility's operating hours so I can plan a visit.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "required",
+    "work_type": "tools",
+    "required_tools": [
+      "web_search"
+    ],
+    "responses": [
+      {
+        "trigger_time": "00:04",
+        "source_trigger_time": "00:04",
+        "window_start": "00:03",
+        "window_end": "00:08",
+        "response": "The educator is starting the owl demonstration; I will search for the park's hours.",
+        "trigger_type": "visual+speech",
+        "trigger_type_reason": "Visual cues show the educator wearing a Wildlife Prairie Park shirt while holding a barn owl on a glove, and her speech indicates she is starting a demonstration to get the owl to vocalize.",
+        "evidence": [
+          {
+            "time": "00:01",
+            "available_time": "00:01",
+            "fact": "An educator wearing a black shirt with the 'Wildlife Prairie Park' logo holds a barn owl perched on a leather glove."
+          },
+          {
+            "time": "00:03",
+            "available_time": "00:03",
+            "fact": "The educator announces to the camera that she wants to see if she can get Jesse to say hi to us today."
+          }
+        ],
+        "details": {
+          "event": "A wildlife educator initiates an educational animal demonstration by prompting a perched barn owl to vocalize.",
+          "participants": "A wildlife educator wearing a Wildlife Prairie Park shirt and Jesse the barn owl.",
+          "relations": "The educator holds the owl on a falconry glove and speaks to it to elicit a greeting call."
+        },
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "episode_1",
+          "confirmed_time": "00:03",
+          "definition": "A wildlife educator begins an educational demonstration with an animal."
+        },
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "agent_call",
+              "arguments": "{\"instruction\":\"Search the web for Wildlife Prairie Park operating hours.\",\"observed_context\":\"At 00:01-00:03, an educator wearing a Wildlife Prairie Park shirt holds Jesse the barn owl on a glove and introduces a demonstration.\",\"user_goal\":\"Find the operating hours of Wildlife Prairie Park for a visit.\",\"constraints_and_authorization\":\"Public web search only; do not book or purchase tickets.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"Public operating schedule for Wildlife Prairie Park.\",\"extracted_parameters\":[{\"name\":\"facility_name\",\"value\":\"Wildlife Prairie Park\",\"evidence_time\":\"00:01\",\"evidence\":\"The educator's shirt displays the Wildlife Prairie Park logo.\"}]}"
+            }
+          }
+        ]
+      },
+      {
+        "trigger_time": "00:13",
+        "response": "{\"simulated\":true,\"status\":\"success\",\"summary\":\"Wildlife Prairie Park is open daily from 9:00 AM to 4:30 PM.\",\"observed_facts\":[\"Educator from Wildlife Prairie Park began an educational owl demonstration with Jesse.\"],\"tool_information\":[\"Web search confirms regular operating hours for Wildlife Prairie Park.\"],\"reasoning\":[\"Retrieved official visiting hours from the park website.\"],\"uncertainties\":[],\"sources\":[{\"tool\":\"web_search\",\"arguments\":{\"query\":\"Wildlife Prairie Park operating hours\"},\"evidence\":\"Wildlife Prairie Park is open daily from 9:00 AM to 4:30 PM.\"}],\"actions\":[],\"artifacts\":[]}",
+        "role": "tool",
+        "name": "agent_call"
+      },
+      {
+        "trigger_time": "00:15",
+        "response": "Wildlife Prairie Park is open daily from 9:00 AM to 4:30 PM.",
+        "role": "assistant",
+        "window_start": "00:14",
+        "window_end": "00:20",
+        "outcome": "success",
+        "agent_result_time": "00:13"
+      }
+    ],
+    "sample_type": "positive",
+    "available_tools": [
+      "todo_create",
+      "todo_query",
+      "todo_update",
+      "calendar_query",
+      "note_write",
+      "order_query",
+      "order_update",
+      "note_search",
+      "document_search",
+      "weather_query",
+      "route_query",
+      "meeting_draft",
+      "shopping_list_query",
+      "shopping_list_update",
+      "budget_query",
+      "budget_update",
+      "calculator",
+      "itinerary_query",
+      "product_search",
+      "calendar_create",
+      "calendar_update",
+      "notification_send",
+      "web_search",
+      "knowledge_search",
+      "history_query",
+      "video_segment_query",
+      "statistics_compute",
+      "report_create"
+    ],
+    "frontend_context": {
+      "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "description": "Delegate one complex, asynchronous objective to the backend agent.",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "instruction": {
+                  "type": "string",
+                  "description": "Complete, self-contained backend work request."
+                },
+                "observed_context": {
+                  "type": "string",
+                  "description": "Timestamped audiovisual facts available at the trigger."
+                },
+                "user_goal": {
+                  "type": "string",
+                  "description": "The result the user asked for."
+                },
+                "constraints_and_authorization": {
+                  "type": "string",
+                  "description": "Scope, permissions, confirmation needs, and user constraints."
+                },
+                "suggested_capabilities": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "At least one available daily application tool that is necessary for the requested outcome."
+                },
+                "expected_output": {
+                  "type": "string",
+                  "description": "Required result, evidence, sources, actions, and artifacts."
+                },
+                "extracted_parameters": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      },
+                      "evidence_time": {
+                        "type": "string",
+                        "description": "MM:SS, no later than trigger_time"
+                      },
+                      "evidence": {
+                        "type": "string",
+                        "description": "Observable audiovisual evidence"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "value",
+                      "evidence_time",
+                      "evidence"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "instruction",
+                "observed_context",
+                "user_goal",
+                "constraints_and_authorization",
+                "suggested_capabilities",
+                "expected_output",
+                "extracted_parameters"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "ability": "event_understanding",
+    "mode": "agent",
+    "schema": "omni-interaction-v2",
+    "task": "event_understanding_agent",
+    "video": "d82e908c-1f27-5103-9f27-6b3b57950224.mp4",
+    "generation_context": {
+      "duration_seconds": 24.155,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": 9,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [
+        "todo_create",
+        "todo_query",
+        "todo_update",
+        "calendar_query",
+        "note_write",
+        "order_query",
+        "order_update",
+        "note_search",
+        "document_search",
+        "weather_query",
+        "route_query",
+        "meeting_draft",
+        "shopping_list_query",
+        "shopping_list_update",
+        "budget_query",
+        "budget_update",
+        "calculator",
+        "itinerary_query",
+        "product_search",
+        "calendar_create",
+        "calendar_update",
+        "notification_send",
+        "web_search",
+        "knowledge_search",
+        "history_query",
+        "video_segment_query",
+        "statistics_compute",
+        "report_create"
+      ],
+      "required_missing_tool": null
+    },
+    "video_folder": "p02"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on newly appearing notable objects or people throughout the video, specifying their category, distinguishing details, and position on screen.",
+    "question_time": "00:00",
+    "vision_dependency": "required",
+    "audio_dependency": "none",
+    "responses": [
+      {
+        "window_start": "00:02",
+        "trigger_time": "00:02",
+        "window_end": "00:03",
+        "response": "A tall stack of four cut sandwiches packed with deli meats is held directly in the center of the frame.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The towering stack of four sandwiches is visually presented to the camera.",
+        "evidence": [
+          {
+            "time": "00:01",
+            "available_time": "00:02",
+            "fact": "A man holds up a stack of four cut schiacciata sandwiches filled with meats and cheese toward the camera."
+          }
+        ],
+        "details": {
+          "target": "stack of four sandwiches",
+          "category": "food",
+          "position": "center of the frame",
+          "uncertainty": "certain"
+        }
+      },
+      {
+        "window_start": "00:08",
+        "trigger_time": "00:08",
+        "window_end": "00:09",
+        "response": "A security guard wearing a black t-shirt and baseball cap stands with crossed arms outside the shop entrance on the left.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The security guard standing outside the shop entrance becomes clearly visible on screen.",
+        "evidence": [
+          {
+            "time": "00:07",
+            "available_time": "00:08",
+            "fact": "A security guard wearing a black t-shirt and cap stands outside the shop doorway with his arms folded."
+          }
+        ],
+        "details": {
+          "target": "security guard",
+          "category": "person",
+          "position": "left side of the frame in front of the entrance",
+          "uncertainty": "certain"
+        }
+      },
+      {
+        "window_start": "00:10",
+        "trigger_time": "00:10",
+        "window_end": "00:12",
+        "response": "A deli worker operates a metal meat slicer in the center to slice cured meat.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "A commercial meat slicer being operated is shown in the new shot.",
+        "evidence": [
+          {
+            "time": "00:09",
+            "available_time": "00:10",
+            "fact": "A deli clerk in black gloves operates a metal meat slicer to shave slices of cured meat."
+          }
+        ],
+        "details": {
+          "target": "metal meat slicer",
+          "category": "appliance / equipment",
+          "position": "center of the frame",
+          "uncertainty": "certain"
+        }
+      },
+      {
+        "window_start": "00:15",
+        "trigger_time": "00:15",
+        "window_end": "00:16",
+        "response": "A bottle of All'Antico Vinaio red wine appears in the lower center, being opened with a corkscrew.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "A bottle of red wine is displayed and opened in a close-up shot.",
+        "evidence": [
+          {
+            "time": "00:14",
+            "available_time": "00:15",
+            "fact": "Hands uncork a bottle of All'Antico Vinaio Vino Rosso using a corkscrew."
+          }
+        ],
+        "details": {
+          "target": "bottle of red wine",
+          "category": "beverage / container",
+          "position": "lower center of the frame",
+          "uncertainty": "certain"
+        }
+      }
+    ],
+    "ability": "object_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "object_perception_rtd",
+    "video": "fc2c9ecf-18c9-5943-b0ee-eb195bed8af1.mp4",
+    "generation_context": {
+      "duration_seconds": 24.172,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p03"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know when the woman in the video puts on headphones.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:19",
+        "trigger_time": "00:20",
+        "window_end": "00:22",
+        "response": "The woman has put on her headphones.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Visual observation confirms the woman placing over-ear headphones onto her head in the locker room.",
+        "evidence": [
+          {
+            "time": "00:18",
+            "available_time": "00:19",
+            "fact": "In the locker room, the woman raises a pair of black over-ear headphones to her head and places them over her ears."
+          }
+        ],
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "headphones_on_01",
+          "confirmed_time": "00:19",
+          "definition": "The woman in the video puts on headphones"
+        },
+        "details": {
+          "actor": "the woman",
+          "action": "putting on headphones",
+          "phase": "end",
+          "uncertainty": "none"
+        }
+      }
+    ],
+    "ability": "action_perception",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "action_perception_pr",
+    "video": "bf220cab-61e1-55a8-b1ac-81c8a252ab98.mp4",
+    "generation_context": {
+      "duration_seconds": 31.115,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p04"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on the clothing worn by the woman throughout the video as it changes.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:01",
+        "window_end": "00:07",
+        "response": "She is wearing a white sleeveless top.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Her clothing is visible as she stands at the bathroom sink.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "The woman is seen in the bathroom wearing a white sleeveless top."
+          }
+        ],
+        "details": {
+          "target": "the woman's outfit",
+          "attributes": "white sleeveless top",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:09",
+        "trigger_time": "00:10",
+        "window_end": "00:14",
+        "response": "She is now wearing a cream quilted jacket.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The scene transitions to show her indoors wearing a quilted jacket.",
+        "evidence": [
+          {
+            "time": "00:09",
+            "available_time": "00:09",
+            "fact": "The woman appears sitting indoors wearing a cream quilted jacket."
+          }
+        ],
+        "details": {
+          "target": "the woman's outfit",
+          "attributes": "cream quilted jacket",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:26",
+        "trigger_time": "00:27",
+        "window_end": "00:31",
+        "response": "She has switched to a white short-sleeved t-shirt and brown trousers.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The scene cuts to her in a sunroom wearing a different outfit.",
+        "evidence": [
+          {
+            "time": "00:26",
+            "available_time": "00:26",
+            "fact": "She is seen in a sunroom sitting on the floor wearing a white short-sleeved t-shirt and brown trousers."
+          }
+        ],
+        "details": {
+          "target": "the woman's outfit",
+          "attributes": "white short-sleeved t-shirt and brown trousers",
+          "uncertainty": "none"
+        }
+      }
+    ],
+    "ability": "attribute_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "attribute_perception_rtd",
+    "video": "6f5039cd-0d3e-5f60-9a3b-d4d17d562c70.mp4",
+    "generation_context": {
+      "duration_seconds": 32.276,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p05"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know when the starter gun fires to signal the start of the race.",
+    "question_time": "00:00",
+    "audio_dependency": "required",
+    "vision_dependency": "helpful",
+    "responses": [
+      {
+        "window_start": "00:09",
+        "trigger_time": "00:09",
+        "window_end": "00:11",
+        "response": "The starter gun just fired, and the runners are bursting out of their blocks.",
+        "trigger_type": "sound+visual",
+        "trigger_type_reason": "The starter gun sound is heard, accompanied visually by the sprinters reacting and driving out of the starting blocks.",
+        "evidence": [
+          {
+            "time": "00:09",
+            "available_time": "00:09",
+            "fact": "The starter gun shot sounds and the competitors immediately push out of their blocks to start the race."
+          }
+        ],
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "starter_gun_race_start",
+          "confirmed_time": "00:09",
+          "definition": "the starter gun fires to signal the start of the race"
+        },
+        "details": {
+          "event": "starter gun firing to begin the race",
+          "localization": "moment",
+          "start": "00:09",
+          "end": "00:09"
+        }
+      }
+    ],
+    "ability": "grounding",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "grounding_pr",
+    "video": "9dff8857-6ea6-5f4b-953b-7b36f0474ab5.mp4",
+    "generation_context": {
+      "duration_seconds": 36.0,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p06"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on Femke Bol's actions as the race event unfolds.",
+    "question_time": "00:00",
+    "audio_dependency": "helpful",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:02",
+        "trigger_time": "00:03",
+        "window_end": "00:04",
+        "response": "Femke Bol is smiling and clapping her hands for the crowd before the race starts.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Bol is shown smiling, clapping her hands, and raising her arms in front of the camera.",
+        "evidence": [
+          {
+            "time": "00:02",
+            "available_time": "00:02",
+            "fact": "Femke Bol raises her hands and claps towards the spectators."
+          }
+        ],
+        "details": {
+          "actor": "Femke Bol",
+          "action": "clapping hands and acknowledging the crowd",
+          "phase": "ongoing",
+          "uncertainty": "certain"
+        }
+      },
+      {
+        "window_start": "00:05",
+        "trigger_time": "00:06",
+        "window_end": "00:08",
+        "response": "She launches out of the starting blocks as the race begins.",
+        "trigger_type": "visual+sound",
+        "trigger_type_reason": "The starting gun fires and Bol accelerates forward from the blocks in lane six.",
+        "evidence": [
+          {
+            "time": "00:05",
+            "available_time": "00:05",
+            "fact": "The starter pistol sounds and the athletes, including Bol in lane six, burst from their starting blocks."
+          }
+        ],
+        "details": {
+          "actor": "Femke Bol",
+          "action": "starting the race from the blocks",
+          "phase": "onset",
+          "uncertainty": "certain"
+        }
+      },
+      {
+        "window_start": "00:17",
+        "trigger_time": "00:18",
+        "window_end": "00:20",
+        "response": "Bol clears a hurdle and pulls ahead into the lead entering the home straight.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Bol leaps over the hurdle and surges past the competitors into first place.",
+        "evidence": [
+          {
+            "time": "00:17",
+            "available_time": "00:17",
+            "fact": "Bol clears the hurdle alongside Jones and moves into the lead on the straightaway."
+          }
+        ],
+        "details": {
+          "actor": "Femke Bol",
+          "action": "clearing hurdle and taking the lead",
+          "phase": "ongoing",
+          "uncertainty": "certain"
+        }
+      },
+      {
+        "window_start": "00:32",
+        "trigger_time": "00:33",
+        "window_end": "00:35",
+        "response": "Bol crosses the finish line to win the race.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Bol sprints over the finish line comfortably ahead of the field.",
+        "evidence": [
+          {
+            "time": "00:32",
+            "available_time": "00:32",
+            "fact": "Bol crosses the white finish line as the race clock stops."
+          }
+        ],
+        "details": {
+          "actor": "Femke Bol",
+          "action": "crossing the finish line",
+          "phase": "end",
+          "uncertainty": "certain"
+        }
+      },
+      {
+        "window_start": "00:38",
+        "trigger_time": "00:38",
+        "window_end": "00:39",
+        "response": "She is walking along the track, smiling and waving to the spectators.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Bol is shown in close-up waving her right hand at the crowd post-race.",
+        "evidence": [
+          {
+            "time": "00:38",
+            "available_time": "00:38",
+            "fact": "Bol walks on the track and raises her hand to wave at the stands."
+          }
+        ],
+        "details": {
+          "actor": "Femke Bol",
+          "action": "walking and waving to spectators",
+          "phase": "ongoing",
+          "uncertainty": "certain"
+        }
+      }
+    ],
+    "ability": "action_perception",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "action_perception_rtd",
+    "video": "f7f2d3eb-0ab5-5fae-a286-34f2c2cf29be.mp4",
+    "generation_context": {
+      "duration_seconds": 38.9,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p07"
+  },
+  {
+    "status": "ok",
+    "question": "Let me know whenever the woman starts petting the tiger.",
+    "question_time": "00:00",
+    "vision_dependency": "required",
+    "audio_dependency": "none",
+    "responses": [
+      {
+        "window_start": "00:15",
+        "trigger_time": "00:15",
+        "window_end": "00:18",
+        "response": "The woman is now petting the tiger on its head.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "Visual observation is necessary to detect when the woman reaches out and begins stroking the tiger.",
+        "evidence": [
+          {
+            "time": "00:15",
+            "available_time": "00:15",
+            "fact": "The woman places her hand onto the tiger's head and starts stroking its fur."
+          }
+        ],
+        "trigger": {
+          "kind": "event",
+          "satisfied": true,
+          "episode_id": "petting_onset_1",
+          "confirmed_time": "00:15",
+          "definition": "The woman starts petting the tiger."
+        },
+        "details": {
+          "actor": "the woman",
+          "action": "petting the tiger",
+          "phase": "onset",
+          "uncertainty": "none"
+        }
+      }
+    ],
+    "ability": "action_perception",
+    "mode": "pr",
+    "schema": "omni-interaction-v2",
+    "task": "action_perception_pr",
+    "video": "6a6f74b7-b325-5ed0-aa7c-f3bed4a8c213.mp4",
+    "generation_context": {
+      "duration_seconds": 40.109,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p08"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on the on-screen graphics and telemetry information displayed during this ski jump broadcast.",
+    "question_time": "00:00",
+    "vision_dependency": "required",
+    "audio_dependency": "none",
+    "responses": [
+      {
+        "window_start": "00:00",
+        "trigger_time": "00:00",
+        "window_end": "00:02",
+        "response": "The on-screen graphic indicates the target to beat is 231.0 meters with gate points at +18.0 in the Individual Final Round.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The competition parameters and target distance appear in an on-screen graphic at the top right.",
+        "evidence": [
+          {
+            "time": "00:00",
+            "available_time": "00:00",
+            "fact": "A graphic in the top right displays 'TO BEAT: 231.0 M', 'GATE +18.0 POINTS', and 'INDIVIDUAL FINAL ROUND'."
+          }
+        ],
+        "details": {
+          "text": "TO BEAT: 231.0 M | GATE +18.0 POINTS | INDIVIDUAL FINAL ROUND",
+          "text_source": "screen",
+          "interpretation": "Shows the target distance needed to take the lead (231.0 m) and gate compensation points (+18.0) during the individual final round.",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:02",
+        "trigger_time": "00:02",
+        "window_end": "00:05",
+        "response": "A telemetry graphic shows an in-run speed of 103.1 kilometers per hour.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The speed telemetry is shown as text in the bottom-left corner.",
+        "evidence": [
+          {
+            "time": "00:02",
+            "available_time": "00:02",
+            "fact": "An on-screen telemetry overlay displays '103.1 KM/H' in the bottom-left corner."
+          }
+        ],
+        "details": {
+          "text": "103.1 KM/H",
+          "text_source": "screen",
+          "interpretation": "Indicates the jumper's measured speed of 103.1 km/h at takeoff.",
+          "uncertainty": "none"
+        }
+      },
+      {
+        "window_start": "00:34",
+        "trigger_time": "00:34",
+        "window_end": "00:38",
+        "response": "The results graphic shows Domen Prevc scored 475.0 points with jumps of 245.0 meters and 254.5 meters, placing him in 1st rank.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "The official score and ranking banner is displayed at the bottom of the screen.",
+        "evidence": [
+          {
+            "time": "00:34",
+            "available_time": "00:34",
+            "fact": "The lower-third results banner displays '21 SLO DOMEN PREVC SLO', distances '245.0M' and '254.5M', rank '1', and total score '475.0'."
+          }
+        ],
+        "details": {
+          "text": "21 SLO DOMEN PREVC SLO 245.0M 254.5M 1 475.0",
+          "text_source": "screen",
+          "interpretation": "Confirms bib number 21 Domen Prevc of Slovenia achieved jumps of 245.0 m and 254.5 m to earn 475.0 points and take 1st place.",
+          "uncertainty": "none"
+        }
+      }
+    ],
+    "ability": "text_rich_understanding",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "text_rich_understanding_rtd",
+    "video": "5ee1a38b-aa7f-5e17-b170-1990dd67d2af.mp4",
+    "generation_context": {
+      "duration_seconds": 41.234,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p09"
+  },
+  {
+    "status": "ok",
+    "question": "Keep me updated on how the performer in the black t-shirt with sunglasses on his head seems to be feeling as the video progresses.",
+    "question_time": "00:00",
+    "audio_dependency": "none",
+    "vision_dependency": "required",
+    "responses": [
+      {
+        "window_start": "00:04",
+        "trigger_time": "00:04",
+        "window_end": "00:09",
+        "response": "He appears playful and enthusiastic, gesturing confidently while lip-syncing into the microphone.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "His enthusiastic expression and confident gestures are observed through visual cues while he sings.",
+        "evidence": [
+          {
+            "time": "00:04",
+            "available_time": "00:04",
+            "fact": "The performer in the black t-shirt gestures expressively with his hands and displays an animated, engaged facial expression into the microphone."
+          }
+        ],
+        "details": {
+          "subject": "performer in the black t-shirt with sunglasses on his head",
+          "emotion": "playful enthusiasm",
+          "basis": "animated facial expressions and confident hand gestures while lip-syncing",
+          "confidence": 0.85,
+          "claim_type": "inference"
+        }
+      },
+      {
+        "window_start": "00:15",
+        "trigger_time": "00:16",
+        "window_end": "00:22",
+        "response": "He seems amused and carefree, dancing energetically in the background to support his friends.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "His amused demeanor is shown by his smiling and cheerful background dancing.",
+        "evidence": [
+          {
+            "time": "00:15",
+            "available_time": "00:15",
+            "fact": "He steps into the background behind his friend, smiling and doing goofy synchronized dance moves."
+          }
+        ],
+        "details": {
+          "subject": "performer in the black t-shirt with sunglasses on his head",
+          "emotion": "amused and carefree",
+          "basis": "smiling and performing goofy synchronized background choreography",
+          "confidence": 0.85,
+          "claim_type": "inference"
+        }
+      },
+      {
+        "window_start": "00:31",
+        "trigger_time": "00:32",
+        "window_end": "00:37",
+        "response": "He appears excited and hyped up, dancing vigorously in the background during the chorus.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "His energetic jumping and broad smile visually convey his high excitement level.",
+        "evidence": [
+          {
+            "time": "00:31",
+            "available_time": "00:31",
+            "fact": "During the chorus, he bounces enthusiastically and smiles broadly while dancing in the background."
+          }
+        ],
+        "details": {
+          "subject": "performer in the black t-shirt with sunglasses on his head",
+          "emotion": "hyped up and excited",
+          "basis": "wide smile and high-energy jumping and dancing",
+          "confidence": 0.9,
+          "claim_type": "inference"
+        }
+      },
+      {
+        "window_start": "00:41",
+        "trigger_time": "00:42",
+        "window_end": "00:43",
+        "response": "He seems thoroughly amused and playful as he collapses dramatically onto the floor at the end of the routine.",
+        "trigger_type": "visual",
+        "trigger_type_reason": "His dramatic collapse onto the floor at the finale visibly shows playful exaggeration.",
+        "evidence": [
+          {
+            "time": "00:41",
+            "available_time": "00:41",
+            "fact": "After rushing over from the game table, he drops flat to the floor in a dramatic finish."
+          }
+        ],
+        "details": {
+          "subject": "performer in the black t-shirt with sunglasses on his head",
+          "emotion": "playfully dramatic",
+          "basis": "dramatic collapse onto the floor after intense dancing",
+          "confidence": 0.85,
+          "claim_type": "inference"
+        }
+      }
+    ],
+    "ability": "emotion_recognition",
+    "mode": "rtd",
+    "schema": "omni-interaction-v2",
+    "task": "emotion_recognition_rtd",
+    "video": "63e538b2-8685-5363-8a8d-b8f60400a36a.mp4",
+    "generation_context": {
+      "duration_seconds": 43.606,
+      "preferred_modality": "vision",
+      "question_position": "start",
+      "agent_delay_seconds": null,
+      "initial_response_delay_seconds": 0,
+      "sample_type": "positive",
+      "available_tools": [],
+      "required_missing_tool": null
+    },
+    "video_folder": "p10"
+  }
+]

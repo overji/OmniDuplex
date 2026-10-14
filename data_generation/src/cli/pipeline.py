@@ -15,6 +15,8 @@ def parse_args(argv=None):
     sources = parser.add_mutually_exclusive_group(required=True)
     sources.add_argument("--video", type=Path, help="one video (legacy convenience)")
     sources.add_argument("--videos-dir", type=Path, help="recursively process a video directory once")
+    sources.add_argument("--dataset-dir", type=Path, help="OmniInteractionDataset root containing A/ and B/")
+    parser.add_argument("--split", choices=("A", "B"), help="dataset half to generate (requires --dataset-dir)")
     parser.add_argument("--num-attempts", type=int, help="global QA attempt limit, including skip and failure")
     parser.add_argument("--video-url-map", type=Path, help="JSON map of video relative paths to remote URLs")
     parser.add_argument("--output-dir", required=True, type=Path,
@@ -31,11 +33,17 @@ def parse_args(argv=None):
             parser.error(f"--{name.replace('_', '-')} must be between 0 and 1")
     if args.num_attempts is not None and args.num_attempts < 1:
         parser.error("--num-attempts must be positive")
-    if args.videos_dir is not None and args.num_attempts is None:
+    if args.dataset_dir is not None and args.split is None:
+        parser.error("--dataset-dir requires --split A or B")
+    if args.split is not None and args.dataset_dir is None:
+        parser.error("--split requires --dataset-dir")
+    if (args.videos_dir is not None or args.dataset_dir is not None) and args.num_attempts is None:
         parser.error("directory pipeline requires --num-attempts")
     args.video = args.video.expanduser().resolve() if args.video else None
     args.output_dir = args.output_dir.expanduser().resolve()
-    args.videos_dir = args.video.parent if args.video else args.videos_dir.expanduser().resolve()
+    args.videos_dir = (args.video.parent if args.video else
+                       (args.dataset_dir.expanduser().resolve() / args.split / "videos" if args.dataset_dir else
+                        args.videos_dir.expanduser().resolve()))
     if args.video_url_map:
         args.video_url_map = args.video_url_map.expanduser().resolve()
     args.tasks = list(TASK_CATALOG)

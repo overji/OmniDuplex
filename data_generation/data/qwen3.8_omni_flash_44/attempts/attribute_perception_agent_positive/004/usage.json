@@ -3,7 +3,7 @@
   "provider": "qwen",
   "model": "qwen3.8-omni-flash",
   "task": "attribute_perception_agent",
-  "video": "video_101.mp4",
+  "video": "b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
   "recorded_at": "2026-10-04T02:20:36.293255+00:00",
   "status": "unavailable",
   "reason": "provider response did not include usage",

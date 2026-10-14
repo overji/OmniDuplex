@@ -1,6 +1,6 @@
 {
   "task": "action_perception_pr",
-  "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/video_152.mp4",
+  "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/f2149405-8494-557b-b218-12a638240089.mp4",
   "context": {
     "duration_seconds": 213.787,
     "preferred_modality": "vision",
