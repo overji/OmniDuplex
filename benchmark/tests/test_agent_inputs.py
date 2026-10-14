@@ -7,13 +7,12 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from benchmark.data.agent_inputs import AgentInputs, agent_results
 from benchmark.adapters import joyai, livestar, minicpmo, mmduet2
 from benchmark.runtime.runner import SampleContext
 
 
 class AgentInputTests(unittest.TestCase):
-    def test_minicpmo_prefills_result_without_generating_at_its_timestamp(self):
+    def test_minicpmo_ignores_backend_results_and_generates_after_media(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sample = {'mode': 'agent', 'task': 'test', 'video': 'clip.mp4', 'question': 'Q',
@@ -51,16 +50,15 @@ class AgentInputTests(unittest.TestCase):
             with patch.dict(sys.modules, modules), patch.object(minicpmo, 'media_cache',
                     return_value=(root, metadata, [0.] * 32000)), contextlib.redirect_stdout(io.StringIO()):
                 result = minicpmo.run_sample(args, SimpleNamespace(model=model), context)
-            self.assertEqual(len(calls), 4)
+            self.assertEqual(len(calls), 3)
             self.assertIn('User request', calls[0]['text_list'][0])
             self.assertIn('audio_waveform', calls[1])
-            self.assertIn('known result', calls[2]['text_list'][0])
-            self.assertIn('audio_waveform', calls[3])
+            self.assertIn('audio_waveform', calls[2])
+            self.assertNotIn('known result', str(calls))
             self.assertEqual(result.events[0]['onset_seconds'], 2)
-            logged = json.loads((root / 'sample_000.agent_inputs.json').read_text())
-            self.assertEqual(logged[0]['input_clock_seconds'], 1)
+            self.assertFalse((root / 'sample_000.agent_inputs.json').exists())
 
-    def test_livestar_gate_and_generation_keep_received_results_and_restore_chat(self):
+    def test_livestar_ignores_backend_results_and_preserves_post_frame_clock(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sample = {'mode': 'agent', 'video': 'clip.mp4', 'question': 'Q',
@@ -97,10 +95,8 @@ class AgentInputTests(unittest.TestCase):
             args = SimpleNamespace(videos_dir=root, cache_dir=root)
             with patch.object(livestar, 'media_cache', return_value=(root, metadata, None)):
                 result = livestar.run_sample(args, state, context)
-            self.assertNotIn('known result', questions[0])
-            for question in questions[1:]:
-                self.assertIn('known result', question)
-                self.assertLess(question.index('known result'), question.index('Frame-'))
+            for question in questions:
+                self.assertNotIn('known result', question)
             self.assertEqual(result.events[0]['onset_seconds'], 2)
             self.assertIs(model.chat, chat)
             # The post-frame clock applies to every response, not just Agent results.
@@ -110,28 +106,7 @@ class AgentInputTests(unittest.TestCase):
             self.assertEqual(result.events[0]['onset_seconds'], 2)
             self.assertIs(model.chat, chat)
 
-    def test_only_tool_text_is_extracted_and_future_results_stay_hidden(self):
-        sample = {'mode': 'agent', 'question_time': '00:00', 'responses': [
-            {'role': 'assistant', 'trigger_time': '00:01', 'response': 'secret answer'},
-            {'role': 'tool', 'trigger_time': '00:03', 'response': 'later'},
-            {'messages': [{'role': 'tool', 'timestamp': '00:01', 'content': 'first'},
-                          {'role': 'assistant', 'timestamp': '00:01', 'content': 'secret completion'}]},
-        ]}
-        results = agent_results(sample)
-        self.assertEqual([r['text'] for r in results], ['first', 'later'])
-        self.assertEqual(agent_results({**sample, 'mode': 'pr'}), [])
-        inputs = AgentInputs({'agent_results': results})
-        self.assertEqual(inputs.take(0), [])
-        text = inputs.take(1)[0]
-        self.assertIn('first', text)
-        self.assertNotIn('later', text)
-        self.assertNotIn('secret', text)
-        self.assertEqual(inputs.take(1), [])
-        self.assertEqual(inputs.take(3, inclusive=False), [])
-        self.assertIn('later', inputs.take(4, inclusive=False)[0])
-        self.assertEqual(len(inputs.delivered), 2)
-
-    def test_joyai_result_precedes_frame_and_reply_clock_follows_timestamp(self):
+    def test_joyai_ignores_backend_results_and_preserves_post_frame_clock(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sample = {'mode': 'agent', 'video': 'clip.mp4', 'question': 'Q',
@@ -157,15 +132,14 @@ class AgentInputTests(unittest.TestCase):
             with patch.object(joyai, 'media_cache', return_value=(root, metadata, None)):
                 result = joyai.run_sample(args, SimpleNamespace(requests=SimpleNamespace(post=post)), context)
             content = calls[1]['messages'][1]['content']
-            self.assertEqual([c['type'] for c in content], ['text', 'image_url'])
-            self.assertIn('known result', content[0]['text'])
-            self.assertNotIn('known result', json.dumps(calls[0]))
+            self.assertEqual([c['type'] for c in content], ['image_url'])
+            self.assertNotIn('known result', json.dumps(calls))
             self.assertEqual(result.events, [{'onset_seconds': 2, 'text': 'reported'}])
             saved = json.loads((root / 'sample_000.json').read_text())
-            self.assertEqual(saved['agent_inputs'][0]['input_clock_seconds'], 1)
+            self.assertNotIn('agent_inputs', saved)
             self.assertEqual(saved['turns'][1]['frame_time_seconds'], 1)
 
-    def test_mmduet_result_is_skipped_text_turn_before_next_frame_generation(self):
+    def test_mmduet_ignores_backend_results_and_only_generates_after_frames(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             sample = {'mode': 'agent', 'video': 'clip.mp4', 'question': 'Q',
@@ -197,13 +171,13 @@ class AgentInputTests(unittest.TestCase):
             with patch.dict(sys.modules, modules), patch.object(mmduet2, 'media_cache',
                     return_value=(root, metadata, None)):
                 result = mmduet2.run_sample(args, state, context)
-            injected = next(i for i, turn in enumerate(conversations)
-                            if isinstance(turn['content'], str) and 'known result' in turn['content'])
-            self.assertTrue(conversations[injected]['skip_inference'])
+            self.assertNotIn('known result', str(conversations))
+            self.assertEqual(sum(turn['role'] == 'user' and isinstance(turn['content'], str)
+                                 for turn in conversations), 1)
             for turn in conversations:
                 if turn['role'] == 'user' and isinstance(turn['content'], str):
                     self.assertTrue(turn['skip_inference'])
-            self.assertEqual(conversations[injected + 1]['content'][0]['text'], 'Frame at 1.000s')
+            self.assertEqual(conversations[-1]['content'][0]['text'], 'Frame at 1.000s')
             self.assertEqual(result.events[0]['onset_seconds'], 2)
 
 

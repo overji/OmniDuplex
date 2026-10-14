@@ -40,9 +40,10 @@ for that file without preventing selection of another file.
 Use **Browse / Annotate** above the existing sample filters. Browse restores its
 selected sample. Annotate selects the first response missing either score in the
 current file and filter scope, in original sample/response order. Select annotator
-**A** or **B**; each has independent scores and progress. Agent assistant delegation
-and completion replies can both be rated. Simulated tool results are inputs and
-remain visible without ratings.
+**A** or **B**; each has independent scores and progress. Agent positives rate only
+assistant replies that call `agent_call`. Tool results and completion replies
+remain visible without ratings. Their existing scores are preserved but excluded
+from resume, progress and agreement calculations.
 Agent negative samples (`missing_tool` and `no_context`) still score refusal responses.
 RTD/PR scoring is unchanged. Observation `annotations` remain visible without ratings.
 Excluded responses do not contribute to progress or agreement statistics; their

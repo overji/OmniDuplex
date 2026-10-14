@@ -104,7 +104,7 @@ test('save failure returns an error without modifying the input QA', async () =>
   }
 })
 
-test('Agent completion ratings can be updated while tool inputs and source are preserved', async () => {
+test('Agent completion writes are rejected while legacy ratings and source are preserved', async () => {
   const root = await mkdtemp(path.join(tmpdir(), 'agent-annotation-'))
   const dataDir = path.join(root, 'data')
   const outputDir = path.join(root, 'annotations')
@@ -139,10 +139,10 @@ test('Agent completion ratings can be updated while tool inputs and source are p
     })
     assert.equal((await rate(0, 1)).status, 400)
     assert.equal(await readFile(annotationPath, 'utf8'), legacyRaw)
-    assert.equal((await rate(0, 2)).status, 200)
+    assert.equal((await rate(0, 2)).status, 400)
     for (const sampleIndex of [0, 1, 2]) assert.equal((await rate(sampleIndex, 0)).status, 200)
     const current = await (await fetch(base + '/api/annotations?file=sample.json&annotator=A')).json()
-    assert.equal(current.records['0:2'].timeScore, 1)
+    assert.equal(current.records['0:2'].timeScore, 0)
     assert.equal(current.records['0:2'].contentScore, 1)
     assert.equal(current.records['0:2'].fingerprint, fingerprints[0][2])
     assert.equal(current.records['0:0'].timeScore, 1)

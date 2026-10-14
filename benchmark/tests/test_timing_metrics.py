@@ -21,7 +21,7 @@ class TimingMetricsTests(unittest.TestCase):
         self.assertEqual(seconds("01:02:03"), 3723)
 
 
-    def test_agent_scores_completion_windows_but_not_tool_inputs(self):
+    def test_agent_scores_only_delegations_and_preserves_original_indices(self):
         def response(role, start, call=False):
             result = {"role": role, "window_start": f"00:{start:02d}",
                       "window_end": f"00:{start + 1:02d}"}
@@ -35,13 +35,13 @@ class TimingMetricsTests(unittest.TestCase):
         ]}
         events = [{"onset_seconds": t} for t in [1, 3, 5, 7, 9]]
         score = match_windows(sample, events)
-        self.assertEqual([i for i, _ in reference_windows(sample)], [0, 2, 3, 4])
-        self.assertEqual([m["response_index"] for m in score["matches"]], [0, 2, 3, 4])
+        self.assertEqual([i for i, _ in reference_windows(sample)], [0, 3])
+        self.assertEqual([m["response_index"] for m in score["matches"]], [0, 3])
         self.assertEqual((score["windows"], score["hits"], score["predictions"],
-                          score["extra_predictions"]), (4, 4, 5, 1))
+                          score["extra_predictions"]), (2, 2, 5, 3))
         metrics = summarize([sample], [{"sample_index": 0, "events": events}])
-        self.assertEqual(metrics["excluded_agent_non_trigger_responses"], 1)
-        self.assertEqual(metrics["groups"]["overall"]["timing_precision"], 0.8)
+        self.assertEqual(metrics["excluded_agent_non_trigger_responses"], 3)
+        self.assertEqual(metrics["groups"]["overall"]["timing_precision"], 0.4)
         # Collection reports must use the same filtered windows as matching.
         import json
         import tempfile
@@ -59,9 +59,9 @@ class TimingMetricsTests(unittest.TestCase):
             self.assertIn("00:01–00:02", report)
             self.assertIn("00:07–00:08", report)
             self.assertNotIn("00:03–00:04", report)
-            self.assertIn("00:05–00:06", report)
+            self.assertNotIn("00:05–00:06", report)
 
-    def test_completion_requires_strictly_later_onset_and_existing_window(self):
+    def test_completion_references_are_excluded_even_with_windows(self):
         sample = {"mode": "agent", "responses": [
             {"role": "tool", "trigger_time": "00:03", "response": "result"},
             {"role": "assistant", "trigger_time": "00:03", "window_start": "00:03",
@@ -69,9 +69,9 @@ class TimingMetricsTests(unittest.TestCase):
             {"role": "assistant", "trigger_time": "00:06", "response": "no window"},
         ]}
         self.assertEqual(match_windows(sample, [{"onset_seconds": 3}])["hits"], 0)
-        self.assertEqual(match_windows(sample, [{"onset_seconds": 4}])["hits"], 1)
+        self.assertEqual(match_windows(sample, [{"onset_seconds": 4}])["hits"], 0)
         self.assertEqual(match_windows(sample, [{"onset_seconds": 6}])["hits"], 0)
-        self.assertEqual(len(reference_windows(sample)), 1)
+        self.assertEqual(len(reference_windows(sample)), 0)
 
 
     def test_agent_negative_refusals_and_other_modes_remain_scored(self):
@@ -84,6 +84,15 @@ class TimingMetricsTests(unittest.TestCase):
             with self.subTest(sample=sample):
                 sample["responses"] = [response]
                 self.assertEqual(match_windows(sample, [{"onset_seconds": 1}])["hits"], 1)
+
+    def test_negative_three_second_window_keeps_inclusive_boundaries(self):
+        for kind in ['missing_tool', 'no_context']:
+            sample = {'mode': 'agent', 'sample_type': kind, 'responses': [
+                {'window_start': '00:10', 'trigger_time': '00:10', 'window_end': '00:13'}]}
+            for onset in [10, 11, 13]:
+                self.assertEqual(match_windows(sample, [{'onset_seconds': onset}])['hits'], 1)
+            for onset in [9.99, 13.01]:
+                self.assertEqual(match_windows(sample, [{'onset_seconds': onset}])['hits'], 0)
 
 
 if __name__ == "__main__":

@@ -58,37 +58,57 @@ Recorded partial predictions continue to count as completed for resume, and
 their metrics still use the sample's full reference windows. Interrupted samples
 without a prediction restart and may append another prompt-log entry.
 
-Current data: `all_qa.json`, copied byte-for-byte from
-`data_generation/data/qwen3.8_omni_flash_44/all_qa.json`.
-`configs/manifests/data_manifest.json` records the source and SHA-256. There are 44 samples,
-189 reference responses, and 157 responses with timing windows. The other
-32 references are not scored because they have no window. Agent assistant
-delegations and completion replies are scored when they have existing windows;
-simulated tool results are timed text inputs and are never scored as outputs.
-Completion onsets must be strictly later than the preceding tool-result timestamp.
-No windows are synthesized for completion replies that lack them.
+Current data: `all_qa.json`, derived from
+`data_generation/data/qwen3.8_omni_flash_44/all_qa.json` with an explicit Agent-window
+migration. `configs/manifests/data_manifest.json` records the source hash, current
+hash, backup and migration ledger. There are 44 samples, 189 reference responses,
+and 173 responses with timing windows. Benchmark scoring uses 157 of those windows:
+Agent positives score only assistant responses calling `agent_call`; tool results
+and completion replies are excluded, even when they have windows. Their full
+traces remain in the data, but neither tools nor reference assistant text are
+provided as model inputs.
 Agent negative refusal responses (`missing_tool` / `no_context`) remain scored.
 All predicted onsets still count toward timing precision and extra predictions.
-`excluded_agent_non_trigger_responses` reports excluded Agent tool references; this
+`excluded_agent_non_trigger_responses` reports excluded Agent tool and completion references; this
 count can overlap `excluded_reference_responses_without_windows`.
 
-Agent result text is inserted before processing the one-second interval beginning
-at its timestamp, and is first available to generation after that interval. Only
-tool-result text is provided; reference assistant text and future tool results are
-never included in the model prompt. MiniCPM, MMDuet2 and ROMA use their existing
+Future Agent generation gives completion replies natural PR-style windows.
+Refusals use `[question_time, question_time + 3]`. The existing 44-sample benchmark
+was migrated separately: 16 completion references use `[tool time + 1, tool time + 3]`
+and their recommended timestamp is the window start; 11 refusals use the new
+three-second window; one zero-width call window was extended to three seconds.
+Other reference windows, question text and recorded tool results are unchanged.
+Completion windows remain available in the dataset but are not evaluated by the
+current benchmark protocol.
+
+The migration is explicit and idempotent:
+
+```bash
+python -m benchmark migrate-agent-windows --dry-run
+python -m benchmark migrate-agent-windows
+```
+
+It backs up the dataset and manifest under `results/` before replacement, records
+every changed reference, and rolls back file replacements on write failure.
+Original generation files, experiment input snapshots, predictions and metrics
+are not rewritten. Existing model results were not rescored for this migration;
+historical reports retain their original 157-window evaluation.
+
+Only the user request, available capability/schema context and observed media
+are supplied to the model. Recorded Agent results are not extracted or injected,
+and no tool-result input logs are produced. MiniCPM, MMDuet2 and ROMA use their existing
 end-of-interval clocks. For JoyAI and LiveStar,
 output clocks use the frame interval end (`frame time + 1`, capped at video
 duration) for every task; their original frame clocks remain in raw records.
-User requests and Agent results are text prefills, never standalone generation
+User requests are text prefills, never standalone generation
 triggers: generation follows the current second's media input. MiniCPM and ROMA
 consume audiovisual input; MMDuet2, LiveStar and JoyAI consume their native visual
-inputs and do not receive audio. Native speak/listen policies remain active;
-receiving a result does not force generation.
+inputs and do not receive audio. Native speak/listen policies remain active.
 
 The input protocol is recorded as `agent_input_protocol` in run and parallel
-configuration. Use new output directories: old predictions were generated without
-these inputs and cannot be resumed as this protocol. Saved historical results
-are not rewritten or rescored automatically. Raw records log each delivered input.
+configuration as `post_media_generation_without_agent_results_v3`. Use new output
+directories: runs that supplied Agent results cannot be resumed as this protocol.
+Saved historical results are not rewritten or rescored automatically.
 
 The model is installed at
 `/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5`.

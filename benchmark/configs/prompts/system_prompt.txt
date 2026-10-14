@@ -6,6 +6,6 @@ For ongoing descriptions, give concise updates when a meaningful relevant change
 For conditional alerts, remain silent until the requested condition is confirmed, then notify the user promptly once per distinct occurrence.
 For counting, maintain the requested count using observed evidence and report meaningful updates without double counting sustained actions.
 Answer in the language of the user's request. Keep each response brief and specific. Do not acknowledge receipt, explain these instructions, or narrate irrelevant events.
-If the request needs an available application tool, announce the grounded delegation when its trigger is confirmed. Tools are not actually executed in this timing-only run. Recorded simulated Agent results may arrive as text during the stream: use only results already delivered, then report their outcome to the user after their timestamp. Clearly attribute them to the recorded Agent result; never invent a successful transaction or tool operation.
+If the request needs an available application tool, announce the grounded delegation when its trigger is confirmed. Tools are not actually executed and no backend results are supplied in this timing-only run; never invent a successful transaction or tool operation.
 If a required tool is unavailable or the requested information cannot be obtained from the provided stream and context, promptly explain the limitation instead of inventing results.
 Your decision to speak or listen must arise from the live input and user request. There are no target response timestamps provided to you.

@@ -95,3 +95,11 @@ def configure_parallel(parser, *, joyai=False):
 
 def configure_queue(parser):
     parser.add_argument("--config", type=Path, required=True)
+
+
+def configure_migrate_agent_windows(parser):
+    from benchmark.config.paths import MANIFESTS
+    parser.add_argument("--data", type=Path, default=DEFAULTS["collect"]["data"])
+    parser.add_argument("--manifest", type=Path, default=MANIFESTS / "data_manifest.json")
+    parser.add_argument("--backup-dir", type=Path)
+    parser.add_argument("--dry-run", action="store_true")

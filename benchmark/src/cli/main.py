@@ -11,6 +11,7 @@ COMMANDS = {
     "compare": "benchmark.evaluation.comparison",
     "download": "benchmark.data.download",
     "queue": "benchmark.runtime.queue",
+    "migrate-agent-windows": "benchmark.data.agent_windows",
 }
 
 
@@ -30,7 +31,7 @@ def build_parser():
                                           help=argparse.SUPPRESS)
                 model_parser.add_argument("--internal-rank", type=int, help=argparse.SUPPRESS)
     for name in COMMANDS:
-        getattr(options, f"configure_{name}")(commands.add_parser(name))
+        getattr(options, f"configure_{name.replace('-', '_')}")(commands.add_parser(name))
     return parser
 
 

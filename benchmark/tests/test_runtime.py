@@ -92,7 +92,7 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(adapter.loaded, 0)
         self.assertEqual((self.args.output_dir / 'predictions.jsonl').read_bytes(), original)
 
-    def test_only_agent_tool_results_reach_model_context_and_old_protocol_cannot_resume(self):
+    def test_all_agent_reference_text_is_hidden_and_old_protocol_cannot_resume(self):
         self.samples[0]['responses'].extend([
             {'role': 'tool', 'trigger_time': '00:03', 'response': 'recorded result'},
             {'role': 'assistant', 'trigger_time': '00:03', 'response': 'secret final answer'},
@@ -101,11 +101,12 @@ class RuntimeTests(unittest.TestCase):
         adapter = FakeAdapter()
         self.execute(adapter)
         context = adapter.contexts[0]
-        self.assertEqual(context.sample['agent_results'][0]['text'], 'recorded result')
+        self.assertNotIn('agent_results', context.sample)
+        self.assertNotIn('recorded result', json.dumps(context.sample))
         self.assertNotIn('secret', json.dumps(context.sample))
         config_path = self.args.output_dir / 'run_config.json'
         config = json.loads(config_path.read_text())
-        config.pop('agent_input_protocol')
+        config['agent_input_protocol'] = 'timestamped_agent_results_and_post_media_generation_v2'
         config_path.write_text(json.dumps(config))
         original = config_path.read_bytes()
         with self.assertRaisesRegex(ValueError, 'protocol changed'):

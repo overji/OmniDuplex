@@ -10,7 +10,6 @@ from urllib.parse import quote
 
 from benchmark.config.models import MODEL_SETTINGS
 from benchmark.data.prompts import user_request
-from benchmark.data.agent_inputs import AgentInputs
 from benchmark.data.media import media_cache
 from benchmark.data.types import SampleResult
 from benchmark.data.timestamps import seconds
@@ -50,15 +49,12 @@ def run_sample(a, state, context):
         json={}, headers={"x-streaming-session": session}, timeout=60).raise_for_status()
     raw, events = [], []
     inserted_query = False
-    agent_inputs = AgentInputs(sample)
     for frame_time, relative in zip(meta["frame_times"], meta["frames"]):
         frame_path = (cache / relative).resolve()
         content = []
         if not inserted_query and frame_time >= qtime:
             content.append({"type": "text", "text": user_request(sample)})
             inserted_query = True
-        content.extend({"type": "text", "text": text}
-                       for text in agent_inputs.take(frame_time))
         frame_uri = "file://" + quote(str(frame_path))
         content.append({"type": "image_url", "image_url": {"url": frame_uri}})
         payload = {"model": a.model, "messages": [
@@ -84,6 +80,5 @@ def run_sample(a, state, context):
     if not inserted_query:
         raise RuntimeError(f"question_time {qtime} exceeds last observed frame for sample {index}")
     with context.open_raw(".json") as f:
-        json.dump({"sample_index": index, "turns": raw,
-                   "agent_inputs": agent_inputs.delivered}, f, ensure_ascii=False, indent=2)
+        json.dump({"sample_index": index, "turns": raw}, f, ensure_ascii=False, indent=2)
     return SampleResult(events=events, observed_seconds=meta["duration"])

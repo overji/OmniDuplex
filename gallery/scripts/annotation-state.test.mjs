@@ -59,7 +59,7 @@ test('filtered resume retains source indices and observation annotations are exc
   assert.equal(firstIncomplete(items, {}), 0)
 })
 
-test('Agent scoring restores completion replies and excludes only tool inputs', async () => {
+test('Agent scoring excludes completion replies and preserves their saved ratings', async () => {
   const { agreement } = await import('../src/annotation-state.mjs')
   const call = { role: 'assistant', tool_calls: [{ function: { name: 'agent_call' } }] }
   const data = [
@@ -69,12 +69,13 @@ test('Agent scoring restores completion replies and excludes only tool inputs', 
     { mode: 'rtd', responses: [{}] }, { mode: 'pr', responses: [{}] },
   ]
   const items = flattenSamples(data, [['a', 'b', 'c', 'd'], ['e'], ['f'], ['g'], ['h']])
-  assert.deepEqual(items.map(item => item.key), ['0:0', '0:2', '0:3', '1:0', '2:0', '3:0', '4:0'])
-  assert.equal(items[1].fingerprint, 'c')
+  assert.deepEqual(items.map(item => item.key), ['0:0', '0:3', '1:0', '2:0', '3:0', '4:0'])
+  assert.equal(items[1].fingerprint, 'd')
   const records = { '0:0': { timeScore: 1, contentScore: 1 },
     '0:1': { timeScore: 0, contentScore: 0 }, '0:2': { timeScore: 0, contentScore: 0 } }
-  assert.equal(firstIncomplete(items, records), 2)
-  assert.equal(progress(items, records).total, 7)
-  assert.equal(progress(items, records).timeRated, 2)
-  assert.equal(agreement(items, records, records, 'time').n, 2)
+  assert.equal(firstIncomplete(items, records), 1)
+  assert.equal(progress(items, records).total, 6)
+  assert.equal(progress(items, records).timeRated, 1)
+  assert.equal(agreement(items, records, records, 'time').n, 1)
+  assert.deepEqual(records['0:2'], { timeScore: 0, contentScore: 0 })
 })

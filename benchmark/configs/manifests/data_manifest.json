@@ -1,6 +1,13 @@
 {
   "source": "/root/jimodels/OmniDuplex/data_generation/data/qwen3.8_omni_flash_44/all_qa.json",
   "benchmark": "all_qa.json",
-  "sha256": "5dade2e41420dad1426d4e21358e60dc69bbef7b9ba3ad6591d7483691d808b4",
-  "samples": 44
+  "sha256": "6867206fee6ae9ff09cfff67e27a661ab7beeb274f4d2d4d1f4dfac19f3f754f",
+  "samples": 44,
+  "source_sha256": "166bbcffe322d5214a1b29025eb8bfda3cf89a99795fc6ab510811e1410f6415",
+  "window_policy": "agent-reference-windows-v1",
+  "migration": {
+    "original_sha256": "5dade2e41420dad1426d4e21358e60dc69bbef7b9ba3ad6591d7483691d808b4",
+    "backup": "/root/jimodels/OmniDuplex/benchmark/results/agent_windows_20261013T014737234292Z/all_qa.original.json",
+    "ledger": "/root/jimodels/OmniDuplex/benchmark/results/agent_windows_20261013T014737234292Z/migration.json"
+  }
 }

@@ -12,7 +12,6 @@ from types import SimpleNamespace, MethodType
 
 from benchmark.config.models import MODEL_SETTINGS, NATIVE_SETTINGS
 from benchmark.data.prompts import user_request
-from benchmark.data.agent_inputs import AgentInputs
 from benchmark.data.media import media_cache
 from benchmark.data.types import SampleResult
 from benchmark.data.timestamps import seconds
@@ -67,16 +66,8 @@ def run_sample(a, state, context):
         raise RuntimeError("LiveStar remote model does not expose its native system_message")
     model.system_message = prompt
     original_chat = model.chat
-    agent_inputs = AgentInputs(sample)
-    agent_texts = []
     def chat_with_request(this, chat_tokenizer, pixel_values, question, *args, **kwargs):
         match = re.search(r"Frame-(\d+):", question)
-        if match:
-            agent_texts.extend(agent_inputs.take(int(match.group(1))))
-            # Native LiveStar reconstructs history on every gate/generation call.
-            # Keep previously received results available, including silent frames.
-            if agent_texts:
-                question = "\n\n".join(agent_texts) + "\n" + question
         if match and int(match.group(1)) == math.ceil(qtime):
             question = question + "\n" + user_request(sample)
         return original_chat(chat_tokenizer, pixel_values, question, *args, **kwargs)
@@ -107,7 +98,6 @@ def run_sample(a, state, context):
     events = [{"onset_seconds": output_clock(t), "text": text} for t, text in session.narration
               if int(t) >= qtime and text.strip()]
     with context.open_raw(".json") as f:
-        json.dump({"sample_index": index, "summary": summary, "narration": raw,
-                   "agent_inputs": agent_inputs.delivered}, f,
+        json.dump({"sample_index": index, "summary": summary, "narration": raw}, f,
                   ensure_ascii=False, indent=2)
     return SampleResult(events=events, observed_seconds=meta["duration"])

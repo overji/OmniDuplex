@@ -1,6 +1,10 @@
 export function isScorableResponse(sample, response) {
   if (sample?.mode !== 'agent') return true
-  return response?.role !== 'tool'
+  if (response?.role === 'tool') return false
+  const kind = sample?.sample_type ?? sample?.generation_context?.sample_type
+  if (kind === 'missing_tool' || kind === 'no_context') return true
+  return response?.role === 'assistant' && Array.isArray(response.tool_calls)
+    && response.tool_calls.some(call => call?.function?.name === 'agent_call')
 }
 
 export function flattenSamples(data, fingerprints) {

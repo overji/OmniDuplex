@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from benchmark.data.files import append_jsonl, read_jsonl, recover_jsonl_tail, write_json
-from benchmark.data.agent_inputs import AGENT_INPUT_PROTOCOL, agent_results
+from benchmark.data.agent_inputs import AGENT_INPUT_PROTOCOL
 from benchmark.data.prompts import build_system_prompt
 from benchmark.data.types import SampleResult
 from benchmark.evaluation.timing import write_metrics
@@ -83,7 +83,6 @@ def run(args, adapter, *, assignment=None):
             "id", "task", "video", "question", "question_time", "available_tools",
             "frontend_context", "sample_type", "mode", "ability",
         ) if key in sample}
-        model_sample["agent_results"] = agent_results(sample)
         context = SampleContext(index, model_sample, base_prompt, args.output_dir,
                                 started=time.perf_counter())
         result: SampleResult = adapter.run_sample(args, state, context)

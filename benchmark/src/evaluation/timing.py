@@ -8,7 +8,14 @@ from benchmark.data.files import write_json
 def is_scored_response(sample, response):
     if sample.get("mode") != "agent":
         return True
-    return response.get("role") != "tool"
+    if response.get("role") == "tool":
+        return False
+    kind = sample.get("sample_type", sample.get("generation_context", {}).get("sample_type"))
+    if kind in {"missing_tool", "no_context"}:
+        return True
+    return response.get("role") == "assistant" and any(
+        isinstance(call, dict) and (call.get("function") or {}).get("name") == "agent_call"
+        for call in (response.get("tool_calls") or []))
 
 
 def reference_windows(sample):
@@ -22,22 +29,9 @@ def match_windows(sample, events):
                for index, response in reference_windows(sample)]
     remaining = set(range(len(events)))
     matches = []
-    after_agent_result = {}
-    if sample.get("mode") == "agent":
-        latest_result = None
-        for index, response in enumerate(sample["responses"]):
-            if response.get("role") == "tool":
-                timestamp = response.get("trigger_time", response.get("timestamp", response.get("window_start")))
-                latest_result = seconds(timestamp) if timestamp is not None else None
-            elif response.get("tool_calls"):
-                latest_result = None
-            elif latest_result is not None:
-                after_agent_result[index] = latest_result
     # Earliest-deadline matching maximizes interval/point matches without reusing an onset.
     for response_index, start, end in sorted(windows, key=lambda row: (row[2], row[1])):
-        candidates = [i for i in remaining if start <= events[i]["onset_seconds"] <= end
-                      and (response_index not in after_agent_result or
-                           events[i]["onset_seconds"] > after_agent_result[response_index])]
+        candidates = [i for i in remaining if start <= events[i]["onset_seconds"] <= end]
         if candidates:
             event_index = min(candidates, key=lambda i: events[i]["onset_seconds"])
             remaining.remove(event_index)

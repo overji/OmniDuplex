@@ -86,7 +86,7 @@ export function annotationMiddleware({ dataDir = defaultDataDir, outputDir: root
           if (!expected) throw fail(404, 'Response not found')
           if (expected !== body.fingerprint) throw fail(409, 'Source response changed; reload the file')
           if (!isScorableResponse(samples[sampleIndex], samples[sampleIndex].responses[responseIndex])) {
-            throw fail(400, 'Agent tool results are inputs and are not scored')
+            throw fail(400, 'Agent tool results and completion replies are not scored')
           }
           const stored = await readAnnotations(root, annotator, file)
           const key = `${sampleIndex}:${responseIndex}`
