@@ -1,0 +1,6 @@
+# Use a separate training environment; native MiniCPM dependencies match benchmark.
+-r ../benchmark/requirements.txt
+peft==0.15.2
+deepspeed==0.16.9
+soundfile
+Pillow

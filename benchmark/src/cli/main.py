@@ -7,6 +7,7 @@ from benchmark.cli import options
 
 MODELS = ("minicpmo", "mmduet2", "livestar", "roma", "joyai")
 COMMANDS = {
+    "judge": "benchmark.evaluation.judge",
     "collect": "benchmark.evaluation.collection",
     "compare": "benchmark.evaluation.comparison",
     "download": "benchmark.data.download",
@@ -56,12 +57,12 @@ def main(argv=None):
         rank = vars(args).pop("internal_rank")
         assignment = None
         if plan_path is not None:
-            from benchmark.data.agent_inputs import AGENT_INPUT_PROTOCOL
+            from benchmark.data.agent_inputs import input_protocol
             import hashlib
             import json
             plan = json.loads(plan_path.read_text())
             if (rank is None or not 0 <= rank < len(plan["assignments"]) or
-                    plan.get("agent_input_protocol") != AGENT_INPUT_PROTOCOL or
+                    plan.get("agent_input_protocol") != input_protocol(args) or
                     plan["model"] != adapter_name or
                     plan["data_sha256"] != hashlib.sha256(args.data.read_bytes()).hexdigest() or
                     plan["prompt_sha256"] != hashlib.sha256(args.system_prompt.read_bytes()).hexdigest()):

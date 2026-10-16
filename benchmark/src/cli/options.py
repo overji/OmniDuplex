@@ -1,10 +1,13 @@
 """CLI options; each model keeps its existing flags and defaults."""
+import argparse
 from pathlib import Path
 
 from benchmark.config.defaults import DEFAULTS
 
 
 def _configure_common(parser, model):
+    parser.add_argument("--agent-output-protocol", choices=(("text", "structured", "agent-token") if model == 'minicpmo' else ("text", "structured")), default=argparse.SUPPRESS,
+                        help="Optional structured Agent output; default preserves existing text protocol")
     defaults = DEFAULTS[model]
     parser.add_argument("--data", type=Path, default=defaults["data"])
     parser.add_argument("--videos-dir", type=Path, default=defaults["videos_dir"])
@@ -16,6 +19,8 @@ def _configure_common(parser, model):
 
 def configure_minicpmo(parser):
     _configure_common(parser, 'minicpmo')
+    parser.add_argument('--lora-adapter', type=Path, default=argparse.SUPPRESS,
+                        help='Agent-token adapter directory; requires --agent-output-protocol agent-token')
     parser.add_argument("--cache-dir", type=Path, default=DEFAULTS["minicpmo"]["cache_dir"])
     parser.add_argument("--device", default=DEFAULTS["minicpmo"]["device"])
     parser.add_argument("--seed", type=int, default=DEFAULTS["minicpmo"]["seed"])

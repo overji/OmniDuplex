@@ -48,8 +48,13 @@ def load(args):
     torch.set_num_threads(args.cpu_threads)
     print(f"Loading {args.model_path} on {args.device}", flush=True)
     # Transformers treats dots in local model folder names as Python module separators.
-    model_alias = args.cache_dir / "MiniCPM_o_4_5"
     model_target = args.model_path.resolve()
+    if (model_target / 'full_training_model.json').is_file():
+        suffix = hashlib.sha256(str(model_target).encode()).hexdigest()[:12]
+        model_alias = args.cache_dir / 'full_training_models' / ('minicpmo_' + suffix)
+        model_alias.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        model_alias = args.cache_dir / "MiniCPM_o_4_5"
     with (args.cache_dir / "model_alias.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         if model_alias.is_symlink():
@@ -63,18 +68,30 @@ def load(args):
     model = AutoModel.from_pretrained(
         str(model_alias), trust_remote_code=True, attn_implementation="sdpa",
         torch_dtype=torch.bfloat16, low_cpu_mem_usage=True,
+        **({'init_tts': False} if (args.model_path / 'full_training_model.json').is_file() else {}),
     ).eval().to(args.device)
+    if (args.model_path / 'full_training_model.json').is_file():
+        from transformers import AutoTokenizer
+        from benchmark.data.agent_token import full_model_identity
+        full_model_identity(args.model_path)
+        model.prepare_processor(tokenizer=AutoTokenizer.from_pretrained(str(model_alias), trust_remote_code=True))
+        model.init_tts = lambda **kwargs: None
+    if getattr(args, 'lora_adapter', None):
+        from train.src.token_rows import load_adapter
+        load_adapter(model, model_alias, args.lora_adapter)
     if args.unused_tts_device == "cpu":
         # Text-only runs never invoke TTS. Move its loaded weights off-device and
         # skip Token2wav initialization, which otherwise transiently allocates
         # several additional GiB on the GPU before being moved back to CPU.
-        model.tts.to("cpu")
+        if getattr(model, 'tts', None) is not None:
+            model.tts.to("cpu")
         model.init_tts = lambda *unused_args, **unused_kwargs: None
     model = model.as_duplex(generate_audio=MODEL_SETTINGS["minicpmo"]["generate_audio"], sliding_window_mode=args.sliding_window_mode,
         basic_window_high_tokens=args.window_high_tokens, basic_window_low_tokens=args.window_low_tokens)
     if args.unused_tts_device == "cpu":
         # Keep the unused TTS modules on CPU for the remainder of the run.
-        model.model.tts.to("cpu")
+        if getattr(model.model, 'tts', None) is not None:
+            model.model.tts.to("cpu")
         torch.cuda.empty_cache()
     print("Native full-duplex model ready", flush=True)
 
@@ -101,6 +118,10 @@ def run_sample(args, state, context):
         sample_prompt = context.build_prompt()
         model.prepare(prefix_system_prompt=sample_prompt)
         events = []
+        token_stream = None
+        if getattr(args, 'agent_output_protocol', 'text') == 'agent-token':
+            from benchmark.data.agent_token import AgentStream
+            token_stream = AgentStream(model.tokenizer)
         active_event = None
         question_sent = False
         print(f"START sample={sample_index} task={sample['task']} duration={stop:.3f}s question={question_time}s", flush=True)
@@ -112,6 +133,13 @@ def run_sample(args, state, context):
                          **{key: value for key, value in result.items() if key != "audio_waveform"}}
                 raw.write(json.dumps(entry, ensure_ascii=False, default=str) + "\n")
                 raw.flush()
+                if token_stream is not None:
+                    if question_sent:
+                        event = token_stream.feed(result['generated_ids'], clock,
+                            ended=result['end_of_turn'], interrupted=result['is_listen'])
+                        if event is not None:
+                            events.append(event)
+                    return
                 text = result.get("text", "")
                 if text and not result["is_listen"] and question_sent:
                     if active_event is None:
@@ -147,11 +175,18 @@ def run_sample(args, state, context):
                 if not prefill["success"]:
                     raise RuntimeError(prefill)
                 prefill_seconds = time.perf_counter() - then
+                before = len(model.total_ids) if token_stream is not None else None
                 result = model.streaming_generate(decode_mode=args.decode_mode,
                     max_new_speak_tokens_per_chunk=args.max_speak_tokens)
+                if token_stream is not None:
+                    result['generated_ids'] = list(model.total_ids[before:])
                 record_result(result, end, "video_audio", prefill_seconds)
                 if (chunk_index + 1) % 30 == 0:
                     print(f"PROGRESS sample={sample_index} video={end:.0f}/{stop:.0f}s wall={time.perf_counter()-started:.1f}s", flush=True)
+        if token_stream is not None:
+            pending = token_stream.finish(complete=False)
+            if pending is not None:
+                events.append(pending)
         if active_event is not None:
             events.append(active_event)
         return SampleResult(events=events, observed_seconds=stop,
