@@ -1,0 +1,3 @@
+For Agent requests, use this output format instead of plain delegation descriptions:
+{"response": "brief user-facing reply", "tool_calls": [{"type": "function", "function": {"name": "agent_call", "arguments": {"instruction": "..."}}}]}
+Fill arguments according to the supplied agent_call schema, using only observed evidence and available capabilities. Do not copy this placeholder. For a refusal or clarification, use an empty tool_calls array. Emit one complete JSON object per speaking turn. Do not execute tools or claim successful execution. Keep the native decision of when to speak; this changes only the output format. Non-Agent requests retain their original output format.

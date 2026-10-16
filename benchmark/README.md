@@ -336,3 +336,94 @@ native generation path, which consumes only the last-position logits. It leaves
 transformer inputs, token dropping, KV context, FPS and generation settings intact.
 The default remains `full`. Projection kernels may have small floating-point
 rounding differences; the selected mode is recorded in `run_config.json`.
+
+## Response 内容 LLM Judge
+
+内容评分作为推理完成后的独立步骤运行，直接复用 `predictions.jsonl`，不需要 GPU。
+RTD / PR 评回复正确性；Agent 正样本分别评回复内容及实际 `agent_call` 参数；
+Agent 负样本评拒绝 / 澄清内容，调用分为 N/A，并单列整个 QA 的误调用率。
+工具返回和工具返回后的完成回复仍不评测。
+
+裁判依据为问题、当前参考回复及标注证据、可用工具和 schema，不上传视频，也不提供后续工具结果。
+这是参考标注一致性评测，不代表重新验证了原始音视频。
+五档分数为 `0 / 0.5 / 1 / 1.5 / 2`，分别表示核心错误或缺失、少量正确、部分正确、基本正确、完全正确。
+提示词位于 `configs/prompts/judge.txt`，可通过 `--system-prompt` 指定替代文件。
+
+```bash
+# 密钥通过环境变量配置；不要提交密钥到仓库。
+export GEMINI_API_KEY='your-key'
+python -m benchmark judge \
+  /path/to/results/minicpmo /path/to/results/livestar \
+  --data /path/to/inputs/all_qa.json \
+  --output-dir /path/to/content_judge \
+  --provider gemini --model YOUR_JUDGE_MODEL \
+  --concurrency 4 --timeout 120 --retries 2
+```
+
+Gemini 使用项目现有 `google-genai` 依赖（`pip install -r data_generation/requirements-gemini.txt`）。
+OpenAI 兼容接口使用 Python 标准库：指定 `--provider openai --model ...`，通过
+`OPENAI_API_KEY` 和 `OPENAI_BASE_URL` 配置。Gemini 支持 `GEMINI_BASE_URL`。
+两者均支持 `--base-url`、`--api-key` 显式覆盖；可选 `--env-file` 通过现有 `python-dotenv`
+加载配置，优先级为命令行 > 进程环境 > dotenv。裁判模型必须显式指定。
+
+每个模型目录会产生：
+
+- `judgments.jsonl`：实时追加逐 response 分数、理由、事件索引、解析状态和每次请求用量。
+- `judge_metrics.json` / `judge_report.md`：整体、交互类型、任务类别和 Agent 子类型统计。
+- `judge_config.json`：数据、预测及提示词哈希、裁判配置，不含密钥。
+- `api_usage.json`：历史累计请求数、失败次数与 API 返回的 token 用量；未提供的用量不估算。
+
+根目录另有 `judge_comparison.json` / `.csv`。使用以下命令并列查看时间与内容分数：
+
+```bash
+python -m benchmark compare /path/to/results/minicpmo /path/to/results/livestar \
+  --judge-dir /path/to/content_judge --output /path/to/comparison
+```
+
+内容评分沿用原先的时间窗口一对一匹配，不按答案好坏重新选回复。
+`response_mean_matched` 只统计时间命中的回复；`response_mean_all_windows` 将未命中记零。
+Agent 调用分仅汇总正样本，同时报告命中与全窗口两种均分。
+未完成推理、缺失视频不算零分，而是显示覆盖率。API 失败也不算零分：
+受影响的汇总分显示 N/A，评分任务标记 incomplete 并以非零状态退出。
+重复运行同一命令复用成功记录、重试失败记录；改变输入或裁判配置需要新的输出目录。
+目录支持单写入进程锁，不要让两个进程同时写同一评测目录。
+
+### Agent 结构化输出（可选）
+
+默认继续使用已有的文本输出，不执行工具、不注入工具结果。
+旧提示词只要求描述委托任务；旧预测中缺少实际调用参数时，正样本调用分为零，
+不能据此单独推断模型的工具参数生成能力。解析只接受完整 JSON 或 JSON 代码块中的明确调用，
+不从普通自然语言或参考答案补出调用参数。
+
+后续推理可在现有 `run` / `parallel` 参数中加入：
+
+```text
+--agent-output-protocol structured
+```
+
+仅 Agent 样本会追加 `configs/prompts/agent_structured.txt`，要求每次回复为：
+
+```json
+{"response": "面向用户的回复", "tool_calls": [{"type": "function", "function": {"name": "agent_call", "arguments": {"instruction": "委托内容及 schema 要求的其他参数"}}}]}
+```
+
+拒绝或澄清使用空 `tool_calls`。仍由原生模型机制决定何时发声，且不改生成长度等超参数。
+原文保留在 `events[].text`，另存 `response_text`、`tool_calls`、`agent_parse_status`。
+协议及其提示词哈希参与运行身份校验，必须使用新输出目录，不能续接旧协议结果。
+本模式仅要求输出格式；短输出预算导致的截断或模型不遵循格式会被标记，不能假定调用完整。
+
+### MiniCPM `<|agent|>` 协议
+
+训练后 adapter 可通过 `run minicpmo` / `parallel minicpmo` 的
+`--lora-adapter /path/to/adapter --agent-output-protocol agent-token` 加载。
+完整训练、词表扩展及加载说明见 [train README](../train/README.md)。
+
+输出形式为 `<|speak|>自然语言回复<|agent|>{"name":"agent_call","arguments":{...}}<|turn_eos|>`。
+调用参数可跨秒生成。解析直接使用原生生成 token ID，保留分隔符，完整轮次结束后才生成 `tool_calls`。
+截断、重复分隔符和非法 JSON 都保留原文与错误状态；负样本输出分隔符即计为调用尝试。
+Judge 沿用已有字段和时间匹配规则。默认 benchmark 输出协议仍为 text；旧 structured JSON 协议继续可用。
+协议与 adapter / tokenizer 指纹加入并行计划和续跑校验，必须使用新结果目录。仅 MiniCPM 支持新协议。
+
+## 全参数训练模型
+
+`train` 同时提供全参 SFT 和完整流式 GRPO，参见 [训练说明](../train/README.md)。将 ZeRO checkpoint 用 `python -m train export` 导出后，可将导出目录作为 MiniCPM 的 `--model-path`，并指定 `--agent-output-protocol agent-token`；不需要再传 LoRA adapter。导出身份、config/index 和 tokenizer 会加入评测协议校验。

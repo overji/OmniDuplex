@@ -77,6 +77,7 @@ def configure_compare(parser):
     p = parser
     p.add_argument("runs", nargs="+", type=Path)
     p.add_argument("--output", type=Path, default=DEFAULTS["compare"]["output"])
+    p.add_argument("--judge-dir", type=Path, help="Optional judge output root; timing scores remain unchanged")
 
 
 def configure_download(parser):
@@ -108,3 +109,19 @@ def configure_migrate_agent_windows(parser):
     parser.add_argument("--manifest", type=Path, default=MANIFESTS / "data_manifest.json")
     parser.add_argument("--backup-dir", type=Path)
     parser.add_argument("--dry-run", action="store_true")
+
+
+def configure_judge(parser):
+    from benchmark.config.paths import CONFIGS
+    parser.add_argument("runs", nargs="+", type=Path, help="Directories containing predictions.jsonl")
+    parser.add_argument("--data", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--provider", choices=("gemini", "openai"), required=True)
+    parser.add_argument("--model", required=True, help="Explicit judge model")
+    parser.add_argument("--base-url")
+    parser.add_argument("--api-key", help="Prefer GEMINI_API_KEY or OPENAI_API_KEY")
+    parser.add_argument("--env-file", type=Path, help="Optional dotenv configuration")
+    parser.add_argument("--system-prompt", type=Path, default=CONFIGS / "prompts/judge.txt")
+    parser.add_argument("--concurrency", type=int, default=4)
+    parser.add_argument("--timeout", type=float, default=120)
+    parser.add_argument("--retries", type=int, default=2)
