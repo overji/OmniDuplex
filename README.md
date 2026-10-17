@@ -17,6 +17,7 @@ Qwen3.5 Omni Plus / Flash Realtime 和 Gemini 2.5 Flash Live 的环境、密钥�
 python -m pip install modelscope-hub
 ms-hub download overji/OmniInteractionDataset \
   --repo-type dataset \
+  --revision master \
   --include 'A/**' \
   --local-dir ../OmniInteractionDataset
 ```
@@ -25,6 +26,22 @@ ms-hub download overji/OmniInteractionDataset \
 指向同一个 `--local-dir`。视频位于 `../OmniInteractionDataset/A/videos/` 或
 `../OmniInteractionDataset/B/videos/`，每组的 `video_metadata.json` 位于该组目录。
 原数据集根目录的 320 个视频路径仍保留，A/B 生成只读取所选分组。
+
+数据集维护者更新 ModelScope 上的文件后，可以用相同的仓库、分组和本地目录重新执行
+下载命令来同步该分组的最新版本；例如更新本地 A 组：
+
+```bash
+ms-hub download overji/OmniInteractionDataset \
+  --repo-type dataset \
+  --revision master \
+  --include 'A/**' \
+  --local-dir ../OmniInteractionDataset
+```
+
+更新 B 组时改为 `--include 'B/**'`。如果需要两组都更新，分别执行两次。更新后重新运行
+pipeline；它会将所选分组的 metadata 与视频文件核对，不一致时会报错，避免用旧 metadata
+或错误分组启动生成。若希望从干净目录重新下载，可先将旧的 `../OmniInteractionDataset`
+移走，再执行上述下载命令。
 
 ## 配置 Gemini 环境
 
