@@ -3,6 +3,18 @@ from typing import Any
 from .common import timestamp_seconds
 
 
+def is_agent_negative(sample: Any) -> bool:
+    """Identify historical capability-negative Agent samples, including raw files."""
+    if not isinstance(sample, dict):
+        return False
+    if sample.get("mode") != "agent" and not str(sample.get("task", "")).endswith("_agent"):
+        return False
+    context = sample.get("generation_context")
+    context = context if isinstance(context, dict) else {}
+    negatives = {"no_context", "missing_tool", "negative"}
+    return sample.get("sample_type") in negatives or context.get("sample_type") in negatives
+
+
 def adapt_responses(responses: list[dict[str, Any]]) -> list[dict[str, Any]]:
     adapted = []
     for response in responses:

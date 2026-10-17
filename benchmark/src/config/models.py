@@ -5,6 +5,25 @@ These values preserve the evaluated protocols; changing them creates a new exper
 from benchmark.config.paths import MODEL_ROOT
 
 MODEL_SETTINGS = {
+    'qwen_realtime': {
+        'native_api': 'DashScope Realtime WebSocket',
+        'fps': 1,
+        'audio_sample_rate': 16000,
+        'output_modality': 'text',
+        'turn_control': 'manual_commit_then_response_create_per_media_second',
+        'missing_audio': 'synthetic_silence_required_by_image_buffer_protocol',
+        'minimum_audio_commit_ms': 100,
+        'timing_clock': 'observed_input_interval_end',
+    },
+    'gemini_live': {
+        'native_api': 'google-genai aio.live',
+        'fps': 1,
+        'audio_sample_rate': 16000,
+        'output_modality': 'audio_with_output_transcription',
+        'turn_control': 'manual_activity_end_per_media_second',
+        'missing_audio': 'omit_audio',
+        'timing_clock': 'observed_input_interval_end',
+    },
     'minicpmo': {
         'native_api': 'as_duplex/prepare/streaming_prefill/streaming_generate',
         'generate_audio': False,

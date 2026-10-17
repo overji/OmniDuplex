@@ -3,6 +3,10 @@
 本仓库提供从视频生成 OmniInteraction 问答数据的 pipeline：视频依次经过
 caption、任务路由、问答生成与校验，最后合并为 `all_qa.json`。
 
+本地模型与云端 Realtime 评测见 [benchmark README](benchmark/README.md)，其中包含
+Qwen3.5 Omni Plus / Flash Realtime 和 Gemini 2.5 Flash Live 的环境、密钥及运行配置。
+同一文档还提供 Qwen3-Omni / Qwen2.5-Omni 的普通推理 Probe 模式，用正负视频前缀评估回复决策。
+
 ## 下载视频数据集
 
 公开数据集 [overji/OmniInteractionDataset](https://modelscope.cn/datasets/overji/OmniInteractionDataset)
@@ -53,16 +57,32 @@ export GEMINI_MODEL='YOUR_VIDEO_CAPABLE_GEMINI_MODEL_ID'
 python data_generation/generate.py \
   --dataset-dir ../OmniInteractionDataset --split A \
   --output-dir data_generation/data/pipeline_runs/A \
-  --num-attempts 100 \
+  --num-attempts 500 \
   --provider gemini \
   --seed 42
 ```
 
 生成 B 组时使用 `--split B`，同时将输出目录改为
-`data_generation/data/pipeline_runs/B`。程序先核对所选组的 metadata 与视频文件，
+`data_generation/data/pipeline_runs/B`。例如，要分别为 A/B 各生成最多 500 次 QA 尝试：
+
+```bash
+python data_generation/generate.py \
+  --dataset-dir ../OmniInteractionDataset --split B \
+  --output-dir data_generation/data/pipeline_runs/B \
+  --num-attempts 500 --provider gemini --seed 42
+```
+
+每次运行会在相应输出目录下建立带时间戳的子目录，终端会打印该路径。`--num-attempts 500`
+表示最多进行 500 次 QA 任务尝试，失败、跳过也计入上限；不是保证产出 500 条成功 QA。
+若要让 A 或 B 的单次运行最多尝试 500 次，分别执行对应的 `--split A` 或 `--split B`
+命令即可。程序先核对所选组的 metadata 与视频文件，
 再检查仓库 `data_generation/data` 和指定输出目录中已有的最终 QA 数据。
 视频已有至少一条有效、非空的回复数据时会跳过；空 `all_qa.json`、失败及
 `skip` 尝试不会让视频被跳过。`--videos-dir` 和 `--video` 仍可用于其他视频来源。
+
+Agent 数据只生成正样本（`sample_type=positive`），不再生成 `no_context` 或
+`missing_tool` 负样本。任务必须能用现有可用工具完成，否则返回 `skip`。
+兼容参数 `--agent-positive-probability` 仅接受 `1`；合并数据时也会排除历史 Agent 负样本。
 
 `--num-attempts` 是整个运行的问答任务**尝试次数上限**，跳过和失败的尝试也计入；
 它不是保证生成成功的样本数。程序递归读取视频目录，只遍历一次，不会循环视频来凑数。
@@ -109,6 +129,36 @@ git push origin main
 ```
 
 生成 B 组时相应更改提交说明。A/B 使用不同输出目录，便于分别查看和同步运行结果。
+
+## 为 A/B 生成 QA benchmark 并评测
+
+上面的 pipeline 每次运行都会生成可直接作为 benchmark 输入的 `all_qa.json`。使用
+终端打印的实际时间戳目录，分别将 A、B 的 QA 文件和对应分组的视频目录传给 benchmark；
+不要把 A 的 JSON 配上 B 的视频目录。例如，下面对 A 组结果运行 Qwen Realtime：
+
+```bash
+python -m benchmark run qwen_realtime \
+  --model qwen3.5-omni-plus-realtime \
+  --data data_generation/data/pipeline_runs/A/<A运行时间戳>/all_qa.json \
+  --videos-dir ../OmniInteractionDataset/A/videos \
+  --output-dir benchmark/results/omni_interaction_A/qwen35_plus
+```
+
+B 组使用其运行目录和 `../OmniInteractionDataset/B/videos`，并使用独立的结果目录：
+
+```bash
+python -m benchmark run qwen_realtime \
+  --model qwen3.5-omni-plus-realtime \
+  --data data_generation/data/pipeline_runs/B/<B运行时间戳>/all_qa.json \
+  --videos-dir ../OmniInteractionDataset/B/videos \
+  --output-dir benchmark/results/omni_interaction_B/qwen35_plus
+```
+
+评测 Gemini 2.5 Flash Live 时，将命令中的 `qwen_realtime` 换成 `gemini_live`，并将模型
+改为 `gemini-2.5-flash-native-audio-preview-12-2025`；评测 Qwen Flash Realtime 时将模型改为
+`qwen3.5-omni-flash-realtime`。先按 [benchmark README](benchmark/README.md) 配置相应 API
+依赖、密钥和 Realtime endpoint。`benchmark/results/` 中保存预测、指标、运行配置及逐样本
+日志；A、B 应使用不同结果目录，便于单独比较。
 
 其他 API 提供商、参数和数据格式见
 [数据生成详细文档](data_generation/docs/README.md)。

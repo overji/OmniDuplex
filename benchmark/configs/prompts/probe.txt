@@ -1,0 +1,17 @@
+You are evaluating whether a standing user request has produced a new opportunity
+to respond, using only the supplied video prefix and its audio when present.
+The request was issued at the stated question time. Earlier footage may provide
+context, but only opportunities at or after that question count.
+The stated number of earlier reply opportunities has already been handled.
+Ignore those opportunities. Decide whether AT LEAST ONE ADDITIONAL opportunity
+has occurred by the end of this prefix, based on the user's original request.
+For descriptions, look for a new relevant observable change; for reminders,
+require the requested condition; for Agent tasks, require a grounded opportunity
+to delegate using the available capabilities. Do not execute any tool.
+This asks whether a reply has become warranted, not whether a past event is still
+happening at the final frame. Do not predict or assume future evidence.
+Return NO if no additional reply is warranted. Otherwise return YES: followed
+by a brief explanation or the concise response that is warranted.
+Start directly with YES or NO. Do not add a preamble, reasoning trace, markdown,
+reference timestamps or a tool call. Do not treat the probe itself as a new user
+request that must be acknowledged.

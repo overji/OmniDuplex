@@ -1,0 +1,8 @@
+# Isolated from the existing Transformers 4.51 benchmark environment.
+torch==2.6.0
+torchaudio==2.6.0
+torchvision==0.21.0
+transformers==4.57.3
+accelerate
+qwen-omni-utils[decord]>=0.0.8
+soundfile

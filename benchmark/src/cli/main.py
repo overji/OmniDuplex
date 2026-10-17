@@ -6,7 +6,9 @@ from benchmark.cli import options
 
 
 MODELS = ("minicpmo", "mmduet2", "livestar", "roma", "joyai")
+REMOTE_MODELS = ("qwen_realtime", "gemini_live")
 COMMANDS = {
+    "probe": "benchmark.probe.runner",
     "judge": "benchmark.evaluation.judge",
     "collect": "benchmark.evaluation.collection",
     "compare": "benchmark.evaluation.comparison",
@@ -22,7 +24,7 @@ def build_parser():
     for command in ("run", "parallel"):
         run = commands.add_parser(command, help="Run native streaming " + command)
         models = run.add_subparsers(dest="adapter_name", required=True)
-        for name in MODELS:
+        for name in MODELS + (REMOTE_MODELS if command == 'run' else ()):
             model_parser = models.add_parser(name)
             getattr(options, f"configure_{name}")(model_parser)
             if command == "parallel":

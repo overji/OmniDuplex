@@ -7,7 +7,8 @@ from urllib.parse import urlsplit
 from . import batch
 from ..domain.catalog import TASK_CATALOG
 from ..domain.common import SAMPLE_SCHEMA
-from ..domain.config import validate_probability
+from ..domain.qa import is_agent_negative
+from ..domain.config import validate_probability, validate_agent_positive_probability
 from ..infrastructure.paths import DATA_ROOT
 
 
@@ -25,7 +26,7 @@ def historical_counts(output_parent, *, exclude=None):
         if not isinstance(samples, list):
             raise ValueError(f"invalid historical QA bundle: {source}")
         for sample in samples:
-            if isinstance(sample, dict) and sample.get("schema") == SAMPLE_SCHEMA and sample.get("status") == "ok" and sample.get("task") in TASK_CATALOG:
+            if isinstance(sample, dict) and not is_agent_negative(sample) and sample.get("schema") == SAMPLE_SCHEMA and sample.get("status") == "ok" and sample.get("task") in TASK_CATALOG:
                 counts[sample["task"]] += 1
     return dict(counts)
 
@@ -67,7 +68,7 @@ def generated_video_names(*roots):
                 continue
             samples = data if isinstance(data, list) else [data]
             for sample in samples:
-                if (isinstance(sample, dict) and sample.get("schema") == SAMPLE_SCHEMA
+                if (isinstance(sample, dict) and not is_agent_negative(sample) and sample.get("schema") == SAMPLE_SCHEMA
                         and sample.get("status") == "ok" and isinstance(sample.get("video"), str)
                         and isinstance(sample.get("responses"), list) and sample["responses"]):
                     names.add(Path(sample["video"]).as_posix())
@@ -106,6 +107,7 @@ def run(args, *, progress=None):
         raise ValueError(f"video does not exist: {args.video}")
     for name in ("pr_probability", "agent_probability", "agent_positive_probability"):
         validate_probability(name, getattr(args, name))
+    validate_agent_positive_probability(args.agent_positive_probability)
     if args.num_attempts is not None and args.num_attempts < 1:
         raise ValueError('num-attempts must be positive')
     videos = source_videos(args)

@@ -9,7 +9,7 @@ from data_generation.tests.fixtures import saved_agent
 
 
 class MergeQaTests(unittest.TestCase):
-    def test_merges_positive_and_both_refusals_without_losing_context(self):
+    def test_merges_positive_and_excludes_both_refusals_without_mutating_sources(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             folder = root / "data" / "test_video"
@@ -20,7 +20,7 @@ class MergeQaTests(unittest.TestCase):
             (folder / "caption.json").write_text('[]')
             (folder / "route.json").write_text(json.dumps({"schema": "dense-caption-v1", "task": "route", "status": "ok"}))
             bundle = build_bundle(root / "data", root / "videos")
-            self.assertEqual(len(bundle), 3)
+            self.assertEqual(len(bundle), 1)
             for source, merged in zip(samples, bundle):
                 for key in ("frontend_context", "sample_type", "available_tools", "required_tools", "generation_context"):
                     self.assertEqual(json.loads(json.dumps(source[key])), merged[key])
@@ -29,8 +29,6 @@ class MergeQaTests(unittest.TestCase):
             self.assertEqual(bundle[0]["responses"][2]["window_start"], "00:41")
             self.assertEqual(bundle[0]["responses"][2]["agent_result_time"], "00:40")
             self.assertEqual(bundle[0]["responses"][0]["source_trigger_time"], "00:20")
-            for index in (1, 2):
-                self.assertEqual(bundle[index]["responses"], samples[index]["responses"])
             for index, original in enumerate(samples):
                 self.assertEqual(json.loads((folder / f"sample{index}.json").read_text()), json.loads(json.dumps(original)))
 
@@ -78,11 +76,11 @@ class MergeQaTests(unittest.TestCase):
                 folder = root / 'test_video'
                 folder.mkdir()
                 (folder / 'sample.json').write_text(json.dumps(sample))
-                merged = build_bundle(root, root / 'videos')[0]
+                bundle = build_bundle(root, root / 'videos')
                 if kind == 'positive':
-                    self.assertNotIn('window_start', merged['responses'][2])
+                    self.assertNotIn('window_start', bundle[0]['responses'][2])
                 else:
-                    self.assertEqual(merged['responses'][0]['window_end'], '00:00')
+                    self.assertEqual(bundle, [])
 
     def test_nested_layout_ignores_summaries_state_and_usage(self):
         with tempfile.TemporaryDirectory() as directory:

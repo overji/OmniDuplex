@@ -33,7 +33,8 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(len(result['tasks']), len(result['abilities']))
         self.assertTrue(all(item['task'].endswith('_rtd') for item in result['tasks']))
         kwargs.update(agent_probability=1, agent_positive_probability=0)
-        self.assertIn(select_tasks(ranked, {}, **kwargs)["tasks"][1]["branch"], {"no_context", "missing_tool"})
+        with self.assertRaisesRegex(ValueError, "disabled"):
+            select_tasks(ranked, {}, **kwargs)
 
     def test_history_counts_only_canonical_successful_samples(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -126,7 +127,7 @@ class PipelineTests(unittest.TestCase):
                 self.assertEqual(call.call_count, 1)
                 self.assertEqual(len(json.loads((run / "all_qa.json").read_text())), 2)
 
-    def test_negative_agent_context_and_route_skip(self):
+    def test_positive_agent_context_and_route_skip(self):
         helper = test_batch.BatchTests()
         tasks = ["object_perception_pr", "object_perception_agent"]
         with tempfile.TemporaryDirectory() as directory:
@@ -136,14 +137,14 @@ class PipelineTests(unittest.TestCase):
             args = application_options(PipelineOptions, parse_args([
                 "--video", str(video), "--output-dir", str(root / "out"), "--api-key", "test",
                 "--model", "test", "--pr-probability", "1", "--agent-probability", "1",
-                "--agent-positive-probability", "0"]))
+                "--agent-positive-probability", "1"]))
             stack, call = helper.patches(helper.api(tasks))
             with stack:
                 self.assertEqual(pipeline.run(args), 0)
             run = next(args.output_dir.iterdir())
             bundle = json.loads((run / "all_qa.json").read_text())
             agent = next(sample for sample in bundle if sample["mode"] == "agent")
-            self.assertIn(agent["sample_type"], {"no_context", "missing_tool"})
+            self.assertEqual(agent["sample_type"], "positive")
             self.assertEqual(agent["sample_type"], agent["generation_context"]["sample_type"])
             original = helper.api(tasks)
             def api(system, user, **kwargs):

@@ -42,7 +42,7 @@ class PipelineOptions(BatchOptions):
     num_attempts: int | None = None
     video_url_map: Path | None = None
     agent_probability: float = 0.75
-    agent_positive_probability: float = 0.7
+    agent_positive_probability: float = 1.0
     pr_probability: float = 0.5
 
 

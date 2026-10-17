@@ -5,13 +5,14 @@ from pathlib import Path
 from benchmark.config.defaults import DEFAULTS
 
 
-def _configure_common(parser, model):
+def _configure_common(parser, model, *, local_model=True):
     parser.add_argument("--agent-output-protocol", choices=(("text", "structured", "agent-token") if model == 'minicpmo' else ("text", "structured")), default=argparse.SUPPRESS,
                         help="Optional structured Agent output; default preserves existing text protocol")
     defaults = DEFAULTS[model]
     parser.add_argument("--data", type=Path, default=defaults["data"])
     parser.add_argument("--videos-dir", type=Path, default=defaults["videos_dir"])
-    parser.add_argument("--model-path", type=Path, required=True)
+    if local_model:
+        parser.add_argument("--model-path", type=Path, required=True)
     parser.add_argument("--system-prompt", type=Path, default=defaults["system_prompt"])
     parser.add_argument("--output-dir", type=Path, default=defaults["output_dir"])
     parser.add_argument("--max-samples", type=int, default=defaults["max_samples"])
@@ -65,6 +66,66 @@ def configure_joyai(p):
     p.add_argument("--cache-dir", type=Path, default=DEFAULTS["joyai"]["cache_dir"])
     p.add_argument("--adapter-url", default=DEFAULTS["joyai"]["adapter_url"])
     p.add_argument("--model", default=DEFAULTS["joyai"]["model"])
+
+
+def _configure_cloud_realtime(parser, provider):
+    _configure_common(parser, provider, local_model=False)
+    defaults = DEFAULTS[provider]
+    common = DEFAULTS['cloud_realtime']
+    parser.add_argument('--model', default=defaults['model'])
+    parser.add_argument('--cache-dir', type=Path, default=defaults['cache_dir'])
+    parser.add_argument('--api-key-env', default=defaults['api_key_env'],
+                        help='Environment variable holding the API key; never saved to results')
+    parser.add_argument('--base-url', help='Endpoint override; otherwise read ' + defaults['base_url_env'])
+    parser.add_argument('--api-timeout', type=float, default=common['api_timeout'],
+                        help='Maximum seconds for session setup or one complete media/response step')
+    parser.add_argument('--max-seconds', type=float, default=common['max_seconds'])
+    parser.add_argument('--sample-start', type=int, default=common['sample_start'])
+    parser.add_argument('--sample-step', type=int, default=common['sample_step'])
+    parser.add_argument('--frame-max-edge', type=int, default=common['frame_max_edge'])
+    parser.add_argument('--jpeg-quality', type=int, default=common['jpeg_quality'])
+    parser.add_argument('--max-output-tokens', type=int,
+                        help='Optional per-step output limit; omitted preserves the provider default')
+
+
+def configure_qwen_realtime(parser):
+    _configure_cloud_realtime(parser, 'qwen_realtime')
+
+
+def configure_gemini_live(parser):
+    _configure_cloud_realtime(parser, 'gemini_live')
+    parser.add_argument('--api-version', default=DEFAULTS['gemini_live']['api_version'])
+
+
+def configure_probe(parser):
+    defaults = DEFAULTS['probe']
+    commands = parser.add_subparsers(dest='probe_command', required=True)
+    prepare = commands.add_parser('prepare', help='Build paired pre/post prefix probes without loading models')
+    prepare.add_argument('--data', type=Path, default=defaults['data'])
+    prepare.add_argument('--videos-dir', type=Path, default=defaults['videos_dir'])
+    prepare.add_argument('--output-dir', type=Path, default=defaults['manifest_dir'])
+    run = commands.add_parser('run', help='Run ordinary, non-duplex Omni inference')
+    models = run.add_subparsers(dest='probe_model', required=True)
+    for name in ('qwen3_omni', 'qwen25_omni'):
+        model = models.add_parser(name)
+        model.add_argument('--manifest', type=Path, required=True)
+        model.add_argument('--model-path', type=Path, required=True)
+        model.add_argument('--output-dir', type=Path, required=True)
+        model.add_argument('--cache-dir', type=Path, default=defaults['cache_dir'])
+        model.add_argument('--system-prompt', type=Path, default=defaults['system_prompt'])
+        model.add_argument('--fps', type=float, default=defaults['fps'])
+        model.add_argument('--max-pixels', type=int, default=defaults['max_pixels'])
+        model.add_argument('--max-new-tokens', type=int, default=defaults['max_new_tokens'])
+        model.add_argument('--dtype', choices=('auto', 'bfloat16', 'float16'), default=defaults['dtype'])
+        model.add_argument('--device-map', default=defaults['device_map'])
+        model.add_argument('--attn-implementation', choices=('sdpa', 'flash_attention_2', 'eager'),
+                           default=defaults['attn_implementation'])
+        model.add_argument('--max-pairs', type=int, default=defaults['max_pairs'],
+                           help='Limit pairs before skipping completed probes')
+    score = commands.add_parser('score', help='Recompute probe metrics without model dependencies')
+    score.add_argument('--manifest', type=Path, required=True)
+    score.add_argument('--predictions', type=Path, required=True)
+    score.add_argument('--output-dir', type=Path, required=True)
 
 
 def configure_collect(parser):

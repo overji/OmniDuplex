@@ -7,7 +7,7 @@ from data_generation.src.domain.selection import ability_counts, select_tasks
 
 class SelectionTests(unittest.TestCase):
     def choose(self, seed, ranked=None, counts=None, **overrides):
-        options = dict(pr_probability=0.5, agent_probability=0.75, agent_positive_probability=0.7)
+        options = dict(pr_probability=0.5, agent_probability=0.75, agent_positive_probability=1.0)
         options.update(overrides)
         if ranked is None:
             ranked = [{'task': name, 'rank': index} for index, name in enumerate(ABILITIES, 1)]
@@ -59,9 +59,8 @@ class SelectionTests(unittest.TestCase):
             self.assertEqual(positive['tasks'][2*index+1], {'task': ability+'_agent', 'branch': 'positive'})
         rtd = self.choose(42, pr_probability=0, agent_probability=0)
         self.assertTrue(all(item['task'].endswith('_rtd') for item in rtd['tasks']))
-        negative = self.choose(42, agent_probability=1, agent_positive_probability=0)
-        self.assertTrue(all(item['branch'] in {'no_context', 'missing_tool'}
-                            for item in negative['tasks'] if item['task'].endswith('_agent')))
+        with self.assertRaisesRegex(ValueError, 'disabled'):
+            self.choose(42, agent_probability=1, agent_positive_probability=0)
         tally = Counter()
         mixed_agent_selection = False
         for seed in range(5000):
@@ -78,7 +77,7 @@ class SelectionTests(unittest.TestCase):
         self.assertTrue(mixed_agent_selection)
         self.assertAlmostEqual(tally['pr'] / tally['abilities'], .5, delta=.02)
         self.assertAlmostEqual(tally['agent'] / tally['abilities'], .75, delta=.02)
-        for branch, probability in [('positive', .7), ('no_context', .15), ('missing_tool', .15)]:
+        for branch, probability in [('positive', 1), ('no_context', 0), ('missing_tool', 0)]:
             self.assertAlmostEqual(tally[branch] / tally['agent'], probability, delta=.02)
 
     def test_adaptive_counts_improve_balance_without_removing_rank_preference(self):

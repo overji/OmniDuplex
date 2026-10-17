@@ -55,8 +55,8 @@ class InteractionTask:
         self.ability, self.mode = split_task(name)
 
     def build_request(self, video, duration, caption, common_template, mode_template, *, sample_type=None):
-        if sample_type is not None and (self.mode != "agent" or sample_type not in {"positive", "no_context", "missing_tool"}):
-            raise ValueError("invalid explicit Agent sample type")
+        if sample_type is not None and (self.mode != "agent" or sample_type != "positive"):
+            raise ValueError("Agent negative generation is disabled; sample_type must be positive")
         sample_type = sample_type or (config.choose_agent_sample_type() if self.mode == "agent" else "positive")
         missing = random.choice(tuple(TOOLS)) if sample_type != "positive" else None
         available = tuple(t for t in TOOLS if t != missing) if self.mode == "agent" and sample_type != "no_context" else ()

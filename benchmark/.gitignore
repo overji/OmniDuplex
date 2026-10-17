@@ -1,4 +1,7 @@
 .venv/
+.venv-probe/
+.venv-realtime/
+probes/
 cache/
 results/
 __pycache__/

@@ -1,0 +1,6 @@
+# CPU-only cloud Realtime adapters; ffmpeg and ffprobe must be installed separately.
+websockets>=14.0
+google-genai>=1.55.0
+numpy
+soundfile
+Pillow

@@ -1,7 +1,7 @@
 """CLI defaults. Explicit command-line arguments keep their existing precedence."""
 from pathlib import Path
 
-from benchmark.config.paths import MANIFESTS, SYSTEM_PROMPT, DATA, VIDEOS, CACHE, RESULTS
+from benchmark.config.paths import ROOT, MANIFESTS, SYSTEM_PROMPT, DATA, VIDEOS, CACHE, RESULTS
 
 COMMON = {
     'data': DATA,
@@ -11,6 +11,21 @@ COMMON = {
 }
 
 DEFAULTS = {
+    'probe': {
+        'data': DATA,
+        'videos_dir': VIDEOS,
+        'manifest_dir': ROOT / 'probes/default',
+        'cache_dir': CACHE / 'probe_prefix',
+        'system_prompt': SYSTEM_PROMPT.parent / 'probe.txt',
+        'pre_seconds': 1.0,
+        'fps': 1.0,
+        'max_pixels': 360 * 420,
+        'max_new_tokens': 256,
+        'max_pairs': 0,
+        'dtype': 'bfloat16',
+        'device_map': 'auto',
+        'attn_implementation': 'sdpa',
+    },
     'minicpmo': {
         **COMMON,
         'output_dir': RESULTS / "minicpmo45_realtime",
@@ -52,6 +67,23 @@ DEFAULTS = {
         'adapter_url': "http://127.0.0.1:8070/v1/chat/completions",
         'model': "jdopensource/JoyAI-VL-Interaction",
     },
+    'qwen_realtime': {
+        **COMMON,
+        'output_dir': RESULTS / 'qwen35_omni_plus_realtime',
+        'cache_dir': CACHE,
+        'model': 'qwen3.5-omni-plus-realtime',
+        'api_key_env': 'DASHSCOPE_API_KEY',
+        'base_url_env': 'DASHSCOPE_REALTIME_URL',
+    },
+    'gemini_live': {
+        **COMMON,
+        'output_dir': RESULTS / 'gemini25_flash_live',
+        'cache_dir': CACHE,
+        'model': 'gemini-2.5-flash-native-audio-preview-12-2025',
+        'api_key_env': 'GEMINI_API_KEY',
+        'base_url_env': 'GEMINI_BASE_URL',
+        'api_version': 'v1beta',
+    },
     'collect': {
         'data': DATA,
         'output_dir': RESULTS / 'minicpmo45_realtime',
@@ -67,5 +99,13 @@ DEFAULTS = {
         'poll_seconds': 10,
     },
     'queue': {
+    },
+    'cloud_realtime': {
+        'api_timeout': 180.0,
+        'max_seconds': 0.0,
+        'sample_start': 0,
+        'sample_step': 1,
+        'frame_max_edge': 640,
+        'jpeg_quality': 75,
     },
 }

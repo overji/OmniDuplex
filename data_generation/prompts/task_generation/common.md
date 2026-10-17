@@ -35,11 +35,9 @@ never present the observed future outcome as a prediction or a current fact.
 An ongoing event cannot be described as completed before completion is observed.
 For Agent tasks, backend observed_facts and video-based reasoning remain limited
 to the evidence available at the call, even though the result is delivered later.
-For capability-negative samples, each separate annotation obeys these rules at its
-own trigger_time; the refusal uses only information available at question_time.
 
 This prefix-only rule is mandatory for every ability and every mode: RTD, PR,
-positive Agent episodes, and the real-trigger annotations of capability negatives.
+Agent episodes.
 For each trigger, treat the video as if playback stops at the FINAL output
 trigger_time. Every factual clause in the response must be observable or reasonably
 inferable from frames and audio already available by that cutoff, together with
@@ -90,7 +88,7 @@ timestamps. The immediate Agent acknowledgement and agent_call must use the same
 truncated trigger_time. Preserve the required temporal ordering and sampled delays.
 Return raw JSON only. If no suitable real evidence exists,
 return {"status":"skip","reason":"..."}. Do not generate all-video no-trigger
-silence samples, including in Agent capability-negative branches.
+silence samples.
 
 The sampled modality is a preference only. Honor the cognitive ability's modality
 requirements; do not turn visible-text understanding into audio transcription.
@@ -164,9 +162,7 @@ trigger_time <= window_end. If later evidence is necessary, re-evaluate the enti
 window and, for PR/Agent, confirmed_time; do not extend window_end mechanically.
 If no useful, evidence-supported window exists, redesign the candidate or return
 skip rather than inventing timing. This evidence rule applies to audiovisual
-observations; capability-negative refusals use window_start=trigger_time=question_time
-and window_end=question_time+3 seconds, entirely within the video. Real event timing
-is confined to their separate annotations.
+observations.
 The ability and mode identifiers are program-controlled and must not be changed.
 
 For PR/Agent annotations also supply:

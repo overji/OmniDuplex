@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 from ..domain.common import SAMPLE_SCHEMA
-from ..domain.qa import adapt_responses
+from ..domain.qa import adapt_responses, is_agent_negative
 from .registry import TASKS, get_task
 
 
@@ -23,6 +23,8 @@ def load_sample(source: Path, videos_dir: Path) -> dict[str, Any] | None:
     data = json.loads(source.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("schema") != SAMPLE_SCHEMA:
         raise ValueError(f"unsupported sample schema: {source}")
+    if is_agent_negative(data):
+        return None
     name = data.get("task")
     if name not in TASKS or name == "route":
         raise ValueError(f"unsupported sample task: {source}")

@@ -25,7 +25,8 @@ def parse_args(argv=None):
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--pr-probability", type=float, default=0.5)
     parser.add_argument("--agent-probability", type=float, default=0.75)
-    parser.add_argument("--agent-positive-probability", type=float, default=0.7)
+    parser.add_argument("--agent-positive-probability", type=float, choices=(1.0,), default=1.0,
+                        help="Agent negative generation is disabled; only 1 is supported")
     add_api_arguments(parser)
     args = resolve_api_arguments(parser.parse_args(argv))
     for name in ("pr_probability", "agent_probability", "agent_positive_probability"):

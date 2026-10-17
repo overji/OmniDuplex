@@ -1,7 +1,7 @@
 """Select distinct suitable abilities, then independently sample their modes."""
 import random
 from .catalog import ABILITIES, split_task
-from .config import PIPELINE_ABILITY_COUNT_WEIGHTS
+from .config import PIPELINE_ABILITY_COUNT_WEIGHTS, validate_agent_positive_probability
 
 
 def ability_counts(task_counts):
@@ -13,6 +13,7 @@ def ability_counts(task_counts):
 
 
 def select_tasks(ranked, counts, *, seed, pr_probability, agent_probability, agent_positive_probability):
+    validate_agent_positive_probability(agent_positive_probability)
     rng = random.Random(seed)
     decisions = []
     totals = ability_counts(counts)
@@ -32,7 +33,7 @@ def select_tasks(ranked, counts, *, seed, pr_probability, agent_probability, age
         mode = 'pr' if rng.random() < pr_probability else 'rtd'
         decisions.append({'task': f'{ability}_{mode}', 'branch': None})
         if rng.random() < agent_probability:
-            branch = 'positive' if rng.random() < agent_positive_probability else rng.choice(('no_context', 'missing_tool'))
+            branch = 'positive'
             decisions.append({'task': f'{ability}_agent', 'branch': branch})
     return {'tasks': decisions, 'agent_selected': any(item['branch'] is not None for item in decisions),
             'sampled_ability_count': sampled_count, 'abilities': abilities, 'ability_draws': draws}

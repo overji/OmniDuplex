@@ -59,15 +59,14 @@ def choose_agent_delay(duration_seconds: float) -> int | None:
     return random.randint(lower, upper)
 
 
-AGENT_POSITIVE_PROBABILITY = 0.5
-AGENT_NO_CONTEXT_NEGATIVE_PROBABILITY = 0.5
+AGENT_POSITIVE_PROBABILITY = 1.0
 
 
 def choose_agent_sample_type() -> str:
-    positive = validate_probability("AGENT_POSITIVE_PROBABILITY", AGENT_POSITIVE_PROBABILITY)
-    no_context = validate_probability(
-        "AGENT_NO_CONTEXT_NEGATIVE_PROBABILITY", AGENT_NO_CONTEXT_NEGATIVE_PROBABILITY
-    )
-    if random.random() < positive:
-        return "positive"
-    return "no_context" if random.random() < no_context else "missing_tool"
+    """New Agent data always has the capabilities required for delegation."""
+    return "positive"
+
+
+def validate_agent_positive_probability(value: float) -> None:
+    if validate_probability("agent_positive_probability", value) != 1:
+        raise ValueError("Agent negative generation is disabled; agent_positive_probability must be 1")

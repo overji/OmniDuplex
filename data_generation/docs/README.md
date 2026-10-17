@@ -38,10 +38,11 @@ The distribution is configured by `PIPELINE_ABILITY_COUNT_WEIGHTS` in
 count is reduced; router skip selects none. Abilities are sampled without replacement.
 
 For **each selected ability independently**, the program attempts PR or RTD with
-equal probability, then additionally attempts Agent with probability 0.75.
-Agent attempts are 70% positive and 30% negative; negatives split equally between
-`no_context` and `missing_tool`. One ability therefore produces one or two QA
-attempts, and eight abilities can produce up to sixteen. The global
+equal probability, then additionally attempts a positive Agent sample with
+probability 0.75. Agent negative samples are disabled; an Agent task is generated
+only when the request can be fulfilled using the available tools. One ability
+therefore produces one or two QA attempts, and eight abilities can produce up to
+sixteen. The global
 `--num-attempts` budget can stop execution partway through the selected abilities.
 These are **attempt probabilities**: a skipped or failed sample is not replaced,
 and successful dataset proportions can differ. Each successful QA sample counts
@@ -203,9 +204,10 @@ configuration, URL map or implementation changes require a new run. The director
 pipeline uses layout version 3; old pipeline runs cannot be resumed with this
 entry. The exhaustive `batch` command retains its existing layout and behavior.
 
-Optional sampling overrides are `--pr-probability`, `--agent-probability` and
-`--agent-positive-probability`, each between zero and one. They apply only to the
-new pipeline entrypoint; the existing standalone Agent sampler is unchanged.
+Optional sampling overrides are `--pr-probability` and `--agent-probability`,
+each between zero and one. The compatibility option `--agent-positive-probability`
+accepts only `1`; it applies to the new pipeline entrypoint. Agent negative
+generation is disabled in both the pipeline and standalone task generation.
 
 ## Task matrix
 
@@ -458,7 +460,7 @@ counts preserve a cumulative occurrence history and counting origin. Predictions
 emotions and causal explanations are labeled as inference rather than observed
 facts. Semantic accuracy still requires checking the original video.
 
-### Agent tools and negative samples
+### Agent tool calls
 
 Agent questions should express a believable everyday need in brief conversational
 language. Choose the need before the tool; do not invent specialist inventories,
@@ -482,20 +484,16 @@ observed-video segment retrieval, statistics and reports. OCR, ASR, perception a
 reasoning are not tool names. The frontend can only call `agent_call`; the backend
 can perform `tools` or `tools_and_reasoning`, with nonempty `required_tools`. All execution is simulated.
 
-The program samples capabilities before generation using existing probabilities:
-50% `positive`, 25% `no_context`, 25% `missing_tool`. Positive exposes the shared
-catalog; `no_context` exposes no Agent function; `missing_tool` exposes Agent with
-one required tool removed. Pure reasoning is not an eligible Agent task. Accepted proportions may differ because of skips.
-
-Capability negatives use `window_start=trigger_time=question_time` and
-`window_end=question_time+3`, leaving all three seconds within the video, based only on the
-instruction and actual `frontend_context`. They contain no calls or backend
-results. A separate root `annotations` array records all real matching triggers, including
+The generator creates only positive Agent examples. It passes the available tool
+catalog and `agent_call` schema to the model, then validates that generated calls
+use tools from that catalog and that the requested work requires a tool. If no
+suitable real trigger or available tool can fulfill the request, generation
+returns `skip`; it does not synthesize `no_context` or `missing_tool` examples.
+A separate root `annotations` array records real matching triggers, including
 brief observational `response` text and ability-specific evidence. These records
-are for dataset validation only;
-**never expose it, the complete caption, or the generator's full catalog as the
-streaming frontend's input**. Without any suitable real trigger, all branches
-return `skip`; the pipeline does not create all-video no-trigger silence examples.
+are for dataset validation only; **never expose them, the complete caption, or the
+generator's full catalog as the streaming frontend's input**. The pipeline does
+not create all-video no-trigger silence examples.
 
 Tool results keep `simulated: true`, separate observed facts/tool information/
 reasoning, and record read evidence in `sources`, writes in `actions`, with typed

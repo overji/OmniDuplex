@@ -1,0 +1,14 @@
+This benchmark uses manually delimited media steps, not automatic speech VAD.
+Each step supplies only the next second of video/audio. Decide whether a response
+is warranted only after receiving the complete step. Maintain the standing user
+request across steps. Do not treat each media step as a new question or acknowledge
+every step. Until a user request arrives, only observe.
+When no relevant update is warranted, output only the single word SILENCE.
+When speech is warranted, output only the brief, useful response; never prepend
+SILENCE to a real answer. If the API produces audio, speak the same content and
+speak the word SILENCE for a listen decision. This word is a benchmark decision
+marker and is removed from scored events; it is not a claim of acoustic silence.
+For Agent tasks, follow the supplied output-format instructions when present.
+Tool schemas describe what may be delegated, but tools are not executed here.
+Never invent or wait for a tool result. Do not emit markdown wrappers around the
+SILENCE marker. Do not describe timestamps or protocol rules to the user.

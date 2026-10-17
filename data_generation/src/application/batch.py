@@ -87,7 +87,7 @@ def run(args: BatchOptions, *, progress: Callable[[str, bool], None] | None = No
     else:
         write_json(manifest_path, manifest)
     stats = {task: {"ok": 0, "skip": 0, "failed": 0, "unsuitable": 0, "blocked": 0,
-                    "branches": {branch: {"ok": 0, "skip": 0, "failed": 0} for branch in ("positive", "no_context", "missing_tool")}
+                    "branches": {branch: {"ok": 0, "skip": 0, "failed": 0} for branch in ("positive",)}
                     if task.endswith("_agent") else {}} for task in TASK_CATALOG}
     report = {"schema": SAMPLE_SCHEMA, "tasks": stats, "stages": [], "errors": [], "accepted": 0}
     selected = []

@@ -1,4 +1,6 @@
-You create one dataset sample for a triggered audiovisual agent task.
+You create one positive dataset sample for a triggered audiovisual agent task.
+Generate positive samples only. Never generate capability-negative or refusal samples.
+If no natural tool-dependent request can be completed with available tools, return skip.
 
 ## Inputs and causality
 The original audiovisual video is authoritative. The complete timestamped caption
@@ -9,7 +11,7 @@ information observable only after that response's timestamp. Backend reasoning
 is limited to the evidence supplied at the call. Do not backfill identities or
 facts using later video or caption segments. Do not put future facts in the question.
 The requester is an outside viewer watching the video, not a participant shown in it.
-This applies to positive, no_context, and missing_tool samples alike. Follow-up
+Follow-up
 work must serve the viewer's own stated goal. Never assume that a video participant's
 accounts, possessions, relationships, or permissions belong to the viewer, or that
 the viewer can authorize operations on that participant's behalf. Keep this identity
@@ -25,11 +27,7 @@ Write a natural standing instruction identifying a trigger and a related useful
 follow-up that necessarily requires at least one real backend tool. For a positive
 sample, choose tools or tools_and_reasoning; required_tools must be nonempty.
 Complex reasoning may accompany necessary tool work, but pure reasoning and
-optional tool use are not eligible Agent tasks. For a negative
-sample, choose a task that genuinely requires the program-specified missing tool;
-it cannot be solved just by reasoning over the video or drafting text locally.
-No pure-reasoning negative samples. The capability gap must be knowable from the
-question and frontend_context alone, without watching future footage.
+optional tool use are not eligible Agent tasks.
 All prose is concise English; timestamps use MM:SS.
 
 ## Natural everyday requests
@@ -57,7 +55,7 @@ If no natural, useful, tool-dependent request fits the scene and sampled capabil
 return skip instead of forcing a question or inventing an elaborate backstory.
 
 ## Implicit delegation intent
-In every branch (positive, no_context, and missing_tool), the user's question must
+The user's question must
 state only the observable trigger, desired real-world outcome, and relevant user
 preferences or authorization. Never ask to use, call, invoke, or delegate to an
 Agent, backend, tool, API, or function; never name a tool or prescribe a tool-use
@@ -69,8 +67,6 @@ tool and ask an Agent to check it" is forbidden. Examples illustrate wording onl
 the actual request must fit the video and available capabilities.
 Implicit delegation does not mean an ambiguous goal or implied permission for
 external writes: keep the desired outcome and any necessary authorization clear.
-Negative questions must express the same kind of natural intent without naming
-the missing tool or revealing the sampled capability gap.
 Keep required_tools, suggested_capabilities, and structured tool_calls explicit
 in their designated annotation and execution fields; this wording rule applies
 to the user's question, not to those machine-readable fields.
@@ -103,8 +99,7 @@ The video event must provide a necessary parameter or timing cue for the delegat
 work; avoid generic tasks that would be identical without that observation.
 For each positive episode, the backend result must advance the requested outcome
 beyond the frontend's acknowledgement and perception. Repeating the same observed
-fact is not a completed Agent result. For negatives, removing the missing capability
-must truly prevent completing the user-requested outcome, not just an optional step.
+fact is not a completed Agent result.
 Perform this necessity check before generating timestamps or traces. Redesign weak
 candidates; if no meaningful necessary delegation fits the video, capabilities and
 timing constraints, return skip with a concrete reason. Do not force an Agent sample.
@@ -166,85 +161,6 @@ external execution: all backend outputs are simulated. Respect authorization and
 mark uncertain parameters or confirmation needs. tools_and_reasoning must provide
 an analysis that uses the necessary tool work to fulfill the requested outcome.
 
-## Negative sample (no_context or missing_tool)
-Immediately refuse at question_time, before waiting for any trigger. Explain in
-ordinary user-facing language that you do not have the ability to complete the
-requested work, naming the relevant activity rather than its implementation.
-Use only the user's instruction and frontend capabilities at that moment. Do not
-cite future video, fabricate completion, invoke agent_call, or emit a backend result.
-No silent interval or backend delay applies to the refusal itself. The responses
-array contains exactly one refusal. Its window_start and trigger_time must equal
-question_time; window_end must equal question_time+3 seconds. This is a closed
-three-second reply window, not an event's timing. Choose question_time to leave
-all three seconds within floor(video duration), or return skip. The refusal text
-uses only facts available at question_time, not later facts in this window.
-The user-facing response itself must clearly say the requested work cannot be
-performed because the needed capability is unavailable. A refusal_reason field
-does not turn an acknowledgement into a refusal.
-For BOTH no_context and missing_tool, phrase responses[0].response as "I don't
-have the ability to <requested activity>" or an equally natural capability-based
-refusal. Do not mention missing or unavailable tools, tool names, APIs, functions,
-Agent/backend access, or internal capability configuration in this user-facing
-text. For example, "I don't have the ability to check your connected knowledge
-base for this ride's safety records" is appropriate; "I am missing the
-knowledge_search tool" and "I don't have access to the required search tool" are
-not. Describe only the relevant limitation, not an inability to help with anything.
-Keep technical explanations in the annotation-only refusal_reason and missing_tools
-fields; required_tools and missing_tools must still contain the exact tool names
-required by the schema. Never copy those technical explanations into response.
-Never say "I am checking",
-"I will look it up", or claim attempted or completed work in this response.
-Do not describe an observed trigger as the reason for refusing; the refusal is
-based only on the request and available capabilities.
-
-Return the following top-level structure. The literal field names are responses
-and annotations, as sibling arrays in the same JSON object. NEVER output a field
-named root, and never nest annotations inside responses. Replace every placeholder
-with the actual value; fill details and trigger using the required ability-specific
-and common annotation contracts, and include every matching annotation:
-{
-  "status": "ok",
-  "question": "<natural viewer request with implicit delegation intent>",
-  "question_time": "<MM:SS>",
-  "audio_dependency": "<required|helpful|none>",
-  "vision_dependency": "<required|helpful|none>",
-  "work_type": "<tools|tools_and_reasoning>",
-  "required_tools": ["<necessary tool name>"],
-  "responses": [{
-    "window_start": "<same value as question_time>",
-    "trigger_time": "<same value as question_time>",
-    "window_end": "<question_time plus 3 seconds>",
-    "response": "I don't have the ability to <requested activity>.",
-    "refusal_reason": "<annotation-only technical capability limitation>",
-    "missing_tools": ["<all required but unavailable tools>"]
-  }],
-  "annotations": [{
-    "window_start": "<earliest video-confirmed eligibility>",
-    "trigger_time": "<recommended event response time>",
-    "window_end": "<latest useful event response time>",
-    "response": "<brief observation for annotation only>",
-    "trigger_type": "<visual|sound|speech or '+' combination>",
-    "trigger_type_reason": "<supporting modality evidence>",
-    "evidence": [{"time": "<MM:SS>", "available_time": "<MM:SS>", "fact": "<observed fact>"}],
-    "details": {},
-    "trigger": {}
-  }]
-}
-Capability limitations alone are NOT grounds for skip. However, if the video has
-no suitable real trigger, return skip in any branch. Every negative must include
-the top-level annotations array covering EVERY real matching episode at or after the
-question through video end. Each object contains window_start, trigger_time,
-window_end, response,
-trigger_type, trigger_type_reason, evidence, details and trigger; omit messages.
-Here response is a brief, precise observation of the matched event, recorded only
-for annotation; it must not claim that unavailable work was performed. These are
-annotation-only future records: NEVER include them in the refusal or frontend_context. The refusal must depend only on the question and capabilities.
-An annotation's response records what happened in the video; it is not a second
-assistant reply and must not be copied into responses. Before returning, verify
-the exact annotations key, the single explicit capability-based refusal without
-tool or implementation references in response, window_start=trigger_time=question_time
-and window_end=question_time+3. Annotation timestamps follow the observed
-events independently and must not be copied into the refusal window.
 Program-controlled sample_type, available_tools and frontend_context are attached
 by the program; do not generate or modify these fields.
 
