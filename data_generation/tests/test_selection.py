@@ -1,5 +1,6 @@
 from collections import Counter
 import unittest
+from unittest.mock import patch
 
 from data_generation.src.domain.catalog import ABILITIES, split_task
 from data_generation.src.domain.selection import ability_counts, select_tasks
@@ -24,8 +25,8 @@ class SelectionTests(unittest.TestCase):
             self.assertLessEqual(size, 8)
             self.assertEqual(len(result['tasks']), len({item['task'] for item in result['tasks']}))
         self.assertEqual(set(histogram), set(range(1, 9)))
-        self.assertAlmostEqual(sum(size * count for size, count in histogram.items()) / 20000, 2.59, delta=0.04)
-        for size, probability in enumerate((.15, .40, .30, .08, .03, .02, .01, .01), 1):
+        self.assertAlmostEqual(sum(size * count for size, count in histogram.items()) / 20000, 1.5, delta=0.04)
+        for size, probability in enumerate((.68, .22, .07, .01, .005, .005, .005, .005), 1):
             self.assertAlmostEqual(histogram[size] / 20000, probability, delta=.015)
         self.assertEqual(self.choose(42), self.choose(42))
 
@@ -46,7 +47,9 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(totals['object_perception'], 9)
         self.assertEqual(totals['action_perception'], 0)
         ranked = [{'task': 'object_perception', 'rank': 1}, {'task': 'action_perception', 'rank': 2}]
-        result = self.choose(42, ranked=ranked, counts=counts)
+        with patch('data_generation.src.domain.selection.PIPELINE_ABILITY_COUNT_WEIGHTS',
+                   (0, 1, 0, 0, 0, 0, 0, 0)):
+            result = self.choose(42, ranked=ranked, counts=counts)
         self.assertEqual(result['ability_draws'][0]['weights'], [.1, .5])
         self.assertEqual(result['ability_draws'][1]['candidates'][0]['task'],
                          next(name for name in totals if name in {'object_perception', 'action_perception'}
