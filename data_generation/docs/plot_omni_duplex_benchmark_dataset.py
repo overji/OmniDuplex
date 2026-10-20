@@ -126,41 +126,50 @@ def binned_bars(values, bins, labels, title, xlabel, annotation, color, target):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data", type=Path, required=True)
+    parser.add_argument("--data", type=Path, nargs="+", required=True,
+                        help="one or more QA JSON files to aggregate")
     parser.add_argument("--output-dir", type=Path,
                         default=Path(__file__).resolve().parent / "assets")
+    parser.add_argument("--prefix", default="",
+                        help="prefix for generated chart filenames")
     args = parser.parse_args()
-    rows = json.loads(args.data.read_text())
-    if len(rows) != 194:
-        raise ValueError("This dated report expects the complete 194-record dataset")
+    rows = [row for path in args.data for row in json.loads(path.read_text())]
+    if not rows:
+        raise ValueError("No QA rows found in input files")
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
+    def target(name):
+        return args.output_dir / f"{args.prefix}{name}"
+
     category_bars(Counter(row["ability"] for row in rows), "Task ability distribution",
-                  BLUE, args.output_dir / "task_abilities")
+                  BLUE, target("task_abilities"))
     donut(Counter(row["mode"] for row in rows), ["rtd", "pr", "agent"],
-          "Interaction mode distribution", "194 QA", args.output_dir / "interaction_modes")
+          "Interaction mode distribution", f"{len(rows)} QA", target("interaction_modes"))
     agent = [row for row in rows if row["mode"] == "agent"]
-    donut(Counter(row.get("sample_type", row["generation_context"].get("sample_type"))
-                  for row in agent), ["positive", "missing_tool", "no_context"],
-          "Agent sample types", "78 Agent", args.output_dir / "agent_subtypes")
+    agent_counts = Counter(row.get("sample_type", row["generation_context"].get("sample_type", "positive"))
+                           for row in agent)
+    agent_labels = [label for label in ("positive", "missing_tool", "no_context", "negative")
+                    if agent_counts[label]]
+    donut(agent_counts, agent_labels,
+          "Agent sample types", f"{len(agent)} Agent", target("agent_subtypes"))
 
     durations = video_durations(rows)
     binned_bars(durations, [0, 60, 120, 180, 240, 300, 420, 540, 660],
                 ["0–1", "1–2", "2–3", "3–4", "4–5", "5–7", "7–9", "9–11"],
-                "Video duration distribution (51 unique videos)", "Duration (minutes)",
+                f"Video duration distribution ({len(durations)} unique videos)", "Duration (minutes)",
                 f"Mean {np.mean(durations):.1f}s  |  Median {np.median(durations):.1f}s",
-                ORANGE, args.output_dir / "video_duration")
+                ORANGE, target("video_duration"))
 
     delays = first_delays(rows)
     p90 = np.sort(delays)[int(np.ceil(.9 * len(delays))) - 1]
-    binned_bars(delays, [0, 1, 3, 10, 30, 60, 120, 180, 240, 360],
+    binned_bars(delays, [0, 1, 3, 10, 30, 60, 120, 180, 240, 360, np.inf],
                 ["0–1", "1–3", "3–10", "10–30", "30–60", "60–120",
-                 "120–180", "180–240", "240–360"],
-                "Question to first assistant response (194 QA)", "Delay (seconds)",
+                 "120–180", "180–240", "240–360", ">360"],
+                f"Question to first assistant response ({len(rows)} QA)", "Delay (seconds)",
                 f"Mean {np.mean(delays):.1f}s  |  Median {np.median(delays):.1f}s  |  P90 {p90:.0f}s",
-                TEAL, args.output_dir / "first_response_delay")
+                TEAL, target("first_response_delay"))
     category_bars(trigger_modalities(rows), "First-response trigger modality",
-                  PURPLE, args.output_dir / "trigger_modality")
+                  PURPLE, target("trigger_modality"))
     print(f"Created six SVG and six PNG charts in {args.output_dir}")
 
 

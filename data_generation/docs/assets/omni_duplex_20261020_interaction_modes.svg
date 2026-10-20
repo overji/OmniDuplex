@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="421.692758pt" height="368.39952pt" viewBox="0 0 421.692758 368.39952" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-20T01:10:35.375242</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.9.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 368.39952
+L 421.692758 368.39952
+L 421.692758 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 294.276626 259.110766
+C 306.077871 238.498882 312.257081 215.142825 312.192758 191.391719
+C 312.128435 167.640614 305.822811 144.318368 293.910097 123.770707
+C 281.997383 103.223045 264.890824 86.162751 244.310975 74.305728
+C 223.731127 62.448705 200.39189 56.206264 176.640697 56.206264
+L 176.640697 115.84939
+C 189.941365 115.84939 203.011338 119.345156 214.536053 125.985089
+C 226.060768 132.625022 235.640442 142.178787 242.311561 153.685478
+C 248.982681 165.192168 252.513831 178.252626 252.549852 191.553245
+C 252.585872 204.853864 249.125515 217.933256 242.516818 229.475911
+z
+" style="fill: #315a86; stroke: #ffffff; stroke-width: 2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 74.284364 280.627698
+C 88.470802 296.967184 106.365647 309.67467 126.467504 317.683985
+C 146.569361 325.693301 168.299868 328.774005 189.835814 326.667625
+C 211.37176 324.561244 232.093521 317.328382 250.262521 305.575882
+C 268.431521 293.823383 283.525009 277.889385 294.276626 259.110766
+L 242.516818 229.475911
+C 236.495912 239.991937 228.043559 248.914976 217.868919 255.496376
+C 207.694279 262.077776 196.090093 266.128178 184.029963 267.307752
+C 171.969833 268.487325 159.800749 266.76213 148.543709 262.276914
+C 137.286669 257.791697 127.265556 250.675505 119.321151 241.525393
+z
+" style="fill: #e38b4f; stroke: #ffffff; stroke-width: 2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 176.640723 56.206265
+C 150.646101 56.20626 125.192009 63.683654 103.327399 77.742787
+C 81.46279 91.801921 64.096967 111.858102 53.310051 135.508955
+C 42.523135 159.159808 38.763731 185.42174 42.482151 211.149036
+C 46.20057 236.876332 57.242171 260.999044 74.284364 280.627698
+L 119.321151 241.525393
+C 109.777523 230.533347 103.594226 217.024628 101.511911 202.617342
+C 99.429597 188.210056 101.534862 173.503374 107.575535 160.258897
+C 113.616208 147.014419 123.341069 135.782958 135.58525 127.909843
+C 147.829432 120.036728 162.083723 115.849387 176.640712 115.84939
+z
+" style="fill: #277c73; stroke: #ffffff; stroke-width: 2; stroke-linejoin: miter"/>
+   </g>
+   <g id="matplotlib.axis_1"/>
+   <g id="matplotlib.axis_2"/>
+   <g id="text_1">
+    <text style="fill: #ffffff; font: 700 10px 'DejaVu Sans'; text-anchor: middle" x="266.938135" y="142.167348" transform="rotate(-0 266.938135 142.167348)">33.3%</text>
+   </g>
+   <g id="text_2">
+    <text style="fill: #ffffff; font: 700 10px 'DejaVu Sans'; text-anchor: middle" x="186.800937" y="298.397975" transform="rotate(-0 186.800937 298.397975)">30.3%</text>
+   </g>
+   <g id="text_3">
+    <text style="fill: #ffffff; font: 700 10px 'DejaVu Sans'; text-anchor: middle" x="81.6761" y="151.2058" transform="rotate(-0 81.6761 151.2058)">36.4%</text>
+   </g>
+   <g id="text_4">
+    <text style="font: 700 17px 'DejaVu Sans'; text-anchor: middle" x="176.640697" y="196.44976" transform="rotate(-0 176.640697 196.44976)">580 QA</text>
+   </g>
+   <g id="text_5">
+    <text style="font: 12px 'DejaVu Sans'; text-anchor: middle" x="176.640697" y="16.318125" transform="rotate(-0 176.640697 16.318125)">Interaction mode distribution</text>
+   </g>
+   <g id="legend_1">
+    <g id="patch_5">
+     <path d="M 327.970883 179.840072
+L 347.970883 179.840072
+L 347.970883 172.840072
+L 327.970883 172.840072
+z
+" style="fill: #315a86; stroke: #ffffff; stroke-width: 2; stroke-linejoin: miter"/>
+    </g>
+    <g id="text_6">
+     <text style="font: 10px 'DejaVu Sans'; text-anchor: start" x="355.970883" y="179.840072" transform="rotate(-0 355.970883 179.840072)">rtd: 193</text>
+    </g>
+    <g id="patch_6">
+     <path d="M 327.970883 194.518197
+L 347.970883 194.518197
+L 347.970883 187.518197
+L 327.970883 187.518197
+z
+" style="fill: #e38b4f; stroke: #ffffff; stroke-width: 2; stroke-linejoin: miter"/>
+    </g>
+    <g id="text_7">
+     <text style="font: 10px 'DejaVu Sans'; text-anchor: start" x="355.970883" y="194.518197" transform="rotate(-0 355.970883 194.518197)">pr: 176</text>
+    </g>
+    <g id="patch_7">
+     <path d="M 327.970883 209.196322
+L 347.970883 209.196322
+L 347.970883 202.196322
+L 327.970883 202.196322
+z
+" style="fill: #277c73; stroke: #ffffff; stroke-width: 2; stroke-linejoin: miter"/>
+    </g>
+    <g id="text_8">
+     <text style="font: 10px 'DejaVu Sans'; text-anchor: start" x="355.970883" y="209.196322" transform="rotate(-0 355.970883 209.196322)">agent: 211</text>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>

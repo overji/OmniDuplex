@@ -10,6 +10,7 @@ from ..domain.catalog import TASK_CATALOG, split_task
 from ..domain.common import SAMPLE_SCHEMA
 from ..domain.caption import validate_caption
 from ..domain.config import PIPELINE_ABILITY_COUNT_WEIGHTS
+from ..domain.qa import is_agent_negative
 from ..domain.selection import ability_counts, select_tasks
 from ..infrastructure.artifacts import digest, file_digest, implementation_digest, write_json
 from .merge_qa import load_sample
@@ -237,7 +238,8 @@ def run(args: BatchOptions, *, progress: Callable[[str, bool], None] | None = No
             random.setstate(state)
 
     def save_totals():
-        bundle = [load_sample(path, args.videos_dir) for path in selected]
+        bundle = [sample for path in selected
+                  if (sample := load_sample(path, args.videos_dir)) is not None]
         report["accepted"] = len(bundle)
         usage_records = [item["usage"] for item in report["stages"] + report["errors"] if item.get("usage")]
         if is_pipeline:
@@ -339,7 +341,10 @@ def run(args: BatchOptions, *, progress: Callable[[str, bool], None] | None = No
                 if decision is None:
                     counts = dict(manifest["historical_counts"])
                     for path in selected:
-                        task_name = json.loads(path.read_text())['task']
+                        existing = json.loads(path.read_text())
+                        if is_agent_negative(existing):
+                            continue
+                        task_name = existing['task']
                         counts[task_name] = counts.get(task_name, 0) + 1
                     decision = select_tasks(route['ranked_tasks'] if suitable else [], counts,
                                             seed=f"{args.seed}:{selection_key}", **settings['selection'])
@@ -365,7 +370,9 @@ def run(args: BatchOptions, *, progress: Callable[[str, bool], None] | None = No
             selected.extend(path for path in video_selected if path not in selected)
         finally:
             video_selected = [path for path in selected if path.parent.parent == folder] if is_pipeline else video_selected
-            write_json(folder / "all_qa.json", [load_sample(path, args.videos_dir) for path in video_selected])
+            video_bundle = [sample for path in video_selected
+                            if (sample := load_sample(path, args.videos_dir)) is not None]
+            write_json(folder / "all_qa.json", video_bundle)
             save_totals()
             # Only sidecars for validated, persisted stages are disposable.
             for usage_path in completed_usage:
@@ -377,6 +384,12 @@ def run(args: BatchOptions, *, progress: Callable[[str, bool], None] | None = No
                         progress(f"{usage_path}: cleanup failed: {exc}", True)
             write_json(run_dir / "coverage.json", report)
     save_totals()
+    if is_pipeline:
+        from .pdf_report import write_pdf_report
+        report_path = run_dir / "dataset_report.pdf"
+        write_pdf_report(run_dir / "all_qa.json", report_path)
+        if progress is not None:
+            progress(f"PDF report: {report_path}", False)
     outstanding = {}
     if is_pipeline:
         for record in manifest['api_calls'] + manifest['attempts']:

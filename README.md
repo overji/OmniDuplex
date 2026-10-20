@@ -113,6 +113,7 @@ data_generation/data/pipeline_runs/A/20261013_120000_000000/
 ├── all_qa.json           # 本次运行合并后的问答数据
 ├── coverage.json         # 尝试、成功、跳过、失败及覆盖情况
 ├── api_usage.json        # caption、router、问答的 API 调用与 token 统计
+├── dataset_report.pdf    # pipeline 完成后生成的数据统计图表报告
 ├── .state/manifest.json  # 运行配置和断点续跑状态
 └── <video-name>-<hash>/
     ├── caption.json      # 单视频 caption
@@ -120,6 +121,9 @@ data_generation/data/pipeline_runs/A/20261013_120000_000000/
     ├── qa/               # 各任务生成结果
     └── all_qa.json       # 单视频合并后的问答数据
 ```
+
+pipeline 结束时会根据最终的 `all_qa.json` 自动生成 `dataset_report.pdf`，包含任务及交互
+分布、触发模态、视频长度和提问至首次回复延时等统计。
 
 视频仍保留在下载目录，不会复制到结果目录。要继续中断的运行，请把
 `--output-dir` 改成终端打印的**具体时间戳目录**，保留原视频目录、模型、
