@@ -10,7 +10,9 @@ Qwen3.5 Omni Plus / Flash Realtime 和 Gemini 2.5 Flash Live 的环境、密钥�
 ## 下载视频数据集
 
 公开数据集 [overji/OmniInteractionDataset](https://modelscope.cn/datasets/overji/OmniInteractionDataset)
-有 A、B 两组，各含 160 个 MP4 视频及对应 metadata。以下命令在仓库根目录执行；
+包含 A、B 两组（各 160 个 MP4 视频及对应 metadata），以及供生成数据使用的
+[train 目录](https://modelscope.cn/datasets/overji/OmniInteractionDataset/tree/master/train)。
+以下命令在仓库根目录执行；
 只下载要生成的 A 组，并把视频放在仓库旁边，避免将大文件放进 Git 工作区：
 
 ```bash
@@ -42,6 +44,61 @@ ms-hub download overji/OmniInteractionDataset \
 pipeline；它会将所选分组的 metadata 与视频文件核对，不一致时会报错，避免用旧 metadata
 或错误分组启动生成。若希望从干净目录重新下载，可先将旧的 `../OmniInteractionDataset`
 移走，再执行上述下载命令。
+
+### 下载并检查 train 数据
+
+`train` 当前有 12,455 个视频，视频文件总计约 211 GB，来自 LongVALE（5,253 个）和
+FineVideo（7,202 个）。它独立于 A/B 分组。下载前请预留视频和生成结果所需的磁盘空间。
+只下载 `train`，保留 metadata、验证报告和来源说明：
+
+```bash
+ms-hub download overji/OmniInteractionDataset \
+  --repo-type dataset \
+  --revision master \
+  --include 'train/**' \
+  --local-dir ../OmniInteractionDataset
+```
+
+更新本地 train 时重新执行相同命令。下载后目录为：
+
+```text
+../OmniInteractionDataset/train/
+├── videos/                     # UUID 命名的视频
+├── video_metadata.json         # 视频清单、来源及原始标识
+├── validation_report.json      # 数量、时长和素材校验统计
+├── validation_exclusions.json  # 素材筛选排除记录
+├── FineVideo_TERMS_OF_USE.md
+└── README.md
+```
+
+请保留来源 metadata，使用或再分发时查阅下载目录中的 `README.md`、
+`FineVideo_TERMS_OF_USE.md` 及其中引用的源数据集条款。
+
+train 使用后文的 `--videos-dir` 导入；这个入口不会像 A/B 的 `--dataset-dir --split`
+入口那样自动核对 metadata。因此下载或更新完成后，先执行下面的只读检查，确认没有
+缺失、多余或重复的视频记录；数量以本次下载的 metadata 为准：
+
+```bash
+python - <<'PY'
+import json
+from pathlib import Path
+
+root = Path('../OmniInteractionDataset/train')
+metadata = json.loads((root / 'video_metadata.json').read_text(encoding='utf-8'))
+listed = [row['file'] for row in metadata['videos']]
+video_dir = root / 'videos'
+actual = {p.relative_to(video_dir).as_posix()
+          for p in video_dir.rglob('*')
+          if p.is_file() and p.suffix.lower() in {'.mp4', '.mov', '.mkv', '.webm', '.avi'}}
+missing = sorted(set(listed) - actual)
+extra = sorted(actual - set(listed))
+if (metadata['video_count'] != len(listed) or len(set(listed)) != len(listed)
+        or missing or extra):
+    raise SystemExit(f'素材与 metadata 不一致：missing={missing[:10]}, extra={extra[:10]}；'
+                     '同时检查 video_count 和重复记录，请补全或更新后再生成。')
+print(f'train 校验通过：{len(actual)} 个视频')
+PY
+```
 
 ## 配置 Gemini 环境
 
@@ -97,6 +154,11 @@ python data_generation/generate.py \
 视频已有至少一条有效、非空的回复数据时会跳过；空 `all_qa.json`、失败及
 `skip` 尝试不会让视频被跳过。`--videos-dir` 和 `--video` 仍可用于其他视频来源。
 
+每个视频抽取 1–8 个不同任务类别，候选充足时的期望为 **2.5 类**：1–4 类分别占
+15%、40%、30%、13%，5–8 类各占 0.5%。这不是 QA 条数；每个类别仍独立生成
+RTD/PR，并以原有概率追加 Agent。路由候选不足、跳过、失败或预算限制会降低实际平均值。
+新的分布用于新运行；更改采样配置或实现后请新建运行目录，不覆盖已有 manifest 的选择。
+
 Agent 数据只生成正样本（`sample_type=positive`），不再生成 `no_context` 或
 `missing_tool` 负样本。任务必须能用现有可用工具完成，否则返回 `skip`。
 兼容参数 `--agent-positive-probability` 仅接受 `1`；合并数据时也会排除历史 Agent 负样本。
@@ -129,6 +191,43 @@ pipeline 结束时会根据最终的 `all_qa.json` 自动生成 `dataset_report.
 `--output-dir` 改成终端打印的**具体时间戳目录**，保留原视频目录、模型、
 `--split`、`--num-attempts`、`--seed` 等设置，并加上 `--resume`。续跑使用原
 manifest 中的视频集合，不会因其他人后来提交了新 QA 而跳过本次运行未完成的阶段。
+
+### 使用 train 生成数据
+
+先按上面的步骤安装 Gemini 依赖，设置 `GEMINI_API_KEY` 和 `GEMINI_MODEL`，并完成
+train 素材检查。然后在仓库根目录运行：
+
+```bash
+python data_generation/generate.py \
+  --videos-dir ../OmniInteractionDataset/train/videos \
+  --output-dir data_generation/data/pipeline_runs/train \
+  --num-attempts 500 \
+  --provider gemini \
+  --seed 42
+```
+
+当前 `--dataset-dir --split` 仅支持 A/B，train 请使用 `--videos-dir`，不要添加
+`--split train`。程序递归读取视频目录，只遍历一次；`500` 是 QA 任务尝试上限，
+失败和 `skip` 也计入，不保证生成 500 条成功 QA。已有有效、非空 QA 的视频会跳过，
+判断依据与 A/B 相同。
+
+结果写入 `data_generation/data/pipeline_runs/train/<UTC时间戳>/`。该目录包含最终
+`all_qa.json`、`coverage.json`、`api_usage.json` 和完成后生成的 `dataset_report.pdf`；
+各视频子目录包含 `caption.json`、`route.json`、`qa/` 及单视频 `all_qa.json`。
+原视频仍保存在下载目录中。
+
+继续中断的 train 运行时，将下面的 `<UTC时间戳>` 替换为终端打印的实际目录，
+保持原视频路径、模型、尝试上限和 seed 不变：
+
+```bash
+python data_generation/generate.py \
+  --videos-dir ../OmniInteractionDataset/train/videos \
+  --output-dir data_generation/data/pipeline_runs/train/<UTC时间戳> \
+  --num-attempts 500 \
+  --provider gemini \
+  --seed 42 \
+  --resume
+```
 
 ## 从 GitHub 同步生成数据
 

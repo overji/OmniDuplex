@@ -25,8 +25,8 @@ class SelectionTests(unittest.TestCase):
             self.assertLessEqual(size, 8)
             self.assertEqual(len(result['tasks']), len({item['task'] for item in result['tasks']}))
         self.assertEqual(set(histogram), set(range(1, 9)))
-        self.assertAlmostEqual(sum(size * count for size, count in histogram.items()) / 20000, 1.5, delta=0.04)
-        for size, probability in enumerate((.68, .22, .07, .01, .005, .005, .005, .005), 1):
+        self.assertAlmostEqual(sum(size * count for size, count in histogram.items()) / 20000, 2.5, delta=0.04)
+        for size, probability in enumerate((.15, .40, .30, .13, .005, .005, .005, .005), 1):
             self.assertAlmostEqual(histogram[size] / 20000, probability, delta=.015)
         self.assertEqual(self.choose(42), self.choose(42))
 

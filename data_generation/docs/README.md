@@ -31,8 +31,8 @@ output parent are skipped. Empty bundles and failed or skipped attempts do not
 count as generated data. Resume retains the original run's video selection.
 
 For each video, the program selects **1–8 distinct suitable abilities**. The
-probabilities for counts 1–8 are 68%, 22%, 7%, 1%, and 0.5% each for 5–8,
-giving a theoretical mean of **1.5 abilities** when enough suitable candidates
+probabilities for counts 1–8 are 15%, 40%, 30%, 13%, and 0.5% each for 5–8,
+giving a theoretical mean of **2.5 abilities** when enough suitable candidates
 exist.
 The distribution is configured by `PIPELINE_ABILITY_COUNT_WEIGHTS` in
 `src/domain/config.py`. If router supplies fewer suitable abilities, the selected
@@ -189,7 +189,7 @@ selected/attempted/successful distinct ability counts; `average_selected_abiliti
 `average_attempted_abilities` and `average_successful_abilities` average these
 counts across processed videos (including zero-count videos). Successful means
 at least one successful QA for that ability. Availability, skip, failure and budget
-limits can lower the observed means below 1.5. Retries do not duplicate successful
+limits can lower the observed means below 2.5. Retries do not duplicate successful
 sample or distinct ability counts.
 
 API statistics count logical model requests, with caption/router/QA breakdowns;

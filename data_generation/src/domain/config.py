@@ -12,7 +12,8 @@ AGENT_DELAY_MIN_SECONDS = 5
 AGENT_DELAY_MIN_FRACTION = 0.1
 AGENT_DELAY_MAX_FRACTION = 0.5
 AGENT_REFUSAL_WINDOW_SECONDS = 3
-PIPELINE_ABILITY_COUNT_WEIGHTS = (136, 44, 14, 2, 1, 1, 1, 1)
+# Counts 1–8: 15%, 40%, 30%, 13%, then 0.5% each; expected count = 2.5.
+PIPELINE_ABILITY_COUNT_WEIGHTS = (30, 80, 60, 26, 1, 1, 1, 1)
 
 
 def validate_probability(name: str, value: float) -> float:
