@@ -33,9 +33,14 @@ MiniCPM 原生类已验证可在 4.57.3 导入，但本模块尚未用真实权�
 
 ## 数据准备
 
+默认 `data` 使用 AOI-Dataset 的 `all_qa.json`，`videos_dir` 指向 AOI-Dataset 根目录
+（QA 本身含 `videos/`）。下载、更新和媒体校验见[仓库 README](../README.md)。
+其他机器修改 `configs/default.json` 的 `data` 与 `videos_dir`；`--data` 可显式覆盖标注来源。
+
+
 ```bash
 JEV_train/.venv/bin/python -m JEV_train --config JEV_train/configs/default.json prepare \
-  --data /path/to/all_qa.json --output JEV_train/prepared/pilot
+  --output JEV_train/prepared/pilot
 ```
 
 按 UUID 视频划分 train/validation/test。对同一 QA 的全部评分窗口选因果合法的整数触发秒；只要有事件超出 horizon，该 QA 就显式排除，避免把未处理的事件误标 silent。

@@ -22,7 +22,8 @@ class CliTests(unittest.TestCase):
                 command += ['--roma-code', '/code']
             args = parser.parse_args(command)
             self.assertEqual(args.adapter_name, model)
-            self.assertEqual(args.data, ROOT / 'all_qa.json')
+            self.assertEqual(args.data, Path('/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench/all_qa.json'))
+            self.assertEqual(args.videos_dir, ROOT / 'cache/aoi_bench_videos')
             self.assertEqual(args.max_samples, 0)
             if model == 'minicpmo':
                 self.assertEqual(args.decode_mode, 'sampling')
@@ -45,9 +46,9 @@ class CliTests(unittest.TestCase):
     def test_package_and_default_resources_from_another_directory(self):
         script = """
 from benchmark.cli.main import build_parser
-from benchmark.config.paths import SYSTEM_PROMPT, MANIFESTS
+from benchmark.config.paths import SYSTEM_PROMPT, MANIFESTS, DATA
 args = build_parser().parse_args(['run', 'minicpmo', '--model-path', '/models/test'])
-assert args.data.is_file()
+assert args.data == DATA and DATA.is_absolute()
 assert args.system_prompt == SYSTEM_PROMPT and SYSTEM_PROMPT.is_file()
 assert (MANIFESTS / 'model_manifest.json').is_file()
 assert (MANIFESTS / 'data_manifest.json').is_file()

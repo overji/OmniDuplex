@@ -31,13 +31,23 @@ train/.venv/bin/pip install -r train/requirements.txt
 
 需要系统提供 `ffmpeg`、`ffprobe`。模型默认位于 `/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5`。配置集中在 `train/configs/minicpmo_lora.json`，相对路径以仓库根目录为基准；使用 `python -m train --config /path/to/config.json ...` 覆盖。
 
+## AOI 数据来源
+
+先按[仓库 README](../README.md)中的「AOI 训练与评测数据：下载、更新和配置」下载
+`overji/AOI-Dataset` 并运行 `benchmark/scripts/prepare_aoi_data.py` 检查媒体。
+三个训练配置的 `data` 默认是
+`/remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset/all_qa.json`，
+`videos_dir` 指向 **AOI-Dataset 根目录**，因为 QA 的路径已包含 `videos/`。
+其他机器复制配置并修改这两个路径；`--data` 可覆盖配置中的标注路径。
+默认 32 秒前缀和 12 条 pilot 采样不变，5,000 条输入不代表全部满足 pilot 的时长限制。
+准备目录记录数据哈希和排除原因；不要将训练集作为独立 benchmark。
+
 ## 准备与运行
 
 在仓库根目录执行：
 
 ```bash
 python -m train prepare \
-  --data benchmark/results/full_omni_duplex_plus_groupa100_20261014T120412Z/inputs/all_qa.json \
   --output train/prepared/task_start_pilot12 --max-samples 12
 
 # 一条样本、一次真实前向 / 反向 / AdamW 更新；默认选择最短前缀
@@ -151,7 +161,7 @@ python -m unittest discover -s train/tests
 
 ```bash
 train/.venv/bin/python -m train --config train/configs/minicpmo_full_sft.json prepare \
-  --data path/to/all_qa.json --output train/prepared/full_sft --max-samples 12
+  --output train/prepared/full_sft --max-samples 12
 
 CUDA_VISIBLE_DEVICES=6 train/.venv/bin/python -m train \
   --config train/configs/minicpmo_full_sft.json profile \
@@ -176,7 +186,7 @@ train/.venv/bin/python -m train --config train/configs/minicpmo_full_sft.json es
 
 ```bash
 train/.venv/bin/python -m train --config train/configs/minicpmo_full_grpo.json prepare \
-  --data path/to/all_qa.json --output train/prepared/full_grpo --max-samples 12
+  --output train/prepared/full_grpo --max-samples 12
 
 CUDA_VISIBLE_DEVICES=6 train/.venv/bin/python -m train \
   --config train/configs/minicpmo_full_grpo.json grpo \

@@ -8,6 +8,21 @@ from benchmark.runtime.preparation import checkpoint_status, media_aliases
 
 
 class PreparationTests(unittest.TestCase):
+    def test_aoi_flat_manifest_resolves_preserved_split_paths(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            videos = root / 'videos'
+            videos.mkdir()
+            (videos / 'uuid.mp4').write_bytes(b'video')
+            metadata = root / 'video_manifest.json'
+            metadata.write_text(json.dumps([{'path': 'videos/uuid.mp4', 'sha256': 'unused'}]))
+            rows = [{'video': 'A/videos/uuid.mp4'}, {'video': 'uuid.mp4'}]
+            result = media_aliases(rows, videos, metadata, root / 'aliases')
+            self.assertEqual(result['missing_qa'], 0)
+            self.assertEqual(result['unique_resolved_media'], 1)
+            for row in rows:
+                self.assertEqual((root / 'aliases' / row['video']).resolve(), videos / 'uuid.mp4')
+
     def test_split_uuid_and_original_names_resolve_without_copying_video(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

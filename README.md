@@ -7,7 +7,83 @@ caption、任务路由、问答生成与校验，最后合并为 `all_qa.json`�
 Qwen3.5 Omni Plus / Flash Realtime 和 Gemini 2.5 Flash Live 的环境、密钥及运行配置。
 同一文档还提供 Qwen3-Omni / Qwen2.5-Omni 的普通推理 Probe 模式，用正负视频前缀评估回复决策。
 
-## 下载视频数据集
+## AOI 训练与评测数据：下载、更新和配置
+
+训练使用 [overji/AOI-Dataset](https://modelscope.cn/datasets/overji/AOI-Dataset)
+（5,000 条 QA / 1,268 个视频）；评测使用
+[overji/AOI-Bench](https://modelscope.cn/datasets/overji/AOI-Bench)
+（2,107 条 QA / 852 个视频）。训练集与下文用于继续生成 QA 的旧 OmniInteractionDataset
+视频库是不同发布数据，不要混用 metadata 或重新计算 UUID。
+
+以下命令在仓库根目录执行。本机真实目录为 `datasets`（复数），不是 `dataset`。
+其他机器可修改下面的两个目录，同时修改训练配置的 `data`、`videos_dir`，
+并在 benchmark 命令中显式指定 `--data` 和 `--videos-dir`。
+
+```bash
+git pull --ff-only
+python3 -m venv .venv-download
+source .venv-download/bin/activate
+python -m pip install 'modelscope-hub==0.4.6'
+
+# 仅在 .env 是自己维护的可信 shell 赋值文件时执行；不要打印或提交 token。
+set -a
+source .env
+set +a
+export MODELSCOPE_API_TOKEN="$MODELSCOPE_TOKEN"
+export TRAIN_ROOT=/remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset
+export BENCH_ROOT=/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench
+
+# 直连下载。更新数据时再次执行相同命令，保留原下载目录以复用已有文件。
+env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
+    -u http_proxy -u https_proxy -u all_proxy \
+  ms-hub download overji/AOI-Dataset --repo-type dataset --revision master \
+    --local-dir "$TRAIN_ROOT"
+env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
+    -u http_proxy -u https_proxy -u all_proxy \
+  ms-hub download overji/AOI-Bench --repo-type dataset --revision master \
+    --local-dir "$BENCH_ROOT"
+
+# 检查全部 QA 引用，建立评测视频别名；不加载模型，不开始实验。
+python benchmark/scripts/prepare_aoi_data.py \
+  --dataset-dir "$TRAIN_ROOT" --bench-dir "$BENCH_ROOT"
+```
+
+首次使用者可在自己的 `.env` 中设置 `MODELSCOPE_TOKEN=你的token`；也可直接设置
+`MODELSCOPE_API_TOKEN` 并省略上述读取 `.env` 的步骤。数据集认证 token 不能用作 Gemini、
+Qwen 或 DeepSeek 的推理 API key。
+
+下载后两份数据各自有 `all_qa.json` 和 `videos/`。训练数据还有 `video_metadata.json`，
+评测数据有 `video_manifest.json`、`manifest.json` 等发布记录。
+**训练 QA 的 `video` 已含 `videos/`，因此训练配置 `videos_dir` 必须指向 AOI-Dataset 根目录。**
+评测视频虽然平铺，但 QA 仍保留 `A/videos/`、`B/videos/` 等来源路径；准备脚本在
+`benchmark/cache/aoi_bench_videos/` 建立软链接，兼容全部引用，既不复制视频，也不改写标注。
+脚本输出 `validation.json`，有缺失视频时退出报错。迁移目录后重新运行；别名目录若指向
+旧素材，应先另选 `--output-dir`，并将新目录传给 `--videos-dir`。
+
+训练配置 `train/configs/minicpmo_{lora,full_sft,full_grpo}.json` 和
+`JEV_train/configs/default.json` 已默认指向 AOI-Dataset。`prepare` 可省略 `--data`，
+显式传入时优先使用命令行路径；详细环境和运行方法见 [train README](train/README.md)
+和 [JEV_train README](JEV_train/README.md)。例如：
+
+```bash
+# 安装训练环境后执行；仅准备小规模数据，不开始 GPU 训练。
+train/.venv/bin/python -m train prepare \
+  --output train/prepared/aoi_pilot12 --max-samples 12
+
+# 安装 benchmark 对应模型环境后执行；本条才会启动推理。
+benchmark/.venv/bin/python -m benchmark run minicpmo \
+  --data "$BENCH_ROOT/all_qa.json" \
+  --videos-dir benchmark/cache/aoi_bench_videos \
+  --output-dir benchmark/results/aoi_minicpmo
+```
+
+benchmark 默认数据也已改为 AOI-Bench，默认视频根为上述别名目录；完整 realtime/probe
+环境及命令见 [benchmark README](benchmark/README.md)。更换数据后请使用新的 prepared、
+probe manifest 和结果目录，避免复用旧样本索引。已启动实验仍使用原始输入和队列，不自动切换。
+
+本次数据内容比对和验证记录见 [AOI 数据源核查报告](benchmark/docs/aoi_data_sources_20261023.md)。
+
+## 下载用于继续生成 QA 的旧视频库
 
 公开数据集 [overji/OmniInteractionDataset](https://modelscope.cn/datasets/overji/OmniInteractionDataset)
 包含 A、B 两组（各 160 个 MP4 视频及对应 metadata），以及供生成数据使用的

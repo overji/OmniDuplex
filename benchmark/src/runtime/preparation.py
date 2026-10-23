@@ -62,7 +62,9 @@ print(json.dumps(loaded))
 
 
 def media_aliases(rows, videos, metadata, output):
-    records = json.loads(metadata.read_text()).get('videos', []) if metadata.is_file() else []
+    manifest = json.loads(metadata.read_text()) if metadata.is_file() else {}
+    records = ([{'file': Path(r['path']).name} for r in manifest]
+               if isinstance(manifest, list) else manifest.get('videos', []))
     known_files = {r['file'] for r in records}
     originals = {}
     for r in records:

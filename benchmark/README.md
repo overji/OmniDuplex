@@ -7,39 +7,38 @@ endpoint 与运行命令见[云端 Realtime 配置](#云端-realtimeqwen35-omni-
 
 ## 全量数据集与闭源 Realtime 快速开始
 
-公开数据集：[overji/OmniInteractionBench](https://modelscope.cn/datasets/overji/OmniInteractionBench)。
-2026-10-21 发布版本包含 **2,107 条 QA、852 个视频**（RTD 706 / PR 678 / Agent 723），
-视频约 17.67 GiB。由最新 2,110 条合并数据剔除缺失的 `video_103.mp4` 及其 3 条 QA 得到，
-没有额外去重、修改参考回复或调整评分窗口。所有保留 QA 的相对视频路径保持不变。
-这份全量数据与下文历史小样本数据、2026-10-16 的 194 条实验结果是不同版本。
+公开评测数据集：[overji/AOI-Bench](https://modelscope.cn/datasets/overji/AOI-Bench)。
+包含 **2,107 条 QA、852 个视频**（RTD 706 / PR 678 / Agent 723），视频约 17.67 GiB。
+标注与原 2,110 条合并集的 2,107 条一致；仅去掉缺失素材 `video_103.mp4` 的 3 条 QA，
+没有调整参考答案或评分窗口。训练另用 `overji/AOI-Dataset`，不要混用两份数据。
 
-### 1. 下载数据和代码
+### 1. 下载数据并配置视频路径
 
-以下命令在当前 OmniDuplex 仓库根目录执行。ModelScope 数据集同时携带可独立运行的
-`benchmark/` 代码及最小工具定义依赖；首次使用者可在下载完成后切换到下载目录运行。
+从当前 OmniDuplex 仓库根目录执行。完整的下载、`.env` 认证、直连和更新流程见
+[仓库 README](../README.md) 的 AOI 数据章节。无需切换到数据下载目录：
 
 ```bash
-python3 -m venv /tmp/omniinteraction-download-env
-/tmp/omniinteraction-download-env/bin/python -m pip install 'modelscope-hub==0.4.6'
-export BENCH_ROOT=/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionBench
-
-# 公开仓库下载无需 token。清除环境代理，通过直连拉取。
+export TRAIN_ROOT=/remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset
+export BENCH_ROOT=/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench
+# 在已安装 modelscope-hub 的环境中执行；需要认证时设置 MODELSCOPE_API_TOKEN。
 env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
     -u http_proxy -u https_proxy -u all_proxy \
-  /tmp/omniinteraction-download-env/bin/ms-hub download overji/OmniInteractionBench \
-    --repo-type dataset --local-dir "$BENCH_ROOT"
+  ms-hub download overji/AOI-Bench --repo-type dataset --revision master \
+    --local-dir "$BENCH_ROOT"
 
+# 同时下载 AOI-Dataset 后检查两份媒体，并建立兼容来源路径的本地别名。
+python benchmark/scripts/prepare_aoi_data.py \
+  --dataset-dir "$TRAIN_ROOT" --bench-dir "$BENCH_ROOT"
 export BENCH_DATA="$BENCH_ROOT/all_qa.json"
-export BENCH_VIDEOS="$BENCH_ROOT/videos"
-# 如果使用下载包内的代码：
-cd "$BENCH_ROOT"
-sha256sum -c checksums.sha256
+export BENCH_VIDEOS="$PWD/benchmark/cache/aoi_bench_videos"
 ```
 
-下载目录中 `all_qa.json` 为发布标注；`videos/` 包含全部被引用视频，保留 `A/videos/`、
-`B/videos/` 和平铺路径；`manifest.json`、`excluded_samples.json` 和 `video_manifest.json`
-记录来源、剔除记录、视频大小和 SHA-256。`benchmark/all_qa.json` 是发布标注的同内容副本，
-只在下载包中替换默认数据，当前开发仓库的历史默认数据不自动改写。
+更新时重复相同下载命令与准备脚本。AOI-Bench 视频平铺在 `videos/`，标注仍保留部分
+`A/videos/`、`B/videos/` 路径，所以不要直接把平铺目录传给 `--videos-dir`。
+别名目录通过 `video_manifest.json` 解析这些引用，不修改原始 QA 或视频。
+`benchmark` CLI 默认数据为上述 AOI-Bench 标注，默认媒体为别名目录；支持命令行覆盖。
+`benchmark/configs/suites/full_2110.json` 也已切换到该发布集（文件名为历史命名，实际为 2,107 条）。
+准备 suite 时会在其输出目录建立独立别名。迁移数据目录后需重新准备并使用新结果目录。
 
 ### 2. 安装 CPU 运行环境并配置密钥
 
@@ -236,7 +235,7 @@ without a prediction restart and may append another prompt-log entry.
 
 The working checkout currently defaults to 33 positive-only QA; the following counts describe the earlier 44-QA snapshot, not the full release.
 
-Historical default data: `all_qa.json`, derived from
+Historical small-sample data (no longer the CLI default): `all_qa.json`, derived from
 `data_generation/data/qwen3.8_omni_flash_44/all_qa.json` with an explicit Agent-window
 migration. `configs/manifests/data_manifest.json` records the source hash, current
 hash, backup and migration ledger. The original snapshot contained 44 samples, 189 reference responses,
@@ -651,12 +650,12 @@ export DASHSCOPE_REALTIME_URL='wss://YOUR_WORKSPACE_ID.cn-beijing.maas.aliyuncs.
 
 python -m benchmark run qwen_realtime \
   --model qwen3.5-omni-plus-realtime \
-  --data benchmark/all_qa.json --videos-dir videos \
+  --data "$BENCH_DATA" --videos-dir "$BENCH_VIDEOS" \
   --output-dir benchmark/results/qwen35_omni_plus_realtime
 
 python -m benchmark run qwen_realtime \
   --model qwen3.5-omni-flash-realtime \
-  --data benchmark/all_qa.json --videos-dir videos \
+  --data "$BENCH_DATA" --videos-dir "$BENCH_VIDEOS" \
   --output-dir benchmark/results/qwen35_omni_flash_realtime
 ```
 
@@ -675,7 +674,7 @@ export GEMINI_API_KEY='YOUR_GEMINI_API_KEY'
 
 python -m benchmark run gemini_live \
   --model gemini-2.5-flash-native-audio-preview-12-2025 \
-  --data benchmark/all_qa.json --videos-dir videos \
+  --data "$BENCH_DATA" --videos-dir "$BENCH_VIDEOS" \
   --output-dir benchmark/results/gemini25_flash_live
 ```
 
@@ -764,7 +763,7 @@ Probe 测试模型在看到一个完整视频前缀后，能否判断“是否�
 
 ```bash
 python -m benchmark probe prepare \
-  --data benchmark/all_qa.json --videos-dir videos \
+  --data "$BENCH_DATA" --videos-dir "$BENCH_VIDEOS" \
   --output-dir benchmark/probes/default
 ```
 

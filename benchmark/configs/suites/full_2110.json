@@ -1,8 +1,8 @@
 {
   "name": "full_2110",
-  "data": "benchmark/results/full_omni_duplex_plus_ab_gemini37_20261021/inputs/all_qa.json",
-  "videos_dir": "videos",
-  "video_metadata": "videos/video_metadata.json",
+  "data": "/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench/all_qa.json",
+  "videos_dir": "/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench/videos",
+  "video_metadata": "/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench/video_manifest.json",
   "model_root": "/remote-home/yushengliao/speech/jimodels/openmodels",
   "models": [
     {

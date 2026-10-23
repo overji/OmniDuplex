@@ -16,7 +16,7 @@ def load(path):
     config = json.loads(Path(path).read_text())
     if config['mode'] not in ('classifier_only', 'separate_sft') or config['backend'] != 'qwen25_omni':
         raise ValueError('Supported modes: classifier_only/separate_sft; backend: qwen25_omni')
-    for key in ('classifier_model', 'backend_model', 'videos_dir', 'cache_dir', 'classifier_adapter', 'backend_adapter'):
+    for key in ('data', 'classifier_model', 'backend_model', 'videos_dir', 'cache_dir', 'classifier_adapter', 'backend_adapter'):
         if config.get(key):
             p = Path(config[key]).expanduser()
             config[key] = str(p if p.is_absolute() else ROOT / p)

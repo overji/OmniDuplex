@@ -8,7 +8,7 @@ def main():
     parser=argparse.ArgumentParser(description='JEV binary gate and pluggable Omni response backend')
     parser.add_argument('--config',type=Path,default=ROOT/'JEV_train/configs/default.json')
     commands=parser.add_subparsers(dest='command',required=True)
-    p=commands.add_parser('prepare');p.add_argument('--data',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
+    p=commands.add_parser('prepare');p.add_argument('--data',type=Path,help='QA JSON; defaults to config.data');p.add_argument('--output',type=Path,required=True)
     for name in ('train-classifier','train-backend','evaluate','stream'):
         p=commands.add_parser(name);p.add_argument('--prepared',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
         if name in ('evaluate','stream'):
@@ -17,7 +17,11 @@ def main():
             p.add_argument('--realtime',action='store_true',help='Pace media production at one second per wall second')
     args=parser.parse_args();config=load(args.config)
     from .data import prepare,load_rows
-    if args.command=='prepare':prepare(args.data,args.output,config);return
+    if args.command=='prepare':
+        if args.data is None:
+            if not config.get('data'):parser.error('prepare requires --data or config.data')
+            args.data=Path(config['data'])
+        prepare(args.data,args.output,config);return
     import hashlib
     config['prepared_manifest_sha256']=hashlib.sha256((args.prepared/'manifest.json').read_bytes()).hexdigest()
     config['prepared_directory']=str(args.prepared.resolve())

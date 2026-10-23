@@ -1,6 +1,7 @@
 {
   "model_path": "/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5",
-  "videos_dir": "videos",
+  "data": "/remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset/all_qa.json",
+  "videos_dir": "/remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset",
   "media_cache": "benchmark/cache",
   "system_prompt": "benchmark/configs/prompts/system_prompt.txt",
   "agent_prompt": "train/configs/agent_task_start_prompt.txt",

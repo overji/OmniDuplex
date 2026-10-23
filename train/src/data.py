@@ -19,7 +19,10 @@ def load_config(path):
     if method not in ('lora_sft', 'full_sft', 'full_grpo'):
         raise ValueError('Unsupported training_method')
     require_protocol(config)
-    for key in ('model_path', 'videos_dir', 'media_cache', 'system_prompt', 'agent_prompt'):
+    paths = ['model_path', 'videos_dir', 'media_cache', 'system_prompt', 'agent_prompt']
+    if config.get('data'):
+        paths.append('data')
+    for key in paths:
         p = Path(config[key]).expanduser()
         config[key] = str(p if p.is_absolute() else ROOT / p)
     if config.get('deepspeed_config'):

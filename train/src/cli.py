@@ -10,7 +10,7 @@ def main():
     parser.add_argument('--config', type=Path, default=ROOT / 'train/configs/minicpmo_lora.json')
     commands = parser.add_subparsers(dest='command', required=True)
     prepare = commands.add_parser('prepare')
-    prepare.add_argument('--data', type=Path, required=True)
+    prepare.add_argument('--data', type=Path, help='QA JSON; defaults to config.data')
     prepare.add_argument('--output', type=Path, required=True)
     prepare.add_argument('--max-samples', type=int, default=12)
     prepare.add_argument('--validation-fraction', type=float, default=.2)
@@ -32,6 +32,10 @@ def main():
     config = load_config(args.config)
     if args.command == 'prepare':
         from train.src.data import prepare
+        if args.data is None:
+            if not config.get('data'):
+                parser.error('prepare requires --data or config.data')
+            args.data = Path(config['data'])
         prepare(args.data, args.output, config, args.max_samples, args.validation_fraction)
     elif args.command == 'estimate':
         from train.src.estimate import estimate
