@@ -6,6 +6,18 @@
 
 使用仓库评分器对预测回复的起始时间与包含边界的参考窗口进行一对一匹配。窗口命中率为 hits/windows，时间精确率为 hits/predictions，时间 F1 是两者的调和平均。指标只衡量回复时机，不评判文本语义、工具选择或拒绝理由是否正确。Agent 正样本只评触发 agent_call 的回复；工具返回及之后的完成回复不输入模型，也不作为评分参考。
 
+## 结果图表
+
+图表分为总体结果、交互类型和任务能力三张，统一使用模型配色与横向柱状图。**未绘制 Agent 正/负样本子类型拆分**；交互类型中的 Agent 仍按整体结果保留。
+
+![Benchmark 模型结果柱状图](assets/benchmark_results_20261016.svg)
+
+![三种交互类型的窗口命中率](assets/benchmark_results_20261016_interactions.svg)
+
+![十二个任务能力类别的窗口命中率](assets/benchmark_results_20261016_abilities.svg)
+
+PNG 版本：[总体结果](assets/benchmark_results_20261016.png)、[交互类型](assets/benchmark_results_20261016_interactions.png)、[任务能力](assets/benchmark_results_20261016_abilities.png)。可在仓库根目录运行 `python benchmark/docs/plot_benchmark_results_20261016.py` 重新生成。
+
 ## 总体结果
 
 | 模型 | 命中窗口 | 窗口命中率 | 时间精确率 | 时间 F1 | 回复次数 |

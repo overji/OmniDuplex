@@ -2,10 +2,12 @@
 import argparse
 from pathlib import Path
 
-from benchmark.config.defaults import DEFAULTS
+from benchmark.config.defaults import DEFAULTS, PROBE_ADAPTER_DEFAULTS
 
 
 def _configure_common(parser, model, *, local_model=True):
+    parser.add_argument('--agent-call-schema', choices=('task-start', 'legacy'), default='task-start',
+                        help='Benchmark call schema; legacy preserves the original agent_call contract')
     parser.add_argument("--agent-output-protocol", choices=(("text", "structured", "agent-token") if model == 'minicpmo' else ("text", "structured")), default=argparse.SUPPRESS,
                         help="Optional structured Agent output; default preserves existing text protocol")
     defaults = DEFAULTS[model]
@@ -47,6 +49,22 @@ def configure_mmduet2(p):
     p.add_argument("--official-code", type=Path, required=True,
                    help="Pinned MMDuet2 checkout's proactive_eval directory")
     p.add_argument("--device", default=DEFAULTS["mmduet2"]["device"])
+
+
+def configure_gander(parser):
+    configure_minicpmo(parser)
+    for action in parser._actions:
+        if action.dest == 'agent_output_protocol':
+            action.choices = ('text',)
+            action.help = 'Gander keeps its native tool-call action grammar; generic JSON/agent-token modes are incompatible'
+    parser.set_defaults(output_dir=DEFAULTS['minicpmo']['output_dir'].parent / 'gander',
+                        max_speak_tokens=11)
+    parser.add_argument('--base-model-path', type=Path, required=True,
+                        help='Frozen MiniCPM-o-4.5 base checkpoint used by released Gander Thinker')
+    parser.add_argument('--official-code', type=Path, required=True,
+                        help='Gander official repository root containing minicpm_ft/mcpmft')
+    parser.add_argument('--max-tool-tokens', type=int, default=96,
+                        help='Native tool JSON token budget, independent of the per-second speech budget')
 
 
 def configure_livestar(p):
@@ -106,10 +124,13 @@ def configure_probe(parser):
     prepare.add_argument('--output-dir', type=Path, default=defaults['manifest_dir'])
     run = commands.add_parser('run', help='Run ordinary, non-duplex Omni inference')
     models = run.add_subparsers(dest='probe_model', required=True)
-    for name in ('qwen3_omni', 'qwen25_omni'):
+    from benchmark.probe.models import PROBE_MODELS
+    for name in PROBE_MODELS:
         model = models.add_parser(name)
         model.add_argument('--manifest', type=Path, required=True)
         model.add_argument('--model-path', type=Path, required=True)
+        model.add_argument('--official-code', type=Path,
+                           help='Native source checkout, required by Ming and optional for other custom models')
         model.add_argument('--output-dir', type=Path, required=True)
         model.add_argument('--cache-dir', type=Path, default=defaults['cache_dir'])
         model.add_argument('--system-prompt', type=Path, default=defaults['system_prompt'])
@@ -119,13 +140,24 @@ def configure_probe(parser):
         model.add_argument('--dtype', choices=('auto', 'bfloat16', 'float16'), default=defaults['dtype'])
         model.add_argument('--device-map', default=defaults['device_map'])
         model.add_argument('--attn-implementation', choices=('sdpa', 'flash_attention_2', 'eager'),
-                           default=defaults['attn_implementation'])
+                           default=PROBE_ADAPTER_DEFAULTS.get(name, {}).get('attn_implementation', defaults['attn_implementation']))
+        if name == 'baichuan_omni':
+            model.add_argument('--attention-query-chunk-size', type=int, default=0,
+                               help='Bound native eager attention query memory; 0 keeps original computation')
         model.add_argument('--max-pairs', type=int, default=defaults['max_pairs'],
                            help='Limit pairs before skipping completed probes')
     score = commands.add_parser('score', help='Recompute probe metrics without model dependencies')
     score.add_argument('--manifest', type=Path, required=True)
     score.add_argument('--predictions', type=Path, required=True)
     score.add_argument('--output-dir', type=Path, required=True)
+
+
+def configure_prepare(parser):
+    from benchmark.config.paths import CONFIGS, ROOT
+    parser.add_argument('--suite', type=Path, default=CONFIGS / 'suites/full_2110.json')
+    parser.add_argument('--output-dir', type=Path, default=ROOT / 'probes/full_2110')
+    parser.add_argument('--skip-probes', action='store_true',
+                        help='Only inventory files/environments; skip ffprobe and paired-manifest creation')
 
 
 def configure_collect(parser):

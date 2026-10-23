@@ -6,6 +6,18 @@ def input_protocol(args):
     from benchmark.config.paths import CONFIGS
     import hashlib
     protocol = getattr(args, 'agent_output_protocol', 'text')
+    schema = getattr(args, 'agent_call_schema', 'legacy')
+    if schema == 'task-start':
+        from types import SimpleNamespace
+        if protocol == 'agent-token':
+            raise ValueError('agent-token requires --agent-call-schema legacy')
+        previous = input_protocol(SimpleNamespace(**{**vars(args), 'agent_call_schema': 'legacy'}))
+        files = ('agent_task_start_structured.txt', 'agent_task_start_gander.txt')
+        identity = hashlib.sha256(b''.join((CONFIGS / 'prompts' / name).read_bytes() for name in files)).hexdigest()
+        return previous + ':task_start_instruction_v1:' + identity
+    if hasattr(args, 'max_tool_tokens'):
+        prompt = hashlib.sha256((CONFIGS / 'prompts/gander_agent.txt').read_bytes()).hexdigest()
+        return AGENT_INPUT_PROTOCOL + ':gander_native_v2:' + prompt
     if protocol == 'agent-token':
         from benchmark.data.agent_token import adapter_identity, full_model_identity, digest
         if getattr(args, 'lora_adapter', None):

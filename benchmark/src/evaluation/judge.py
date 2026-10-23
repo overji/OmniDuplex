@@ -9,6 +9,7 @@ import time
 
 from benchmark.data.files import append_jsonl, read_jsonl, recover_jsonl_tail, write_json
 from benchmark.evaluation.agent_calls import parse_event
+from benchmark.data.agent_schema import adapt_sample, run_schema, validate_task_start
 from benchmark.evaluation.timing import match_windows, reference_windows
 from benchmark.evaluation.judge_client import completion, resolve_config
 
@@ -74,6 +75,8 @@ def prepare_rows(samples, predictions):
             ei = matched.get(ri)
             candidate = parsed[ei] if ei is not None else {'response': '', 'calls': [], 'status': 'unmatched'}
             actual_call = positive and candidate['status'] != 'malformed' and bool(candidate['calls'])
+            if sample.get('_agent_call_schema') == 'task-start' and actual_call:
+                actual_call = bool(sample.get('available_tools')) and all(validate_task_start(c) for c in candidate['calls'])
             # Whitelist only the current reference. Never send later tool results or completion replies.
             ref = {key: reference[key] for key in ('response', 'tool_calls', 'evidence', 'details',
                 'trigger', 'refusal_reason', 'missing_tools') if key in reference}
@@ -181,17 +184,21 @@ def execute(args):
         raise ValueError('Run directories must be unique and have distinct names')
     key, url = resolve_config(args)
     system = args.system_prompt.read_text()
-    samples = json.loads(args.data.read_text())
+    original_samples = json.loads(args.data.read_text())
     config = {'version': VERSION, 'provider': args.provider, 'model': args.model,
         'base_url': url, 'timeout': args.timeout, 'retries': args.retries, 'temperature': 0,
-        'system_prompt_sha256': fingerprint(system), 'data_sha256': fingerprint(samples)}
+        'system_prompt_sha256': fingerprint(system), 'data_sha256': fingerprint(original_samples)}
     summaries = []
     for run in args.runs:
+        schema = run_schema(run)
+        samples = [adapt_sample(s, schema) for s in original_samples]
         predictions = read_jsonl(run / 'predictions.jsonl')
         if not (run / 'predictions.jsonl').is_file():
             raise FileNotFoundError(run / 'predictions.jsonl')
         rows, negatives = prepare_rows(samples, predictions)
         identity = {**config, 'predictions_sha256': fingerprint(predictions)}
+        if schema != 'legacy':
+            identity['agent_call_schema'] = schema
         out = args.output_dir / run.name
         out.mkdir(parents=True, exist_ok=True)
         with (out / '.judge.lock').open('a') as lock:

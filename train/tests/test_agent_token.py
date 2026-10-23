@@ -26,18 +26,18 @@ class StreamTests(unittest.TestCase):
     def test_separator_first_token_of_next_chunk_and_complete_call(self):
         t = ByteTokenizer(); s = AgentStream(t)
         self.assertIsNone(s.feed([301] + t.encode('I will check.') + [304, 305], 4))
-        self.assertIsNone(s.feed([300] + t.encode('{"name":"agent_call",') + [304, 305], 5))
+        self.assertIsNone(s.feed([300] + t.encode('{"name":"task_start",') + [304, 305], 5))
         event = s.feed([301] + t.encode('"arguments":{"instruction":"search"}}') + [303, 304, 305], 6, ended=True)
         self.assertEqual(event['response_text'], 'I will check.')
         self.assertEqual(event['onset_seconds'], 4)
         self.assertEqual(event['agent_call_onset_seconds'], 5)
         self.assertEqual(event['agent_call_complete_seconds'], 6)
-        self.assertEqual(event['tool_calls'][0]['function']['name'], 'agent_call')
+        self.assertEqual(event['tool_calls'][0]['function']['name'], 'task_start')
         self.assertIn(300, event['raw_generated_ids'])
 
     def test_call_completion_is_turn_end_not_last_json_token(self):
         t = ByteTokenizer(); s = AgentStream(t)
-        s.feed([300] + t.encode('{"name":"agent_call","arguments":{}}'), 2)
+        s.feed([300] + t.encode('{"name":"task_start","arguments":{"instruction":"search"}}'), 2)
         event = s.feed([303], 3, ended=True)
         self.assertEqual(event['agent_call_complete_seconds'], 3)
 
@@ -50,7 +50,7 @@ class StreamTests(unittest.TestCase):
             self.assertTrue(parse_event(event)['attempted'])
             self.assertEqual(event['tool_calls'], [])
         stream = AgentStream(t)
-        stream.feed([300] + t.encode('{"name":"agent_call","arguments":{}}'), 1)
+        stream.feed([300] + t.encode('{"name":"task_start","arguments":{"instruction":"search"}}'), 1)
         event = stream.finish(complete=False)
         self.assertEqual(event['agent_parse_status'], 'truncated')
         self.assertEqual(event['tool_calls'], [])
@@ -66,13 +66,13 @@ class TargetTests(unittest.TestCase):
         tokenizer = ByteTokenizer()
         record = {'sample': {'mode': 'agent'}, 'reference': {'response': 'I will check.',
             'tool_calls': [{'function': {'name': 'agent_call', 'arguments': '{"instruction":"search"}'}}]}}
-        chunks = target_chunks(record, tokenizer, 8, protocol='agent_token_v1')
+        chunks = target_chunks(record, tokenizer, 8, protocol='agent_token_task_start_v1')
         self.assertEqual(sum(ids.count(300) for ids, _ in chunks), 1)
         content = bytes(t for ids, groups in chunks for t,g in zip(ids,groups) if g == 3).decode()
         self.assertEqual(json.loads(content)['arguments']['instruction'], 'search')
         self.assertEqual(bytes(t for ids, groups in chunks for t,g in zip(ids,groups) if g == 2).decode(), 'I will check.')
         record['reference']['tool_calls'] = []
-        chunks = target_chunks(record, tokenizer, 8, protocol='agent_token_v1')
+        chunks = target_chunks(record, tokenizer, 8, protocol='agent_token_task_start_v1')
         self.assertFalse(any(300 in ids or 3 in groups for ids, groups in chunks))
 
 

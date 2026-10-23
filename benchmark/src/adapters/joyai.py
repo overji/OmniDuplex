@@ -64,18 +64,26 @@ def run_sample(a, state, context):
             headers={"x-streaming-session": session}, timeout=360)
         response.raise_for_status()
         body = response.json()
-        message = body["choices"][0]["message"].get("content", "")
-        raw_text = body.get("streamingharness", {}).get("raw_content", message)
+        message_object = body["choices"][0]["message"]
+        message = message_object.get("content") or ""
+        native_calls = message_object.get('tool_calls')
+        raw_text = body.get("streamingharness", {}).get("raw_content", message) or ""
         # Text and this frame are supplied together before generation. Record
         # the interval end for every task, including the initial user request.
         at = min(float(frame_time) + 1, meta["duration"])
         item = {"video_time_seconds": at, "frame_time_seconds": float(frame_time),
                 "content": message, "raw_content": raw_text,
                 "timing": body.get("streamingharness", {}).get("timing")}
+        if native_calls:
+            item['tool_calls'] = native_calls
         raw.append(item)
         if inserted_query and frame_time >= qtime:
             match = re.search(r"</response>\s*(.*?)(?:</|$)", raw_text, flags=re.S)
-            if match and match.group(1).strip():
+            if native_calls:
+                text = match.group(1).strip() if match else message
+                events.append({'onset_seconds': at, 'text': text, 'response_text': text,
+                               'tool_calls': native_calls, 'agent_parse_status': 'structured'})
+            elif match and match.group(1).strip():
                 events.append({"onset_seconds": at, "text": match.group(1).strip()})
     if not inserted_query:
         raise RuntimeError(f"question_time {qtime} exceeds last observed frame for sample {index}")

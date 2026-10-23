@@ -33,7 +33,7 @@ def register_token(model, tokenizer, base_path):
         model.llm.get_output_embeddings().weight[token_id].copy_(output_mean)
     model.llm.requires_grad_(False)
     model.config.vocab_size = len(tokenizer)
-    return {'protocol': PROTOCOL, 'token': TOKEN, 'token_id': token_id, 'old_vocab_size': old_vocab,
+    return {'protocol': PROTOCOL, 'agent_call_schema': 'task-start', 'token': TOKEN, 'token_id': token_id, 'old_vocab_size': old_vocab,
             'vocab_size': len(tokenizer), 'old_tokenizer_sha256': before,
             'tokenizer_sha256': tokenizer_identity(tokenizer), 'base_identity': base_identity(base_path)}
 

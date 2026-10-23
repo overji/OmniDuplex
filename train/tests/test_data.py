@@ -59,10 +59,11 @@ class DataTests(unittest.TestCase):
         sample['responses'].append({'role': 'tool', 'response': 'future secret',
                                     'window_start': '00:07', 'window_end': '00:09'})
         row, _ = first_record(sample, 0, self.config)
-        chunks = target_chunks(row, Tokenizer(), 10)
-        content = bytes(t for ids, kinds in chunks for t, k in zip(ids, kinds) if k in (2,3)).decode()
+        from train.tests.test_agent_token import ByteTokenizer
+        chunks = target_chunks(row, ByteTokenizer(), 10)
+        content = bytes(t for ids, kinds in chunks for t, k in zip(ids, kinds) if k == 3).decode()
         obj = json.loads(content)
-        self.assertEqual(obj['tool_calls'][0]['function']['arguments']['instruction'], 'Look up the object')
+        self.assertEqual(obj, {'name':'task_start','arguments':{'instruction':'Look up the object'}})
         self.assertNotIn('future secret', content)
         self.assertTrue(any(3 in kinds for _, kinds in chunks))
 

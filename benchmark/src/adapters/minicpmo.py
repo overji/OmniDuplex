@@ -140,13 +140,23 @@ def run_sample(args, state, context):
                         if event is not None:
                             events.append(event)
                     return
+                if (result.get('is_tool_call') or result.get('tool_calls')) and question_sent:
+                    from benchmark.evaluation.agent_calls import native_event
+                    events.append(native_event(result, clock, active_event))
+                    active_event = None
+                    return
                 text = result.get("text", "")
                 if text and not result["is_listen"] and question_sent:
                     if active_event is None:
                         active_event = {"onset_seconds": clock, "text": ""}
                     active_event["text"] += text
                     active_event["last_text_seconds"] = clock
+                    if (getattr(args, 'agent_output_protocol', 'text') == 'structured'
+                            and sample.get('mode') == 'agent' and '"tool_calls"' in active_event['text']):
+                        active_event.setdefault('agent_call_onset_seconds', clock)
                 if active_event is not None and (result["end_of_turn"] or result["is_listen"]):
+                    if 'agent_call_onset_seconds' in active_event:
+                        active_event['agent_call_complete_seconds'] = clock
                     events.append(active_event)
                     print(f"RESPONSE sample={sample_index} at={active_event['onset_seconds']:.3f}s {active_event['text'][:180]}", flush=True)
                     active_event = None

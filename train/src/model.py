@@ -5,6 +5,8 @@ from pathlib import Path
 
 
 def load_model(config, device):
+    from train.src.agent import require_protocol
+    require_protocol(config)
     import torch
     from transformers import AutoModel
     path = Path(config['model_path']).resolve()
@@ -19,14 +21,19 @@ def load_model(config, device):
         attn_implementation=config['attention_backend'], init_tts=False, low_cpu_mem_usage=True).eval().to(device)
     model.requires_grad_(False)
     model.init_tts = lambda **kwargs: None
-    if config.get('agent_output_protocol', 'structured') == 'agent_token_v1':
+    if config['agent_output_protocol'] == 'agent_token_task_start_v1':
         from transformers import AutoTokenizer
         from train.src.token_rows import register_token
         tokenizer = AutoTokenizer.from_pretrained(str(alias), trust_remote_code=True)
         if '<|agent|>' not in tokenizer.get_vocab():
             model.agent_metadata = register_token(model, tokenizer, alias)
-        elif config.get('training_method', 'lora_sft') == 'lora_sft':
-            raise ValueError('Use the original base model for LoRA token registration')
+        else:
+            if config.get('training_method', 'lora_sft') == 'lora_sft':
+                raise ValueError('Use the original base model for LoRA token registration')
+            from benchmark.data.agent_token import full_model_identity
+            if not (path / 'full_training_model.json').is_file():
+                raise ValueError('Unversioned Agent weights are incompatible; use the original base or a new export')
+            full_model_identity(path)
         model.prepare_processor(tokenizer=tokenizer)
     duplex = model.as_duplex(generate_audio=False, sliding_window_mode='off')
     return model, duplex
@@ -74,10 +81,12 @@ def encode_record(record, model, duplex, config):
     from benchmark.data.timestamps import seconds
     from train.src.data import target_chunks
 
+    from train.src.agent import training_record
+    record = training_record(record)
     sample = record['sample']
     tokenizer = duplex.tokenizer
     target = target_chunks(record, tokenizer, config['max_speak_tokens_per_chunk'],
-                           protocol=config.get('agent_output_protocol', 'structured'))
+                           protocol=config['agent_output_protocol'])
     end = record['onset_seconds'] + len(target) - 1
     cache, metadata, audio = media_cache(Path(config['videos_dir']) / sample['video'], Path(config['media_cache']))
     if end > math.floor(metadata['duration']):

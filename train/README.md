@@ -4,7 +4,7 @@
 
 ## 数据范围与时序
 
-默认输出协议为 `agent_token_v1`；旧的外层 JSON 协议可通过配置 `agent_output_protocol: "structured"` 选择，旧协议的 `agent_prompt` 应指向 `benchmark/configs/prompts/agent_structured.txt`。
+训练只使用 `agent_token_task_start_v1`，不再支持外层 structured JSON 或旧七字段调用的训练分支。生成数据中的 `agent_call` 在训练入口只读转换为 `task_start`，仅保留非空 `instruction`；原始 JSON 不改写。三种训练配置使用同一适配、目标构造与奖励口径。
 
 第一版对每条 QA 只取最早一个可评分 response，从视频 0 秒开始保留完整上下文，到目标回复生成完毕结束。默认目标发声前缀最多 32 秒、总序列最多 8192 token；回复跨秒可能延长输入。超限报错或在准备阶段排除，绝不静默截掉历史或标签。
 
@@ -38,20 +38,20 @@ train/.venv/bin/pip install -r train/requirements.txt
 ```bash
 python -m train prepare \
   --data benchmark/results/full_omni_duplex_plus_groupa100_20261014T120412Z/inputs/all_qa.json \
-  --output train/prepared/pilot12 --max-samples 12
+  --output train/prepared/task_start_pilot12 --max-samples 12
 
 # 一条样本、一次真实前向 / 反向 / AdamW 更新；默认选择最短前缀
 CUDA_VISIBLE_DEVICES=6 python -m train profile \
-  --prepared train/prepared/pilot12 --output train/outputs/profile_short
+  --prepared train/prepared/task_start_pilot12 --output train/outputs/profile_short
 
 # 指定原始 sample_index 测量更长序列
 CUDA_VISIBLE_DEVICES=6 python -m train profile \
-  --prepared train/prepared/pilot12 --sample-index 118 \
+  --prepared train/prepared/task_start_pilot12 --sample-index 118 \
   --output train/outputs/profile_agent
 
 # 小规模训练，配置默认 2 epoch，累积 4 条序列再更新
 CUDA_VISIBLE_DEVICES=6 python -m train run \
-  --prepared train/prepared/pilot12 --output train/outputs/pilot12
+  --prepared train/prepared/task_start_pilot12 --output train/outputs/pilot12
 ```
 
 GPU 号只是示例，运行前选择空闲卡。所有命令在前台执行。`--max-steps 1` 可限制优化器更新次数。输出目录必须是新目录；当前 pilot 不支持恢复 optimizer 状态。准备时记录分组和排除原因，run 时不会改变视频划分。不要把用于训练的 QA 再作为独立 benchmark 测试集。
@@ -71,10 +71,10 @@ GPU 号只是示例，运行前选择空闲卡。所有命令在前台执行。`
 Agent 正样本目标为原生 speak token、自然语言回复、单个 `<|agent|>`、调用 JSON、原生 turn 结束标记：
 
 ```text
-<|speak|>我来查找替换配件。<|agent|>{"name":"agent_call","arguments":{"instruction":"查找……"}}<|turn_eos|>
+<|speak|>我来查找替换配件。<|agent|>{"name":"task_start","arguments":{"instruction":"查询视频中配件的可售替换选项。"}}<|turn_eos|>
 ```
 
-每次只支持一个调用，参数沿用 frontend schema。负样本直接自然语言拒绝或澄清并结束；RTD、PR 不使用 Agent 分隔符。调用内容可跨多个媒体 chunk，分隔符只出现一次；生成途中仍逐秒输入媒体。当前不执行工具，也不启用 TTS。
+每次只支持一个调用，唯一参数为非空字符串 `instruction`，不允许额外参数。简短指令应包含任务目标和必要的已观察事实；不再输出 observed_context、suggested_capabilities 或 extracted_parameters 等字段。澄清时自然语言回复，不输出分隔符；RTD、PR 不使用 Agent 分隔符。调用内容可跨多个媒体 chunk，分隔符只出现一次；生成途中仍逐秒输入媒体。当前不执行工具，也不启用 TTS。
 
 tokenizer 新增 `<|agent|>`，保留旧 token ID。本地基座中 token ID 为 151748，扩展词表为 151749；这些值由程序注册并记录，不能手工硬编码迁移。只训练新 token 的输入 / 输出两行 FP32 参数，旧词表行冻结。训练时重新嵌入所有分隔符位置，包括 system prompt 中的分隔符，防止预计算 embedding 阻断梯度。
 
@@ -88,17 +88,11 @@ model.eval()
 duplex = model.as_duplex(generate_audio=False)
 ```
 
-加载器检查协议、基座配置 / 分片索引指纹、旧词表 ID、新词表身份及向量形状，扩词表后恢复两行权重并合并 LoRA。旧结构化 JSON adapter 继续按旧方式加载，不能当 agent-token adapter 使用。
+加载器检查固定新协议、`agent_call_schema: "task-start"`、基座配置 / 分片索引指纹、旧词表 ID、新词表身份及向量形状，扩词表后恢复两行权重并合并 LoRA。旧 prepared 数据必须重新 prepare；旧 adapter、全模型导出和训练 checkpoint 不支持自动迁移，需要重新训练。`<|agent|>` 的字符串及旧词表 ID 保持不变，调用内容的协议单独升级。
 
-benchmark 原生推理示例：
+训练侧 rollout 和 GRPO 使用新的原生 token 解析器。当前正在运行的 benchmark 结构化 `task_start` 队列保持不变；benchmark CLI 原有 agent-token 入口仍有 legacy schema 限制，本次没有改动其运行协议文件，不能直接用该入口评测新训练导出。
 
-```bash
-CUDA_VISIBLE_DEVICES=6 python -m benchmark run minicpmo   --model-path /remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5   --lora-adapter train/outputs/agent_token_positive/adapter   --agent-output-protocol agent-token   --data /path/to/all_qa.json --sample-start 85 --max-samples 1   --max-seconds 16 --output-dir train/outputs/agent_token_inference
-```
-
-`parallel minicpmo` 同样支持这两个参数。协议、提示词、adapter 和 tokenizer 文件指纹参与缓存身份校验，需要新输出目录。`--agent-output-protocol agent-token` 必须同时提供完整 adapter。
-
-原生 `text` 返回会过滤 special token，因此新协议直接捕获生成 token ID，以 `<|agent|>` 切换状态。解析器跨秒保留状态，完整 turn 结束后才产生标准 `tool_calls`；半截 JSON、重复分隔符或非法调用不生成可执行调用，仍记录 `agent_attempted` 以计负样本误调用。文本回复为空时，以分隔符时间记录事件并单独标为空回复。
+原生 `text` 返回会过滤 special token，因此新协议直接捕获生成 token ID，以 `<|agent|>` 切换状态。解析器跨秒保留状态，完整 turn 结束后才产生标准 `tool_calls`；半截 JSON、重复分隔符或非法调用不生成可执行调用，仍记录 `agent_attempted` 以审计失败尝试。文本回复为空时，以分隔符时间记录事件并单独标为空回复。
 
 预测保留 `raw_generated_ids`、`response_text`、`agent_call_text`、标准 `tool_calls`、解析状态和调用起止时间。用户回复的首次内容时间继续用于现有窗口匹配，调用时间只是附加记录。Judge 直接复用分开的回复和调用，不需要再次让模型推断分隔位置。
 
@@ -128,7 +122,9 @@ python -m unittest discover -s train/tests
 
 测试包括因果时间点、缺失素材、跨秒标签完整性、视频隔离，以及微型模型上分块 loss 与完整词表 loss 一致和仅 LoRA 接收梯度。缺少 PyTorch / PEFT 的环境会跳过梯度测试。
 
-## agent_token_v1 实测（A100 80GB）
+## 历史 agent_token_v1 实测（A100 80GB）
+
+以下是旧调用协议的历史显存与梯度验证，不代表新 task_start 协议已经执行 GPU 训练；旧权重不用于新协议。
 
 采用 rank=16、batch=1、FlashAttention 2、gradient checkpointing，仅训练 LoRA 和新增 token 两行。以下均完成一次前向、反向及 AdamW 更新；是链路验证，不是完整训练效果。
 

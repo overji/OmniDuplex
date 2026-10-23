@@ -16,6 +16,8 @@ class CliTests(unittest.TestCase):
             command = ['run', model, '--model-path', '/models/example']
             if model in ('mmduet2', 'livestar'):
                 command += ['--official-code', '/code']
+            if model == 'gander':
+                command += ['--base-model-path', '/models/base', '--official-code', '/code']
             if model == 'roma':
                 command += ['--roma-code', '/code']
             args = parser.parse_args(command)

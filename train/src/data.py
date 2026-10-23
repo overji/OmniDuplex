@@ -8,6 +8,7 @@ from pathlib import Path
 
 from benchmark.data.timestamps import seconds
 from benchmark.evaluation.timing import reference_windows
+from train.src.agent import training_sample, training_record, require_protocol, PROTOCOL
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -17,8 +18,7 @@ def load_config(path):
     method = config.setdefault('training_method', 'lora_sft')
     if method not in ('lora_sft', 'full_sft', 'full_grpo'):
         raise ValueError('Unsupported training_method')
-    if config.get('agent_output_protocol', 'structured') not in ('structured', 'agent_token_v1'):
-        raise ValueError('Unsupported training output protocol')
+    require_protocol(config)
     for key in ('model_path', 'videos_dir', 'media_cache', 'system_prompt', 'agent_prompt'):
         p = Path(config[key]).expanduser()
         config[key] = str(p if p.is_absolute() else ROOT / p)
@@ -36,8 +36,6 @@ def load_config(path):
             raise ValueError('GRPO requires group_size >= 2 and kl_beta=0 in this implementation')
         if config.get('temperature', 1.) != 1.:
             raise ValueError('Native two-stage GRPO replay currently requires temperature=1')
-        if config.get('agent_output_protocol') != 'agent_token_v1':
-            raise ValueError('GRPO requires agent_token_v1')
         if not 0 < config.get('clip_epsilon', .2) < 1 or config.get('replay_logprob_tolerance', .15) <= 0:
             raise ValueError('Invalid GRPO clip or replay tolerance')
     if method != 'lora_sft' and not config.get('deepspeed_config'):
@@ -46,6 +44,7 @@ def load_config(path):
 
 
 def first_record(sample, index, config):
+    sample = training_sample(sample)
     refs = reference_windows(sample)
     if not refs:
         return None, 'no_scored_window'
@@ -111,7 +110,7 @@ def prepare(data, output, config, max_samples, validation_fraction):
     output.mkdir(parents=True)
     for split, records in selected.items():
         (output / f'{split}.json').write_text(json.dumps(records, ensure_ascii=False, indent=2))
-    manifest = {'source': str(data.resolve()), 'source_sha256': hashlib.sha256(data.read_bytes()).hexdigest(),
+    manifest = {'protocol': PROTOCOL, 'source': str(data.resolve()), 'source_sha256': hashlib.sha256(data.read_bytes()).hexdigest(),
         'config': config, 'counts': {s: len(r) for s, r in selected.items()}, 'skipped': dict(skipped),
         'videos': {s: sorted({r['sample']['video'] for r in rows}) for s, rows in selected.items()},
         'scope': ('All scored windows within full rollout horizon. No tool results.'
@@ -121,35 +120,30 @@ def prepare(data, output, config, max_samples, validation_fraction):
     print(json.dumps({k: manifest[k] for k in ('counts', 'skipped', 'scope')}, indent=2))
 
 
-def target_chunks(record, tokenizer, budget, *, protocol='structured'):
+def target_chunks(record, tokenizer, budget, *, protocol=PROTOCOL):
     """Teacher-forced text with native speak/turn/chunk markers, split across seconds."""
+    require_protocol({'agent_output_protocol': protocol})
+    record = training_record(record)
     reference, sample = record['reference'], record['sample']
     encode = lambda text: tokenizer.encode(text, add_special_tokens=False)
     if sample['mode'] == 'agent':
         calls = reference.get('tool_calls') or []
         kind = sample.get('sample_type', sample.get('generation_context', {}).get('sample_type'))
-        if protocol == 'agent_token_v1' and kind in ('missing_tool', 'no_context') and calls:
+        if kind in ('missing_tool', 'no_context') and calls:
             raise ValueError('Negative Agent reference must not contain a tool call')
         calls = json.loads(json.dumps(calls))
         for call in calls:
             args = call['function'].get('arguments')
             if isinstance(args, str):
                 call['function']['arguments'] = json.loads(args)
-        if protocol == 'agent_token_v1':
-            from benchmark.data.agent_token import TOKEN
-            parts = [(encode(reference['response']), 2)]
-            if calls:
-                if len(calls) != 1 or calls[0]['function'].get('name') != 'agent_call':
-                    raise ValueError('agent_token_v1 supports exactly one agent_call')
-                token_id = tokenizer.convert_tokens_to_ids(TOKEN)
-                if encode(TOKEN) != [token_id] or TOKEN not in tokenizer.get_vocab():
-                    raise ValueError('Missing atomic Agent token')
-                parts.extend([([token_id], 1),
-                              (encode(json.dumps(calls[0]['function'], ensure_ascii=False)), 3)])
-        else:
-            response_text = json.dumps(reference['response'], ensure_ascii=False)
-            parts = [(encode('{"response": ' + response_text + ', "tool_calls": '), 2),
-                 (encode(json.dumps(calls, ensure_ascii=False)), 3), (encode('}'), 2)]
+        from benchmark.data.agent_token import TOKEN
+        parts = [(encode(reference['response']), 2)]
+        if calls:
+            token_id = tokenizer.convert_tokens_to_ids(TOKEN)
+            if encode(TOKEN) != [token_id] or TOKEN not in tokenizer.get_vocab():
+                raise ValueError('Missing atomic Agent token')
+            parts.extend([([token_id], 1),
+                          (encode(json.dumps(calls[0]['function'], ensure_ascii=False)), 3)])
     else:
         parts = [(encode(reference['response']), 2)]
     body = [(token, group) for tokens, group in parts for token in tokens]

@@ -14,7 +14,7 @@ def is_scored_response(sample, response):
     if kind in {"missing_tool", "no_context"}:
         return True
     return response.get("role") == "assistant" and any(
-        isinstance(call, dict) and (call.get("function") or {}).get("name") == "agent_call"
+        isinstance(call, dict) and (call.get("function") or {}).get("name") in {"agent_call", "task_start"}
         for call in (response.get("tool_calls") or []))
 
 

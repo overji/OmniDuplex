@@ -5,6 +5,177 @@ endpoint 与运行命令见[云端 Realtime 配置](#云端-realtimeqwen35-omni-
 普通 Qwen3-Omni / Qwen2.5-Omni 的前缀二分类评测见
 [Probe 模式](#probe-模式普通-omni-llm-的回复决策评测)。
 
+## 全量数据集与闭源 Realtime 快速开始
+
+公开数据集：[overji/OmniInteractionBench](https://modelscope.cn/datasets/overji/OmniInteractionBench)。
+2026-10-21 发布版本包含 **2,107 条 QA、852 个视频**（RTD 706 / PR 678 / Agent 723），
+视频约 17.67 GiB。由最新 2,110 条合并数据剔除缺失的 `video_103.mp4` 及其 3 条 QA 得到，
+没有额外去重、修改参考回复或调整评分窗口。所有保留 QA 的相对视频路径保持不变。
+这份全量数据与下文历史小样本数据、2026-10-16 的 194 条实验结果是不同版本。
+
+### 1. 下载数据和代码
+
+以下命令在当前 OmniDuplex 仓库根目录执行。ModelScope 数据集同时携带可独立运行的
+`benchmark/` 代码及最小工具定义依赖；首次使用者可在下载完成后切换到下载目录运行。
+
+```bash
+python3 -m venv /tmp/omniinteraction-download-env
+/tmp/omniinteraction-download-env/bin/python -m pip install 'modelscope-hub==0.4.6'
+export BENCH_ROOT=/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionBench
+
+# 公开仓库下载无需 token。清除环境代理，通过直连拉取。
+env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
+    -u http_proxy -u https_proxy -u all_proxy \
+  /tmp/omniinteraction-download-env/bin/ms-hub download overji/OmniInteractionBench \
+    --repo-type dataset --local-dir "$BENCH_ROOT"
+
+export BENCH_DATA="$BENCH_ROOT/all_qa.json"
+export BENCH_VIDEOS="$BENCH_ROOT/videos"
+# 如果使用下载包内的代码：
+cd "$BENCH_ROOT"
+sha256sum -c checksums.sha256
+```
+
+下载目录中 `all_qa.json` 为发布标注；`videos/` 包含全部被引用视频，保留 `A/videos/`、
+`B/videos/` 和平铺路径；`manifest.json`、`excluded_samples.json` 和 `video_manifest.json`
+记录来源、剔除记录、视频大小和 SHA-256。`benchmark/all_qa.json` 是发布标注的同内容副本，
+只在下载包中替换默认数据，当前开发仓库的历史默认数据不自动改写。
+
+### 2. 安装 CPU 运行环境并配置密钥
+
+Python 3.10+；系统需安装 FFmpeg（含 `ffprobe`）和 libsndfile。
+
+```bash
+python3 -m venv benchmark/.venv-realtime
+source benchmark/.venv-realtime/bin/activate
+python -m pip install -r benchmark/requirements-realtime.txt
+ffmpeg -version
+ffprobe -version
+
+export DASHSCOPE_API_KEY='YOUR_DASHSCOPE_API_KEY'
+export DASHSCOPE_REALTIME_URL='wss://YOUR_WORKSPACE_ID.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime'
+export GEMINI_API_KEY='YOUR_GEMINI_API_KEY'
+```
+
+Qwen 的 Workspace ID、密钥与 endpoint 必须属于相同地区。新加坡 endpoint 为
+`wss://YOUR_WORKSPACE_ID.ap-southeast-1.maas.aliyuncs.com/api-ws/v1/realtime`。
+Realtime adapter **只读取进程环境，不自动加载 `.env`**。若自行创建仅含可信 shell
+赋值语句的 `.env`，可用 `set -a; source .env; set +a` 导出变量；不要提交真实密钥。
+ModelScope token 用于仓库上传认证，不是模型推理 API key，也不需要写入下载包。
+
+### 3. 运行三个闭源 Realtime 模型
+
+从包含 `benchmark/` 的目录执行，三个模型各使用独立结果目录。以下为当前代码配置的模型 ID；
+云端 adapter 尚未完成真实 API 联调，账号需具备相应模型权限。接口不可用时直接报错，
+不会自动替换模型；可以通过 `--model` 显式指定账号实际支持的 ID。
+
+```bash
+python -m benchmark run qwen_realtime \
+  --model qwen3.5-omni-plus-realtime \
+  --data "$BENCH_DATA" --videos-dir "$BENCH_VIDEOS" \
+  --output-dir benchmark/results/qwen35_omni_plus_realtime_full
+
+python -m benchmark run qwen_realtime \
+  --model qwen3.5-omni-flash-realtime \
+  --data "$BENCH_DATA" --videos-dir "$BENCH_VIDEOS" \
+  --output-dir benchmark/results/qwen35_omni_flash_realtime_full
+
+python -m benchmark run gemini_live \
+  --model gemini-2.5-flash-native-audio-preview-12-2025 \
+  --data "$BENCH_DATA" --videos-dir "$BENCH_VIDEOS" \
+  --output-dir benchmark/results/gemini25_flash_live_full
+
+python -m benchmark compare \
+  benchmark/results/qwen35_omni_plus_realtime_full \
+  benchmark/results/qwen35_omni_flash_realtime_full \
+  benchmark/results/gemini25_flash_live_full \
+  --output benchmark/results/realtime_full_comparison
+```
+
+命令以前台方式运行；全量运行不要设置 `--max-samples` 或 `--max-seconds`。
+重复相同命令会跳过已保存预测，未完成且未保存预测的 QA 从头开始；
+改变数据、配置或模型需另选结果目录。输出包括 `predictions.jsonl`、`metrics.json`、
+实际提示词及原始 realtime 事件。截短运行会标记 partial，不能作为全量结果。
+运行协议为逐秒手动分轮，输入不快于 1 FPS；该设置不是原生 VAD 连续发声评测。
+详细输入、Agent 调用和时间评分口径见下方云端 Realtime 章节。
+
+### 4. 可选：DeepSeek 内容评分
+
+推理完成后再运行独立 judge；该步骤会向 DeepSeek 发送问题、参考标注及模型回复，不上传视频。
+使用进程环境中的 DeepSeek key；不要复用其他平台的 `OPENAI_API_KEY`。
+
+```bash
+export OPENAI_API_KEY='YOUR_DEEPSEEK_API_KEY'
+python -m benchmark judge \
+  benchmark/results/qwen35_omni_plus_realtime_full \
+  benchmark/results/qwen35_omni_flash_realtime_full \
+  benchmark/results/gemini25_flash_live_full \
+  --data "$BENCH_DATA" --output-dir benchmark/results/realtime_full_judge \
+  --provider openai --model deepseek-flash --base-url https://api.deepseek.com
+```
+
+内容原始分数为 0–2，除以 2 可归一化为 0–1；全窗口内容均分将未命中记零。
+API 失败不记零，汇总显示 incomplete；重复原命令仅补跑失败记录。
+
+### 5. 三个模型运行完成后，需要交回什么
+
+请把以下产物打包为 **`realtime_full_submission.tar.gz`** 交回，用于复算时间指标、
+运行内容 judge 和排查异常。三个模型分别保留完整结果目录，不要只交最终分数截图。
+
+| 交付内容 | 文件 / 目录 | 用途 |
+| --- | --- | --- |
+| 三个模型的完整结果目录（必需） | `benchmark/results/qwen35_omni_plus_realtime_full/`、`qwen35_omni_flash_realtime_full/`、`gemini25_flash_live_full/` | 保留下表所列逐样本预测、配置、提示词和原始事件 |
+| 时间指标比较表（必需） | `benchmark/results/realtime_full_comparison.csv`、`.md` | 由第 3 步 `compare` 命令生成 |
+| 实际使用的标注和发布清单（必需） | 下方命令复制为 `realtime_full_all_qa.json`、`realtime_full_dataset_manifest.json` | 确认数据版本与样本索引，后续按同一份标注复算 |
+| 内容评分目录（做了第 4 步时交回） | `benchmark/results/realtime_full_judge/` | 包含逐条 judgments、judge 配置、指标、报告、API 用量和模型比较表 |
+| 异常信息（有异常时交回） | 手动保存的报错文本或终端日志 | 说明模型名、未完成进度、报错；不要包含真实 API key |
+
+每个模型的结果目录内，至少要保留：
+
+| 文件 | 内容 |
+| --- | --- |
+| `predictions.jsonl` | 每条 QA 的 `sample_index`、完成状态、回复文本、回复时间等；内容 judge 和复算必须使用 |
+| `metrics.json` | 当前总体、交互类型、能力分类与逐样本时间指标 |
+| `run_config.json` | 实际模型 ID、endpoint、数据/提示词哈希及运行参数；只记录密钥变量名 |
+| `sample_system_prompts.jsonl` | 实际输入的系统提示词；续跑时可能有同一 QA 的多次记录，保留即可 |
+| `sample_*.realtime.jsonl` | 各 QA 的逐秒输入时间、输出文本/转写、协议事件与 API 返回用量（若有）；原样保留 |
+
+**完整结果判据：** 每个模型的 `predictions.jsonl` 应包含 **2,107 条**预测，
+`sample_index` 为不重复的 `0–2106`，所有 `status` 都为 `complete`；
+`metrics.json` 的 `evaluated_samples` 和 `total_benchmark_samples` 均为 **2107**。
+`run_config.json` 的 `data_sha256` 应与实际标注的 SHA-256 一致，
+全量命令的 `max_samples`、`max_seconds` 均为 0。
+没有回复（`events: []`）也是有效预测，不能删掉或用参考答案补写。
+仅看分数或 JSONL 行数不足以确认跑完：截短样本可能也已写入预测，因此必须检查完成状态。
+
+如果中途失败，先重复原命令续跑；若暂时无法完成，也可以交回现有目录并标明未完成，
+不要把 partial 或缺失样本的结果作为完整评分。内容 judge 是可选步骤，未运行时交回三个
+模型的预测及配套文件即可，后续可以据此补做内容评分。
+
+从包含 `benchmark/` 的目录执行以下打包命令；运行前确认第 3 步比较表已生成：
+
+```bash
+cp "$BENCH_DATA" benchmark/results/realtime_full_all_qa.json
+cp "$BENCH_ROOT/manifest.json" benchmark/results/realtime_full_dataset_manifest.json
+
+set -- \
+  benchmark/results/qwen35_omni_plus_realtime_full \
+  benchmark/results/qwen35_omni_flash_realtime_full \
+  benchmark/results/gemini25_flash_live_full \
+  benchmark/results/realtime_full_comparison.csv \
+  benchmark/results/realtime_full_comparison.md \
+  benchmark/results/realtime_full_all_qa.json \
+  benchmark/results/realtime_full_dataset_manifest.json
+if [ -d benchmark/results/realtime_full_judge ]; then
+  set -- "$@" benchmark/results/realtime_full_judge
+fi
+tar -czf benchmark/results/realtime_full_submission.tar.gz "$@"
+```
+
+最终交回 **`benchmark/results/realtime_full_submission.tar.gz`**。
+若有额外报错日志，请一并提供并标明对应模型。无需重复打包原始视频、媒体缓存或虚拟环境；
+不要打包 `.env`、API key 或 ModelScope token。
+
 ## Code structure and commands
 
 Run commands from the repository root with the appropriate model's Python environment.
@@ -63,11 +234,13 @@ Recorded partial predictions continue to count as completed for resume, and
 their metrics still use the sample's full reference windows. Interrupted samples
 without a prediction restart and may append another prompt-log entry.
 
-Current data: `all_qa.json`, derived from
+The working checkout currently defaults to 33 positive-only QA; the following counts describe the earlier 44-QA snapshot, not the full release.
+
+Historical default data: `all_qa.json`, derived from
 `data_generation/data/qwen3.8_omni_flash_44/all_qa.json` with an explicit Agent-window
 migration. `configs/manifests/data_manifest.json` records the source hash, current
-hash, backup and migration ledger. There are 44 samples, 189 reference responses,
-and 173 responses with timing windows. Benchmark scoring uses 157 of those windows:
+hash, backup and migration ledger. The original snapshot contained 44 samples, 189 reference responses,
+and 173 responses with timing windows. Its historical scoring used 157 of those windows:
 Agent positives score only assistant responses calling `agent_call`; tool results
 and completion replies are excluded, even when they have windows. Their full
 traces remain in the data, but neither tools nor reference assistant text are
@@ -660,3 +833,121 @@ paired accuracy 要求一对两侧均正确，只在完整配对上计算，同�
 推理失败属于未完成覆盖，不伪装成模型的 NO。
 Precision/recall/F1 仅基于可解析的已完成结果，并同时报告 parse coverage、invalid rate、
 失败数；结果按 `mode` 和 `ability` 汇总。该结果不交给在线 timing scorer 或内容 judge 混合计分。
+
+## 完整 2110 条数据：本轮模型准备（尚未启动推理）
+
+本轮配置集中在 `configs/suites/full_2110.json`。Realtime 包含 Gander、
+JoyAI-VL-Interaction、MiniCPM-o-4.5、LiveStar；probe 包含
+Qwen3-Omni-30B-A3B-Instruct、Qwen2.5-Omni-7B、MiniCPM-o-4.5、
+Ming-Lite-Omni-1.5、Qwen3-VL-8B-Instruct、Baichuan-Omni-1.5、HumanOmniV2、OmniVinci。
+没有安排 MMDuet2。
+
+```bash
+# 下载 Gander / Ming 官方源码（不走代理），然后创建隔离环境、安装依赖。
+# 不加载模型、不启动服务。
+bash benchmark/scripts/fetch_native_sources.sh
+bash benchmark/scripts/prepare_environments.sh
+
+# CPU 文件/模型类导入检查、视频路径解析、probe 配对清单；不会推理。
+python -m benchmark prepare --suite benchmark/configs/suites/full_2110.json
+```
+
+准备产物位于 `benchmark/probes/full_2110/`：`preparation_report.md/json`、
+`run_commands.json`、`videos/` 别名以及 `probe/probe_manifest.jsonl`。
+`run_commands.json` 只保存后续命令，不会自动执行；启动时必须另行指定 GPU 分配。
+JoyAI 命令需要在正式启动阶段通过已有 `parallel joyai --joyai-services` 流程管理
+原生 main/summary/adapter 服务。准备阶段不启动这些服务。
+
+Probe 沿用已有规则：负前缀截至 `window_start−1s`，正前缀截至 `window_end`。
+Qwen3-VL 只输入视频；其余模型按实际音轨输入音视频。每个 pre/post 请求独立，
+使用原问题与既往已处理次数，输出 YES/NO；没有参考回复、目标窗口或标签输入模型。
+超出上下文或处理器降低完整前缀的采样覆盖时记录失败，不截去视频开头来完成评测。
+新增原生 adapter 按模型自己的空间处理器编码视频；Qwen 和 MiniCPM/Baichuan
+使用配置中的像素预算，OmniVinci 保留原生视觉处理器，不能把各模型的视觉 token 数视为相同。
+
+准备时保留源 JSON，并为 `A/videos/...`、`B/videos/...` 和可由 metadata 识别的旧名称
+创建只读素材别名。缺失素材及被排除的 probe 配对写入报告，不补回外部视频。
+
+Gander 使用官方 `mcpmft.infer.online.OnlineRunner`，Thinker 每秒 8 个词汇 token、
+11 个含控制标记的解码预算。时间评测收集 Thinker 文本，不运行 Talker 语音合成。
+Ming 固定使用官方 `v1.5` 源码；`prepare_ming_text.py` 将语音输出模块改为按需导入，
+probe 关闭 Talker/image generation，但保留音频输入编码器。其源码变更记录在
+缓存中的 `text_probe_patch.json`。OmniVinci 环境按官方要求应用其 Transformers 补丁，
+只修改隔离环境。Ming、Baichuan、OmniVinci 默认使用原生支持的 eager attention，
+其余 probe 配置沿用 SDPA。这些配置的 GPU 推理尚未验证，待明确启动后再检查。
+
+Gander 权重安装在 `/remote-home/yushengliao/speech/jimodels/openmodels/Gander`。
+下载时清除所有代理变量，允许使用镜像站：
+
+```bash
+env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY \
+    -u http_proxy -u https_proxy -u all_proxy \
+    HF_ENDPOINT=https://hf-mirror.com HF_HUB_DISABLE_XET=1 \
+    hf download Gander-Omni/Gander \
+      --revision 24fc4cc8543f95daf99be53b6199403a7732688f \
+      --local-dir /remote-home/yushengliao/speech/jimodels/openmodels/Gander
+```
+
+Gander 与 Ming 原生源码位于忽略的 `benchmark/cache/official/`；隔离环境位于
+`benchmark/.venv-*`，均不加入 Git。安装脚本在源码缺失时明确报错，不下载错误版本。
+
+### 2026-10-22 修复后补跑
+
+前缀编码使用 FFmpeg 4.4 支持的 `-vsync 0`，保持原采样和截断边界。
+JSON 产物显式按 UTF-8 保存。Gander 复用原生 OnlineRunner，在每条视频开始时
+通过原生 `prepare()` 重置会话；没有额外启用滑窗或丢弃历史。
+Ming 从官方源码目录加载音频处理资源；Qwen3-VL 显式传递原视频 FPS 和采样帧索引。
+Baichuan 使用 checkpoint 自带的 chat template，本轮显式设置
+`--attention-query-chunk-size 512` 分块计算原生 eager attention，保留完整键值和因果掩码。
+该选项默认仍为 0，并记录在 probe 配置中。
+
+JoyAI 服务使用 `benchmark/.venv-joyai`，固定 vLLM 0.19.1 / CUDA 12.8，
+避免 CUDA 13 超出当前驱动支持范围；不修改系统驱动。
+安装该环境需要 `uv`，可运行 `bash benchmark/scripts/prepare_environments.sh joyai`。
+
+补跑命令（前台监督；需要后台运行时由调用者显式安排）：
+
+```bash
+benchmark/.venv/bin/python benchmark/scripts/run_prepared_suite.py \
+  --commands benchmark/probes/full_2110/run_commands.json \
+  --gpus 0 1 2 3 6 7 \
+  --output-dir benchmark/results/full_2110_dp6_repair_20261022 \
+  --reuse-root benchmark/results/full_2110_dp6_20261021 \
+  --joyai-services benchmark/probes/full_2110/joyai_services.json
+```
+
+`--reuse-root` 复用已完成的 realtime 运行，并按原计划续跑已有分片。
+Probe 使用新结果目录，避免混用修复前后的实现。新目录内的 `suite_status.json`
+和 `suite.log` 记录队列状态；被复用模型的具体预测仍保存在原目录中。
+
+### Agent 工具协议重评
+
+2026-10-22 的协议审查、模型差异、验证限制和 Agent-only 重评命令见
+[工具调用协议审查](docs/agent_protocol_audit_20261022.md)。
+新 Agent 结果与之前 timing-only 结果分开保存，不把“按时说会调用”计为有效工具调用。
+
+### 简化 Agent 调用（2026-10-23）
+
+Benchmark 默认使用 `--agent-call-schema task-start`：仅暴露
+`task_start({"instruction":"一句简短、明确的后台任务"})`。这是评测自定义 schema，
+不同于 Gander 官方 `task_start(name)`。保留 available 后端能力列表及权限限制，
+模型无需再输出七字段参数。Gander 仍走原生 `<tool_call>`，其他模型沿用所选文本/structured 通道。
+
+原始 QA、生成器和训练协议不变；运行时将旧参考调用的 instruction 转成评测视图。
+`judge` 从结果配置识别 schema，旧目录默认 legacy，不要求新调用输出旧字段。
+需要原协议时显式传 `--agent-call-schema legacy`；训练权重的 `--agent-output-protocol agent-token`
+也必须搭配 legacy。新旧 Agent 结果使用不同目录，不能互相断点续用。
+
+```bash
+benchmark/.venv/bin/python benchmark/scripts/run_agent_recheck.py \
+  --commands benchmark/probes/full_2110/run_commands.json \
+  --output-dir benchmark/results/agent_task_start_v1_20261023 \
+  --agent-call-schema task-start --max-tool-tokens 1024 \
+  --gpus 0 1 2 3 6 7
+```
+
+添加 `--dry-run` 仅写入计划，不启动推理。当前安排是 Agent 重评后自动补齐全量队列，
+状态目录分别为 `results/agent_task_start_v1_20261023` 和
+`results/full_2110_dp6_after_task_start_20261023`。
+调用统计区分语法可解析与 schema 合法；简化协议不再统计模型输出的 suggested_capabilities
+或 extracted_parameters。语义正确性仍需另外运行内容 judge，工具不会实际执行。

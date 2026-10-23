@@ -117,8 +117,14 @@ class QwenSession:
                                    for part in item.get('content', []))
                     if text and first is None:
                         first = time.perf_counter()
-                return {'text': text, 'usage': response.get('usage'),
-                        'first_output_monotonic': first}
+                calls = [{'type': 'function', 'function': {'name': item.get('name'),
+                          'arguments': item.get('arguments')}} for item in response.get('output', [])
+                         if item.get('type') == 'function_call']
+                result = {'text': text, 'usage': response.get('usage'),
+                          'first_output_monotonic': first}
+                if calls:
+                    result['tool_calls'] = calls
+                return result
 
     async def close(self):
         if self.ws is not None:

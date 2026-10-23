@@ -1,0 +1,159 @@
+{
+  "name": "full_2110",
+  "data": "benchmark/results/full_omni_duplex_plus_ab_gemini37_20261021/inputs/all_qa.json",
+  "videos_dir": "videos",
+  "video_metadata": "videos/video_metadata.json",
+  "model_root": "/remote-home/yushengliao/speech/jimodels/openmodels",
+  "models": [
+    {
+      "mode": "realtime",
+      "adapter": "gander",
+      "checkpoint": "Gander",
+      "python": "benchmark/.venv-gander/bin/python",
+      "official_code": "benchmark/cache/official/Omni-Interaction-Agent-main",
+      "arguments": {
+        "base-model-path": "/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5"
+      },
+      "modules": [
+        "torch",
+        "transformers",
+        "mcpmft.infer.online",
+        "mcpmft.infer.common"
+      ]
+    },
+    {
+      "mode": "realtime",
+      "adapter": "joyai",
+      "checkpoint": "JoyAI-VL-Interaction",
+      "python": "benchmark/.venv/bin/python",
+      "official_code": "/tmp/OmniDuplex-JoyAI",
+      "modules": [
+        "requests"
+      ],
+      "service_required": true,
+      "service_python": "benchmark/.venv-joyai/bin/python",
+      "service_modules": [
+        "vllm"
+      ]
+    },
+    {
+      "mode": "realtime",
+      "adapter": "minicpmo",
+      "checkpoint": "MiniCPM-o-4.5",
+      "python": "benchmark/.venv/bin/python",
+      "modules": [
+        "torch",
+        "transformers"
+      ]
+    },
+    {
+      "mode": "realtime",
+      "adapter": "livestar",
+      "checkpoint": "LiveStar-8B",
+      "python": "/tmp/livestar-benchmark-venv/bin/python",
+      "official_code": "/tmp/OmniDuplex-LiveStar",
+      "modules": [
+        "torch",
+        "transformers"
+      ]
+    },
+    {
+      "mode": "probe",
+      "adapter": "qwen3_omni",
+      "checkpoint": "/remote-home/yushengliao/ziyangcheng/openmodels/Qwen3-Omni-30B-A3B-Instruct",
+      "python": "benchmark/.venv-probe/bin/python",
+      "modules": [
+        "torch",
+        "transformers:Qwen3OmniMoeForConditionalGeneration",
+        "qwen_omni_utils"
+      ]
+    },
+    {
+      "mode": "probe",
+      "adapter": "qwen25_omni",
+      "checkpoint": "Qwen2.5-Omni-7B",
+      "python": "benchmark/.venv-probe/bin/python",
+      "modules": [
+        "torch",
+        "transformers:Qwen2_5OmniForConditionalGeneration",
+        "qwen_omni_utils"
+      ]
+    },
+    {
+      "mode": "probe",
+      "adapter": "minicpmo",
+      "checkpoint": "MiniCPM-o-4.5",
+      "python": "benchmark/.venv/bin/python",
+      "modules": [
+        "torch",
+        "transformers",
+        "decord",
+        "soundfile"
+      ]
+    },
+    {
+      "mode": "probe",
+      "adapter": "ming_omni",
+      "checkpoint": "Ming-Lite-Omni-1.5",
+      "python": "benchmark/.venv-ming/bin/python",
+      "official_code": "benchmark/cache/official/Ming",
+      "modules": [
+        "torch",
+        "transformers",
+        "modeling_bailingmm:BailingMMNativeForConditionalGeneration"
+      ]
+    },
+    {
+      "mode": "probe",
+      "adapter": "qwen3_vl",
+      "checkpoint": "Qwen3-VL-8B-Instruct",
+      "python": "benchmark/.venv-probe/bin/python",
+      "modules": [
+        "torch",
+        "transformers:Qwen3VLForConditionalGeneration",
+        "qwen_vl_utils"
+      ]
+    },
+    {
+      "mode": "probe",
+      "adapter": "baichuan_omni",
+      "checkpoint": "Baichuan-Omni-1.5",
+      "python": "benchmark/.venv-baichuan/bin/python",
+      "modules": [
+        "torch",
+        "transformers",
+        "easydict",
+        "ujson",
+        "decord"
+      ],
+      "class_reference": "modeling_omni.OmniForCausalLM",
+      "arguments": {
+        "attention-query-chunk-size": 512
+      }
+    },
+    {
+      "mode": "probe",
+      "adapter": "humanomni_v2",
+      "checkpoint": "HumanOmniV2",
+      "python": "benchmark/.venv-probe/bin/python",
+      "modules": [
+        "torch",
+        "transformers:Qwen2_5OmniThinkerForConditionalGeneration",
+        "qwen_omni_utils"
+      ]
+    },
+    {
+      "mode": "probe",
+      "adapter": "omnivinci",
+      "checkpoint": "omnivinci",
+      "python": "benchmark/.venv-omnivinci/bin/python",
+      "modules": [
+        "torch",
+        "transformers",
+        "whisper",
+        "timm"
+      ],
+      "class_reference": "modeling_vila.VILAForCausalLM"
+    }
+  ]
+}

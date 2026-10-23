@@ -20,7 +20,8 @@ class SequenceTooLong(ValueError):
 
 
 def system_prompt(record, config):
-    sample = record['sample']
+    from train.src.agent import training_sample
+    sample = training_sample(record['sample'])
     prompt = build_system_prompt(Path(config['system_prompt']).read_text(), sample)
     if sample['mode'] == 'agent':
         prompt += '\n\n' + Path(config['agent_prompt']).read_text()
@@ -130,7 +131,7 @@ def replay(model, duplex, record, clip, config, trajectory=None):
         prompt = '<|im_start|>system\n' + system_prompt(record, config) + '<|im_end|>'
         append(duplex.tokenizer.encode(prompt, add_special_tokens=False))
         targets = None if trajectory is not None else target_chunks(record, duplex.tokenizer,
-            config['max_speak_tokens_per_chunk'], protocol=config.get('agent_output_protocol', 'structured'))
+            config['max_speak_tokens_per_chunk'], protocol=config['agent_output_protocol'])
         sent = False
         with clip.preprocessing_cache(duplex.processor):
             for i, inputs in enumerate(clip.chunks):

@@ -57,6 +57,8 @@ def save(engine, path, epoch, cursor, identity, config, duplex, rank):
 
 
 def run(args, config):
+    from train.src.agent import validate_prepared
+    validate_prepared(json.loads((args.prepared / 'manifest.json').read_text()), config)
     import deepspeed
     from transformers import set_seed
     from train.src.model import load_model
@@ -337,6 +339,8 @@ def export_checkpoint(checkpoint, output):
     if output.exists():
         raise ValueError('Use a fresh export directory')
     config = json.loads((checkpoint / 'training_config.json').read_text())
+    from train.src.agent import require_protocol
+    require_protocol(config)
     # Load on CPU; exporting an optimizer checkpoint needs substantial host RAM.
     from train.src.model import model_alias
     alias = model_alias(config)
@@ -372,6 +376,8 @@ def finalize_export(output, checkpoint, config, tokenizer):
     for file in runtime_files:
         shutil.copy2(file, output / file.name)
         runtime_hashes[file.name] = hashlib.sha256((output / file.name).read_bytes()).hexdigest()
-    write_json(output / 'full_training_model.json', dict(protocol=config['agent_output_protocol'],
+    from train.src.agent import require_protocol
+    require_protocol(config)
+    write_json(output / 'full_training_model.json', dict(protocol=config['agent_output_protocol'], agent_call_schema='task-start',
         export_id=str(uuid.uuid4()), tokenizer_sha256=tokenizer_identity(tokenizer),
         files=base_identity(output), runtime_files=runtime_hashes, source_checkpoint=str(checkpoint.resolve())))

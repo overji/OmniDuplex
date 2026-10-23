@@ -46,6 +46,9 @@ def call_score(actual, expected):
 
 
 def reward(sample, events, config):
+    from train.src.agent import training_sample
+    from benchmark.data.agent_schema import validate_task_start
+    sample = training_sample(sample)
     matched = match_windows(sample, events)
     n = max(matched['windows'], 1)
     timing = 2 * matched['hits'] / max(matched['windows'] + len(events), 1)
@@ -61,7 +64,7 @@ def reward(sample, events, config):
             content += text_f1(event['response'], ref.get('response', ref.get('text', ref.get('content', '')))) / n
             if negative:
                 calls += float(not any_attempt) / n
-        if not negative and event['status'] == 'structured':
+        if not negative and event['status'] == 'structured' and all(validate_task_start(c) for c in event['calls']):
             calls += call_score(event['calls'], ref.get('tool_calls', [])) / n
     invalid = sum(e.get('agent_parse_status') in ('malformed', 'truncated', 'duplicate_separator') for e in events)
     weights = config.get('reward_weights', {})

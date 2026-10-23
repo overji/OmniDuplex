@@ -1,8 +1,0 @@
-{
-  "changes": [
-    "Removed redundant annotations exactly duplicated in positive response evidence and details.",
-    "responses[0]: copied authoritative backend status into missing final outcome.",
-    "responses[1]: copied authoritative backend status into missing final outcome."
-  ],
-  "scope": "No substantive observations, timing, question, tool actions, or backend claims edited."
-}

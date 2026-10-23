@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 TOKEN = '<|agent|>'
-PROTOCOL = 'agent_token_v1'
+PROTOCOL = 'agent_token_task_start_v1'
 
 
 def digest(value):
@@ -27,6 +27,9 @@ def base_identity(path):
 
 def adapter_identity(path):
     path = Path(path)
+    meta = json.loads((path / 'agent_protocol.json').read_text())
+    if meta.get('protocol') != PROTOCOL or meta.get('token') != TOKEN or meta.get('agent_call_schema') != 'task-start':
+        raise ValueError('Unsupported adapter protocol; retrain with task_start(instruction)')
     required = ['agent_protocol.json', 'agent_rows.safetensors', 'adapter_config.json',
                 'adapter_model.safetensors', 'tokenizer/tokenizer.json', 'tokenizer/tokenizer_config.json']
     required = sorted(set(required) | {str(f.relative_to(path)) for f in (path / 'tokenizer').rglob('*') if f.is_file()})
@@ -40,9 +43,6 @@ def adapter_identity(path):
             for block in iter(lambda: source.read(1024 * 1024), b''):
                 h.update(block)
         result[name] = h.hexdigest()
-    meta = json.loads((path / 'agent_protocol.json').read_text())
-    if meta.get('protocol') != PROTOCOL or meta.get('token') != TOKEN:
-        raise ValueError('Unsupported adapter protocol')
     return result
 
 
@@ -51,6 +51,8 @@ def full_model_identity(path):
     from transformers import AutoTokenizer
     path = Path(path)
     meta = json.loads((path / 'full_training_model.json').read_text())
+    if meta.get('protocol') != PROTOCOL or meta.get('agent_call_schema') != 'task-start':
+        raise ValueError('Unsupported full-model protocol; retrain with task_start(instruction)')
     if not (path / 'config.json').is_file():
         raise ValueError('Incomplete full-model export: config.json')
     index = path / 'model.safetensors.index.json'
@@ -63,7 +65,7 @@ def full_model_identity(path):
         if not file.is_file() or hashlib.sha256(file.read_bytes()).hexdigest() != expected:
             raise ValueError('Full-model runtime code/processor mismatch: ' + name)
     tokenizer = AutoTokenizer.from_pretrained(str(path), trust_remote_code=True)
-    if (meta.get('protocol') != PROTOCOL or meta['files'] != base_identity(path)
+    if (meta.get('protocol') != PROTOCOL or meta.get('agent_call_schema') != 'task-start' or meta['files'] != base_identity(path)
             or tokenizer_identity(tokenizer) != meta['tokenizer_sha256']
             or tokenizer.encode(TOKEN, add_special_tokens=False) != [tokenizer.convert_tokens_to_ids(TOKEN)]):
         raise ValueError('Full-model export/tokenizer identity mismatch')
@@ -117,9 +119,9 @@ class AgentStream:
             if complete and self.separators == 1:
                 try:
                     obj = json.loads(call_text)
-                    if (not isinstance(obj, dict) or obj.get('name') != 'agent_call'
-                            or not isinstance(obj.get('arguments'), dict)):
-                        raise ValueError('Invalid agent_call envelope')
+                    from benchmark.data.agent_schema import validate_task_start
+                    if not isinstance(obj, dict) or set(obj) != {'name', 'arguments'} or not validate_task_start(obj):
+                        raise ValueError('Invalid task_start(instruction) envelope')
                     calls = [{'type': 'function', 'function': obj}]
                     status = 'structured'
                 except (ValueError, TypeError):

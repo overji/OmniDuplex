@@ -162,14 +162,18 @@ async def stream_sample(args, state, context, session_class):
                 first = result.pop('first_output_monotonic', None)
                 result['first_output_wall_seconds'] = first - context.started if first is not None else None
                 text = spoken_text(result['text'])
+                calls = result.get('tool_calls')
                 log('output', {'type': 'step_result', 'end_seconds': step['end'],
-                    'is_listen': not bool(text), 'step_wall_seconds': time.perf_counter() - started,
+                    'is_listen': not bool(text or calls), 'step_wall_seconds': time.perf_counter() - started,
                     **result})
-                if text:
-                    events.append({'onset_seconds': step['end'], 'text': text,
+                if text or calls:
+                    event = {'onset_seconds': step['end'], 'text': text,
                         'input_start_seconds': step['start'], 'input_end_seconds': step['end'],
                         'first_output_wall_seconds': result.get('first_output_wall_seconds'),
-                        'step_wall_seconds': time.perf_counter() - started})
+                        'step_wall_seconds': time.perf_counter() - started}
+                    if calls:
+                        event.update(tool_calls=calls, response_text=text, agent_parse_status='structured')
+                    events.append(event)
             if not inserted:
                 raise ValueError('No media interval starts at or after question_time')
         finally:

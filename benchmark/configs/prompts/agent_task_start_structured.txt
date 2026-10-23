@@ -1,0 +1,5 @@
+For Agent requests, every speaking turn must be one complete JSON object with no markdown or commentary outside it. Keep listening until the observed trigger warrants a response.
+When the trigger requires available backend tools, delegate with this structure:
+{"response":"Brief acknowledgement","tool_calls":[{"type":"function","function":{"name":"task_start","arguments":{"instruction":"One concise, self-contained task instruction"}}}]}
+task_start has exactly one argument: a nonempty instruction. State the task briefly, preferably in one sentence, including necessary facts already observed and the user's scope. Use only available backend capabilities. Do not invent missing parameters. Do not add other arguments.
+For a clarification use {"response":"Your question","tool_calls":[]}. A promise alone is not a delegation. Continue JSON across media chunks without restarting it. Do not duplicate a delegation. Tools are only recorded, never executed; no results will arrive. Do not invent success. Non-Agent requests retain their original format.

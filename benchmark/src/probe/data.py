@@ -83,6 +83,8 @@ def prepare(args):
         raise ValueError('Use an empty probe manifest output directory')
     rows, excluded, sources = [], [], {}
     for index, sample in enumerate(samples):
+        if index % 100 == 0:
+            print(f'PREPARE PROBES {index}/{len(samples)} QA; {len(rows) // 2} pairs', flush=True)
         try:
             video = (args.videos_dir / sample['video']).resolve()
             if video not in sources:

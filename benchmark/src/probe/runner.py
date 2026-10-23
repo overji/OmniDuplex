@@ -29,8 +29,9 @@ def model_identity(model_path):
               'chat_template.json', 'chat_template.jinja',
               'model.safetensors.index.json', 'pytorch_model.bin.index.json')
              if (model_path / name).is_file()}
-    weights = [[path.name, path.stat().st_size, path.stat().st_mtime_ns]
-               for path in sorted([*model_path.glob('*.safetensors'), *model_path.glob('pytorch_model*.bin')])]
+    weights = [[str(path.relative_to(model_path)), path.stat().st_size, path.stat().st_mtime_ns]
+               for path in sorted([*model_path.rglob('*.safetensors'), *model_path.rglob('pytorch_model*.bin')])
+               if '.cache' not in path.relative_to(model_path).parts]
     return {'path': str(model_path.resolve()), 'config_hashes': files, 'weight_file_stats': weights}
 
 
@@ -39,13 +40,19 @@ def run_config(args):
             or args.max_new_tokens < 1 or args.max_pairs < 0):
         raise ValueError('Invalid probe sampling or generation setting')
     implementation = {path.name: file_hash(path) for path in Path(__file__).parent.glob('*.py')}
+    native_source = getattr(args, 'official_code', None)
+    source_hashes = {str(p.relative_to(native_source)): file_hash(p) for p in sorted(native_source.rglob('*.py'))} if native_source else {}
     return {'schema': SCHEMA, 'manifest_sha256': file_hash(args.manifest),
         'prompt_sha256': file_hash(args.system_prompt), 'implementation': digest(implementation),
         'model': args.probe_model, 'model_identity': model_identity(args.model_path),
         'fps': args.fps, 'max_pixels': args.max_pixels, 'max_new_tokens': args.max_new_tokens,
         'dtype': args.dtype, 'device_map': args.device_map, 'attn_implementation': args.attn_implementation,
         'max_pairs': args.max_pairs, 'do_sample': False, 'return_audio': False,
-        'independent_requests': True, 'audio': 'use_source_track_if_present'}
+        'official_source_sha256': digest(source_hashes) if native_source else None,
+        'attention_query_chunk_size': getattr(args, 'attention_query_chunk_size', 0),
+        'independent_requests': True,
+        'official_code': str(args.official_code.resolve()) if getattr(args, 'official_code', None) else None,
+        'audio': 'omit_for_visual_model' if args.probe_model == 'qwen3_vl' else 'use_source_track_if_present'}
 
 
 def run(args):

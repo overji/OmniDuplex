@@ -8,6 +8,9 @@ venv/
 .env
 tmp/
 
+# Local archives; keep historical artifacts on disk, outside Git tracking.
+/legacy/
+
 # Node
 node_modules/
 npm-debug.log*

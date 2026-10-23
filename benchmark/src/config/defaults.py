@@ -109,3 +109,7 @@ DEFAULTS = {
         'jpeg_quality': 75,
     },
 }
+
+# These native outer model classes do not advertise SDPA support.
+PROBE_ADAPTER_DEFAULTS = {name: {'attn_implementation': 'eager'}
+                          for name in ('ming_omni', 'baichuan_omni', 'omnivinci')}

@@ -34,7 +34,7 @@ def scan_video(video):
 def prefix_command(video, output, cutoff, has_audio):
     command = ['ffmpeg', '-v', 'error', '-y', '-threads', '2', '-copyts', '-start_at_zero', '-i', str(video),
                '-map', '0:v:0', '-vf', f'trim=start=0:end={cutoff:.9f}',
-               '-c:v', 'libx264', '-preset', 'fast', '-fps_mode', 'passthrough']
+               '-c:v', 'libx264', '-preset', 'fast', '-vsync', '0']
     if has_audio:
         command += ['-map', '0:a:0', '-af', f'atrim=start=0:end={cutoff:.9f}',
                     '-c:a', 'aac']

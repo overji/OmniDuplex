@@ -110,7 +110,7 @@ class RewardTests(unittest.TestCase):
         self.assertEqual(r['invalid_calls'], 1)
         self.assertEqual(value_score({'instruction': 'search red', 'n': 1}, {'instruction': 'search red', 'n': 2}), .5)
         sample.pop('sample_type')
-        call = dict(type='function', function=dict(name='agent_call', arguments={'instruction': 'search'}))
+        call = dict(type='function', function=dict(name='task_start', arguments={'instruction': 'search'}))
         sample['responses'][0].update(role='assistant', tool_calls=[call])
         event.update(tool_calls=[call], agent_parse_status='structured')
         self.assertEqual(reward(sample, [event], {})['total'], 1.)
@@ -180,7 +180,7 @@ class ReplayGradientTests(unittest.TestCase):
         model = TinyMedia(); model.requires_grad_(False)
         duplex = TinyDuplex(model)
         config = dict(max_sequence_tokens=1024, max_speak_tokens_per_chunk=20,
-            agent_output_protocol='agent_token_v1', supervise_silence=False,
+            agent_output_protocol='agent_token_task_start_v1', supervise_silence=False,
             decision_weight=1., content_weight=1., call_weight=1., loss_projection_chunk=2)
         graph = TrainGraph(model, duplex, config)
         record = dict(onset_seconds=1, sample=dict(mode='rtd', question_time='00:00'),

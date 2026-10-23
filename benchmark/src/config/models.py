@@ -5,6 +5,14 @@ These values preserve the evaluated protocols; changing them creates a new exper
 from benchmark.config.paths import MODEL_ROOT
 
 MODEL_SETTINGS = {
+    'gander': {
+        'model': 'Gander-Omni/Gander',
+        'model_revision': '24fc4cc8543f95daf99be53b6199403a7732688f',
+        'native_api': 'mcpmft.infer.online.OnlineRunner',
+        'fps': 1, 'audio_sample_rate': 16000, 'generate_audio': False,
+        'speak_text_tokens_per_unit': 8, 'max_new_speak_tokens_per_chunk': 11,
+        'timing_clock': 'observed_input_interval_end',
+    },
     'qwen_realtime': {
         'native_api': 'DashScope Realtime WebSocket',
         'fps': 1,

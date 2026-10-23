@@ -6,10 +6,15 @@ from types import SimpleNamespace
 MODEL_CLASSES = {
     'qwen3_omni': ('Qwen3OmniMoeForConditionalGeneration', 'Qwen3OmniMoeProcessor'),
     'qwen25_omni': ('Qwen2_5OmniForConditionalGeneration', 'Qwen2_5OmniProcessor'),
+    'humanomni_v2': ('Qwen2_5OmniThinkerForConditionalGeneration', 'Qwen2_5OmniProcessor'),
 }
+PROBE_MODELS = tuple(MODEL_CLASSES) + ('minicpmo', 'ming_omni', 'qwen3_vl', 'baichuan_omni', 'omnivinci')
 
 
 def load(args):
+    if args.probe_model not in MODEL_CLASSES:
+        from benchmark.probe import native_models
+        return native_models.load(args)
     import torch
     import transformers
     from qwen_omni_utils import process_mm_info
@@ -17,7 +22,8 @@ def load(args):
     dtype = 'auto' if args.dtype == 'auto' else getattr(torch, args.dtype)
     model = getattr(transformers, model_name).from_pretrained(str(args.model_path), dtype=dtype,
         device_map=args.device_map, attn_implementation=args.attn_implementation, local_files_only=True)
-    model.disable_talker()
+    if hasattr(model, 'disable_talker'):
+        model.disable_talker()
     model.eval()
     processor = getattr(transformers, processor_name).from_pretrained(str(args.model_path), local_files_only=True)
     return SimpleNamespace(model=model, processor=processor, process_mm_info=process_mm_info, torch=torch)
@@ -42,6 +48,10 @@ def generated_sequences(output):
 
 
 def generate(args, state, probe):
+    name = getattr(args, 'probe_model', 'qwen25_omni')
+    if name not in MODEL_CLASSES:
+        from benchmark.probe import native_models
+        return native_models.generate(args, state, probe)
     messages = conversation(probe, args)  # Fresh conversation for EVERY pre/post request.
     processor, model = state.processor, state.model
     text = processor.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
@@ -61,8 +71,12 @@ def generate(args, state, probe):
     if limit and input_length + args.max_new_tokens > limit:
         raise ValueError('Complete probe prefix exceeds model context; input is not truncated')
     with state.torch.inference_mode():
-        output = model.generate(**inputs, use_audio_in_video=probe.has_audio, return_audio=False,
-            thinker_do_sample=False, thinker_max_new_tokens=args.max_new_tokens)
+        if name == 'humanomni_v2':
+            output = model.generate(**inputs, use_audio_in_video=probe.has_audio,
+                                    do_sample=False, max_new_tokens=args.max_new_tokens)
+        else:
+            output = model.generate(**inputs, use_audio_in_video=probe.has_audio, return_audio=False,
+                thinker_do_sample=False, thinker_max_new_tokens=args.max_new_tokens)
     sequences = generated_sequences(output)
     return processor.batch_decode(sequences[:, input_length:], skip_special_tokens=True,
                                   clean_up_tokenization_spaces=False)[0].strip()

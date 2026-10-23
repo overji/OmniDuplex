@@ -5,6 +5,9 @@ and validation → QA merge and coverage report**. It replaces the former twelve
 tasks; old task names have no aliases. Source videos, task definitions and existing
 JSON files are retained, but old task samples are rejected by the new merger.
 
+The latest merged benchmark statistics, including an OmniPro-style four-panel
+overview, are documented in [the final 2026-10-21 report](omni_duplex_final_benchmark_report_20261021.md).
+
 ## End-to-end directory generation
 
 `generate.py` is the only top-level entry. With pipeline flags (or the explicit

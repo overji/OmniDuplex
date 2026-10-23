@@ -14,6 +14,8 @@ def run(args, config):
     if args.output.exists():
         raise ValueError('Use a fresh output directory; pilot does not resume optimizer state')
     manifest = json.loads((args.prepared / 'manifest.json').read_text())
+    from train.src.agent import validate_prepared
+    validate_prepared(manifest, config)
     # Identity-sensitive preparation settings must remain fixed.
     for key in ('seed', 'max_prefix_seconds', 'videos_dir'):
         if manifest['config'][key] != config[key]:

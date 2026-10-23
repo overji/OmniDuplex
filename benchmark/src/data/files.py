@@ -9,7 +9,7 @@ def atomic_write_text(path, text):
     temporary = None
     try:
         with tempfile.NamedTemporaryFile(mode="w", dir=path.parent,
-                                         prefix=path.name + ".", delete=False) as output:
+                                         prefix=path.name + ".", delete=False, encoding="utf-8") as output:
             temporary = output.name
             output.write(text)
         os.replace(temporary, path)
@@ -42,6 +42,6 @@ def recover_jsonl_tail(path):
 
 
 def append_jsonl(path, data):
-    with path.open("a") as output:
+    with path.open("a", encoding="utf-8") as output:
         output.write(json.dumps(data, ensure_ascii=False) + "\n")
         output.flush()

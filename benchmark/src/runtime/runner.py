@@ -9,6 +9,7 @@ from pathlib import Path
 
 from benchmark.data.files import append_jsonl, read_jsonl, recover_jsonl_tail, write_json
 from benchmark.data.agent_inputs import input_protocol
+from benchmark.data.agent_schema import adapt_sample
 from benchmark.data.prompts import build_system_prompt
 from benchmark.data.types import SampleResult
 from benchmark.evaluation.timing import write_metrics
@@ -23,15 +24,20 @@ class SampleContext:
     started: float = 0.0
     system_prompt: str = ""
     agent_output_protocol: str = "text"
+    native_protocol: str = ""
 
     def build_prompt(self, native_protocol=""):
+        native_protocol = native_protocol or self.native_protocol
         self.system_prompt = build_system_prompt(self.base_prompt, self.sample, native_protocol)
         if self.agent_output_protocol == "structured" and self.sample.get("mode") == "agent":
             from benchmark.config.paths import CONFIGS
-            self.system_prompt += "\n\n" + (CONFIGS / "prompts/agent_structured.txt").read_text()
+            name = 'agent_task_start_structured.txt' if self.sample.get('_agent_call_schema') == 'task-start' else 'agent_structured.txt'
+            self.system_prompt += "\n\n" + (CONFIGS / 'prompts' / name).read_text()
         if self.agent_output_protocol == 'agent-token' and self.sample.get('mode') == 'agent':
             from benchmark.config.paths import CONFIGS
             self.system_prompt += '\n\n' + (CONFIGS / 'prompts/agent_token.txt').read_text()
+        if self.sample.get('_agent_call_schema') == 'task-start':
+            self.system_prompt = self.system_prompt.replace('agent_call', 'task_start')
         append_jsonl(self.output_dir / "sample_system_prompts.jsonl", {
             "sample_index": self.index, "system_prompt": self.system_prompt,
         })
@@ -53,13 +59,14 @@ def select_samples(samples, completed, args, *, before_resume=False):
 
 
 def run(args, adapter, *, assignment=None):
-    samples = json.loads(args.data.read_text())
+    samples = [adapt_sample(s, getattr(args, 'agent_call_schema', 'legacy')) for s in json.loads(args.data.read_text())]
     base_prompt = args.system_prompt.read_text()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     if hasattr(args, "cache_dir"):
         args.cache_dir.mkdir(parents=True, exist_ok=True)
     config = adapter.run_config(args, base_prompt)
     config["agent_input_protocol"] = input_protocol(args)
+    config['agent_call_schema'] = getattr(args, 'agent_call_schema', 'legacy')
     config_path = args.output_dir / "run_config.json"
     strict = getattr(adapter, "STRICT_CONFIG", False)
     if (args.output_dir / "predictions.jsonl").exists():
@@ -89,15 +96,23 @@ def run(args, adapter, *, assignment=None):
         model_sample = {key: sample[key] for key in (
             "id", "task", "video", "question", "question_time", "available_tools",
             "frontend_context", "sample_type", "mode", "ability",
+            "_agent_call_schema",
         ) if key in sample}
         context = SampleContext(index, model_sample, base_prompt, args.output_dir,
                                 started=time.perf_counter(),
                                 agent_output_protocol=getattr(args, "agent_output_protocol", "text"))
         result: SampleResult = adapter.run_sample(args, state, context)
-        if getattr(args, "agent_output_protocol", "text") == "structured" and sample.get("mode") == "agent":
+        if sample.get('mode') == 'agent' and (getattr(args, 'agent_output_protocol', 'text') == 'structured'
+                or sample.get('_agent_call_schema') == 'task-start'):
             from benchmark.evaluation.agent_calls import parse_event
+            from benchmark.data.agent_schema import validate_task_start
             for event in result.events:
                 parsed = parse_event(event)
+                if sample.get('_agent_call_schema') == 'task-start':
+                    valid = bool(parsed['calls']) and bool(sample.get('available_tools')) and all(validate_task_start(c) for c in parsed['calls'])
+                    event['agent_schema_valid'] = valid
+                    if parsed['calls'] and not valid:
+                        parsed['status'] = 'malformed'
                 event["agent_parse_status"] = parsed["status"]
                 event["response_text"] = parsed["response"]
                 event["tool_calls"] = parsed["calls"]

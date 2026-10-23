@@ -6,3 +6,5 @@ cache/
 results/
 __pycache__/
 /*.log
+
+.venv-*/
