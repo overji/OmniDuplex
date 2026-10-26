@@ -142,3 +142,47 @@ def load_manifest(path):
                 < pre['window_start_seconds'] <= post['prefix_end_seconds'] <= pre['duration_seconds']):
             raise ValueError('Invalid probe cutoff bounds')
     return rows
+
+
+def reference_history(rows, samples, data_sha256):
+    """Attach only earlier user-facing reference replies, safe for BOTH prefix sides."""
+    enriched, excluded = [], []
+    for row in rows:
+        sample = samples[row['sample_index']]
+        windows = sorted((finite_time(r['window_start']), finite_time(r['window_end']), i)
+                         for i, r in reference_windows(sample))
+        target = next((n for n, (_, _, i) in enumerate(windows) if i == row['response_index']), None)
+        pre = row['window_start_seconds'] - DEFAULTS['probe']['pre_seconds']
+        if (target is None or target != row['handled_count']
+                or sample['question'] != row['request']['question']
+                or any(sample[k] != row[k] for k in ('mode', 'ability', 'task'))
+                or windows[target][:2] != (row['window_start_seconds'], row['window_end_seconds'])
+                or row['pair_id'] != digest([SCHEMA, data_sha256, row['sample_index'],
+                                             row['response_index'], pre, row['window_end_seconds']])):
+            raise ValueError('Reference history data does not match the probe manifest')
+        history, reason = [], None
+        for start, _, index in windows[:target]:
+            response = sample['responses'][index]
+            text = response.get('response')
+            times = [start]
+            times += [finite_time(response[k]) for k in ('trigger_time',) if k in response]
+            trigger = response.get('trigger') or {}
+            if trigger.get('confirmed_time') is not None:
+                times.append(finite_time(trigger['confirmed_time']))
+            for evidence in response.get('evidence') or []:
+                time = evidence.get('available_time', evidence.get('time'))
+                if time is not None:
+                    times.append(finite_time(time))
+            if not isinstance(text, str) or not text.strip():
+                reason = 'missing_previous_reference_reply'
+                break
+            if max(times) >= pre:
+                reason = 'previous_reference_not_available_before_negative_cutoff'
+                break
+            history.append({'response_index': index, 'response': text})
+        if reason:
+            excluded.append({'probe_id': row['probe_id'], 'pair_id': row['pair_id'],
+                             'sample_index': row['sample_index'], 'reason': reason})
+        else:
+            enriched.append({**row, 'handled_responses': history})
+    return enriched, excluded

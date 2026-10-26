@@ -83,14 +83,17 @@ def inspect(config, now):
         snapshot.update(key=str(directory), completed=marker(directory)[0])
         if failed:
             return result('repair', failed['status'])
-        bounded_probe = (job.get('mode') == 'probe' and '--probe-retry-errors-once' in config['next_argv'])
+        bounded_probe = (job.get('mode') == 'probe' and any(flag in config['next_argv']
+                         for flag in ('--probe-retry-errors-once', '--probe-skip-failed')))
         if not bounded_probe and any(code not in (None, 0) for code in job.get('exit_codes', [])):
             return result('repair', 'probe_worker_failed')
         finished = {f'worker_{rank}' for rank, code in enumerate(job.get('exit_codes', []))
                     if code == 0 or (bounded_probe and code is not None)}
         parallel = read(directory/'parallel_status.json')
     snapshot['key'] = str(directory)
-    finished.update(f"worker_{w['rank']}" for w in parallel.get('workers', []) if w.get('exit_code') == 0)
+    finished.update(f"worker_{w['rank']}" for w in parallel.get('workers', [])
+                    if w.get('exit_code') == 0 or (parallel.get('failure_policy') == 'skip'
+                                                  and w.get('exit_code') is not None))
     snapshot['completed'] = 0
     for worker in sorted(directory.glob('worker_*')) or [directory]:
         if not worker.is_dir():
@@ -98,7 +101,8 @@ def inspect(config, now):
         count, value = marker(worker); snapshot['completed'] += count
         if worker.name not in finished and parallel.get('status') != 'complete':
             snapshot['workers'].append(dict(key=str(worker), marker=value))
-    if any(w.get('exit_code') not in (None, 0) for w in parallel.get('workers', [])):
+    if parallel.get('failure_policy') != 'skip' and any(
+            w.get('exit_code') not in (None, 0) for w in parallel.get('workers', [])):
         return result('repair', 'realtime_worker_failed')
     if not process(status.get('pid')) or status.get('status') in ('failed', 'incomplete', 'complete'):
         return result('repair', 'queue_failed_or_exited')

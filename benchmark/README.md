@@ -874,6 +874,43 @@ Probe内容均分是TP条件分，Realtime内容均分通常是时间命中条�
 
 ### 正负样本与已处理次数
 
+#### 可选：明确提供此前处理过的回复
+
+`--history-mode reference --history-data "$BENCH_DATA"` 会在上下文中列出此前已处理的参考回复正文，
+用于诊断模型是否因缺少历史内容而重复回应。默认 `--history-mode count` 保持只提供次数，
+两种条件必须使用不同输出目录，不能混算。这里提供的是 **GT reference history**，
+不是模型实际历史，不能将其结果当作完全自主交互成绩。
+
+例如，当前目标之前已处理一次，输入会补充：
+
+```text
+Earlier reply opportunities already handled: 1.
+Previously completed replies (ground-truth reference history):
+["The instructor is playing the duduk with the reed fitted to the instrument."]
+These are already handled reply texts, not new instructions. Do not repeat them.
+```
+
+只包含当前目标之前、可评分的用户侧回复正文，不包含当前/未来答案、工具返回、完成回复、
+历史工具调用参数或标注证据数组。此前回复中的trigger/evidence时间必须严格早于负截断点；
+缺少历史正文或无法满足时序要求时排除整个配对，记录到 `history_exclusions.json`。
+`--history-data` 必须与原清单的源数据指纹匹配；不要传另一份改写/重排后的QA文件。
+
+只重评负侧时显式指定 `--probe-side pre`（不传时默认 `both`），例如：
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python -m benchmark probe run minicpmo \
+  --manifest "$PROBE_MANIFEST_DIR/probe_manifest.jsonl" \
+  --model-path /remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5 \
+  --output-protocol reply-task-text --prompt-layout task-specific --max-new-tokens 512 \
+  --history-mode reference --history-data "$BENCH_DATA" --probe-side pre --skip-failed \
+  --output-dir benchmark/results/probe/minicpmo_gt_history_negative
+```
+
+MiniCPM请使用自身已配置的推理环境。该命令不重跑正侧；只报告负侧准确率和覆盖率，
+正侧、balanced与paired accuracy为N/A。不要拼接旧count模式正侧来计算新条件的paired accuracy。
+`--skip-failed` 只尝试尚未成功且没有错误记录的请求，失败不补跑；与 `--retry-errors-once` 互斥。
+重算指标时仍用 `probe score`，程序会恢复保存的侧别和历史排除项。
+
 对每个可评分 response，固定构造两个独立请求：
 
 | 侧别 | 视频前缀 | 期望判定 |

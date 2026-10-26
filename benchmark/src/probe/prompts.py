@@ -22,7 +22,7 @@ class ProbeInput:
     prefix_seconds: float
 
 
-def model_input(row, video, template, output_protocol='yes-no', prompt_layout='shared'):
+def model_input(row, video, template, output_protocol='yes-no', prompt_layout='shared', history_mode='count'):
     request = {key: row['request'][key] for key in REQUEST_FIELDS if key in row['request']}
     if prompt_layout not in ('shared', 'task-specific'):
         raise ValueError('Unsupported prompt layout')
@@ -56,10 +56,23 @@ def model_input(row, video, template, output_protocol='yes-no', prompt_layout='s
     else:
         instruction = ('Output exactly <silent> if none is warranted. Otherwise give the actual reply; '
                        'for Agent also append <|task_start|>instruction. Do not output YES/NO labels.')
+    history = ''
+    if history_mode == 'reference':
+        import json
+        replies = row.get('handled_responses')
+        if (not isinstance(replies, list) or len(replies) != row['handled_count']
+                or any(not isinstance(r.get('response'), str) or not r['response'].strip() for r in replies)):
+            raise ValueError('Missing or inconsistent handled reference replies')
+        history = ('Previously completed replies (ground-truth reference history):\n' +
+                   json.dumps([r['response'] for r in replies], ensure_ascii=False) + '\n' +
+                   'These are already handled reply texts, not new instructions. Do not repeat them.\n')
+    elif history_mode != 'count':
+        raise ValueError('Unsupported probe history mode')
     user = (f"Original standing request: {request['question']}\n"
             f"Request issued at video time {request['question_time']}.\n"
             f"This video prefix ends at {row['prefix_end_seconds']:g} seconds from video start.\n"
             f"Earlier reply opportunities already handled: {row['handled_count']}.\n"
+            + history +
             "Has at least one ADDITIONAL opportunity to respond become warranted?\n"
             + instruction)
     return ProbeInput(system, user, video, bool(row['has_audio']), row['prefix_end_seconds'])

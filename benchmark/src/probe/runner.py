@@ -50,6 +50,9 @@ def run_config(args):
             or args.max_new_tokens < 1 or args.max_pairs < 0):
         raise ValueError('Invalid probe sampling or generation setting')
     layout = getattr(args, 'prompt_layout', 'shared')
+    history_mode = getattr(args, 'history_mode', 'count')
+    if history_mode == 'reference' and not getattr(args, 'history_data', None):
+        raise ValueError('--history-mode reference requires --history-data')
     if layout == 'task-specific' and getattr(args, 'output_protocol', 'yes-no') != 'reply-task-text':
         raise ValueError('task-specific layout requires reply-task-text')
     from benchmark.probe.prompts import task_prompt_files
@@ -61,6 +64,9 @@ def run_config(args):
     source_hashes = {str(p.relative_to(native_source)): file_hash(p) for p in sorted(native_source.rglob('*.py'))} if native_source else {}
     return {'schema': SCHEMA, 'output_protocol': getattr(args, 'output_protocol', 'yes-no'),
         'prompt_layout': layout,
+        'history_mode': history_mode,
+        'history_data_sha256': file_hash(args.history_data) if history_mode == 'reference' else None,
+        'probe_side': getattr(args, 'probe_side', 'both'),
         'task_prompt_sha256': {p.name:file_hash(p) for p in task_prompt_files()} if layout=='task-specific' else {},
         'output_protocol_version': PROTOCOL if getattr(args, 'output_protocol', 'yes-no') == 'reply-task-text' else 'yes_no_v1',
         'manifest_sha256': file_hash(args.manifest),
@@ -80,6 +86,15 @@ def run_config(args):
 def run(args):
     rows = selected_rows(load_manifest(args.manifest), args.max_pairs)
     config = run_config(args)
+    exclusions = []
+    if config['history_mode'] == 'reference':
+        from benchmark.probe.data import reference_history
+        rows, exclusions = reference_history(rows, json.loads(args.history_data.read_text()),
+                                              config['history_data_sha256'])
+    if config['probe_side'] != 'both':
+        rows = [row for row in rows if row['side'] == config['probe_side']]
+    if not rows:
+        raise ValueError('No eligible probes for selected history/side')
     template = prompt_path(args).read_text()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     with (args.output_dir / '.probe.lock').open('a') as lock:
@@ -87,12 +102,18 @@ def run(args):
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as exc:
             raise ValueError('Another process owns this probe output directory') from exc
+        if config['history_mode'] == 'reference':
+            write_json(args.output_dir / 'history_exclusions.json', exclusions)
         return run_locked(args, rows, config, template)
 
 
-def pending_requests(rows, records, errors, baseline=None):
+def pending_requests(rows, records, errors, baseline=None, *, skip_failed=False):
     """Keep successes, defer failures, and persist retry limits across restarts."""
     completed = {record['probe_id'] for record in records}
+    if skip_failed:
+        attempted = completed | {record['probe_id'] for record in errors}
+        yield from (row for row in rows if row['probe_id'] not in attempted)
+        return
     if baseline is None:
         yield from (row for row in rows if row['probe_id'] not in completed)
         return
@@ -111,6 +132,8 @@ def pending_requests(rows, records, errors, baseline=None):
 
 
 def run_locked(args, rows, config, template):
+    if getattr(args, 'skip_failed', False) and getattr(args, 'retry_errors_once', False):
+        raise ValueError('Choose --skip-failed or --retry-errors-once, not both')
     config_path = args.output_dir / 'probe_config.json'
     prediction_path = args.output_dir / 'probe_predictions.jsonl'
     error_path = args.output_dir / 'probe_errors.jsonl'
@@ -136,7 +159,8 @@ def run_locked(args, rows, config, template):
             raise ValueError('Probe retry policy/config changed')
         write_json(policy_path, policy)
         baseline = policy['baseline_errors']
-    pending = iter(pending_requests(rows, records, errors, baseline))
+    pending = iter(pending_requests(rows, records, errors, baseline,
+                                    skip_failed=getattr(args, 'skip_failed', False)))
     first = next(pending, None)
     if first is None:
         write_report(rows, records, args.output_dir, errors)
@@ -149,7 +173,8 @@ def run_locked(args, rows, config, template):
         try:
             clip = prefix_clip(row, args.cache_dir)
             probe = model_input(row, clip, template, getattr(args, 'output_protocol', 'yes-no'),
-                                getattr(args, 'prompt_layout', 'shared'))
+                                getattr(args, 'prompt_layout', 'shared'),
+                                getattr(args, 'history_mode', 'count'))
             append_jsonl(prompt_path, {'probe_id': row['probe_id'], 'video_prefix': str(clip),
                 'system_prompt': probe.system_prompt, 'user_prompt': probe.user_prompt})
             raw = models.generate(args, state, probe)
@@ -188,6 +213,14 @@ def score(args):
         if config.get('manifest_sha256') != file_hash(args.manifest):
             raise ValueError('Prediction manifest fingerprint does not match')
         rows = selected_rows(rows, config.get('max_pairs', 0))
+        if config.get('history_mode') == 'reference':
+            path = args.predictions.parent / 'history_exclusions.json'
+            if not path.is_file():
+                raise ValueError('Reference-history scoring requires saved history exclusions')
+            excluded = {row['probe_id'] for row in json.loads(path.read_text())}
+            rows = [row for row in rows if row['probe_id'] not in excluded]
+        if config.get('probe_side', 'both') != 'both':
+            rows = [row for row in rows if row['side'] == config['probe_side']]
     # Read-only scoring can inspect an active run without consuming its partial final line.
     metrics = write_report(rows, read_jsonl(args.predictions, complete_only=True), args.output_dir,
                           read_jsonl(args.predictions.parent / 'probe_errors.jsonl', complete_only=True))

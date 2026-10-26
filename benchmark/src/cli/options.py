@@ -143,6 +143,14 @@ def configure_probe(parser):
         model.add_argument('--max-new-tokens', type=int, default=defaults['max_new_tokens'])
         model.add_argument('--retry-errors-once', action='store_true',
                            help='Finish unattempted requests, then retry failures once with a persistent budget')
+        model.add_argument('--skip-failed', action='store_true',
+                           help='Attempt only requests with no successful output and no recorded error')
+        model.add_argument('--probe-side', choices=('both', 'pre', 'post'), default='both',
+                           help='Run both paired requests or a separately reported single-side diagnostic')
+        model.add_argument('--history-mode', choices=('count', 'reference'), default='count',
+                           help='Prior handled count only, or explicitly supplied past reference replies')
+        model.add_argument('--history-data', type=Path,
+                           help='Original QA JSON matching the manifest, required for reference history')
         model.add_argument('--output-protocol', choices=('yes-no', 'reply-task-text'), default='yes-no',
                            help='Reply/silent generation or historical YES/NO decision probes')
         model.add_argument('--prompt-layout', choices=('shared', 'task-specific'), default='shared',

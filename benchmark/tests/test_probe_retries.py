@@ -44,6 +44,17 @@ class ProbeRetryTests(unittest.TestCase):
         self.assertEqual(list(pending_requests(rows, [{'probe_id': 'done'}],
                                               [{'probe_id': 'failed'}])), [rows[1]])
 
+    def test_skip_failed_only_attempts_new_requests_and_never_retries(self):
+        rows = [{'probe_id': key} for key in ('done', 'old', 'new')]
+        records = [{'probe_id': 'done'}]
+        errors = [{'probe_id': 'old'}]
+        generated = []
+        for row in pending_requests(rows, records, errors, skip_failed=True):
+            generated.append(row['probe_id'])
+            errors.append({'probe_id': row['probe_id']})
+        self.assertEqual(generated, ['new'])
+        self.assertEqual(list(pending_requests(rows, records, errors, skip_failed=True)), [])
+
     def test_suite_continues_to_next_model_after_failed_retry(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -67,3 +78,11 @@ class ProbeRetryTests(unittest.TestCase):
             self.assertEqual(status['status'],'complete_with_errors')
             self.assertEqual([job['adapter'] for job in status['jobs']],['first','second'])
             self.assertTrue(all(job['status']=='incomplete_final' for job in status['jobs']))
+            # A restart with no retries must preserve final partial tasks without launching them.
+            argv[-1] = '--probe-skip-failed'
+            with patch.object(sys,'argv',argv), \
+                 patch.object(run_prepared_suite,'build_plan',return_value=tasks), \
+                 patch.object(run_prepared_suite.subprocess,'Popen',side_effect=AssertionError('Unexpected retry')):
+                self.assertEqual(run_prepared_suite.main(),0)
+            status = json.loads((root/'suite/suite_status.json').read_text())
+            self.assertTrue(all(job['reused'] for job in status['jobs']))

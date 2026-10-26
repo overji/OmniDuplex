@@ -98,6 +98,14 @@ class WatchdogTests(unittest.TestCase):
         self.assertEqual(result['action'],'waiting_for_gpus');launch.assert_not_called()
         self.assertIn('pending_repair',state)
 
+    def test_diagnostic_failure_policy_does_not_retry_failed_workers(self):
+        guard.write(self.root/'joyai/parallel_status.json',dict(status='running',failure_policy='skip',
+            workers=[dict(rank=0,exit_code=1)]))
+        directory=self.root/'joyai/worker_0';directory.mkdir()
+        result=self.inspect()
+        self.assertEqual(result['verdict'],'healthy')
+        self.assertEqual(result['workers'],[])
+
     def test_probe_failure_in_previous_task_is_not_hidden_by_later_running_task(self):
         (self.root/'suite').mkdir()
         guard.write(self.root/'queue/transition_status.json',{**self.status,'stage':'new_suite'})

@@ -119,9 +119,13 @@ def main():
     p.add_argument('--dry-run', action='store_true')
     p.add_argument('--probe-retry-errors-once', action='store_true',
                    help='Retry probe failures once after the first pass, then continue with partial results')
+    p.add_argument('--probe-skip-failed', action='store_true',
+                   help='Do not retry failed probe requests; keep final partial tasks and continue')
     p.add_argument('--reuse-root', type=Path, help='Resume existing realtime shards without changing their plans')
     p.add_argument('--joyai-services', type=Path, help='Explicit compatible JoyAI service configuration')
     args = p.parse_args()
+    if args.probe_retry_errors_once and args.probe_skip_failed:
+        p.error('Choose one probe error policy')
     if len(set(args.gpus)) != len(args.gpus):
         p.error('GPU indices must be distinct')
     output = args.output_dir.resolve()
@@ -154,6 +158,8 @@ def main():
     if args.dry_run:
         print(f'Prepared {len(tasks)} model/mode jobs; no inference started')
         return
+    previous_status_path = output / 'suite_status.json'
+    previous_status = json.loads(previous_status_path.read_text()) if previous_status_path.exists() else {}
     processes, logs = [], []
     status = {'pid': os.getpid(), 'status': 'running', 'gpus': args.gpus, 'jobs': []}
     def interrupted(signum, frame):
@@ -181,6 +187,13 @@ def main():
             status['jobs'].append(item); save()
             print(f"START {task['mode']}/{task['adapter']}", flush=True)
             directory = Path(task['output'])
+            previous = next((j for j in previous_status.get('jobs', [])
+                             if j['output'] == task['output']), None)
+            if (args.probe_skip_failed and task['mode'] == 'probe' and previous
+                    and previous['status'] in ('complete', 'incomplete_final')):
+                item.update(previous, pids=[], exit_codes=[], reused=True)
+                save()
+                continue
             existing = directory / 'parallel_status.json'
             if task['mode'] == 'realtime' and existing.is_file() and json.loads(existing.read_text()).get('status') == 'complete':
                 item.update(status='complete', reused=True); save()
@@ -199,7 +212,9 @@ def main():
                 children.append(launch(task['commands'][0], directory / 'supervisor.log'))
             else:
                 for rank, worker in enumerate(task['commands']):
-                    command = worker['argv'] + (['--retry-errors-once'] if args.probe_retry_errors_once else [])
+                    flags = (['--retry-errors-once'] if args.probe_retry_errors_once else
+                             ['--skip-failed'] if args.probe_skip_failed else [])
+                    command = worker['argv'] + flags
                     children.append(launch(command, directory / f'worker_{rank}' / 'worker.log', worker['gpus']))
             item.update(status='running', pids=[c.pid for c in children]); save()
             while any(c.poll() is None for c in children):
@@ -224,7 +239,8 @@ def main():
                 atomic_write_text(directory / 'probe_errors.jsonl', ''.join(json.dumps(r, ensure_ascii=False)+'\n' for r in errors))
                 write_report(load_manifest(Path(task['manifest'])), records, directory, errors)
                 item['completed_probes'] = len(records)
-            failed_status = ('incomplete_final' if task['mode'] == 'probe' and args.probe_retry_errors_once
+            failed_status = ('incomplete_final' if task['mode'] == 'probe' and
+                             (args.probe_retry_errors_once or args.probe_skip_failed)
                              else 'incomplete')
             item.update(status='complete' if all(c.returncode == 0 for c in children) else failed_status,
                         exit_codes=[c.returncode for c in children])
