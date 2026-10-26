@@ -91,9 +91,7 @@ def inspect(config, now):
                     if code == 0 or (bounded_probe and code is not None)}
         parallel = read(directory/'parallel_status.json')
     snapshot['key'] = str(directory)
-    finished.update(f"worker_{w['rank']}" for w in parallel.get('workers', [])
-                    if w.get('exit_code') == 0 or (parallel.get('failure_policy') == 'skip'
-                                                  and w.get('exit_code') is not None))
+    finished.update(f"worker_{w['rank']}" for w in parallel.get('workers', []) if w.get('exit_code') == 0)
     snapshot['completed'] = 0
     for worker in sorted(directory.glob('worker_*')) or [directory]:
         if not worker.is_dir():
@@ -101,8 +99,7 @@ def inspect(config, now):
         count, value = marker(worker); snapshot['completed'] += count
         if worker.name not in finished and parallel.get('status') != 'complete':
             snapshot['workers'].append(dict(key=str(worker), marker=value))
-    if parallel.get('failure_policy') != 'skip' and any(
-            w.get('exit_code') not in (None, 0) for w in parallel.get('workers', [])):
+    if any(w.get('exit_code') not in (None, 0) for w in parallel.get('workers', [])):
         return result('repair', 'realtime_worker_failed')
     if not process(status.get('pid')) or status.get('status') in ('failed', 'incomplete', 'complete'):
         return result('repair', 'queue_failed_or_exited')
