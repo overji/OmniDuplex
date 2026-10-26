@@ -45,11 +45,15 @@ class DataTests(unittest.TestCase):
         s['responses']=s['responses'][:1];s['responses'][0].update(role='assistant',tool_calls=[dict(function=dict(name='agent_call',
             arguments=json.dumps({'instruction':'search caps','observed_context':'private evidence'})))])
         row,_=record(s,0,10);text=row['events'][0]['target']
-        self.assertIn('task_start',text);self.assertNotIn('observed_context',text)
+        self.assertEqual(text,'Red appeared.<|task_start|>search caps')
+        self.assertNotIn('observed_context',text)
         self.assertEqual(parse_reply(text)['tool_calls'][0]['function']['arguments'],{'instruction':'search caps'})
         self.assertEqual(parse_reply('Hello')['tool_calls'],[])
         self.assertEqual(parse_reply(text,complete=False)['tool_calls'],[])
         self.assertEqual(parse_reply('Hello<|agent|>{}')['agent_parse_status'],'malformed')
+        for invalid in ('Hello<|task_start|>', '<|task_start|>search caps',
+                        'Hello<|task_start|>search<|task_start|>caps'):
+            self.assertEqual(parse_reply(invalid)['tool_calls'],[])
     def test_prepare_video_disjoint_and_original_file_unchanged(self):
         config=load(ROOT/'JEV_train/configs/default.json')
         with tempfile.TemporaryDirectory() as tmp:

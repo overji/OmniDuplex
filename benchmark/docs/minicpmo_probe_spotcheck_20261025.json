@@ -1,0 +1,1844 @@
+{
+  "report_created_utc": "2026-10-25T02:15:21.339383+00:00",
+  "snapshot_completed_probes": 132,
+  "metrics": {
+    "evaluation": "independent_paired_prefix_reply_decision_v1",
+    "output_protocol": "probe_reply_task_text_v1",
+    "invalid_policy": "incorrect_for_accuracy_and_paired_accuracy",
+    "precision_recall_f1_scope": "parseable_completed_probes_only",
+    "failed_probes": 0,
+    "error_attempts": 0,
+    "groups": {
+      "overall": {
+        "eligible_probes": 9188,
+        "completed_probes": 132,
+        "probe_coverage": 0.014366565084893338,
+        "accuracy": 0.5227272727272727,
+        "negative_accuracy": 0.38235294117647056,
+        "positive_accuracy": 0.671875,
+        "balanced_accuracy": 0.5271139705882353,
+        "eligible_pairs": 4594,
+        "complete_pairs": 64,
+        "pair_coverage": 0.013931214627775359,
+        "paired_accuracy": 0.140625,
+        "invalid_outputs": 1,
+        "invalid_rate": 0.007575757575757576,
+        "parse_coverage": 0.9924242424242424,
+        "valid_only_confusion": {
+          "tp": 43,
+          "tn": 26,
+          "fp": 42,
+          "fn": 20
+        },
+        "valid_only_precision": 0.5058823529411764,
+        "valid_only_recall": 0.6825396825396826,
+        "valid_only_f1": 0.581081081081081,
+        "output_format_valid": 82,
+        "output_format_total": 132,
+        "output_format_valid_rate": 0.6212121212121212,
+        "agent_reply_outputs": 3,
+        "agent_valid_calls": 1,
+        "agent_valid_call_rate": 0.3333333333333333,
+        "truncated_outputs": 35,
+        "unknown_completion_outputs": 0
+      },
+      "mode:rtd": {
+        "eligible_probes": 5394,
+        "completed_probes": 109,
+        "probe_coverage": 0.020207638116425657,
+        "accuracy": 0.5229357798165137,
+        "negative_accuracy": 0.3392857142857143,
+        "positive_accuracy": 0.7169811320754716,
+        "balanced_accuracy": 0.528133423180593,
+        "eligible_pairs": 2697,
+        "complete_pairs": 53,
+        "pair_coverage": 0.0196514645902855,
+        "paired_accuracy": 0.1509433962264151,
+        "invalid_outputs": 1,
+        "invalid_rate": 0.009174311926605505,
+        "parse_coverage": 0.9908256880733946,
+        "valid_only_confusion": {
+          "tp": 38,
+          "tn": 19,
+          "fp": 37,
+          "fn": 14
+        },
+        "valid_only_precision": 0.5066666666666667,
+        "valid_only_recall": 0.7307692307692307,
+        "valid_only_f1": 0.5984251968503937,
+        "output_format_valid": 66,
+        "output_format_total": 109,
+        "output_format_valid_rate": 0.6055045871559633,
+        "agent_reply_outputs": 0,
+        "agent_valid_calls": 0,
+        "agent_valid_call_rate": null,
+        "truncated_outputs": 29,
+        "unknown_completion_outputs": 0
+      },
+      "ability:attribute_perception": {
+        "eligible_probes": 690,
+        "completed_probes": 12,
+        "probe_coverage": 0.017391304347826087,
+        "accuracy": 0.5,
+        "negative_accuracy": 0.3333333333333333,
+        "positive_accuracy": 0.6666666666666666,
+        "balanced_accuracy": 0.5,
+        "eligible_pairs": 345,
+        "complete_pairs": 6,
+        "pair_coverage": 0.017391304347826087,
+        "paired_accuracy": 0.16666666666666666,
+        "invalid_outputs": 1,
+        "invalid_rate": 0.08333333333333333,
+        "parse_coverage": 0.9166666666666666,
+        "valid_only_confusion": {
+          "tp": 4,
+          "tn": 2,
+          "fp": 4,
+          "fn": 1
+        },
+        "valid_only_precision": 0.5,
+        "valid_only_recall": 0.8,
+        "valid_only_f1": 0.6153846153846154,
+        "output_format_valid": 7,
+        "output_format_total": 12,
+        "output_format_valid_rate": 0.5833333333333334,
+        "agent_reply_outputs": 0,
+        "agent_valid_calls": 0,
+        "agent_valid_call_rate": null,
+        "truncated_outputs": 3,
+        "unknown_completion_outputs": 0
+      },
+      "mode:pr": {
+        "eligible_probes": 2322,
+        "completed_probes": 13,
+        "probe_coverage": 0.005598621877691645,
+        "accuracy": 0.46153846153846156,
+        "negative_accuracy": 0.42857142857142855,
+        "positive_accuracy": 0.5,
+        "balanced_accuracy": 0.4642857142857143,
+        "eligible_pairs": 1161,
+        "complete_pairs": 6,
+        "pair_coverage": 0.00516795865633075,
+        "paired_accuracy": 0.0,
+        "invalid_outputs": 0,
+        "invalid_rate": 0.0,
+        "parse_coverage": 1.0,
+        "valid_only_confusion": {
+          "tp": 3,
+          "tn": 3,
+          "fp": 4,
+          "fn": 3
+        },
+        "valid_only_precision": 0.42857142857142855,
+        "valid_only_recall": 0.5,
+        "valid_only_f1": 0.46153846153846156,
+        "output_format_valid": 8,
+        "output_format_total": 13,
+        "output_format_valid_rate": 0.6153846153846154,
+        "agent_reply_outputs": 0,
+        "agent_valid_calls": 0,
+        "agent_valid_call_rate": null,
+        "truncated_outputs": 4,
+        "unknown_completion_outputs": 0
+      },
+      "mode:agent": {
+        "eligible_probes": 1472,
+        "completed_probes": 10,
+        "probe_coverage": 0.006793478260869565,
+        "accuracy": 0.6,
+        "negative_accuracy": 0.8,
+        "positive_accuracy": 0.4,
+        "balanced_accuracy": 0.6000000000000001,
+        "eligible_pairs": 736,
+        "complete_pairs": 5,
+        "pair_coverage": 0.006793478260869565,
+        "paired_accuracy": 0.2,
+        "invalid_outputs": 0,
+        "invalid_rate": 0.0,
+        "parse_coverage": 1.0,
+        "valid_only_confusion": {
+          "tp": 2,
+          "tn": 4,
+          "fp": 1,
+          "fn": 3
+        },
+        "valid_only_precision": 0.6666666666666666,
+        "valid_only_recall": 0.4,
+        "valid_only_f1": 0.5,
+        "output_format_valid": 8,
+        "output_format_total": 10,
+        "output_format_valid_rate": 0.8,
+        "agent_reply_outputs": 3,
+        "agent_valid_calls": 1,
+        "agent_valid_call_rate": 0.3333333333333333,
+        "truncated_outputs": 2,
+        "unknown_completion_outputs": 0
+      },
+      "ability:grounding": {
+        "eligible_probes": 864,
+        "completed_probes": 18,
+        "probe_coverage": 0.020833333333333332,
+        "accuracy": 0.5555555555555556,
+        "negative_accuracy": 0.1111111111111111,
+        "positive_accuracy": 1.0,
+        "balanced_accuracy": 0.5555555555555556,
+        "eligible_pairs": 432,
+        "complete_pairs": 9,
+        "pair_coverage": 0.020833333333333332,
+        "paired_accuracy": 0.1111111111111111,
+        "invalid_outputs": 0,
+        "invalid_rate": 0.0,
+        "parse_coverage": 1.0,
+        "valid_only_confusion": {
+          "tp": 9,
+          "tn": 1,
+          "fp": 8,
+          "fn": 0
+        },
+        "valid_only_precision": 0.5294117647058824,
+        "valid_only_recall": 1.0,
+        "valid_only_f1": 0.6923076923076923,
+        "output_format_valid": 6,
+        "output_format_total": 18,
+        "output_format_valid_rate": 0.3333333333333333,
+        "agent_reply_outputs": 3,
+        "agent_valid_calls": 1,
+        "agent_valid_call_rate": 0.3333333333333333,
+        "truncated_outputs": 12,
+        "unknown_completion_outputs": 0
+      },
+      "ability:action_perception": {
+        "eligible_probes": 1424,
+        "completed_probes": 55,
+        "probe_coverage": 0.038623595505617975,
+        "accuracy": 0.509090909090909,
+        "negative_accuracy": 0.32142857142857145,
+        "positive_accuracy": 0.7037037037037037,
+        "balanced_accuracy": 0.5125661375661376,
+        "eligible_pairs": 712,
+        "complete_pairs": 27,
+        "pair_coverage": 0.037921348314606744,
+        "paired_accuracy": 0.1111111111111111,
+        "invalid_outputs": 0,
+        "invalid_rate": 0.0,
+        "parse_coverage": 1.0,
+        "valid_only_confusion": {
+          "tp": 19,
+          "tn": 9,
+          "fp": 19,
+          "fn": 8
+        },
+        "valid_only_precision": 0.5,
+        "valid_only_recall": 0.7037037037037037,
+        "valid_only_f1": 0.5846153846153846,
+        "output_format_valid": 30,
+        "output_format_total": 55,
+        "output_format_valid_rate": 0.5454545454545454,
+        "agent_reply_outputs": 0,
+        "agent_valid_calls": 0,
+        "agent_valid_call_rate": null,
+        "truncated_outputs": 14,
+        "unknown_completion_outputs": 0
+      },
+      "ability:object_perception": {
+        "eligible_probes": 660,
+        "completed_probes": 28,
+        "probe_coverage": 0.04242424242424243,
+        "accuracy": 0.5714285714285714,
+        "negative_accuracy": 0.6428571428571429,
+        "positive_accuracy": 0.5,
+        "balanced_accuracy": 0.5714285714285714,
+        "eligible_pairs": 330,
+        "complete_pairs": 14,
+        "pair_coverage": 0.04242424242424243,
+        "paired_accuracy": 0.14285714285714285,
+        "invalid_outputs": 0,
+        "invalid_rate": 0.0,
+        "parse_coverage": 1.0,
+        "valid_only_confusion": {
+          "tp": 7,
+          "tn": 9,
+          "fp": 5,
+          "fn": 7
+        },
+        "valid_only_precision": 0.5833333333333334,
+        "valid_only_recall": 0.5,
+        "valid_only_f1": 0.5384615384615384,
+        "output_format_valid": 22,
+        "output_format_total": 28,
+        "output_format_valid_rate": 0.7857142857142857,
+        "agent_reply_outputs": 0,
+        "agent_valid_calls": 0,
+        "agent_valid_call_rate": null,
+        "truncated_outputs": 5,
+        "unknown_completion_outputs": 0
+      },
+      "ability:event_understanding": {
+        "eligible_probes": 1182,
+        "completed_probes": 16,
+        "probe_coverage": 0.01353637901861252,
+        "accuracy": 0.5,
+        "negative_accuracy": 0.4444444444444444,
+        "positive_accuracy": 0.5714285714285714,
+        "balanced_accuracy": 0.5079365079365079,
+        "eligible_pairs": 591,
+        "complete_pairs": 7,
+        "pair_coverage": 0.011844331641285956,
+        "paired_accuracy": 0.2857142857142857,
+        "invalid_outputs": 0,
+        "invalid_rate": 0.0,
+        "parse_coverage": 1.0,
+        "valid_only_confusion": {
+          "tp": 4,
+          "tn": 4,
+          "fp": 5,
+          "fn": 3
+        },
+        "valid_only_precision": 0.4444444444444444,
+        "valid_only_recall": 0.5714285714285714,
+        "valid_only_f1": 0.5,
+        "output_format_valid": 14,
+        "output_format_total": 16,
+        "output_format_valid_rate": 0.875,
+        "agent_reply_outputs": 0,
+        "agent_valid_calls": 0,
+        "agent_valid_call_rate": null,
+        "truncated_outputs": 1,
+        "unknown_completion_outputs": 0
+      },
+      "ability:text_rich_understanding": {
+        "eligible_probes": 1330,
+        "completed_probes": 2,
+        "probe_coverage": 0.0015037593984962407,
+        "accuracy": 0.5,
+        "negative_accuracy": 1.0,
+        "positive_accuracy": 0.0,
+        "balanced_accuracy": 0.5,
+        "eligible_pairs": 665,
+        "complete_pairs": 1,
+        "pair_coverage": 0.0015037593984962407,
+        "paired_accuracy": 0.0,
+        "invalid_outputs": 0,
+        "invalid_rate": 0.0,
+        "parse_coverage": 1.0,
+        "valid_only_confusion": {
+          "tp": 0,
+          "tn": 1,
+          "fp": 0,
+          "fn": 1
+        },
+        "valid_only_precision": null,
+        "valid_only_recall": 0.0,
+        "valid_only_f1": 0.0,
+        "output_format_valid": 2,
+        "output_format_total": 2,
+        "output_format_valid_rate": 1.0,
+        "agent_reply_outputs": 0,
+        "agent_valid_calls": 0,
+        "agent_valid_call_rate": null,
+        "truncated_outputs": 0,
+        "unknown_completion_outputs": 0
+      },
+      "ability:object_counting": {
+        "eligible_probes": 370,
+        "completed_probes": 1,
+        "probe_coverage": 0.002702702702702703,
+        "accuracy": 0.0,
+        "negative_accuracy": 0.0,
+        "positive_accuracy": null,
+        "balanced_accuracy": null,
+        "eligible_pairs": 185,
+        "complete_pairs": 0,
+        "pair_coverage": 0.0,
+        "paired_accuracy": null,
+        "invalid_outputs": 0,
+        "invalid_rate": 0.0,
+        "parse_coverage": 1.0,
+        "valid_only_confusion": {
+          "tp": 0,
+          "tn": 0,
+          "fp": 1,
+          "fn": 0
+        },
+        "valid_only_precision": 0.0,
+        "valid_only_recall": null,
+        "valid_only_f1": 0.0,
+        "output_format_valid": 1,
+        "output_format_total": 1,
+        "output_format_valid_rate": 1.0,
+        "agent_reply_outputs": 0,
+        "agent_valid_calls": 0,
+        "agent_valid_call_rate": null,
+        "truncated_outputs": 0,
+        "unknown_completion_outputs": 0
+      },
+      "ability:spatial_understanding": {
+        "eligible_probes": 680,
+        "completed_probes": 0,
+        "probe_coverage": 0.0,
+        "accuracy": null,
+        "negative_accuracy": null,
+        "positive_accuracy": null,
+        "balanced_accuracy": null,
+        "eligible_pairs": 340,
+        "complete_pairs": 0,
+        "pair_coverage": 0.0,
+        "paired_accuracy": null,
+        "invalid_outputs": 0,
+        "invalid_rate": null,
+        "parse_coverage": null,
+        "valid_only_confusion": {
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "valid_only_precision": null,
+        "valid_only_recall": null,
+        "valid_only_f1": null
+      },
+      "ability:prospective_reasoning": {
+        "eligible_probes": 418,
+        "completed_probes": 0,
+        "probe_coverage": 0.0,
+        "accuracy": null,
+        "negative_accuracy": null,
+        "positive_accuracy": null,
+        "balanced_accuracy": null,
+        "eligible_pairs": 209,
+        "complete_pairs": 0,
+        "pair_coverage": 0.0,
+        "paired_accuracy": null,
+        "invalid_outputs": 0,
+        "invalid_rate": null,
+        "parse_coverage": null,
+        "valid_only_confusion": {
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "valid_only_precision": null,
+        "valid_only_recall": null,
+        "valid_only_f1": null
+      },
+      "ability:causal_reasoning": {
+        "eligible_probes": 564,
+        "completed_probes": 0,
+        "probe_coverage": 0.0,
+        "accuracy": null,
+        "negative_accuracy": null,
+        "positive_accuracy": null,
+        "balanced_accuracy": null,
+        "eligible_pairs": 282,
+        "complete_pairs": 0,
+        "pair_coverage": 0.0,
+        "paired_accuracy": null,
+        "invalid_outputs": 0,
+        "invalid_rate": null,
+        "parse_coverage": null,
+        "valid_only_confusion": {
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "valid_only_precision": null,
+        "valid_only_recall": null,
+        "valid_only_f1": null
+      },
+      "ability:emotion_recognition": {
+        "eligible_probes": 482,
+        "completed_probes": 0,
+        "probe_coverage": 0.0,
+        "accuracy": null,
+        "negative_accuracy": null,
+        "positive_accuracy": null,
+        "balanced_accuracy": null,
+        "eligible_pairs": 241,
+        "complete_pairs": 0,
+        "pair_coverage": 0.0,
+        "paired_accuracy": null,
+        "invalid_outputs": 0,
+        "invalid_rate": null,
+        "parse_coverage": null,
+        "valid_only_confusion": {
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "valid_only_precision": null,
+        "valid_only_recall": null,
+        "valid_only_f1": null
+      },
+      "ability:action_counting": {
+        "eligible_probes": 524,
+        "completed_probes": 0,
+        "probe_coverage": 0.0,
+        "accuracy": null,
+        "negative_accuracy": null,
+        "positive_accuracy": null,
+        "balanced_accuracy": null,
+        "eligible_pairs": 262,
+        "complete_pairs": 0,
+        "pair_coverage": 0.0,
+        "paired_accuracy": null,
+        "invalid_outputs": 0,
+        "invalid_rate": null,
+        "parse_coverage": null,
+        "valid_only_confusion": {
+          "tp": 0,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "valid_only_precision": null,
+        "valid_only_recall": null,
+        "valid_only_f1": null
+      }
+    }
+  },
+  "examples": [
+    {
+      "sample_index": 5,
+      "response_index": 0,
+      "probes": [
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "e52685e39eb8e862952f02b72d41bceaeae05ea3b410ae0a29dfa703a37b2c3a:pre",
+            "pair_id": "e52685e39eb8e862952f02b72d41bceaeae05ea3b410ae0a29dfa703a37b2c3a",
+            "sample_index": 5,
+            "response_index": 0,
+            "side": "pre",
+            "expected": "NO",
+            "prefix_end_seconds": 57.0,
+            "handled_count": 0,
+            "window_start_seconds": 58.0,
+            "window_end_seconds": 62.0,
+            "task": "grounding_agent",
+            "mode": "agent",
+            "ability": "grounding",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
+              "size": 173286335,
+              "mtime_ns": 1784700297399027822
+            },
+            "has_audio": true,
+            "duration_seconds": 229.762,
+            "request": {
+              "task": "grounding_agent",
+              "mode": "agent",
+              "ability": "grounding",
+              "question": "Each time the crowd lets out a loud cheer or laugh at something on the street set, make a note with the time and what triggered it, so I can find the reaction moments later.",
+              "question_time": "00:50",
+              "available_tools": [
+                "todo_create",
+                "todo_query",
+                "todo_update",
+                "calendar_query",
+                "note_write",
+                "order_query",
+                "order_update",
+                "note_search",
+                "document_search",
+                "weather_query",
+                "route_query",
+                "meeting_draft",
+                "shopping_list_query",
+                "shopping_list_update",
+                "budget_query",
+                "budget_update",
+                "calculator",
+                "itinerary_query",
+                "product_search",
+                "calendar_create",
+                "calendar_update",
+                "notification_send",
+                "web_search",
+                "knowledge_search",
+                "history_query",
+                "video_segment_query",
+                "statistics_compute",
+                "report_create"
+              ],
+              "frontend_context": {
+                "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+                "tools": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "agent_call",
+                      "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "instruction": {
+                            "type": "string",
+                            "description": "Complete, self-contained backend work request."
+                          },
+                          "observed_context": {
+                            "type": "string",
+                            "description": "Timestamped audiovisual facts available at the trigger."
+                          },
+                          "user_goal": {
+                            "type": "string",
+                            "description": "The result the user asked for."
+                          },
+                          "constraints_and_authorization": {
+                            "type": "string",
+                            "description": "Scope, permissions, confirmation needs, and user constraints."
+                          },
+                          "suggested_capabilities": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "At least one available daily application tool that is necessary for the requested outcome."
+                          },
+                          "expected_output": {
+                            "type": "string",
+                            "description": "Required result, evidence, sources, actions, and artifacts."
+                          },
+                          "extracted_parameters": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
+                                "evidence_time": {
+                                  "type": "string",
+                                  "description": "MM:SS, no later than trigger_time"
+                                },
+                                "evidence": {
+                                  "type": "string",
+                                  "description": "Observable audiovisual evidence"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "value",
+                                "evidence_time",
+                                "evidence"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "instruction",
+                          "observed_context",
+                          "user_goal",
+                          "constraints_and_authorization",
+                          "suggested_capabilities",
+                          "expected_output",
+                          "extracted_parameters"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "prediction": {
+            "probe_id": "e52685e39eb8e862952f02b72d41bceaeae05ea3b410ae0a29dfa703a37b2c3a:pre",
+            "pair_id": "e52685e39eb8e862952f02b72d41bceaeae05ea3b410ae0a29dfa703a37b2c3a",
+            "sample_index": 5,
+            "response_index": 0,
+            "side": "pre",
+            "status": "complete",
+            "raw_response": "<silent>",
+            "decision": "NO",
+            "parse_status": "valid",
+            "wall_seconds": 48.08353641629219,
+            "text": "<silent>",
+            "response_text": "",
+            "agent_instruction": "",
+            "tool_calls": [],
+            "agent_attempted": false,
+            "task_text_status": "absent",
+            "task_text_format_valid": false,
+            "task_text_generation_complete": true,
+            "task_text_separator_count": 0,
+            "agent_parse_status": "absent",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": true,
+            "output_status": "silent",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 5
+          }
+        },
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "e52685e39eb8e862952f02b72d41bceaeae05ea3b410ae0a29dfa703a37b2c3a:post",
+            "pair_id": "e52685e39eb8e862952f02b72d41bceaeae05ea3b410ae0a29dfa703a37b2c3a",
+            "sample_index": 5,
+            "response_index": 0,
+            "side": "post",
+            "expected": "YES",
+            "prefix_end_seconds": 62.0,
+            "handled_count": 0,
+            "window_start_seconds": 58.0,
+            "window_end_seconds": 62.0,
+            "task": "grounding_agent",
+            "mode": "agent",
+            "ability": "grounding",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
+              "size": 173286335,
+              "mtime_ns": 1784700297399027822
+            },
+            "has_audio": true,
+            "duration_seconds": 229.762,
+            "request": {
+              "task": "grounding_agent",
+              "mode": "agent",
+              "ability": "grounding",
+              "question": "Each time the crowd lets out a loud cheer or laugh at something on the street set, make a note with the time and what triggered it, so I can find the reaction moments later.",
+              "question_time": "00:50",
+              "available_tools": [
+                "todo_create",
+                "todo_query",
+                "todo_update",
+                "calendar_query",
+                "note_write",
+                "order_query",
+                "order_update",
+                "note_search",
+                "document_search",
+                "weather_query",
+                "route_query",
+                "meeting_draft",
+                "shopping_list_query",
+                "shopping_list_update",
+                "budget_query",
+                "budget_update",
+                "calculator",
+                "itinerary_query",
+                "product_search",
+                "calendar_create",
+                "calendar_update",
+                "notification_send",
+                "web_search",
+                "knowledge_search",
+                "history_query",
+                "video_segment_query",
+                "statistics_compute",
+                "report_create"
+              ],
+              "frontend_context": {
+                "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+                "tools": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "agent_call",
+                      "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "instruction": {
+                            "type": "string",
+                            "description": "Complete, self-contained backend work request."
+                          },
+                          "observed_context": {
+                            "type": "string",
+                            "description": "Timestamped audiovisual facts available at the trigger."
+                          },
+                          "user_goal": {
+                            "type": "string",
+                            "description": "The result the user asked for."
+                          },
+                          "constraints_and_authorization": {
+                            "type": "string",
+                            "description": "Scope, permissions, confirmation needs, and user constraints."
+                          },
+                          "suggested_capabilities": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "At least one available daily application tool that is necessary for the requested outcome."
+                          },
+                          "expected_output": {
+                            "type": "string",
+                            "description": "Required result, evidence, sources, actions, and artifacts."
+                          },
+                          "extracted_parameters": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
+                                "evidence_time": {
+                                  "type": "string",
+                                  "description": "MM:SS, no later than trigger_time"
+                                },
+                                "evidence": {
+                                  "type": "string",
+                                  "description": "Observable audiovisual evidence"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "value",
+                                "evidence_time",
+                                "evidence"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "instruction",
+                          "observed_context",
+                          "user_goal",
+                          "constraints_and_authorization",
+                          "suggested_capabilities",
+                          "expected_output",
+                          "extracted_parameters"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "prediction": {
+            "probe_id": "e52685e39eb8e862952f02b72d41bceaeae05ea3b410ae0a29dfa703a37b2c3a:post",
+            "pair_id": "e52685e39eb8e862952f02b72d41bceaeae05ea3b410ae0a29dfa703a37b2c3a",
+            "sample_index": 5,
+            "response_index": 0,
+            "side": "post",
+            "status": "complete",
+            "raw_response": "At 00:57, the crowd cheers loudly as the man in the gray shirt falls over the barricade and lands on the sidewalk. This was triggered by his clumsy attempt at a Spider-Man-like leap. <|task_start|>Record crowd cheer at 00:57 due to man falling over barricade during \"Spider-Man\" stunt attempt.",
+            "decision": "YES",
+            "parse_status": "valid",
+            "wall_seconds": 13.568962451070547,
+            "text": "At 00:57, the crowd cheers loudly as the man in the gray shirt falls over the barricade and lands on the sidewalk. This was triggered by his clumsy attempt at a Spider-Man-like leap. <|task_start|>Record crowd cheer at 00:57 due to man falling over barricade during \"Spider-Man\" stunt attempt.",
+            "response_text": "At 00:57, the crowd cheers loudly as the man in the gray shirt falls over the barricade and lands on the sidewalk. This was triggered by his clumsy attempt at a Spider-Man-like leap.",
+            "agent_instruction": "Record crowd cheer at 00:57 due to man falling over barricade during \"Spider-Man\" stunt attempt.",
+            "tool_calls": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "task_start",
+                  "arguments": {
+                    "instruction": "Record crowd cheer at 00:57 due to man falling over barricade during \"Spider-Man\" stunt attempt."
+                  }
+                }
+              }
+            ],
+            "agent_attempted": true,
+            "task_text_status": "valid",
+            "task_text_format_valid": true,
+            "task_text_generation_complete": true,
+            "task_text_separator_count": 1,
+            "agent_parse_status": "structured",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": true,
+            "output_status": "response",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 75
+          }
+        }
+      ]
+    },
+    {
+      "sample_index": 2,
+      "response_index": 0,
+      "probes": [
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "c253ff17b3570150803649ec02ebd1e0432a2618ce497f440446398f69c47f25:pre",
+            "pair_id": "c253ff17b3570150803649ec02ebd1e0432a2618ce497f440446398f69c47f25",
+            "sample_index": 2,
+            "response_index": 0,
+            "side": "pre",
+            "expected": "NO",
+            "prefix_end_seconds": 64.0,
+            "handled_count": 0,
+            "window_start_seconds": 65.0,
+            "window_end_seconds": 80.0,
+            "task": "attribute_perception_agent",
+            "mode": "agent",
+            "ability": "attribute_perception",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+              "size": 13689634,
+              "mtime_ns": 1784700287035015098
+            },
+            "has_audio": true,
+            "duration_seconds": 233.484,
+            "request": {
+              "task": "attribute_perception_agent",
+              "mode": "agent",
+              "ability": "attribute_perception",
+              "question": "Watch the light-colored end of the instrument. If a small light-colored cover is removed from it, let me know and check whether replacement covers for it are available.",
+              "question_time": "00:00",
+              "available_tools": [
+                "todo_create",
+                "todo_query",
+                "todo_update",
+                "calendar_query",
+                "note_write",
+                "order_query",
+                "order_update",
+                "note_search",
+                "document_search",
+                "weather_query",
+                "route_query",
+                "meeting_draft",
+                "shopping_list_query",
+                "shopping_list_update",
+                "budget_query",
+                "budget_update",
+                "calculator",
+                "itinerary_query",
+                "product_search",
+                "calendar_create",
+                "calendar_update",
+                "notification_send",
+                "web_search",
+                "knowledge_search",
+                "history_query",
+                "video_segment_query",
+                "statistics_compute",
+                "report_create"
+              ],
+              "frontend_context": {
+                "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+                "tools": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "agent_call",
+                      "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "instruction": {
+                            "type": "string",
+                            "description": "Complete, self-contained backend work request."
+                          },
+                          "observed_context": {
+                            "type": "string",
+                            "description": "Timestamped audiovisual facts available at the trigger."
+                          },
+                          "user_goal": {
+                            "type": "string",
+                            "description": "The result the user asked for."
+                          },
+                          "constraints_and_authorization": {
+                            "type": "string",
+                            "description": "Scope, permissions, confirmation needs, and user constraints."
+                          },
+                          "suggested_capabilities": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "At least one available daily application tool that is necessary for the requested outcome."
+                          },
+                          "expected_output": {
+                            "type": "string",
+                            "description": "Required result, evidence, sources, actions, and artifacts."
+                          },
+                          "extracted_parameters": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
+                                "evidence_time": {
+                                  "type": "string",
+                                  "description": "MM:SS, no later than trigger_time"
+                                },
+                                "evidence": {
+                                  "type": "string",
+                                  "description": "Observable audiovisual evidence"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "value",
+                                "evidence_time",
+                                "evidence"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "instruction",
+                          "observed_context",
+                          "user_goal",
+                          "constraints_and_authorization",
+                          "suggested_capabilities",
+                          "expected_output",
+                          "extracted_parameters"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "prediction": {
+            "probe_id": "c253ff17b3570150803649ec02ebd1e0432a2618ce497f440446398f69c47f25:pre",
+            "pair_id": "c253ff17b3570150803649ec02ebd1e0432a2618ce497f440446398f69c47f25",
+            "sample_index": 2,
+            "response_index": 0,
+            "side": "pre",
+            "status": "complete",
+            "raw_response": "<silent>",
+            "decision": "NO",
+            "parse_status": "valid",
+            "wall_seconds": 8.058064080774784,
+            "text": "<silent>",
+            "response_text": "",
+            "agent_instruction": "",
+            "tool_calls": [],
+            "agent_attempted": false,
+            "task_text_status": "absent",
+            "task_text_format_valid": false,
+            "task_text_generation_complete": true,
+            "task_text_separator_count": 0,
+            "agent_parse_status": "absent",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": true,
+            "output_status": "silent",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 5
+          }
+        },
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "c253ff17b3570150803649ec02ebd1e0432a2618ce497f440446398f69c47f25:post",
+            "pair_id": "c253ff17b3570150803649ec02ebd1e0432a2618ce497f440446398f69c47f25",
+            "sample_index": 2,
+            "response_index": 0,
+            "side": "post",
+            "expected": "YES",
+            "prefix_end_seconds": 80.0,
+            "handled_count": 0,
+            "window_start_seconds": 65.0,
+            "window_end_seconds": 80.0,
+            "task": "attribute_perception_agent",
+            "mode": "agent",
+            "ability": "attribute_perception",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+              "size": 13689634,
+              "mtime_ns": 1784700287035015098
+            },
+            "has_audio": true,
+            "duration_seconds": 233.484,
+            "request": {
+              "task": "attribute_perception_agent",
+              "mode": "agent",
+              "ability": "attribute_perception",
+              "question": "Watch the light-colored end of the instrument. If a small light-colored cover is removed from it, let me know and check whether replacement covers for it are available.",
+              "question_time": "00:00",
+              "available_tools": [
+                "todo_create",
+                "todo_query",
+                "todo_update",
+                "calendar_query",
+                "note_write",
+                "order_query",
+                "order_update",
+                "note_search",
+                "document_search",
+                "weather_query",
+                "route_query",
+                "meeting_draft",
+                "shopping_list_query",
+                "shopping_list_update",
+                "budget_query",
+                "budget_update",
+                "calculator",
+                "itinerary_query",
+                "product_search",
+                "calendar_create",
+                "calendar_update",
+                "notification_send",
+                "web_search",
+                "knowledge_search",
+                "history_query",
+                "video_segment_query",
+                "statistics_compute",
+                "report_create"
+              ],
+              "frontend_context": {
+                "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+                "tools": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "agent_call",
+                      "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "instruction": {
+                            "type": "string",
+                            "description": "Complete, self-contained backend work request."
+                          },
+                          "observed_context": {
+                            "type": "string",
+                            "description": "Timestamped audiovisual facts available at the trigger."
+                          },
+                          "user_goal": {
+                            "type": "string",
+                            "description": "The result the user asked for."
+                          },
+                          "constraints_and_authorization": {
+                            "type": "string",
+                            "description": "Scope, permissions, confirmation needs, and user constraints."
+                          },
+                          "suggested_capabilities": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "At least one available daily application tool that is necessary for the requested outcome."
+                          },
+                          "expected_output": {
+                            "type": "string",
+                            "description": "Required result, evidence, sources, actions, and artifacts."
+                          },
+                          "extracted_parameters": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
+                                "evidence_time": {
+                                  "type": "string",
+                                  "description": "MM:SS, no later than trigger_time"
+                                },
+                                "evidence": {
+                                  "type": "string",
+                                  "description": "Observable audiovisual evidence"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "value",
+                                "evidence_time",
+                                "evidence"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "instruction",
+                          "observed_context",
+                          "user_goal",
+                          "constraints_and_authorization",
+                          "suggested_capabilities",
+                          "expected_output",
+                          "extracted_parameters"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "prediction": {
+            "probe_id": "c253ff17b3570150803649ec02ebd1e0432a2618ce497f440446398f69c47f25:post",
+            "pair_id": "c253ff17b3570150803649ec02ebd1e0432a2618ce497f440446398f69c47f25",
+            "sample_index": 2,
+            "response_index": 0,
+            "side": "post",
+            "status": "complete",
+            "raw_response": "<silent>",
+            "decision": "NO",
+            "parse_status": "valid",
+            "wall_seconds": 11.064663987606764,
+            "text": "<silent>",
+            "response_text": "",
+            "agent_instruction": "",
+            "tool_calls": [],
+            "agent_attempted": false,
+            "task_text_status": "absent",
+            "task_text_format_valid": false,
+            "task_text_generation_complete": true,
+            "task_text_separator_count": 0,
+            "agent_parse_status": "absent",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": true,
+            "output_status": "silent",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 5
+          }
+        }
+      ]
+    },
+    {
+      "sample_index": 0,
+      "response_index": 1,
+      "probes": [
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "7e8f8e654143216a7120f1f3ef7fd7d6e22054a625b18cf4aa6c34bffe64e48d:pre",
+            "pair_id": "7e8f8e654143216a7120f1f3ef7fd7d6e22054a625b18cf4aa6c34bffe64e48d",
+            "sample_index": 0,
+            "response_index": 1,
+            "side": "pre",
+            "expected": "NO",
+            "prefix_end_seconds": 66.0,
+            "handled_count": 1,
+            "window_start_seconds": 67.0,
+            "window_end_seconds": 80.0,
+            "task": "attribute_perception_rtd",
+            "mode": "rtd",
+            "ability": "attribute_perception",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+              "size": 13689634,
+              "mtime_ns": 1784700287035015098
+            },
+            "has_audio": true,
+            "duration_seconds": 233.484,
+            "request": {
+              "task": "attribute_perception_rtd",
+              "mode": "rtd",
+              "ability": "attribute_perception",
+              "question": "Keep me updated on the reed the instructor handles during this lesson — tell me its condition and where it is as things change.",
+              "question_time": "00:00"
+            }
+          },
+          "prediction": {
+            "probe_id": "7e8f8e654143216a7120f1f3ef7fd7d6e22054a625b18cf4aa6c34bffe64e48d:pre",
+            "pair_id": "7e8f8e654143216a7120f1f3ef7fd7d6e22054a625b18cf4aa6c34bffe64e48d",
+            "sample_index": 0,
+            "response_index": 1,
+            "side": "pre",
+            "status": "complete",
+            "raw_response": "<silent>",
+            "decision": "NO",
+            "parse_status": "valid",
+            "wall_seconds": 7.296671882271767,
+            "text": "<silent>",
+            "response_text": "",
+            "agent_instruction": "",
+            "tool_calls": [],
+            "agent_attempted": false,
+            "task_text_status": "absent",
+            "task_text_format_valid": false,
+            "task_text_generation_complete": true,
+            "task_text_separator_count": 0,
+            "agent_parse_status": "absent",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": true,
+            "output_status": "silent",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 5
+          }
+        },
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "7e8f8e654143216a7120f1f3ef7fd7d6e22054a625b18cf4aa6c34bffe64e48d:post",
+            "pair_id": "7e8f8e654143216a7120f1f3ef7fd7d6e22054a625b18cf4aa6c34bffe64e48d",
+            "sample_index": 0,
+            "response_index": 1,
+            "side": "post",
+            "expected": "YES",
+            "prefix_end_seconds": 80.0,
+            "handled_count": 1,
+            "window_start_seconds": 67.0,
+            "window_end_seconds": 80.0,
+            "task": "attribute_perception_rtd",
+            "mode": "rtd",
+            "ability": "attribute_perception",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+              "size": 13689634,
+              "mtime_ns": 1784700287035015098
+            },
+            "has_audio": true,
+            "duration_seconds": 233.484,
+            "request": {
+              "task": "attribute_perception_rtd",
+              "mode": "rtd",
+              "ability": "attribute_perception",
+              "question": "Keep me updated on the reed the instructor handles during this lesson — tell me its condition and where it is as things change.",
+              "question_time": "00:00"
+            }
+          },
+          "prediction": {
+            "probe_id": "7e8f8e654143216a7120f1f3ef7fd7d6e22054a625b18cf4aa6c34bffe64e48d:post",
+            "pair_id": "7e8f8e654143216a7120f1f3ef7fd7d6e22054a625b18cf4aa6c34bffe64e48d",
+            "sample_index": 0,
+            "response_index": 1,
+            "side": "post",
+            "status": "complete",
+            "raw_response": "The instructor is currently holding and explaining the reed component of the duduk. He points out the cap, bridle, and double-reed at the end, demonstrating how the bridle adjusts the reed's position. The reed appears to be in good, intact condition as he manipulates it for the lesson. <|task_start|>Explain the function of the bridle on the duduk reed and how it affects sound production.",
+            "decision": "YES",
+            "parse_status": "valid",
+            "wall_seconds": 13.47494574636221,
+            "text": "The instructor is currently holding and explaining the reed component of the duduk. He points out the cap, bridle, and double-reed at the end, demonstrating how the bridle adjusts the reed's position. The reed appears to be in good, intact condition as he manipulates it for the lesson. <|task_start|>Explain the function of the bridle on the duduk reed and how it affects sound production.",
+            "response_text": "The instructor is currently holding and explaining the reed component of the duduk. He points out the cap, bridle, and double-reed at the end, demonstrating how the bridle adjusts the reed's position. The reed appears to be in good, intact condition as he manipulates it for the lesson.",
+            "agent_instruction": "Explain the function of the bridle on the duduk reed and how it affects sound production.",
+            "tool_calls": [],
+            "agent_attempted": true,
+            "task_text_status": "valid",
+            "task_text_format_valid": true,
+            "task_text_generation_complete": true,
+            "task_text_separator_count": 1,
+            "agent_parse_status": "structured",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": false,
+            "output_status": "response",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 94
+          }
+        }
+      ]
+    },
+    {
+      "sample_index": 1,
+      "response_index": 0,
+      "probes": [
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "9877d138fb1afffb01c61f389f3e334487542c8b54612e62d349f26a9228bce2:pre",
+            "pair_id": "9877d138fb1afffb01c61f389f3e334487542c8b54612e62d349f26a9228bce2",
+            "sample_index": 1,
+            "response_index": 0,
+            "side": "pre",
+            "expected": "NO",
+            "prefix_end_seconds": 141.0,
+            "handled_count": 0,
+            "window_start_seconds": 142.0,
+            "window_end_seconds": 145.0,
+            "task": "attribute_perception_pr",
+            "mode": "pr",
+            "ability": "attribute_perception",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+              "size": 13689634,
+              "mtime_ns": 1784700287035015098
+            },
+            "has_audio": true,
+            "duration_seconds": 233.484,
+            "request": {
+              "task": "attribute_perception_pr",
+              "mode": "pr",
+              "ability": "attribute_perception",
+              "question": "Tell me whenever the duduk reed is placed into the clear glass of water.",
+              "question_time": "02:17"
+            }
+          },
+          "prediction": {
+            "probe_id": "9877d138fb1afffb01c61f389f3e334487542c8b54612e62d349f26a9228bce2:pre",
+            "pair_id": "9877d138fb1afffb01c61f389f3e334487542c8b54612e62d349f26a9228bce2",
+            "sample_index": 1,
+            "response_index": 0,
+            "side": "pre",
+            "status": "complete",
+            "raw_response": "02:17 done already handled: 1, output: <|task_start|>Place the duduk reed into the clear glass of water.",
+            "decision": "YES",
+            "parse_status": "valid",
+            "wall_seconds": 25.669878363609314,
+            "text": "02:17 done already handled: 1, output: <|task_start|>Place the duduk reed into the clear glass of water.",
+            "response_text": "02:17 done already handled: 1, output:",
+            "agent_instruction": "Place the duduk reed into the clear glass of water.",
+            "tool_calls": [],
+            "agent_attempted": true,
+            "task_text_status": "valid",
+            "task_text_format_valid": true,
+            "task_text_generation_complete": true,
+            "task_text_separator_count": 1,
+            "agent_parse_status": "structured",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": false,
+            "output_status": "response",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 35
+          }
+        },
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "9877d138fb1afffb01c61f389f3e334487542c8b54612e62d349f26a9228bce2:post",
+            "pair_id": "9877d138fb1afffb01c61f389f3e334487542c8b54612e62d349f26a9228bce2",
+            "sample_index": 1,
+            "response_index": 0,
+            "side": "post",
+            "expected": "YES",
+            "prefix_end_seconds": 145.0,
+            "handled_count": 0,
+            "window_start_seconds": 142.0,
+            "window_end_seconds": 145.0,
+            "task": "attribute_perception_pr",
+            "mode": "pr",
+            "ability": "attribute_perception",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/b364982f-fb37-5e7c-b6a3-844f771024d7.mp4",
+              "size": 13689634,
+              "mtime_ns": 1784700287035015098
+            },
+            "has_audio": true,
+            "duration_seconds": 233.484,
+            "request": {
+              "task": "attribute_perception_pr",
+              "mode": "pr",
+              "ability": "attribute_perception",
+              "question": "Tell me whenever the duduk reed is placed into the clear glass of water.",
+              "question_time": "02:17"
+            }
+          },
+          "prediction": {
+            "probe_id": "9877d138fb1afffb01c61f389f3e334487542c8b54612e62d349f26a9228bce2:post",
+            "pair_id": "9877d138fb1afffb01c61f389f3e334487542c8b54612e62d349f26a9228bce2",
+            "sample_index": 1,
+            "response_index": 0,
+            "side": "post",
+            "status": "complete",
+            "raw_response": "duduk reed is placed into the clear glass of water.",
+            "decision": "YES",
+            "parse_status": "valid",
+            "wall_seconds": 25.374801747500896,
+            "text": "duduk reed is placed into the clear glass of water.",
+            "response_text": "duduk reed is placed into the clear glass of water.",
+            "agent_instruction": "",
+            "tool_calls": [],
+            "agent_attempted": false,
+            "task_text_status": "absent",
+            "task_text_format_valid": false,
+            "task_text_generation_complete": true,
+            "task_text_separator_count": 0,
+            "agent_parse_status": "absent",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": true,
+            "output_status": "response",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 16
+          }
+        }
+      ]
+    },
+    {
+      "sample_index": 5,
+      "response_index": 3,
+      "probes": [
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "fbfc90cd3e7d70c40a0fe70d8eec55da39c2ad87ddf3e596b910ed47e1519305:pre",
+            "pair_id": "fbfc90cd3e7d70c40a0fe70d8eec55da39c2ad87ddf3e596b910ed47e1519305",
+            "sample_index": 5,
+            "response_index": 3,
+            "side": "pre",
+            "expected": "NO",
+            "prefix_end_seconds": 153.0,
+            "handled_count": 1,
+            "window_start_seconds": 154.0,
+            "window_end_seconds": 160.0,
+            "task": "grounding_agent",
+            "mode": "agent",
+            "ability": "grounding",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
+              "size": 173286335,
+              "mtime_ns": 1784700297399027822
+            },
+            "has_audio": true,
+            "duration_seconds": 229.762,
+            "request": {
+              "task": "grounding_agent",
+              "mode": "agent",
+              "ability": "grounding",
+              "question": "Each time the crowd lets out a loud cheer or laugh at something on the street set, make a note with the time and what triggered it, so I can find the reaction moments later.",
+              "question_time": "00:50",
+              "available_tools": [
+                "todo_create",
+                "todo_query",
+                "todo_update",
+                "calendar_query",
+                "note_write",
+                "order_query",
+                "order_update",
+                "note_search",
+                "document_search",
+                "weather_query",
+                "route_query",
+                "meeting_draft",
+                "shopping_list_query",
+                "shopping_list_update",
+                "budget_query",
+                "budget_update",
+                "calculator",
+                "itinerary_query",
+                "product_search",
+                "calendar_create",
+                "calendar_update",
+                "notification_send",
+                "web_search",
+                "knowledge_search",
+                "history_query",
+                "video_segment_query",
+                "statistics_compute",
+                "report_create"
+              ],
+              "frontend_context": {
+                "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+                "tools": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "agent_call",
+                      "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "instruction": {
+                            "type": "string",
+                            "description": "Complete, self-contained backend work request."
+                          },
+                          "observed_context": {
+                            "type": "string",
+                            "description": "Timestamped audiovisual facts available at the trigger."
+                          },
+                          "user_goal": {
+                            "type": "string",
+                            "description": "The result the user asked for."
+                          },
+                          "constraints_and_authorization": {
+                            "type": "string",
+                            "description": "Scope, permissions, confirmation needs, and user constraints."
+                          },
+                          "suggested_capabilities": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "At least one available daily application tool that is necessary for the requested outcome."
+                          },
+                          "expected_output": {
+                            "type": "string",
+                            "description": "Required result, evidence, sources, actions, and artifacts."
+                          },
+                          "extracted_parameters": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
+                                "evidence_time": {
+                                  "type": "string",
+                                  "description": "MM:SS, no later than trigger_time"
+                                },
+                                "evidence": {
+                                  "type": "string",
+                                  "description": "Observable audiovisual evidence"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "value",
+                                "evidence_time",
+                                "evidence"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "instruction",
+                          "observed_context",
+                          "user_goal",
+                          "constraints_and_authorization",
+                          "suggested_capabilities",
+                          "expected_output",
+                          "extracted_parameters"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "prediction": {
+            "probe_id": "fbfc90cd3e7d70c40a0fe70d8eec55da39c2ad87ddf3e596b910ed47e1519305:pre",
+            "pair_id": "fbfc90cd3e7d70c40a0fe70d8eec55da39c2ad87ddf3e596b910ed47e1519305",
+            "sample_index": 5,
+            "response_index": 3,
+            "side": "pre",
+            "status": "complete",
+            "raw_response": "00:50.00000000000000000000000000000000000000000000000000000000000000000000000:50.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n",
+            "decision": "YES",
+            "parse_status": "valid",
+            "wall_seconds": 53.77849465981126,
+            "text": "00:50.00000000000000000000000000000000000000000000000000000000000000000000000:50.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n",
+            "response_text": "00:50.00000000000000000000000000000000000000000000000000000000000000000000000:50.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "agent_instruction": "",
+            "tool_calls": [],
+            "agent_attempted": false,
+            "task_text_status": "truncated",
+            "task_text_format_valid": false,
+            "task_text_generation_complete": false,
+            "task_text_separator_count": 0,
+            "agent_parse_status": "truncated",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": false,
+            "output_status": "truncated",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 256
+          }
+        },
+        {
+          "manifest": {
+            "schema": "omniduplex-probe-v1",
+            "probe_id": "fbfc90cd3e7d70c40a0fe70d8eec55da39c2ad87ddf3e596b910ed47e1519305:post",
+            "pair_id": "fbfc90cd3e7d70c40a0fe70d8eec55da39c2ad87ddf3e596b910ed47e1519305",
+            "sample_index": 5,
+            "response_index": 3,
+            "side": "post",
+            "expected": "YES",
+            "prefix_end_seconds": 160.0,
+            "handled_count": 1,
+            "window_start_seconds": 154.0,
+            "window_end_seconds": 160.0,
+            "task": "grounding_agent",
+            "mode": "agent",
+            "ability": "grounding",
+            "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
+            "source": {
+              "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/a5736cff-92b4-5955-bff5-9a78475760cc.mp4",
+              "size": 173286335,
+              "mtime_ns": 1784700297399027822
+            },
+            "has_audio": true,
+            "duration_seconds": 229.762,
+            "request": {
+              "task": "grounding_agent",
+              "mode": "agent",
+              "ability": "grounding",
+              "question": "Each time the crowd lets out a loud cheer or laugh at something on the street set, make a note with the time and what triggered it, so I can find the reaction moments later.",
+              "question_time": "00:50",
+              "available_tools": [
+                "todo_create",
+                "todo_query",
+                "todo_update",
+                "calendar_query",
+                "note_write",
+                "order_query",
+                "order_update",
+                "note_search",
+                "document_search",
+                "weather_query",
+                "route_query",
+                "meeting_draft",
+                "shopping_list_query",
+                "shopping_list_update",
+                "budget_query",
+                "budget_update",
+                "calculator",
+                "itinerary_query",
+                "product_search",
+                "calendar_create",
+                "calendar_update",
+                "notification_send",
+                "web_search",
+                "knowledge_search",
+                "history_query",
+                "video_segment_query",
+                "statistics_compute",
+                "report_create"
+              ],
+              "frontend_context": {
+                "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+                "tools": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "agent_call",
+                      "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "instruction": {
+                            "type": "string",
+                            "description": "Complete, self-contained backend work request."
+                          },
+                          "observed_context": {
+                            "type": "string",
+                            "description": "Timestamped audiovisual facts available at the trigger."
+                          },
+                          "user_goal": {
+                            "type": "string",
+                            "description": "The result the user asked for."
+                          },
+                          "constraints_and_authorization": {
+                            "type": "string",
+                            "description": "Scope, permissions, confirmation needs, and user constraints."
+                          },
+                          "suggested_capabilities": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "At least one available daily application tool that is necessary for the requested outcome."
+                          },
+                          "expected_output": {
+                            "type": "string",
+                            "description": "Required result, evidence, sources, actions, and artifacts."
+                          },
+                          "extracted_parameters": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
+                                "evidence_time": {
+                                  "type": "string",
+                                  "description": "MM:SS, no later than trigger_time"
+                                },
+                                "evidence": {
+                                  "type": "string",
+                                  "description": "Observable audiovisual evidence"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "value",
+                                "evidence_time",
+                                "evidence"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "instruction",
+                          "observed_context",
+                          "user_goal",
+                          "constraints_and_authorization",
+                          "suggested_capabilities",
+                          "expected_output",
+                          "extracted_parameters"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "prediction": {
+            "probe_id": "fbfc90cd3e7d70c40a0fe70d8eec55da39c2ad87ddf3e596b910ed47e1519305:post",
+            "pair_id": "fbfc90cd3e7d70c40a0fe70d8eec55da39c2ad87ddf3e596b910ed47e1519305",
+            "sample_index": 5,
+            "response_index": 3,
+            "side": "post",
+            "status": "complete",
+            "raw_response": "\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think> street set, make a note with the time and what triggered it, so I can find the actual reply; for agent also append <|task_start|>instruction.00:50.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n00:50.000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "decision": "YES",
+            "parse_status": "valid",
+            "wall_seconds": 149.1736197322607,
+            "text": "\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think> street set, make a note with the time and what triggered it, so I can find the actual reply; for agent also append <|task_start|>instruction.00:50.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n00:50.000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "response_text": "<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think> street set, make a note with the time and what triggered it, so I can find the actual reply; for agent also append",
+            "agent_instruction": "instruction.00:50.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n00:50.000000000000000000000000000000000000000000000000000000000000000000000000000000",
+            "tool_calls": [],
+            "agent_attempted": true,
+            "task_text_status": "truncated",
+            "task_text_format_valid": true,
+            "task_text_generation_complete": false,
+            "task_text_separator_count": 1,
+            "agent_parse_status": "truncated",
+            "agent_call_onset_seconds": null,
+            "agent_call_complete_seconds": null,
+            "output_format_valid": false,
+            "output_status": "truncated",
+            "output_protocol": "probe_reply_task_text_v1",
+            "generated_tokens": 256
+          }
+        }
+      ]
+    }
+  ]
+}

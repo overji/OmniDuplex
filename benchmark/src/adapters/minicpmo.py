@@ -122,6 +122,10 @@ def run_sample(args, state, context):
         if getattr(args, 'agent_output_protocol', 'text') == 'agent-token':
             from benchmark.data.agent_token import AgentStream
             token_stream = AgentStream(model.tokenizer)
+        task_text = getattr(args, 'agent_output_protocol', 'text') == 'task-text'
+        if task_text:
+            from benchmark.data.task_text import TaskTextStream
+            token_stream = TaskTextStream(model.tokenizer)
         active_event = None
         question_sent = False
         print(f"START sample={sample_index} task={sample['task']} duration={stop:.3f}s question={question_time}s", flush=True)
@@ -136,7 +140,8 @@ def run_sample(args, state, context):
                 if token_stream is not None:
                     if question_sent:
                         event = token_stream.feed(result['generated_ids'], clock,
-                            ended=result['end_of_turn'], interrupted=result['is_listen'])
+                            ended=(result['end_of_turn'] or result['is_listen']) if task_text else result['end_of_turn'],
+                            interrupted=result.get('is_interrupt', False) if task_text else result['is_listen'])
                         if event is not None:
                             events.append(event)
                     return

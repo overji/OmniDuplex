@@ -3,6 +3,16 @@ from collections import defaultdict
 import re
 
 from benchmark.data.files import atomic_write_text, write_json
+from benchmark.probe.output import PROTOCOL, parse_reply
+
+
+def record_output(record, row):
+    if record.get('output_protocol') == PROTOCOL:
+        return parse_reply(record['raw_response'], row['mode'],
+                           complete=record.get('task_text_generation_complete'))
+    if record.get('output_protocol') not in (None, 'yes_no_v1'):
+        raise ValueError('Unknown probe output protocol')
+    return {'decision': parse_decision(record['raw_response'])}
 
 
 def parse_decision(text):
@@ -22,7 +32,7 @@ def score_group(rows, predictions):
         pairs[row['pair_id']].append(row)
     correctness = {}
     for row in complete:
-        decision = parse_decision(predictions[row['probe_id']]['raw_response'])
+        decision = record_output(predictions[row['probe_id']], row)['decision']
         right = decision == row['expected']
         correctness[row['probe_id']] = right
         correct += int(right)
@@ -44,7 +54,7 @@ def score_group(rows, predictions):
     def ratio(a, b):
         return a / b if b else None
     pre_acc, post_acc = ratio(pre_correct, pre_total), ratio(post_correct, post_total)
-    return {'eligible_probes': len(rows), 'completed_probes': len(complete),
+    result = {'eligible_probes': len(rows), 'completed_probes': len(complete),
         'probe_coverage': ratio(len(complete), len(rows)), 'accuracy': ratio(correct, len(complete)),
         'negative_accuracy': pre_acc, 'positive_accuracy': post_acc,
         'balanced_accuracy': (pre_acc + post_acc) / 2 if pre_acc is not None and post_acc is not None else None,
@@ -54,9 +64,25 @@ def score_group(rows, predictions):
         'parse_coverage': ratio(len(complete) - invalid, len(complete)),
         'valid_only_confusion': confusion, 'valid_only_precision': ratio(tp, tp + fp),
         'valid_only_recall': ratio(tp, tp + fn), 'valid_only_f1': ratio(2 * tp, 2 * tp + fp + fn)}
+    generated = [(row, record_output(predictions[row['probe_id']], row)) for row in complete
+                 if predictions[row['probe_id']].get('output_protocol') == PROTOCOL]
+    if generated:
+        agent_replies = [parsed for row, parsed in generated if row['mode'] == 'agent' and parsed['decision'] == 'YES']
+        valid_agent = sum(bool(p['tool_calls']) for p in agent_replies)
+        result.update(output_format_valid=sum(p['output_format_valid'] for _, p in generated),
+            output_format_total=len(generated),
+            output_format_valid_rate=ratio(sum(p['output_format_valid'] for _, p in generated), len(generated)),
+            agent_reply_outputs=len(agent_replies), agent_valid_calls=valid_agent,
+            agent_valid_call_rate=ratio(valid_agent, len(agent_replies)),
+            truncated_outputs=sum(p['output_status'] == 'truncated' for _, p in generated),
+            unknown_completion_outputs=sum(p['task_text_generation_complete'] is None for _, p in generated))
+    return result
 
 
 def summarize(rows, records, errors=()):
+    protocols = {r.get('output_protocol', 'yes_no_v1') for r in records}
+    if len(protocols) > 1:
+        raise ValueError('Mixed probe output protocols; use separate result directories')
     known = {row['probe_id'] for row in rows}
     predictions = {}
     for record in records:
@@ -72,6 +98,7 @@ def summarize(rows, records, errors=()):
             groups[name].append(row)
     failures = {error['probe_id'] for error in errors if error.get('probe_id') in known} - predictions.keys()
     return {'evaluation': 'independent_paired_prefix_reply_decision_v1',
+        'output_protocol': next(iter(protocols), None),
         'invalid_policy': 'incorrect_for_accuracy_and_paired_accuracy',
         'precision_recall_f1_scope': 'parseable_completed_probes_only',
         'failed_probes': len(failures),
@@ -97,5 +124,15 @@ def write_report(rows, records, output_dir, errors=()):
             f"{percent(value['accuracy'])} | {percent(value['negative_accuracy'])} | "
             f"{percent(value['positive_accuracy'])} | {value['complete_pairs']}/{value['eligible_pairs']} | "
             f"{percent(value['paired_accuracy'])} | {percent(value['parse_coverage'])} |")
+    if metrics['output_protocol'] == PROTOCOL:
+        report += ['', '## Response / instruction format', '',
+                   'Decision accuracy is independent of Agent payload validity. A spoken reply without an instruction is still a positive decision.',
+                   'Unknown completion is reported separately; it is not a verified natural stop.', '',
+                   '| Group | Valid format | Agent replies | Valid calls | Truncated | Unknown stop |',
+                   '| --- | ---: | ---: | ---: | ---: | ---: |']
+        for name, value in metrics['groups'].items():
+            report.append(f"| {name} | {value.get('output_format_valid', 0)}/{value.get('output_format_total', 0)} | "
+                f"{value.get('agent_reply_outputs', 0)} | {value.get('agent_valid_calls', 0)} | "
+                f"{value.get('truncated_outputs', 0)} | {value.get('unknown_completion_outputs', 0)} |")
     atomic_write_text(output_dir / 'probe_report.md', '\n'.join(report) + '\n')
     return metrics

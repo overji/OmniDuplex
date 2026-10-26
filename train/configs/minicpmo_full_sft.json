@@ -32,7 +32,7 @@
   "loss_projection_chunk": 64,
   "supervise_silence": false,
   "attention_backend": "flash_attention_2",
-  "agent_output_protocol": "agent_token_task_start_v1",
+  "agent_output_protocol": "task_text_sft_v1",
   "training_method": "full_sft",
   "deepspeed_config": "train/configs/zero3_cpu.json",
   "cpu_threads": 4,

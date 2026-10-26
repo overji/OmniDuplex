@@ -1,0 +1,199 @@
+{
+  "source": "benchmark/docs/realtime_12_tasks_20261025.json",
+  "source_snapshot_utc": "2026-10-25T11:02:28.298676+00:00",
+  "taxonomy": [
+    {
+      "id": "T1",
+      "ability": "attribute_perception",
+      "name_zh": "属性感知",
+      "name_en": "Attribute Perception",
+      "cognitive_level": "感知"
+    },
+    {
+      "id": "T2",
+      "ability": "grounding",
+      "name_zh": "时间定位",
+      "name_en": "Grounding",
+      "cognitive_level": "感知"
+    },
+    {
+      "id": "T3",
+      "ability": "action_perception",
+      "name_zh": "动作感知",
+      "name_en": "Action Perception",
+      "cognitive_level": "感知"
+    },
+    {
+      "id": "T4",
+      "ability": "object_perception",
+      "name_zh": "物体感知",
+      "name_en": "Object Perception",
+      "cognitive_level": "感知"
+    },
+    {
+      "id": "T5",
+      "ability": "emotion_recognition",
+      "name_zh": "情绪识别",
+      "name_en": "Emotion Recognition",
+      "cognitive_level": "感知"
+    },
+    {
+      "id": "T6",
+      "ability": "event_understanding",
+      "name_zh": "事件理解",
+      "name_en": "Event Understanding",
+      "cognitive_level": "理解"
+    },
+    {
+      "id": "T7",
+      "ability": "text_rich_understanding",
+      "name_zh": "文本内容理解",
+      "name_en": "Text-Rich Understanding",
+      "cognitive_level": "理解"
+    },
+    {
+      "id": "T8",
+      "ability": "object_counting",
+      "name_zh": "物体计数",
+      "name_en": "Object Counting",
+      "cognitive_level": "理解"
+    },
+    {
+      "id": "T9",
+      "ability": "action_counting",
+      "name_zh": "动作计数",
+      "name_en": "Action Counting",
+      "cognitive_level": "理解"
+    },
+    {
+      "id": "T10",
+      "ability": "spatial_understanding",
+      "name_zh": "空间理解",
+      "name_en": "Spatial Understanding",
+      "cognitive_level": "推理"
+    },
+    {
+      "id": "T11",
+      "ability": "prospective_reasoning",
+      "name_zh": "前瞻推理",
+      "name_en": "Prospective Reasoning",
+      "cognitive_level": "推理"
+    },
+    {
+      "id": "T12",
+      "ability": "causal_reasoning",
+      "name_zh": "因果推理",
+      "name_en": "Causal Reasoning",
+      "cognitive_level": "推理"
+    }
+  ],
+  "grouping": {
+    "感知": [
+      "attribute_perception",
+      "grounding",
+      "action_perception",
+      "object_perception",
+      "emotion_recognition"
+    ],
+    "理解": [
+      "event_understanding",
+      "text_rich_understanding",
+      "object_counting",
+      "action_counting"
+    ],
+    "推理": [
+      "spatial_understanding",
+      "prospective_reasoning",
+      "causal_reasoning"
+    ]
+  },
+  "results": {
+    "感知": {
+      "minicpmo": {
+        "samples": 863,
+        "windows": 2027,
+        "predictions": 1707,
+        "hits": 446,
+        "recall": 0.22002960039467193,
+        "precision": 0.2612770943175161,
+        "f1": 0.2388859132297804
+      },
+      "gander": {
+        "samples": 863,
+        "windows": 2027,
+        "predictions": 705,
+        "hits": 266,
+        "recall": 0.13122841637888505,
+        "precision": 0.3773049645390071,
+        "f1": 0.19472913616398244
+      },
+      "joyai": {
+        "samples": 863,
+        "windows": 2027,
+        "predictions": 5463,
+        "hits": 529,
+        "recall": 0.26097681302417364,
+        "precision": 0.09683324180853012,
+        "f1": 0.14125500667556742
+      }
+    },
+    "理解": {
+      "minicpmo": {
+        "samples": 749,
+        "windows": 1830,
+        "predictions": 1562,
+        "hits": 492,
+        "recall": 0.26885245901639343,
+        "precision": 0.31498079385403327,
+        "f1": 0.29009433962264153
+      },
+      "gander": {
+        "samples": 749,
+        "windows": 1830,
+        "predictions": 459,
+        "hits": 219,
+        "recall": 0.11967213114754098,
+        "precision": 0.477124183006536,
+        "f1": 0.1913499344692005
+      },
+      "joyai": {
+        "samples": 749,
+        "windows": 1830,
+        "predictions": 4797,
+        "hits": 562,
+        "recall": 0.307103825136612,
+        "precision": 0.11715655618094642,
+        "f1": 0.1696091745888034
+      }
+    },
+    "推理": {
+      "minicpmo": {
+        "samples": 396,
+        "windows": 812,
+        "predictions": 707,
+        "hits": 156,
+        "recall": 0.1921182266009852,
+        "precision": 0.22065063649222066,
+        "f1": 0.2053982883475971
+      },
+      "gander": {
+        "samples": 396,
+        "windows": 812,
+        "predictions": 285,
+        "hits": 80,
+        "recall": 0.09852216748768473,
+        "precision": 0.2807017543859649,
+        "f1": 0.14585232452142208
+      },
+      "joyai": {
+        "samples": 396,
+        "windows": 812,
+        "predictions": 1731,
+        "hits": 147,
+        "recall": 0.1810344827586207,
+        "precision": 0.08492201039861352,
+        "f1": 0.11561148250098309
+      }
+    }
+  }
+}

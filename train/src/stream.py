@@ -8,9 +8,9 @@ from pathlib import Path
 import torch
 
 from benchmark.data.timestamps import seconds
-from benchmark.data.prompts import build_system_prompt, user_request
+from benchmark.data.prompts import user_request
 from benchmark.data.media import media_cache
-from benchmark.data.agent_token import AgentStream
+from benchmark.data.task_text import TaskTextStream
 from train.src.data import target_chunks
 from train.src.grpo import action_log_probs
 
@@ -20,12 +20,8 @@ class SequenceTooLong(ValueError):
 
 
 def system_prompt(record, config):
-    from train.src.agent import training_sample
-    sample = training_sample(record['sample'])
-    prompt = build_system_prompt(Path(config['system_prompt']).read_text(), sample)
-    if sample['mode'] == 'agent':
-        prompt += '\n\n' + Path(config['agent_prompt']).read_text()
-    return prompt
+    from train.src.agent import system_prompt as render
+    return render(record['sample'], config)
 
 
 class Clip:
@@ -200,7 +196,7 @@ def rollout(model, duplex, record, clip, config, seed):
         return token
     duplex.decoder.decode = decode
     chunks, events = [], []
-    parser, sent = AgentStream(duplex.tokenizer), False
+    parser, sent = TaskTextStream(duplex.tokenizer), False
     try:
         with clip.preprocessing_cache(duplex.processor):
             for i, inputs in enumerate(clip.chunks):
@@ -222,7 +218,7 @@ def rollout(model, duplex, record, clip, config, seed):
                 if duplex.decoder.get_cache_length() > config['max_sequence_tokens']:
                     raise SequenceTooLong('Rollout exceeds token limit; discard whole group')
                 if sent:
-                    event = parser.feed(ids, i + 1, ended=result['end_of_turn'], interrupted=result['is_listen'])
+                    event = parser.feed(ids, i + 1, ended=result['end_of_turn'] or result['is_listen'], interrupted=result.get('is_interrupt', False))
                     if event:
                         events.append(event)
         pending = parser.finish(complete=False)

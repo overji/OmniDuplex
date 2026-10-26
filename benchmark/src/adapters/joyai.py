@@ -78,6 +78,14 @@ def run_sample(a, state, context):
             item['tool_calls'] = native_calls
         raw.append(item)
         if inserted_query and frame_time >= qtime:
+            if getattr(a, 'agent_output_protocol', 'text') == 'task-text':
+                from benchmark.data.task_text import event
+                if '</response>' in raw_text:
+                    text = raw_text.split('</response>', 1)[1].strip()
+                    if text:
+                        complete = False if body['choices'][0].get('finish_reason') == 'length' else None
+                        events.append(event(text, at, complete=complete, separator_time=at, end_time=at))
+                continue
             match = re.search(r"</response>\s*(.*?)(?:</|$)", raw_text, flags=re.S)
             if native_calls:
                 text = match.group(1).strip() if match else message

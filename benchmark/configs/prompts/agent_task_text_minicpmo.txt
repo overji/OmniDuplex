@@ -1,0 +1,3 @@
+Use your normal native listening and speaking controls.
+The required format applies to the text of a speaking turn.
+Continue the same response and instruction across streaming chunks when necessary; do not restart them or repeat the separator.

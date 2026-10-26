@@ -12,3 +12,10 @@ class DecisionEmbedding(torch.nn.Module):
         for i,token in enumerate(self.ids):
             output=torch.where((ids==token).unsqueeze(-1),self.rows[i].to(output.dtype),output)
         return output
+
+
+def mean_row(weight):
+    total = torch.zeros(weight.shape[1], device=weight.device, dtype=torch.float32)
+    for start in range(0, len(weight), 2048):
+        total += weight[start:start + 2048].float().sum(0)
+    return total / len(weight)

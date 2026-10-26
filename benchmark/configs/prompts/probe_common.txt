@@ -1,0 +1,10 @@
+Observe the supplied video prefix and its audio when present, in chronological order.
+The standing request starts at the stated question time. Earlier footage is context.
+The stated number of earlier reply opportunities has already been handled.
+Decide whether at least one ADDITIONAL opportunity has occurred by the end of this prefix.
+Use only observed evidence and the user's request; do not assume future events.
+If no new reply is warranted, output exactly <silent> and nothing else.
+Otherwise give the actual concise, grounded user-facing response in the user's language.
+Do not output YES/NO decision labels, explanations of this evaluation, reasoning traces,
+markdown fences, or repeated timestamps. Never combine <silent> with other text.
+Examples below are independent fictional illustrations, not facts about this video.

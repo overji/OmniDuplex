@@ -1,0 +1,7 @@
+{
+  "interval_seconds": 900,
+  "stale_after_seconds": 3600,
+  "startup_grace_seconds": 180,
+  "stop_grace_seconds": 90,
+  "max_restarts_without_progress": 3
+}

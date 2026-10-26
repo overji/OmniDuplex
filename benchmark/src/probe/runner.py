@@ -10,6 +10,16 @@ from benchmark.probe.data import SCHEMA, digest, file_hash, load_manifest, prepa
 from benchmark.probe.media import prefix_clip
 from benchmark.probe.metrics import parse_decision, summarize, write_report
 from benchmark.probe.prompts import model_input
+from benchmark.probe.output import PROTOCOL, parse_reply
+
+
+def prompt_path(args):
+    from benchmark.config.defaults import DEFAULTS
+    if (getattr(args, 'output_protocol', 'yes-no') == 'reply-task-text'
+            and args.system_prompt == DEFAULTS['probe']['system_prompt']):
+        return args.system_prompt.with_name('probe_common.txt' if getattr(args, 'prompt_layout', 'shared') == 'task-specific'
+                                            else 'probe_reply_task_text.txt')
+    return args.system_prompt
 
 
 def selected_rows(rows, max_pairs):
@@ -39,11 +49,22 @@ def run_config(args):
     if (not math.isfinite(args.fps) or args.fps <= 0 or args.max_pixels < 1
             or args.max_new_tokens < 1 or args.max_pairs < 0):
         raise ValueError('Invalid probe sampling or generation setting')
+    layout = getattr(args, 'prompt_layout', 'shared')
+    if layout == 'task-specific' and getattr(args, 'output_protocol', 'yes-no') != 'reply-task-text':
+        raise ValueError('task-specific layout requires reply-task-text')
+    from benchmark.probe.prompts import task_prompt_files
     implementation = {path.name: file_hash(path) for path in Path(__file__).parent.glob('*.py')}
+    if getattr(args, 'output_protocol', 'yes-no') == 'reply-task-text':
+        from benchmark.data import task_text
+        implementation['shared_task_text'] = file_hash(Path(task_text.__file__))
     native_source = getattr(args, 'official_code', None)
     source_hashes = {str(p.relative_to(native_source)): file_hash(p) for p in sorted(native_source.rglob('*.py'))} if native_source else {}
-    return {'schema': SCHEMA, 'manifest_sha256': file_hash(args.manifest),
-        'prompt_sha256': file_hash(args.system_prompt), 'implementation': digest(implementation),
+    return {'schema': SCHEMA, 'output_protocol': getattr(args, 'output_protocol', 'yes-no'),
+        'prompt_layout': layout,
+        'task_prompt_sha256': {p.name:file_hash(p) for p in task_prompt_files()} if layout=='task-specific' else {},
+        'output_protocol_version': PROTOCOL if getattr(args, 'output_protocol', 'yes-no') == 'reply-task-text' else 'yes_no_v1',
+        'manifest_sha256': file_hash(args.manifest),
+        'prompt_sha256': file_hash(prompt_path(args)), 'implementation': digest(implementation),
         'model': args.probe_model, 'model_identity': model_identity(args.model_path),
         'fps': args.fps, 'max_pixels': args.max_pixels, 'max_new_tokens': args.max_new_tokens,
         'dtype': args.dtype, 'device_map': args.device_map, 'attn_implementation': args.attn_implementation,
@@ -52,13 +73,14 @@ def run_config(args):
         'attention_query_chunk_size': getattr(args, 'attention_query_chunk_size', 0),
         'independent_requests': True,
         'official_code': str(args.official_code.resolve()) if getattr(args, 'official_code', None) else None,
+        'input_modality': getattr(args, 'input_modality', 'audio-video'),
         'audio': 'omit_for_visual_model' if args.probe_model == 'qwen3_vl' else 'use_source_track_if_present'}
 
 
 def run(args):
     rows = selected_rows(load_manifest(args.manifest), args.max_pairs)
     config = run_config(args)
-    template = args.system_prompt.read_text()
+    template = prompt_path(args).read_text()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     with (args.output_dir / '.probe.lock').open('a') as lock:
         try:
@@ -66,6 +88,26 @@ def run(args):
         except BlockingIOError as exc:
             raise ValueError('Another process owns this probe output directory') from exc
         return run_locked(args, rows, config, template)
+
+
+def pending_requests(rows, records, errors, baseline=None):
+    """Keep successes, defer failures, and persist retry limits across restarts."""
+    completed = {record['probe_id'] for record in records}
+    if baseline is None:
+        yield from (row for row in rows if row['probe_id'] not in completed)
+        return
+    attempted = {record['probe_id'] for record in errors}
+    for row in rows:
+        if row['probe_id'] not in completed and row['probe_id'] not in attempted:
+            yield row
+    from collections import Counter
+    counts = Counter(record['probe_id'] for record in errors)
+    completed = {record['probe_id'] for record in records}
+    for row in rows:
+        pid = row['probe_id']
+        limit = baseline.get(pid, 0) + 1 if baseline.get(pid, 0) else 2
+        if pid not in completed and counts[pid] < limit:
+            yield row
 
 
 def run_locked(args, rows, config, template):
@@ -83,18 +125,31 @@ def run_locked(args, rows, config, template):
         recover_jsonl_tail(path)
     records, errors = read_jsonl(prediction_path), read_jsonl(error_path)
     summarize(rows, records, errors)  # Reject mixed or duplicate records before loading weights.
-    completed = {record['probe_id'] for record in records}
-    pending = [row for row in rows if row['probe_id'] not in completed]
-    if not pending:
+    baseline = None
+    if getattr(args, 'retry_errors_once', False):
+        from collections import Counter
+        policy_path = args.output_dir / 'probe_retry_policy.json'
+        policy = (json.loads(policy_path.read_text()) if policy_path.exists() else
+                  {'config_sha256': digest(config), 'baseline_errors': dict(Counter(
+                      record['probe_id'] for record in errors)), 'error_retries': 1})
+        if policy['config_sha256'] != digest(config) or policy['error_retries'] != 1:
+            raise ValueError('Probe retry policy/config changed')
+        write_json(policy_path, policy)
+        baseline = policy['baseline_errors']
+    pending = iter(pending_requests(rows, records, errors, baseline))
+    first = next(pending, None)
+    if first is None:
         write_report(rows, records, args.output_dir, errors)
-        return 0
+        return int(len(records) != len(rows))
     from benchmark.probe import models
+    from itertools import chain
     state = models.load(args)
-    for row in pending:
+    for row in chain([first], pending):
         started = time.perf_counter()
         try:
             clip = prefix_clip(row, args.cache_dir)
-            probe = model_input(row, clip, template)
+            probe = model_input(row, clip, template, getattr(args, 'output_protocol', 'yes-no'),
+                                getattr(args, 'prompt_layout', 'shared'))
             append_jsonl(prompt_path, {'probe_id': row['probe_id'], 'video_prefix': str(clip),
                 'system_prompt': probe.system_prompt, 'user_prompt': probe.user_prompt})
             raw = models.generate(args, state, probe)
@@ -114,6 +169,10 @@ def run_locked(args, rows, config, template):
                 'side': row['side'], 'status': 'complete', 'raw_response': raw,
                 'decision': decision, 'parse_status': 'valid' if decision is not None else 'invalid',
                 'wall_seconds': time.perf_counter() - started}
+            if getattr(args, 'output_protocol', 'yes-no') == 'reply-task-text':
+                record.update(parse_reply(raw, row['mode'], complete=getattr(raw, 'generation_complete', None)))
+                record.update(output_protocol=PROTOCOL, generated_tokens=getattr(raw, 'generated_tokens', None))
+                decision = record['decision']
             append_jsonl(prediction_path, record)
             records.append(record)
             print(f"PROBE DONE {row['probe_id']} decision={decision}", flush=True)

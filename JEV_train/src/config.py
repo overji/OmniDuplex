@@ -3,9 +3,9 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = 'jev_gate_qwen25_v1'
+PROTOCOL = 'jev_gate_qwen25_task_text_v2'
 SILENT, RESPONSE = '<|silent|>', '<|response|>'
-AGENT = '<|agent|>'
+AGENT = '<|task_start|>'
 
 
 def digest(value):

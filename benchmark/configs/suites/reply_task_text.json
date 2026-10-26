@@ -1,0 +1,16 @@
+{
+  "realtime_protocol": "task-text",
+  "probe_protocol": "reply-task-text",
+  "probe_prompt": "benchmark/configs/prompts/probe_common.txt",
+  "probe_prompt_layout": "task-specific",
+  "probe_max_new_tokens": 512,
+  "probe_first": ["minicpmo", "qwen3_omni", "qwen25_omni"],
+  "ablations": [
+    {"mode": "realtime", "adapter": "minicpmo", "variant": "no_audio"},
+    {"mode": "realtime", "adapter": "minicpmo", "variant": "no_vision"},
+    {"mode": "probe", "adapter": "qwen25_omni", "variant": "no_audio"},
+    {"mode": "probe", "adapter": "qwen25_omni", "variant": "no_vision"}
+  ],
+  "realtime_after_ablations": ["livestar"],
+  "probe_last": ["ming_omni", "qwen3_vl", "baichuan_omni", "humanomni_v2", "omnivinci"]
+}

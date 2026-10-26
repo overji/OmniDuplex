@@ -76,12 +76,6 @@ def run(args, config):
                     raise RuntimeError('Nonfinite loss')
                 value += loss.item() / len(batch)
                 (loss / len(batch)).backward()
-            if hasattr(model, 'agent_metadata'):
-                base = llm.get_base_model()
-                row_grads = {name: (module.row.grad.norm().item() if module.row.grad is not None else 0.)
-                    for name, module in [('input_row', base.get_input_embeddings()),
-                                         ('output_row', base.get_output_embeddings())]}
-                append_jsonl(args.output / 'token_gradients.jsonl', {'step': step + 1, **row_grads})
             grad_norm = torch.nn.utils.clip_grad_norm_(trainable, config['max_grad_norm'])
             if not torch.isfinite(grad_norm) or grad_norm == 0:
                 raise RuntimeError('Missing or nonfinite LoRA gradient')
@@ -99,11 +93,8 @@ def run(args, config):
             append_jsonl(args.output / 'metrics.jsonl', {'epoch': epoch, 'validation_loss': val_loss})
         if args.profile or (args.max_steps and step >= args.max_steps):
             break
-    if hasattr(model, 'agent_metadata'):
-        from train.src.token_rows import save_adapter
-        save_adapter(llm, duplex.tokenizer, model.agent_metadata, args.output / 'adapter')
-    else:
-        llm.save_pretrained(args.output / 'adapter')
+    from train.src.checkpoints import save_adapter
+    save_adapter(llm, duplex.tokenizer, config['model_path'], args.output / 'adapter')
     report = {'profile': args.profile, 'optimizer_steps': step, 'last_loss': final_loss,
         'trainable_parameters': sum(p.numel() for p in trainable), 'gpu': torch.cuda.get_device_name(device),
         'loaded_gib': loaded_bytes / 2**30, 'feature_peak_gib': feature_peak / 2**30,

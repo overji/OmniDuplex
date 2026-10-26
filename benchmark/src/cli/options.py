@@ -8,7 +8,9 @@ from benchmark.config.defaults import DEFAULTS, PROBE_ADAPTER_DEFAULTS
 def _configure_common(parser, model, *, local_model=True):
     parser.add_argument('--agent-call-schema', choices=('task-start', 'legacy'), default='task-start',
                         help='Benchmark call schema; legacy preserves the original agent_call contract')
-    parser.add_argument("--agent-output-protocol", choices=(("text", "structured", "agent-token") if model == 'minicpmo' else ("text", "structured")), default=argparse.SUPPRESS,
+    protocols = (('text', 'structured', 'agent-token', 'task-text') if model == 'minicpmo'
+                 else ('text', 'structured', 'task-text') if model in ('joyai', 'livestar') else ('text', 'structured'))
+    parser.add_argument("--agent-output-protocol", choices=protocols, default=argparse.SUPPRESS,
                         help="Optional structured Agent output; default preserves existing text protocol")
     defaults = DEFAULTS[model]
     parser.add_argument("--data", type=Path, default=defaults["data"])
@@ -55,7 +57,7 @@ def configure_gander(parser):
     configure_minicpmo(parser)
     for action in parser._actions:
         if action.dest == 'agent_output_protocol':
-            action.choices = ('text',)
+            action.choices = ('text', 'task-text')
             action.help = 'Gander keeps its native tool-call action grammar; generic JSON/agent-token modes are incompatible'
     parser.set_defaults(output_dir=DEFAULTS['minicpmo']['output_dir'].parent / 'gander',
                         max_speak_tokens=11)
@@ -72,6 +74,8 @@ def configure_livestar(p):
     p.add_argument("--cache-dir", type=Path, default=DEFAULTS["livestar"]["cache_dir"])
     p.add_argument("--official-code", type=Path, required=True,
                    help="Pinned LiveStar checkout")
+    p.add_argument('--reuse-non-agent', type=Path, default=argparse.SUPPRESS,
+                   help='Import compatible completed RTD/PR from an old LiveStar parallel run; Agent always regenerates')
 
 
 def configure_roma(p):
@@ -137,6 +141,12 @@ def configure_probe(parser):
         model.add_argument('--fps', type=float, default=defaults['fps'])
         model.add_argument('--max-pixels', type=int, default=defaults['max_pixels'])
         model.add_argument('--max-new-tokens', type=int, default=defaults['max_new_tokens'])
+        model.add_argument('--retry-errors-once', action='store_true',
+                           help='Finish unattempted requests, then retry failures once with a persistent budget')
+        model.add_argument('--output-protocol', choices=('yes-no', 'reply-task-text'), default='yes-no',
+                           help='Reply/silent generation or historical YES/NO decision probes')
+        model.add_argument('--prompt-layout', choices=('shared', 'task-specific'), default='shared',
+                           help='Shared historical prompt or common + per-task prompts and examples')
         model.add_argument('--dtype', choices=('auto', 'bfloat16', 'float16'), default=defaults['dtype'])
         model.add_argument('--device-map', default=defaults['device_map'])
         model.add_argument('--attn-implementation', choices=('sdpa', 'flash_attention_2', 'eager'),
@@ -146,6 +156,9 @@ def configure_probe(parser):
                                help='Bound native eager attention query memory; 0 keeps original computation')
         model.add_argument('--max-pairs', type=int, default=defaults['max_pairs'],
                            help='Limit pairs before skipping completed probes')
+        if name == 'qwen25_omni':
+            model.add_argument('--input-modality', choices=('audio-video', 'video-only', 'audio-only'),
+                               default=argparse.SUPPRESS, help='Explicit input modality ablation')
     score = commands.add_parser('score', help='Recompute probe metrics without model dependencies')
     score.add_argument('--manifest', type=Path, required=True)
     score.add_argument('--predictions', type=Path, required=True)
@@ -218,3 +231,14 @@ def configure_judge(parser):
     parser.add_argument("--concurrency", type=int, default=4)
     parser.add_argument("--timeout", type=float, default=120)
     parser.add_argument("--retries", type=int, default=2)
+
+
+def configure_probe_judge(parser):
+    configure_judge(parser)
+    for action in parser._actions:
+        if action.dest in ('provider', 'model'):
+            action.required = False  # dry-run validates inputs without credentials or a judge model.
+        if action.dest == 'runs':
+            action.help = 'Directories containing new-protocol probe_predictions.jsonl'
+    parser.add_argument('--manifest', type=Path, required=True)
+    parser.add_argument('--dry-run', action='store_true', help='Validate and count TP requests without API calls')

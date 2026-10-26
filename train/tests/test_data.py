@@ -62,8 +62,7 @@ class DataTests(unittest.TestCase):
         from train.tests.test_agent_token import ByteTokenizer
         chunks = target_chunks(row, ByteTokenizer(), 10)
         content = bytes(t for ids, kinds in chunks for t, k in zip(ids, kinds) if k == 3).decode()
-        obj = json.loads(content)
-        self.assertEqual(obj, {'name':'task_start','arguments':{'instruction':'Look up the object'}})
+        self.assertEqual(content, 'Look up the object')
         self.assertNotIn('future secret', content)
         self.assertTrue(any(3 in kinds for _, kinds in chunks))
 

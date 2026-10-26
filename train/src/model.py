@@ -21,20 +21,13 @@ def load_model(config, device):
         attn_implementation=config['attention_backend'], init_tts=False, low_cpu_mem_usage=True).eval().to(device)
     model.requires_grad_(False)
     model.init_tts = lambda **kwargs: None
-    if config['agent_output_protocol'] == 'agent_token_task_start_v1':
-        from transformers import AutoTokenizer
-        from train.src.token_rows import register_token
-        tokenizer = AutoTokenizer.from_pretrained(str(alias), trust_remote_code=True)
-        if '<|agent|>' not in tokenizer.get_vocab():
-            model.agent_metadata = register_token(model, tokenizer, alias)
-        else:
-            if config.get('training_method', 'lora_sft') == 'lora_sft':
-                raise ValueError('Use the original base model for LoRA token registration')
-            from benchmark.data.agent_token import full_model_identity
-            if not (path / 'full_training_model.json').is_file():
-                raise ValueError('Unversioned Agent weights are incompatible; use the original base or a new export')
-            full_model_identity(path)
-        model.prepare_processor(tokenizer=tokenizer)
+    from transformers import AutoTokenizer
+    from train.src.checkpoints import tokenizer_metadata, full_model_identity
+    tokenizer = AutoTokenizer.from_pretrained(str(alias), trust_remote_code=True, local_files_only=True)
+    tokenizer_metadata(tokenizer)
+    if (path / 'full_training_model.json').is_file():
+        full_model_identity(path)
+    model.prepare_processor(tokenizer=tokenizer)
     duplex = model.as_duplex(generate_audio=False, sliding_window_mode='off')
     return model, duplex
 
@@ -77,7 +70,7 @@ def encode_record(record, model, duplex, config):
     import torch
     from PIL import Image
     from benchmark.data.media import media_cache
-    from benchmark.data.prompts import build_system_prompt, user_request
+    from benchmark.data.prompts import user_request
     from benchmark.data.timestamps import seconds
     from train.src.data import target_chunks
 
@@ -91,23 +84,17 @@ def encode_record(record, model, duplex, config):
     cache, metadata, audio = media_cache(Path(config['videos_dir']) / sample['video'], Path(config['media_cache']))
     if end > math.floor(metadata['duration']):
         raise ValueError(f"Target exceeds video duration: sample {record['sample_index']}")
-    prompt = build_system_prompt(Path(config['system_prompt']).read_text(), sample)
-    if sample['mode'] == 'agent':
-        prompt += '\n\n' + Path(config['agent_prompt']).read_text()
+    from train.src.agent import system_prompt
+    prompt = system_prompt(sample, config)
     prompt = '<|im_start|>system\n' + prompt + '<|im_end|>'
     recorder = Recorder(model.llm.get_input_embeddings())
     duplex.decoder = recorder
     duplex._reset_streaming_state()
     model.init_streaming_processor()
     embeddings, labels, groups = [], [], []
-    agent_positions = []
-    agent_id = tokenizer.convert_tokens_to_ids('<|agent|>') if hasattr(model, 'agent_metadata') else None
 
     def add(embeds, ids=None, kinds=None, token_ids=None):
         embeds = embeds.detach().cpu()
-        positions_ids = token_ids if token_ids is not None else ids
-        if positions_ids is not None and agent_id is not None:
-            agent_positions.extend(len(labels) + i for i, token in enumerate(positions_ids) if token == agent_id)
         embeddings.append(embeds)
         labels.extend(ids if ids is not None else [-100] * len(embeds))
         groups.extend(kinds if kinds is not None else [0] * len(embeds))
@@ -149,7 +136,7 @@ def encode_record(record, model, duplex, config):
             add(recorder.embed_token(tokenizer.convert_tokens_to_ids('</unit>')))
     return {'inputs_embeds': torch.cat(embeddings), 'labels': torch.tensor(labels),
             'groups': torch.tensor(groups), 'sample_index': record['sample_index'],
-            'seconds': end, 'target_chunks': len(target), 'agent_positions': agent_positions}
+            'seconds': end, 'target_chunks': len(target)}
 
 
 def add_lora(model, config):
@@ -159,9 +146,6 @@ def add_lora(model, config):
         target_modules=config['target_modules'], bias='none', task_type='CAUSAL_LM'))
     model.llm.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
     model.llm.config.use_cache = False
-    if hasattr(model, 'agent_metadata'):
-        from train.src.token_rows import install_rows
-        install_rows(model.llm, model.agent_metadata)
     return model.llm
 
 
@@ -170,12 +154,6 @@ def loss_for_record(llm, encoded, config, device):
     import torch.nn.functional as F
     from torch.utils.checkpoint import checkpoint
     x = encoded['inputs_embeds'].to(device)
-    if encoded.get('agent_positions'):
-        index = torch.tensor(encoded['agent_positions'], device=device, dtype=torch.long)
-        embedding = llm.get_input_embeddings()
-        ids = torch.full_like(index, embedding.token_id)
-        # Restore current trainable token embedding instead of the detached feature-cache row.
-        x = x.index_copy(0, index, embedding(ids))
     x = x.unsqueeze(0)
     labels = encoded['labels'].to(device)
     groups = encoded['groups'].to(device)

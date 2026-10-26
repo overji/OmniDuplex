@@ -1,0 +1,858 @@
+{
+  "summary": {
+    "snapshot_utc": "2026-10-25T05:44:22Z",
+    "total": 3630,
+    "modes": {
+      "rtd": {
+        "n": 2135,
+        "silent": 775,
+        "think_tags": 478,
+        "separator": 334,
+        "truncated": 542,
+        "long_zero_run": 116,
+        "valid_calls": 0,
+        "format_valid": 1259,
+        "pre_n": 1073,
+        "pre_correct": 416,
+        "post_n": 1062,
+        "post_correct": 683
+      },
+      "pr": {
+        "n": 881,
+        "silent": 385,
+        "think_tags": 172,
+        "separator": 151,
+        "truncated": 189,
+        "long_zero_run": 51,
+        "valid_calls": 0,
+        "format_valid": 530,
+        "pre_n": 441,
+        "pre_correct": 209,
+        "post_n": 440,
+        "post_correct": 255
+      },
+      "agent": {
+        "n": 614,
+        "silent": 388,
+        "think_tags": 72,
+        "separator": 101,
+        "truncated": 108,
+        "long_zero_run": 27,
+        "valid_calls": 78,
+        "format_valid": 464,
+        "pre_n": 308,
+        "pre_correct": 211,
+        "post_n": 306,
+        "post_correct": 123
+      }
+    },
+    "errors": {
+      "OutOfMemoryError": 150,
+      "ValueError": 25
+    }
+  },
+  "prefix_bins": [
+    {
+      "range_seconds": "0–60",
+      "n": 1480,
+      "truncated": 10,
+      "think": 0
+    },
+    {
+      "range_seconds": "60–120",
+      "n": 1092,
+      "truncated": 26,
+      "think": 1
+    },
+    {
+      "range_seconds": "120–inf",
+      "n": 1058,
+      "truncated": 803,
+      "think": 720
+    }
+  ],
+  "examples": [
+    {
+      "manifest": {
+        "schema": "omniduplex-probe-v1",
+        "probe_id": "91d83c739a6c917ecc17404ea33c0330d1de4e34521578666168f6fb07c87a16:pre",
+        "pair_id": "91d83c739a6c917ecc17404ea33c0330d1de4e34521578666168f6fb07c87a16",
+        "sample_index": 835,
+        "response_index": 0,
+        "side": "pre",
+        "expected": "NO",
+        "prefix_end_seconds": 78.0,
+        "handled_count": 0,
+        "window_start_seconds": 79.0,
+        "window_end_seconds": 84.0,
+        "task": "spatial_understanding_pr",
+        "mode": "pr",
+        "ability": "spatial_understanding",
+        "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/6bd1a410-05c9-5b8a-9a53-51a20b81401b.mp4",
+        "source": {
+          "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/6bd1a410-05c9-5b8a-9a53-51a20b81401b.mp4",
+          "size": 6968484,
+          "mtime_ns": 1792198741373546487
+        },
+        "has_audio": true,
+        "duration_seconds": 116.4,
+        "request": {
+          "task": "spatial_understanding_pr",
+          "mode": "pr",
+          "ability": "spatial_understanding",
+          "question": "Let me know whenever the print head carriage is positioned above the mascot's head on the paper sheet.",
+          "question_time": "01:00"
+        }
+      },
+      "prediction": {
+        "probe_id": "91d83c739a6c917ecc17404ea33c0330d1de4e34521578666168f6fb07c87a16:pre",
+        "pair_id": "91d83c739a6c917ecc17404ea33c0330d1de4e34521578666168f6fb07c87a16",
+        "sample_index": 835,
+        "response_index": 0,
+        "side": "pre",
+        "status": "complete",
+        "raw_response": "The print head carriage is positioned above the mascot's head on the paper sheet.",
+        "decision": "YES",
+        "parse_status": "valid",
+        "wall_seconds": 13.61380571871996,
+        "text": "The print head carriage is positioned above the mascot's head on the paper sheet.",
+        "response_text": "The print head carriage is positioned above the mascot's head on the paper sheet.",
+        "agent_instruction": "",
+        "tool_calls": [],
+        "agent_attempted": false,
+        "task_text_status": "absent",
+        "task_text_format_valid": false,
+        "task_text_generation_complete": true,
+        "task_text_separator_count": 0,
+        "agent_parse_status": "absent",
+        "agent_call_onset_seconds": null,
+        "agent_call_complete_seconds": null,
+        "output_format_valid": true,
+        "output_status": "response",
+        "output_protocol": "probe_reply_task_text_v1",
+        "generated_tokens": 18
+      }
+    },
+    {
+      "manifest": {
+        "schema": "omniduplex-probe-v1",
+        "probe_id": "91d83c739a6c917ecc17404ea33c0330d1de4e34521578666168f6fb07c87a16:post",
+        "pair_id": "91d83c739a6c917ecc17404ea33c0330d1de4e34521578666168f6fb07c87a16",
+        "sample_index": 835,
+        "response_index": 0,
+        "side": "post",
+        "expected": "YES",
+        "prefix_end_seconds": 84.0,
+        "handled_count": 0,
+        "window_start_seconds": 79.0,
+        "window_end_seconds": 84.0,
+        "task": "spatial_understanding_pr",
+        "mode": "pr",
+        "ability": "spatial_understanding",
+        "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/6bd1a410-05c9-5b8a-9a53-51a20b81401b.mp4",
+        "source": {
+          "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/6bd1a410-05c9-5b8a-9a53-51a20b81401b.mp4",
+          "size": 6968484,
+          "mtime_ns": 1792198741373546487
+        },
+        "has_audio": true,
+        "duration_seconds": 116.4,
+        "request": {
+          "task": "spatial_understanding_pr",
+          "mode": "pr",
+          "ability": "spatial_understanding",
+          "question": "Let me know whenever the print head carriage is positioned above the mascot's head on the paper sheet.",
+          "question_time": "01:00"
+        }
+      },
+      "prediction": {
+        "probe_id": "91d83c739a6c917ecc17404ea33c0330d1de4e34521578666168f6fb07c87a16:post",
+        "pair_id": "91d83c739a6c917ecc17404ea33c0330d1de4e34521578666168f6fb07c87a16",
+        "sample_index": 835,
+        "response_index": 0,
+        "side": "post",
+        "status": "complete",
+        "raw_response": "The print head carriage is positioned above the mascot's head on the paper sheet.",
+        "decision": "YES",
+        "parse_status": "valid",
+        "wall_seconds": 14.082800216972828,
+        "text": "The print head carriage is positioned above the mascot's head on the paper sheet.",
+        "response_text": "The print head carriage is positioned above the mascot's head on the paper sheet.",
+        "agent_instruction": "",
+        "tool_calls": [],
+        "agent_attempted": false,
+        "task_text_status": "absent",
+        "task_text_format_valid": false,
+        "task_text_generation_complete": true,
+        "task_text_separator_count": 0,
+        "agent_parse_status": "absent",
+        "agent_call_onset_seconds": null,
+        "agent_call_complete_seconds": null,
+        "output_format_valid": true,
+        "output_status": "response",
+        "output_protocol": "probe_reply_task_text_v1",
+        "generated_tokens": 18
+      }
+    },
+    {
+      "manifest": {
+        "schema": "omniduplex-probe-v1",
+        "probe_id": "8f35123318c2ccbe7fde120af1a01794146017f820c8c30f88fd668c39b25b99:pre",
+        "pair_id": "8f35123318c2ccbe7fde120af1a01794146017f820c8c30f88fd668c39b25b99",
+        "sample_index": 840,
+        "response_index": 0,
+        "side": "pre",
+        "expected": "NO",
+        "prefix_end_seconds": 68.0,
+        "handled_count": 0,
+        "window_start_seconds": 69.0,
+        "window_end_seconds": 72.0,
+        "task": "emotion_recognition_agent",
+        "mode": "agent",
+        "ability": "emotion_recognition",
+        "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/727c6bba-b2b0-5eb8-9508-bb18ccfbc5cd.mp4",
+        "source": {
+          "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/727c6bba-b2b0-5eb8-9508-bb18ccfbc5cd.mp4",
+          "size": 41988413,
+          "mtime_ns": 1792198750459767729
+        },
+        "has_audio": true,
+        "duration_seconds": 367.427,
+        "request": {
+          "task": "emotion_recognition_agent",
+          "mode": "agent",
+          "ability": "emotion_recognition",
+          "question": "Whenever the streamer expresses frustration over making a tactical mistake with his equipment or scorestreaks, save a note summarizing his reaction and what happened.",
+          "question_time": "00:40",
+          "available_tools": [
+            "todo_create",
+            "todo_query",
+            "todo_update",
+            "calendar_query",
+            "note_write",
+            "order_query",
+            "order_update",
+            "note_search",
+            "document_search",
+            "weather_query",
+            "route_query",
+            "meeting_draft",
+            "shopping_list_query",
+            "shopping_list_update",
+            "budget_query",
+            "budget_update",
+            "calculator",
+            "itinerary_query",
+            "product_search",
+            "calendar_create",
+            "calendar_update",
+            "notification_send",
+            "web_search",
+            "knowledge_search",
+            "history_query",
+            "video_segment_query",
+            "statistics_compute",
+            "report_create"
+          ],
+          "frontend_context": {
+            "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "instruction": {
+                        "type": "string",
+                        "description": "Complete, self-contained backend work request."
+                      },
+                      "observed_context": {
+                        "type": "string",
+                        "description": "Timestamped audiovisual facts available at the trigger."
+                      },
+                      "user_goal": {
+                        "type": "string",
+                        "description": "The result the user asked for."
+                      },
+                      "constraints_and_authorization": {
+                        "type": "string",
+                        "description": "Scope, permissions, confirmation needs, and user constraints."
+                      },
+                      "suggested_capabilities": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "At least one available daily application tool that is necessary for the requested outcome."
+                      },
+                      "expected_output": {
+                        "type": "string",
+                        "description": "Required result, evidence, sources, actions, and artifacts."
+                      },
+                      "extracted_parameters": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            },
+                            "evidence_time": {
+                              "type": "string",
+                              "description": "MM:SS, no later than trigger_time"
+                            },
+                            "evidence": {
+                              "type": "string",
+                              "description": "Observable audiovisual evidence"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "value",
+                            "evidence_time",
+                            "evidence"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "instruction",
+                      "observed_context",
+                      "user_goal",
+                      "constraints_and_authorization",
+                      "suggested_capabilities",
+                      "expected_output",
+                      "extracted_parameters"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "prediction": {
+        "probe_id": "8f35123318c2ccbe7fde120af1a01794146017f820c8c30f88fd668c39b25b99:pre",
+        "pair_id": "8f35123318c2ccbe7fde120af1a01794146017f820c8c30f88fd668c39b25b99",
+        "sample_index": 840,
+        "response_index": 0,
+        "side": "pre",
+        "status": "complete",
+        "raw_response": "<silent>",
+        "decision": "NO",
+        "parse_status": "valid",
+        "wall_seconds": 16.47364953905344,
+        "text": "<silent>",
+        "response_text": "",
+        "agent_instruction": "",
+        "tool_calls": [],
+        "agent_attempted": false,
+        "task_text_status": "absent",
+        "task_text_format_valid": false,
+        "task_text_generation_complete": true,
+        "task_text_separator_count": 0,
+        "agent_parse_status": "absent",
+        "agent_call_onset_seconds": null,
+        "agent_call_complete_seconds": null,
+        "output_format_valid": true,
+        "output_status": "silent",
+        "output_protocol": "probe_reply_task_text_v1",
+        "generated_tokens": 5
+      }
+    },
+    {
+      "manifest": {
+        "schema": "omniduplex-probe-v1",
+        "probe_id": "8f35123318c2ccbe7fde120af1a01794146017f820c8c30f88fd668c39b25b99:post",
+        "pair_id": "8f35123318c2ccbe7fde120af1a01794146017f820c8c30f88fd668c39b25b99",
+        "sample_index": 840,
+        "response_index": 0,
+        "side": "post",
+        "expected": "YES",
+        "prefix_end_seconds": 72.0,
+        "handled_count": 0,
+        "window_start_seconds": 69.0,
+        "window_end_seconds": 72.0,
+        "task": "emotion_recognition_agent",
+        "mode": "agent",
+        "ability": "emotion_recognition",
+        "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/727c6bba-b2b0-5eb8-9508-bb18ccfbc5cd.mp4",
+        "source": {
+          "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/727c6bba-b2b0-5eb8-9508-bb18ccfbc5cd.mp4",
+          "size": 41988413,
+          "mtime_ns": 1792198750459767729
+        },
+        "has_audio": true,
+        "duration_seconds": 367.427,
+        "request": {
+          "task": "emotion_recognition_agent",
+          "mode": "agent",
+          "ability": "emotion_recognition",
+          "question": "Whenever the streamer expresses frustration over making a tactical mistake with his equipment or scorestreaks, save a note summarizing his reaction and what happened.",
+          "question_time": "00:40",
+          "available_tools": [
+            "todo_create",
+            "todo_query",
+            "todo_update",
+            "calendar_query",
+            "note_write",
+            "order_query",
+            "order_update",
+            "note_search",
+            "document_search",
+            "weather_query",
+            "route_query",
+            "meeting_draft",
+            "shopping_list_query",
+            "shopping_list_update",
+            "budget_query",
+            "budget_update",
+            "calculator",
+            "itinerary_query",
+            "product_search",
+            "calendar_create",
+            "calendar_update",
+            "notification_send",
+            "web_search",
+            "knowledge_search",
+            "history_query",
+            "video_segment_query",
+            "statistics_compute",
+            "report_create"
+          ],
+          "frontend_context": {
+            "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "instruction": {
+                        "type": "string",
+                        "description": "Complete, self-contained backend work request."
+                      },
+                      "observed_context": {
+                        "type": "string",
+                        "description": "Timestamped audiovisual facts available at the trigger."
+                      },
+                      "user_goal": {
+                        "type": "string",
+                        "description": "The result the user asked for."
+                      },
+                      "constraints_and_authorization": {
+                        "type": "string",
+                        "description": "Scope, permissions, confirmation needs, and user constraints."
+                      },
+                      "suggested_capabilities": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "At least one available daily application tool that is necessary for the requested outcome."
+                      },
+                      "expected_output": {
+                        "type": "string",
+                        "description": "Required result, evidence, sources, actions, and artifacts."
+                      },
+                      "extracted_parameters": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            },
+                            "evidence_time": {
+                              "type": "string",
+                              "description": "MM:SS, no later than trigger_time"
+                            },
+                            "evidence": {
+                              "type": "string",
+                              "description": "Observable audiovisual evidence"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "value",
+                            "evidence_time",
+                            "evidence"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "instruction",
+                      "observed_context",
+                      "user_goal",
+                      "constraints_and_authorization",
+                      "suggested_capabilities",
+                      "expected_output",
+                      "extracted_parameters"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "prediction": {
+        "probe_id": "8f35123318c2ccbe7fde120af1a01794146017f820c8c30f88fd668c39b25b99:post",
+        "pair_id": "8f35123318c2ccbe7fde120af1a01794146017f820c8c30f88fd668c39b25b99",
+        "sample_index": 840,
+        "response_index": 0,
+        "side": "post",
+        "status": "complete",
+        "raw_response": "Note: At 00:40, the streamer expresses frustration for mistakenly using his Shredder scorestreak. <|task_start|>Create a note titled \"Shredder Mistake at 00:40\" summarizing the streamer's regret over the unnecessary use of the Shredder scorestreak.",
+        "decision": "YES",
+        "parse_status": "valid",
+        "wall_seconds": 17.231304939836264,
+        "text": "Note: At 00:40, the streamer expresses frustration for mistakenly using his Shredder scorestreak. <|task_start|>Create a note titled \"Shredder Mistake at 00:40\" summarizing the streamer's regret over the unnecessary use of the Shredder scorestreak.",
+        "response_text": "Note: At 00:40, the streamer expresses frustration for mistakenly using his Shredder scorestreak.",
+        "agent_instruction": "Create a note titled \"Shredder Mistake at 00:40\" summarizing the streamer's regret over the unnecessary use of the Shredder scorestreak.",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "task_start",
+              "arguments": {
+                "instruction": "Create a note titled \"Shredder Mistake at 00:40\" summarizing the streamer's regret over the unnecessary use of the Shredder scorestreak."
+              }
+            }
+          }
+        ],
+        "agent_attempted": true,
+        "task_text_status": "valid",
+        "task_text_format_valid": true,
+        "task_text_generation_complete": true,
+        "task_text_separator_count": 1,
+        "agent_parse_status": "structured",
+        "agent_call_onset_seconds": null,
+        "agent_call_complete_seconds": null,
+        "output_format_valid": true,
+        "output_status": "response",
+        "output_protocol": "probe_reply_task_text_v1",
+        "generated_tokens": 70
+      }
+    },
+    {
+      "manifest": {
+        "schema": "omniduplex-probe-v1",
+        "probe_id": "0a413bf7bac3d240744b480ee5c08829dca992123bc856bad62c4dc735d37919:pre",
+        "pair_id": "0a413bf7bac3d240744b480ee5c08829dca992123bc856bad62c4dc735d37919",
+        "sample_index": 868,
+        "response_index": 2,
+        "side": "pre",
+        "expected": "NO",
+        "prefix_end_seconds": 42.0,
+        "handled_count": 2,
+        "window_start_seconds": 43.0,
+        "window_end_seconds": 47.0,
+        "task": "object_perception_pr",
+        "mode": "pr",
+        "ability": "object_perception",
+        "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/4365f15d-b619-57e2-aa61-ee30e97f0a19.mp4",
+        "source": {
+          "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/4365f15d-b619-57e2-aa61-ee30e97f0a19.mp4",
+          "size": 5706052,
+          "mtime_ns": 1792198714323939941
+        },
+        "has_audio": true,
+        "duration_seconds": 60.005,
+        "request": {
+          "task": "object_perception_pr",
+          "mode": "pr",
+          "ability": "object_perception",
+          "question": "Let me know whenever the drummer appears on screen.",
+          "question_time": "00:00"
+        }
+      },
+      "prediction": {
+        "probe_id": "0a413bf7bac3d240744b480ee5c08829dca992123bc856bad62c4dc735d37919:pre",
+        "pair_id": "0a413bf7bac3d240744b480ee5c08829dca992123bc856bad62c4dc735d37919",
+        "sample_index": 868,
+        "response_index": 2,
+        "side": "pre",
+        "status": "complete",
+        "raw_response": "<silent>",
+        "decision": "NO",
+        "parse_status": "valid",
+        "wall_seconds": 9.585790388286114,
+        "text": "<silent>",
+        "response_text": "",
+        "agent_instruction": "",
+        "tool_calls": [],
+        "agent_attempted": false,
+        "task_text_status": "absent",
+        "task_text_format_valid": false,
+        "task_text_generation_complete": true,
+        "task_text_separator_count": 0,
+        "agent_parse_status": "absent",
+        "agent_call_onset_seconds": null,
+        "agent_call_complete_seconds": null,
+        "output_format_valid": true,
+        "output_status": "silent",
+        "output_protocol": "probe_reply_task_text_v1",
+        "generated_tokens": 5
+      }
+    },
+    {
+      "manifest": {
+        "schema": "omniduplex-probe-v1",
+        "probe_id": "0a413bf7bac3d240744b480ee5c08829dca992123bc856bad62c4dc735d37919:post",
+        "pair_id": "0a413bf7bac3d240744b480ee5c08829dca992123bc856bad62c4dc735d37919",
+        "sample_index": 868,
+        "response_index": 2,
+        "side": "post",
+        "expected": "YES",
+        "prefix_end_seconds": 47.0,
+        "handled_count": 2,
+        "window_start_seconds": 43.0,
+        "window_end_seconds": 47.0,
+        "task": "object_perception_pr",
+        "mode": "pr",
+        "ability": "object_perception",
+        "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/4365f15d-b619-57e2-aa61-ee30e97f0a19.mp4",
+        "source": {
+          "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/4365f15d-b619-57e2-aa61-ee30e97f0a19.mp4",
+          "size": 5706052,
+          "mtime_ns": 1792198714323939941
+        },
+        "has_audio": true,
+        "duration_seconds": 60.005,
+        "request": {
+          "task": "object_perception_pr",
+          "mode": "pr",
+          "ability": "object_perception",
+          "question": "Let me know whenever the drummer appears on screen.",
+          "question_time": "00:00"
+        }
+      },
+      "prediction": {
+        "probe_id": "0a413bf7bac3d240744b480ee5c08829dca992123bc856bad62c4dc735d37919:post",
+        "pair_id": "0a413bf7bac3d240744b480ee5c08829dca992123bc856bad62c4dc735d37919",
+        "sample_index": 868,
+        "response_index": 2,
+        "side": "post",
+        "status": "complete",
+        "raw_response": "The drummer appears on screen. <|task_start|>Continue monitoring for further appearances of the drummer.",
+        "decision": "YES",
+        "parse_status": "valid",
+        "wall_seconds": 10.670601833611727,
+        "text": "The drummer appears on screen. <|task_start|>Continue monitoring for further appearances of the drummer.",
+        "response_text": "The drummer appears on screen.",
+        "agent_instruction": "Continue monitoring for further appearances of the drummer.",
+        "tool_calls": [],
+        "agent_attempted": true,
+        "task_text_status": "valid",
+        "task_text_format_valid": true,
+        "task_text_generation_complete": true,
+        "task_text_separator_count": 1,
+        "agent_parse_status": "structured",
+        "agent_call_onset_seconds": null,
+        "agent_call_complete_seconds": null,
+        "output_format_valid": false,
+        "output_status": "response",
+        "output_protocol": "probe_reply_task_text_v1",
+        "generated_tokens": 22
+      }
+    },
+    {
+      "manifest": {
+        "schema": "omniduplex-probe-v1",
+        "probe_id": "b7b83330782948357be0411f9c0dd34a285b06b48c1b14ce08a6727e57f68357:pre",
+        "pair_id": "b7b83330782948357be0411f9c0dd34a285b06b48c1b14ce08a6727e57f68357",
+        "sample_index": 876,
+        "response_index": 0,
+        "side": "pre",
+        "expected": "NO",
+        "prefix_end_seconds": 156.0,
+        "handled_count": 0,
+        "window_start_seconds": 157.0,
+        "window_end_seconds": 160.0,
+        "task": "grounding_agent",
+        "mode": "agent",
+        "ability": "grounding",
+        "video": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/53cb7553-3781-5d21-b4a5-8919297623c4.mp4",
+        "source": {
+          "path": "/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/videos/53cb7553-3781-5d21-b4a5-8919297623c4.mp4",
+          "size": 165699835,
+          "mtime_ns": 1784700536278458707
+        },
+        "has_audio": true,
+        "duration_seconds": 389.0,
+        "request": {
+          "task": "grounding_agent",
+          "mode": "agent",
+          "ability": "grounding",
+          "question": "When Raphael and his instructor jump out of the airplane into freefall, let me know and check the current weather conditions in Portimão.",
+          "question_time": "00:00",
+          "available_tools": [
+            "todo_create",
+            "todo_query",
+            "todo_update",
+            "calendar_query",
+            "note_write",
+            "order_query",
+            "order_update",
+            "note_search",
+            "document_search",
+            "weather_query",
+            "route_query",
+            "meeting_draft",
+            "shopping_list_query",
+            "shopping_list_update",
+            "budget_query",
+            "budget_update",
+            "calculator",
+            "itinerary_query",
+            "product_search",
+            "calendar_create",
+            "calendar_update",
+            "notification_send",
+            "web_search",
+            "knowledge_search",
+            "history_query",
+            "video_segment_query",
+            "statistics_compute",
+            "report_create"
+          ],
+          "frontend_context": {
+            "system_prompt": "The frontend delegates triggered work through agent_call. It cannot directly call backend tools.\nDelegate only work that requires at least one available daily application tool;\ncomplex reasoning may support that tool work. Answer ordinary perception directly.\nAudiovisual understanding and complex reasoning are not tools and must never appear in the tool list.\nUse only the following backend tools and operation scopes:\n- todo_create: Create a user-authorized todo with extracted owner and deadline. Operation: write. Required string arguments: title, owner, deadline.\n- todo_query: Query existing todos and their status. Operation: read/compute. Required string arguments: query.\n- todo_update: Update existing todos; do not create unrelated tasks. Operation: write. Required string arguments: todo_id, changes.\n- calendar_query: Read scheduled events and availability; cannot edit the calendar. Operation: read/compute. Required string arguments: time_range.\n- note_write: Write user-authorized notes. Operation: write. Required string arguments: title, content.\n- order_query: Query orders and packages awaiting delivery. Operation: read/compute. Required string arguments: query.\n- order_update: Update existing order or package records; cannot place purchases. Operation: write. Required string arguments: order_id, changes.\n- note_search: Search personal notes. Operation: read/compute. Required string arguments: query.\n- document_search: Search available personal documents. Operation: read/compute. Required string arguments: query.\n- weather_query: Query weather for a specified place and time. Operation: read/compute. Required string arguments: place, time.\n- route_query: Query maps and routes, including station exits and walking routes. Operation: read/compute. Required string arguments: origin, destination.\n- meeting_draft: Prepare a meeting-record draft; cannot send it. Operation: write. Required string arguments: title, content.\n- shopping_list_query: Read the user's shopping list. Operation: read/compute. Required string arguments: list_name.\n- shopping_list_update: Update shopping-list items and quantities. Operation: write. Required string arguments: list_name, changes.\n- budget_query: Read budgets and existing accounting records. Operation: read/compute. Required string arguments: query.\n- budget_update: Record expenses or update a user-authorized budget. Operation: write. Required string arguments: record.\n- calculator: Calculate values from provided numbers. Operation: read/compute. Required string arguments: expression.\n- itinerary_query: Read the user's itinerary. Operation: read/compute. Required string arguments: time_range.\n- product_search: Search product specifications, prices, and available offers. Operation: read/compute. Required string arguments: query.\n- calendar_create: Create a user-authorized calendar event; do not invite unspecified people. Operation: write. Required string arguments: title, start, end.\n- calendar_update: Modify an identified existing event within the user's requested scope. Operation: write. Required string arguments: event_id, changes.\n- notification_send: Send the authorized message to the specified recipient and channel; require confirmation if recipient or authorization is unresolved. Operation: write. Required string arguments: recipient, channel, message.\n- web_search: Retrieve public information and source references; cannot execute transactions. Operation: read/compute. Required string arguments: query.\n- knowledge_search: Search connected knowledge bases; no access beyond the provided connection. Operation: read/compute. Required string arguments: query.\n- history_query: Read connected historical records, including faults or activity logs. Operation: read/compute. Required string arguments: query.\n- video_segment_query: Retrieve already observed video context only, with MM:SS start/end no later than delegation time; never retrieve future footage. Operation: read/compute. Required string arguments: start, end, query.\n- statistics_compute: Calculate requested statistics from supplied data; do not invent missing measurements. Operation: read/compute. Required string arguments: data, analysis.\n- report_create: Create a report artifact from supplied facts and analysis; cannot publish or send it. Operation: write. Required string arguments: title, content.\nRespect the user's authorization, avoid duplicate operations, express uncertainties,\nand distinguish observed audiovisual facts, tool information, and reasoning conclusions.\nNever claim completion without execution evidence. Backend results in this dataset are simulated.",
+            "tools": [
+              {
+                "type": "function",
+                "function": {
+                  "name": "agent_call",
+                  "description": "Delegate one complex, asynchronous objective to the backend agent.",
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "instruction": {
+                        "type": "string",
+                        "description": "Complete, self-contained backend work request."
+                      },
+                      "observed_context": {
+                        "type": "string",
+                        "description": "Timestamped audiovisual facts available at the trigger."
+                      },
+                      "user_goal": {
+                        "type": "string",
+                        "description": "The result the user asked for."
+                      },
+                      "constraints_and_authorization": {
+                        "type": "string",
+                        "description": "Scope, permissions, confirmation needs, and user constraints."
+                      },
+                      "suggested_capabilities": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "At least one available daily application tool that is necessary for the requested outcome."
+                      },
+                      "expected_output": {
+                        "type": "string",
+                        "description": "Required result, evidence, sources, actions, and artifacts."
+                      },
+                      "extracted_parameters": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            },
+                            "evidence_time": {
+                              "type": "string",
+                              "description": "MM:SS, no later than trigger_time"
+                            },
+                            "evidence": {
+                              "type": "string",
+                              "description": "Observable audiovisual evidence"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "value",
+                            "evidence_time",
+                            "evidence"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "instruction",
+                      "observed_context",
+                      "user_goal",
+                      "constraints_and_authorization",
+                      "suggested_capabilities",
+                      "expected_output",
+                      "extracted_parameters"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "prediction": {
+        "probe_id": "b7b83330782948357be0411f9c0dd34a285b06b48c1b14ce08a6727e57f68357:pre",
+        "pair_id": "b7b83330782948357be0411f9c0dd34a285b06b48c1b14ce08a6727e57f68357",
+        "sample_index": 876,
+        "response_index": 0,
+        "side": "pre",
+        "status": "complete",
+        "raw_response": "\n<think>\n\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n\n\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n\n\n<think>\n<think>\n\n\n<think>\n<think>\n\n<think>\n\n<think>\n\n\n\n\n\n\n<think>\n<think>\n\n\n\n\n<think>\n\n\n\n<think>\n<think>\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n\n\n<think>\n\n\n<think>\n\n\n<think>\n\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n<think>\n\n\n<think>\n\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n\n\n\n\n\n\n\n\n<think>\n\n\n\n\n",
+        "decision": "YES",
+        "parse_status": "valid",
+        "wall_seconds": 164.81192038208246,
+        "text": "\n<think>\n\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n\n\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n\n\n<think>\n<think>\n\n\n<think>\n<think>\n\n<think>\n\n<think>\n\n\n\n\n\n\n<think>\n<think>\n\n\n\n\n<think>\n\n\n\n<think>\n<think>\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n\n\n<think>\n\n\n<think>\n\n\n<think>\n\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n<think>\n\n\n<think>\n\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n\n\n\n\n\n\n\n\n<think>\n\n\n\n\n",
+        "response_text": "<think>\n\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n\n\n\n<think>\n<think>\n<think>\n<think>\n<think>\n<think>\n\n\n\n<think>\n<think>\n\n\n<think>\n<think>\n\n<think>\n\n<think>\n\n\n\n\n\n\n<think>\n<think>\n\n\n\n\n<think>\n\n\n\n<think>\n<think>\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n\n\n<think>\n\n\n<think>\n\n\n<think>\n\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n<think>\n\n\n<think>\n\n<think>\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<think>\n\n\n\n\n\n\n\n\n<think>",
+        "agent_instruction": "",
+        "tool_calls": [],
+        "agent_attempted": false,
+        "task_text_status": "truncated",
+        "task_text_format_valid": false,
+        "task_text_generation_complete": false,
+        "task_text_separator_count": 0,
+        "agent_parse_status": "truncated",
+        "agent_call_onset_seconds": null,
+        "agent_call_complete_seconds": null,
+        "output_format_valid": false,
+        "output_status": "truncated",
+        "output_protocol": "probe_reply_task_text_v1",
+        "generated_tokens": 256
+      }
+    }
+  ]
+}

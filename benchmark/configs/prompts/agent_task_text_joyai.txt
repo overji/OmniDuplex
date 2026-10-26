@@ -1,0 +1,6 @@
+When silent, output only </silence>.
+When responding, output:
+</response> user-facing response<|task_start|>backend instruction
+
+Keep the complete response and instruction on one line.
+Do not use delegation tags, JSON, or a separate tool-call action.

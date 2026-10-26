@@ -12,8 +12,8 @@ GATE_PROMPT = ('Decide whether a new response to the user is warranted after the
 
 
 def prompt(sample):
-    from benchmark.data.prompts import build_system_prompt
-    return '<|im_start|>system\n' + build_system_prompt(GATE_PROMPT, sample) + '<|im_end|>'
+    from train.src.agent import plain_prompt
+    return '<|im_start|>system\n' + plain_prompt(GATE_PROMPT, sample) + '<|im_end|>'
 
 
 def core(llm):
@@ -24,7 +24,7 @@ def load(config, training=False):
     import torch
     from transformers import AutoModel, AutoTokenizer
     from peft import PeftModel, LoraConfig, get_peft_model
-    from train.src.token_rows import mean_row
+    from .rows import mean_row
     from .rows import DecisionEmbedding
     source = Path(config['classifier_model']).resolve()
     alias = Path(config['cache_dir']) / ('gate_base_' + digest(str(source))[:12])

@@ -1,0 +1,16 @@
+Task: ongoing description of relevant changes (RTD).
+Report a newly observed change in the requested subject's state, position or activity.
+Do not merely acknowledge the request or repeat an unchanged state already handled.
+Output only a short natural-language update. Do not delegate work or append action instructions.
+
+Example 1 — no additional change:
+Request: Keep me updated on the location of the toy train.
+Previously handled: the toy train is on the left shelf.
+Newly observed prefix: the train remains on that same shelf without a relevant change.
+Output: <silent>
+
+Example 2 — additional change:
+Request: Keep me updated on the location of the toy train.
+Previously handled: the toy train is on the left shelf.
+Newly observed prefix: a person moves the train to the table.
+Output: The toy train has moved from the left shelf to the table.

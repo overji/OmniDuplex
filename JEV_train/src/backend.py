@@ -4,14 +4,16 @@ import time
 from pathlib import Path
 from typing import Protocol
 
-from benchmark.data.agent_schema import validate_task_start
-from benchmark.data.prompts import build_system_prompt, user_request
+from benchmark.data.prompts import user_request
+from train.src.agent import plain_prompt
 from benchmark.data.timestamps import seconds
-from .config import AGENT, PROTOCOL, digest,base_identity
+from .config import PROTOCOL, digest,base_identity
 
 BACKEND_PROMPT = ('Observe timestamped media and answer the user when the input message ends. '
     'Give a grounded natural-language reply. If external delegation is necessary, append exactly '
-    '<|agent|>{"name":"task_start","arguments":{"instruction":"A concise backend task"}}. '
+    '<|task_start|> followed by one concise, self-contained plain-text backend instruction. '
+    'Output reply<|task_start|>instruction on one line, with the separator exactly once. '
+    'Do not output JSON or a function envelope. Use only available capabilities and observed facts. '
     'Otherwise give only the reply. Do not claim unexecuted tools succeeded. No tool results will arrive.')
 
 
@@ -23,18 +25,17 @@ class Backend(Protocol):
 
 
 def parse_reply(text, complete=True):
-    response, marker, payload = text.partition(AGENT)
-    calls=[];error=None
-    if marker:
-        try:
-            call=json.loads(payload)
-            if not complete or AGENT in payload or set(call) != {'name','arguments'} or not validate_task_start(call):
-                raise ValueError('Invalid/incomplete delegation')
-            calls=[{'type':'function','function':call}]
-        except (ValueError,TypeError): error='invalid_or_incomplete_agent_json'
-    return dict(response_text=response.strip(),tool_calls=calls,agent_attempted=bool(marker),
-                agent_parse_status='malformed' if error else 'structured' if calls else 'absent',
-                error=error,text=text,complete=complete)
+    from benchmark.data.task_text import event
+    result = event(text, 0, complete=complete)
+    if '<|agent|>' in text:
+        result.update(tool_calls=[], agent_attempted=True, agent_parse_status='malformed',
+                      task_text_status='legacy_format', task_text_format_valid=False)
+    keep = ('response_text', 'tool_calls', 'agent_attempted', 'agent_parse_status', 'agent_instruction',
+            'task_text_status', 'task_text_format_valid', 'task_text_generation_complete', 'text')
+    result = {key: result[key] for key in keep}
+    result.update(complete=complete, error=None if result['agent_parse_status'] in ('absent','structured')
+                  else 'invalid_or_incomplete_task_text')
+    return result
 
 
 def merge_packets(packets):
@@ -120,7 +121,7 @@ class Qwen25Session:
     def start_session(self,sample,execute=True):
         self.close_session();self.sample=sample;self.closed=False
         self.append_text(self.processor.apply_chat_template([
-            {'role':'system','content':build_system_prompt(BACKEND_PROMPT,sample)}],
+            {'role':'system','content':plain_prompt(BACKEND_PROMPT,sample)}],
             tokenize=False,add_generation_prompt=False)+'<|im_start|>user\n',execute)
     def media_packet(self,unit):
         text=f'\nVideo time [{unit.second-1},{unit.second}) seconds:\n'

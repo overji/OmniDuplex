@@ -9,18 +9,12 @@ import random
 from benchmark.data.timestamps import seconds
 from benchmark.evaluation.timing import reference_windows
 from train.src.agent import training_sample
-from .config import PROTOCOL, AGENT, write
+from .config import PROTOCOL, write
 
 
 def target(reference):
-    text = reference['response']
-    calls = reference.get('tool_calls') or []
-    if calls:
-        function = calls[0]['function'].copy()
-        if isinstance(function['arguments'], str):
-            function['arguments'] = json.loads(function['arguments'])
-        text += AGENT + json.dumps(function, ensure_ascii=False)
-    return text
+    from train.src.agent import target_text
+    return target_text(reference)
 
 
 def record(sample, index, horizon):

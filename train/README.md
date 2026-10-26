@@ -4,7 +4,7 @@
 
 ## 数据范围与时序
 
-训练只使用 `agent_token_task_start_v1`，不再支持外层 structured JSON 或旧七字段调用的训练分支。生成数据中的 `agent_call` 在训练入口只读转换为 `task_start`，仅保留非空 `instruction`；原始 JSON 不改写。三种训练配置使用同一适配、目标构造与奖励口径。
+训练只使用 `task_text_sft_v1`，目标为 `回复<|task_start|>instruction`，不输出 JSON，不支持旧 Agent token / JSON checkpoint 的训练分支。生成数据中的 `agent_call` 在训练入口只读转换为 `task_start`，仅保留非空 `instruction`；原始 JSON 不改写。三种训练配置使用同一适配、目标构造与奖励口径。
 
 第一版对每条 QA 只取最早一个可评分 response，从视频 0 秒开始保留完整上下文，到目标回复生成完毕结束。默认目标发声前缀最多 32 秒、总序列最多 8192 token；回复跨秒可能延长输入。超限报错或在准备阶段排除，绝不静默截掉历史或标签。
 
@@ -12,7 +12,7 @@
 - 首次发声采用不早于 question 输入、证据 available_time、trigger confirmed_time 和 trigger_time 的整数秒边界，且必须位于参考窗口内。
 - 先输入 `[t-1,t)` 秒媒体，再预测时刻 `t` 的输出；复用 benchmark 的帧时间戳选择、16 kHz 音频和缺失音轨补零规则。
 - 通过原生 `streaming_prefill` 录制冻结编码器的 embedding，不运行 LLM 推理。训练时对交错序列执行具有因果 mask 的 LLM forward。
-- 使用原生 `<unit>`、`<|listen|>`、`<|speak|>`、`<|turn_eos|>`、`<|chunk_eos|>`、`</unit>`；文本按 chunk 预算分段，回复内容和 Agent JSON 均可跨秒。
+- 使用原生 `<unit>`、`<|listen|>`、`<|speak|>`、`<|turn_eos|>`、`<|chunk_eos|>`、`</unit>`；文本按 chunk 预算分段，回复、普通文本分隔符和 instruction 均可跨秒。
 - system 只包含任务规则、可用工具和 schema；参考答案、证据、窗口只供构造标签，工具返回和后续完成回复不进入输入。
 - 当前 chunk 文本对齐是按 token 预算构造的 teacher-forcing 近似，不是有语音对齐标注的完整双工复现。需以原生 realtime 推理回归确认效果。
 
@@ -32,6 +32,8 @@ train/.venv/bin/pip install -r train/requirements.txt
 需要系统提供 `ffmpeg`、`ffprobe`。模型默认位于 `/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5`。配置集中在 `train/configs/minicpmo_lora.json`，相对路径以仓库根目录为基准；使用 `python -m train --config /path/to/config.json ...` 覆盖。
 
 ## AOI 数据来源
+
+完整数据规模、任务与模态分布、时间统计、训练前缀覆盖和图表见 [AOI-Dataset 统计报告](docs/aoi_dataset_statistics.md)。
 
 先按[仓库 README](../README.md)中的「AOI 训练与评测数据：下载、更新和配置」下载
 `overji/AOI-Dataset` 并运行 `benchmark/scripts/prepare_aoi_data.py` 检查媒体。
@@ -76,35 +78,45 @@ GPU 号只是示例，运行前选择空闲卡。所有命令在前台执行。`
 
 训练特征暂存 CPU 内存，属于小规模实现；扩大数据后应增加有版本校验的磁盘特征缓存。当前训练器是单 GPU，没有 DDP、自动选最优 checkpoint 或学习率搜索。
 
-## Agent token 输出与 adapter 加载
+## Agent 纯文本输出与 adapter 加载
 
-Agent 正样本目标为原生 speak token、自然语言回复、单个 `<|agent|>`、调用 JSON、原生 turn 结束标记：
+LoRA SFT、全参 SFT 和 GRPO 使用同一目标。省略媒体单元之间的控制符后，正样本为：
 
 ```text
-<|speak|>我来查找替换配件。<|agent|>{"name":"task_start","arguments":{"instruction":"查询视频中配件的可售替换选项。"}}<|turn_eos|>
+<|speak|>我来查找替换配件。<|task_start|>查询视频中配件的可售替换选项。<|turn_eos|>
 ```
 
-每次只支持一个调用，唯一参数为非空字符串 `instruction`，不允许额外参数。简短指令应包含任务目标和必要的已观察事实；不再输出 observed_context、suggested_capabilities 或 extracted_parameters 等字段。澄清时自然语言回复，不输出分隔符；RTD、PR 不使用 Agent 分隔符。调用内容可跨多个媒体 chunk，分隔符只出现一次；生成途中仍逐秒输入媒体。当前不执行工具，也不启用 TTS。
+`<|task_start|>` 是普通文本分隔串，在原始 MiniCPM tokenizer 中由 6 个已有 token 编码；
+不扩词表、不注册原子 Agent token、不训练额外 embedding/head 行。
+分隔符仅出现一次，后面直接是 instruction，不包含 name/arguments/function JSON。
+原始生成 QA 仍只读适配为内部 task_start(instruction)，保留时序与事实，不改原始数据。
+澄清时只回复自然语言，RTD/PR 不带分隔符。工具不执行，也不输入工具结果。
 
-tokenizer 新增 `<|agent|>`，保留旧 token ID。本地基座中 token ID 为 151748，扩展词表为 151749；这些值由程序注册并记录，不能手工硬编码迁移。只训练新 token 的输入 / 输出两行 FP32 参数，旧词表行冻结。训练时重新嵌入所有分隔符位置，包括 system prompt 中的分隔符，防止预计算 embedding 阻断梯度。
+标签按原配置的三组损失加权：回复内容属于 content；分隔符的全部已有 token 与原生听说/结束控制符属于 decision；instruction 属于 call。
+文本可跨多个 chunk，分隔符也可跨 chunk；不因 chunk 边界重复生成。
+Agent prompt 只含新格式要求和一次 available 能力说明，不再附带旧 JSON 函数 schema。
+LoRA 编码与全参/GRPO 使用同一个 prompt 构造函数。
 
-`adapter/` 中除 PEFT 权重，还包含 `agent_rows.safetensors`、`agent_protocol.json` 和完整 `tokenizer/`。必须整体移动目录；不能仅加载 PEFT 权重，否则新 token 无法工作。
+`adapter/` 保存 PEFT 权重、原始 tokenizer 副本与 `agent_protocol.json`，不生成 agent_rows.safetensors。
+加载器核验新协议、基座身份、完整 tokenizer 指纹、词表大小及分隔符编码后合并 LoRA：
 
 ```python
-from train.src.token_rows import load_adapter
-# model 是原始 MiniCPM；base_path 是其完整基座目录。
-load_adapter(model, base_path, 'train/outputs/agent_token_positive/adapter')
+from train.src.checkpoints import load_adapter
+load_adapter(model, base_path, 'train/outputs/task_text/adapter')
 model.eval()
+# 在合并后重新创建 duplex，让 decoder 引用更新后的 LLM。
 duplex = model.as_duplex(generate_audio=False)
 ```
 
-加载器检查固定新协议、`agent_call_schema: "task-start"`、基座配置 / 分片索引指纹、旧词表 ID、新词表身份及向量形状，扩词表后恢复两行权重并合并 LoRA。旧 prepared 数据必须重新 prepare；旧 adapter、全模型导出和训练 checkpoint 不支持自动迁移，需要重新训练。`<|agent|>` 的字符串及旧词表 ID 保持不变，调用内容的协议单独升级。
+旧 prepared 必须在新目录重新 prepare；旧 Agent token/JSON adapter、优化器 checkpoint 和全模型导出不可自动迁移，需要按新目标训练。
+旧 benchmark 兼容接口所需的 token_rows.py 保留，但当前训练不再调用它。
 
-训练侧 rollout 和 GRPO 使用新的原生 token 解析器。当前正在运行的 benchmark 结构化 `task_start` 队列保持不变；benchmark CLI 原有 agent-token 入口仍有 legacy schema 限制，本次没有改动其运行协议文件，不能直接用该入口评测新训练导出。
+GRPO 从原始生成 token 增量使用 task-text 流式解析，过滤原生控制 token，分别提取 response 与 instruction。
+缺失分隔符不产生委托；空字段、重复分隔符和明确截断保留失败状态，不修复原始输出。
+内部标准 tool_calls 仅供奖励/评测使用，不是模型必须生成的格式；instruction 参考匹配仍使用原有奖励权重和规则，不等同于语义 judge。
 
-原生 `text` 返回会过滤 special token，因此新协议直接捕获生成 token ID，以 `<|agent|>` 切换状态。解析器跨秒保留状态，完整 turn 结束后才产生标准 `tool_calls`；半截 JSON、重复分隔符或非法调用不生成可执行调用，仍记录 `agent_attempted` 以审计失败尝试。文本回复为空时，以分隔符时间记录事件并单独标为空回复。
-
-预测保留 `raw_generated_ids`、`response_text`、`agent_call_text`、标准 `tool_calls`、解析状态和调用起止时间。用户回复的首次内容时间继续用于现有窗口匹配，调用时间只是附加记录。Judge 直接复用分开的回复和调用，不需要再次让模型推断分隔位置。
+本次修改不改变运行中的原始基座 benchmark 协议或队列。新的训练 checkpoint 通过本节加载器和训练 rollout 验证；
+现有 benchmark 的旧 agent-token/全模型加载入口仍不接受新训练元数据，不能直接沿用该入口评测新权重。
 
 ## 显存估算
 
@@ -134,7 +146,7 @@ python -m unittest discover -s train/tests
 
 ## 历史 agent_token_v1 实测（A100 80GB）
 
-以下是旧调用协议的历史显存与梯度验证，不代表新 task_start 协议已经执行 GPU 训练；旧权重不用于新协议。
+以下是旧调用协议的历史显存与梯度验证，不代表当前纯文本协议已经执行 GPU 训练；旧权重不用于新协议。
 
 采用 rank=16、batch=1、FlashAttention 2、gradient checkpointing，仅训练 LoRA 和新增 token 两行。以下均完成一次前向、反向及 AdamW 更新；是链路验证，不是完整训练效果。
 
@@ -145,7 +157,7 @@ python -m unittest discover -s train/tests
 
 产物在 `train/outputs/agent_token_positive/` 与 `train/outputs/agent_token_negative/`；`token_gradients.jsonl` 额外记录两行梯度范数。新增两行共 8192 个参数，adapter 中单独保存约 33 KB；加上梯度和 Adam 状态，额外训练内存约 128 KiB，不会明显改变整体显存需求。
 
-### 本轮验证范围
+### 当时的历史验证范围
 
 正、负样本均完成一次真实优化器更新，并已保存新 token 的两行权重与 tokenizer。单步正样本 adapter 成功重新加载到 benchmark，完成 16 秒原生流式输入；该次自然生成保持沉默，没有生成调用，这不能作为学会新协议的效果证明。
 
@@ -153,7 +165,7 @@ python -m unittest discover -s train/tests
 
 ## 全参数 SFT
 
-`training_method: full_sft` 解冻完整 LLM、输入/输出 embedding、视觉编码器 `vpm`、视觉连接层 `resampler`、音频编码器 `apm` 和音频连接层。包括新增 `<|agent|>` 在内的所有词表行一起更新，不使用 LoRA 单行包装。SFT 仍选每条 QA 最早一个 response，保留已有的三组损失和可选 silence 监督。
+`training_method: full_sft` 解冻完整 LLM、输入/输出 embedding、视觉编码器 `vpm`、视觉连接层 `resampler`、音频编码器 `apm` 和音频连接层。原有词表行随模型一起更新，不新增 Agent token，也不使用单行包装。SFT 仍选每条 QA 最早一个 response，保留已有的三组损失和可选 silence 监督。
 
 全参路径缓存的是 CPU 上的图像/音频预处理结果，编码器输出每次重新计算并保留梯度。训练调用原生 prefill 的可微函数体，不修改模型源文件；流式音频 KV 在同一轨迹中保留计算图，每条轨迹结束后释放。LLM/视觉支持梯度检查点；音频编码器使用有状态 KV，不对它启用不安全的 checkpoint 重算。
 
@@ -223,14 +235,15 @@ CUDA_VISIBLE_DEVICES=6,7 train/.venv/bin/torchrun --standalone --nproc_per_node=
 train/.venv/bin/python -m train export \
   --checkpoint train/outputs/full_sft/checkpoint-final --output train/outputs/full_sft_export
 
-CUDA_VISIBLE_DEVICES=6 benchmark/.venv/bin/python -m benchmark run minicpmo \
-  --model-path train/outputs/full_sft_export --agent-output-protocol agent-token \
-  --data path/to/all_qa.json --output-dir benchmark/results/full_sft_eval
+# 新导出使用 task_text_sft_v1；推理前可先只读验证身份（不加载模型权重）。
+train/.venv/bin/python -c "from train.src.checkpoints import full_model_identity; print(full_model_identity('train/outputs/full_sft_export')['protocol'])"
 ```
 
-checkpoint 保存模型分片、优化器、epoch/样本游标和各 rank 随机状态，并核对配置、数据及提示词指纹。`save_every_steps` 可配置周期保存；默认仅在结束时保存。恢复不能改变卡数或准备数据。导出目录带 `full_training_model.json` 标识，benchmark 会校验 config/index/tokenizer 并将导出身份写入输入协议，避免与基座或其他 checkpoint 混用缓存；该身份不是全部权重字节的校验和。
+checkpoint 保存模型分片、优化器、epoch/样本游标和各 rank 随机状态，并核对配置、数据及提示词指纹。`save_every_steps` 可配置周期保存；默认仅在结束时保存。恢复不能改变卡数或准备数据。导出目录带 `full_training_model.json` 标识，训练层加载器会校验协议、config/index/tokenizer、分隔符编码及运行时代码。该身份不是全部权重字节的校验和。旧 benchmark 加载入口尚未接入本次新导出协议。
 
-## 全参短程验证记录（2026-10-16）
+## 历史全参短程验证记录（2026-10-16）
+
+以下是旧 Agent token/JSON 协议的历史实测，不代表本次纯文本目标已做 GPU 训练。
 
 以下均使用 A100 80GB、BF16、ZeRO-3、CPU optimizer offload，实际可训练参数为 9,024,099,568。显存为 PyTorch peak allocated，每项只完成一个优化器步，不能据此判断收敛或最终 benchmark 效果。
 
@@ -244,3 +257,10 @@ checkpoint 保存模型分片、优化器、epoch/样本游标和各 rank 随机
 SFT 和 GRPO 均确认 LLM、视觉、音频及两个连接模块有非零梯度。完整 SFT checkpoint 已保存并导出，对比原始权重确认五个模块都发生参数更新；导出模型通过真实 benchmark loader 在 CPU 加载，新增 token ID 为 151748。微型模型验证 ZeRO checkpoint 恢复后的下一次更新与不中断训练逐值一致。
 
 四轨迹 GRPO 奖励为 `[0, 0, 0, 0.7315]`，最大重放 log-prob 误差约 0.060，平均策略比率约 0.9994，完成了一次实际更新。另一次开启激活卸载的实跑peak allocated 为 34.92 GiB（未卸载的 4 轨迹实跑为 69.89 GiB），CPU 暂存激活峰值约 61.42 GiB；2 条轨迹的一步耗时约 408 秒，说明该方式以主存和传输时间换显存。现在采样后预检和带梯度回放都执行 log-prob 误差阈值检查，超限会在优化器 step 前中止。零方差、时间匹配、负样本调用、可微 KV、CPU 卸载参数去重及 stride 保真另有自动检查。多卡 GRPO、完整 32 秒轨迹和正式长训仍需要独立验证。
+
+
+## 本次纯文本协议验证（2026-10-24）
+
+CPU 验证覆盖旧生成数据只读适配、跨 chunk 的纯文本目标/解析、LoRA 真实前后向与保存加载一致、原始 embedding/head 权重冻结、全参导出身份、全参梯度与 GRPO 概率回放。另使用真实 tokenizer 检查分隔符编码及 AOI-Dataset prepare。
+训练层 29 项测试中 28 项通过、1 项 GPU 测试按设置跳过；JEV 17 项通过。真实 prepare 生成 12 条训练和 2 条验证记录，5 条 Agent 目标经过真实 tokenizer 和流式 parser 往返校验。另检查了源数据 4078 个 Agent assistant 目标，源文件 SHA256 未变；分隔符编码为 `[27, 91, 8202, 4906, 91, 29]`，词表维持 151748。
+本次没有启动 GPU 训练；正在运行的 benchmark 没有暂停或切换协议。旧 prepared 和旧权重保留原位。

@@ -30,12 +30,18 @@ def load(args):
 
 
 def conversation(probe, args):
+    modality = getattr(args, 'input_modality', 'audio-video')
+    if modality == 'audio-only':
+        if not probe.has_audio:
+            raise ValueError('Audio-only probe requires a source audio track')
+        media = {'type': 'audio', 'audio': str(probe.video)}
+    else:
+        media = {'type': 'video', 'video': str(probe.video), 'fps': args.fps, 'max_pixels': args.max_pixels,
+                 'max_frames': max(2, math.ceil(probe.prefix_seconds * args.fps) + 2)}
     return [
         {'role': 'system', 'content': [{'type': 'text', 'text': probe.system_prompt}]},
         {'role': 'user', 'content': [
-            {'type': 'video', 'video': str(probe.video), 'fps': args.fps, 'max_pixels': args.max_pixels,
-             # Do not let the utility's generic frame cap silently shorten long prefixes.
-             'max_frames': max(2, math.ceil(probe.prefix_seconds * args.fps) + 2)},
+            media,
             {'type': 'text', 'text': probe.user_prompt}]}]
 
 
@@ -55,14 +61,22 @@ def generate(args, state, probe):
     messages = conversation(probe, args)  # Fresh conversation for EVERY pre/post request.
     processor, model = state.processor, state.model
     text = processor.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
-    audios, images, videos = state.process_mm_info(messages, use_audio_in_video=probe.has_audio)
-    if videos is None or len(videos) != 1:
-        raise ValueError('Expected one complete prefix video')
-    minimum_frames = max(1, math.floor(probe.prefix_seconds * args.fps) - 2)
-    if len(videos[0]) < minimum_frames:
-        raise ValueError('Video utility downsampled below the configured probe FPS')
+    modality = getattr(args, 'input_modality', 'audio-video')
+    use_audio = probe.has_audio and modality == 'audio-video'
+    audios, images, videos = state.process_mm_info(messages, use_audio_in_video=use_audio)
+    if modality == 'audio-only':
+        if audios is None or len(audios) != 1 or videos is not None or images is not None:
+            raise ValueError('Audio-only ablation must contain audio and no visual inputs')
+    else:
+        if videos is None or len(videos) != 1:
+            raise ValueError('Expected one complete prefix video')
+        minimum_frames = max(1, math.floor(probe.prefix_seconds * args.fps) - 2)
+        if len(videos[0]) < minimum_frames:
+            raise ValueError('Video utility downsampled below the configured probe FPS')
+        if modality == 'video-only' and audios is not None:
+            raise ValueError('Video-only ablation must not contain audio')
     inputs = processor(text=text, audio=audios, images=images, videos=videos,
-        return_tensors='pt', padding=True, use_audio_in_video=probe.has_audio,
+        return_tensors='pt', padding=True, use_audio_in_video=use_audio,
         videos_kwargs={'fps': args.fps, 'max_pixels': args.max_pixels, 'do_sample_frames': False})
     inputs = inputs.to(model.device).to(model.dtype)
     input_length = inputs['input_ids'].shape[1]
@@ -72,11 +86,15 @@ def generate(args, state, probe):
         raise ValueError('Complete probe prefix exceeds model context; input is not truncated')
     with state.torch.inference_mode():
         if name == 'humanomni_v2':
-            output = model.generate(**inputs, use_audio_in_video=probe.has_audio,
+            output = model.generate(**inputs, use_audio_in_video=use_audio,
                                     do_sample=False, max_new_tokens=args.max_new_tokens)
         else:
-            output = model.generate(**inputs, use_audio_in_video=probe.has_audio, return_audio=False,
+            output = model.generate(**inputs, use_audio_in_video=use_audio, return_audio=False,
                 thinker_do_sample=False, thinker_max_new_tokens=args.max_new_tokens)
     sequences = generated_sequences(output)
-    return processor.batch_decode(sequences[:, input_length:], skip_special_tokens=True,
+    text = processor.batch_decode(sequences[:, input_length:], skip_special_tokens=True,
                                   clean_up_tokenization_spaces=False)[0].strip()
+    from benchmark.probe.output import decoded_output
+    config = getattr(model, 'generation_config', None)
+    return decoded_output(text, sequences, input_length, getattr(processor, 'tokenizer', None),
+                          args.max_new_tokens, getattr(config, 'eos_token_id', None))

@@ -1,0 +1,4 @@
+Use native listen/speak decisions.
+For this experiment, delegation is expressed entirely as spoken-text output using <|task_start|>.
+Do not emit <tool_call>, </tool_call>, or a native JSON tool action.
+Continue the same text across units until both parts are finished.

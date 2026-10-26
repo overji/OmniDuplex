@@ -350,8 +350,8 @@ def export_checkpoint(checkpoint, output):
     model = AutoModel.from_pretrained(str(alias), trust_remote_code=True, torch_dtype=torch.bfloat16,
                                      init_tts=False, low_cpu_mem_usage=True)
     tokenizer = AutoTokenizer.from_pretrained(str(checkpoint / 'tokenizer'), trust_remote_code=True)
-    model.llm.resize_token_embeddings(len(tokenizer), mean_resizing=False)
-    model.config.vocab_size = len(tokenizer)
+    if model.llm.get_input_embeddings().weight.shape[0] != len(tokenizer):
+        raise ValueError('Export tokenizer must retain the original vocabulary size')
     state = get_fp32_state_dict_from_zero_checkpoint(str(checkpoint), tag='state')
     state = {key.removeprefix('model.'): value for key, value in state.items()}
     model.load_state_dict(state, strict=True)
@@ -362,7 +362,7 @@ def export_checkpoint(checkpoint, output):
 
 
 def finalize_export(output, checkpoint, config, tokenizer):
-    from benchmark.data.agent_token import base_identity, tokenizer_identity
+    from train.src.checkpoints import base_identity, tokenizer_identity, tokenizer_metadata
     import uuid
     import shutil
     source = Path(config['model_path']).resolve()
@@ -378,6 +378,6 @@ def finalize_export(output, checkpoint, config, tokenizer):
         runtime_hashes[file.name] = hashlib.sha256((output / file.name).read_bytes()).hexdigest()
     from train.src.agent import require_protocol
     require_protocol(config)
-    write_json(output / 'full_training_model.json', dict(protocol=config['agent_output_protocol'], agent_call_schema='task-start',
-        export_id=str(uuid.uuid4()), tokenizer_sha256=tokenizer_identity(tokenizer),
+    write_json(output / 'full_training_model.json', dict(**tokenizer_metadata(tokenizer),
+        export_id=str(uuid.uuid4()),
         files=base_identity(output), runtime_files=runtime_hashes, source_checkpoint=str(checkpoint.resolve())))

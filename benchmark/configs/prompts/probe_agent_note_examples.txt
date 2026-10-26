@@ -1,0 +1,14 @@
+These two independent examples have note_write available and user authorization
+to write a personal note. Use the actual capability list below for the real request.
+
+Example 1 — trigger not confirmed:
+Request: When a parcel is left at my front door, save a personal note about it.
+Previously handled qualifying occurrences: 0.
+Observed prefix: the front door area is empty; no parcel drop-off has occurred.
+Output: <silent>
+
+Example 2 — trigger confirmed:
+Request: When a parcel is left at my front door, save a personal note about it.
+Previously handled qualifying occurrences: 0.
+Observed prefix: a courier leaves a parcel beside the front door.
+Output: A parcel was left beside the front door; I'll note it.<|task_start|>Create a personal note recording that a courier left a parcel beside the front door.

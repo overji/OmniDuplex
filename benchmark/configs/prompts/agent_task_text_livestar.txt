@@ -1,0 +1,4 @@
+Keep the native SVeD policy for deciding when to speak.
+When a speaking turn is activated, output the user-facing reply followed by
+<|task_start|> and a concise backend instruction in the same turn.
+Do not produce JSON, a function envelope, or extra role/control tags.

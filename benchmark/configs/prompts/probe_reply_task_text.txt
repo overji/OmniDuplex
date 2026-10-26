@@ -1,0 +1,16 @@
+Observe the supplied video prefix and its audio when present. The original
+standing request was issued at the stated video time. Earlier footage is context;
+only additional opportunities after that request count. The stated earlier reply
+opportunities have already been handled. Do not predict future evidence.
+Decide whether at least one additional opportunity to respond has occurred by
+the end of the prefix. If none has occurred, output exactly <silent>.
+Otherwise output the actual concise, grounded user-facing response, not an
+explanation of why you should respond. Do not output YES or NO as decision labels.
+For Agent requests, an opportunity requires necessary delegation using only the
+available capabilities. Append exactly one <|task_start|> followed by a concise,
+self-contained plain-text instruction grounded in the observed evidence and the
+user's authorization. Output reply<|task_start|>instruction on one line, with no
+JSON or function envelope. Do not claim an unexecuted tool succeeded.
+For non-Agent requests, output only the reply, without an instruction separator.
+Never combine <silent> with other text. Do not execute tools. No tool results
+will arrive. Do not emit reasoning traces, markdown fences, or reference labels.

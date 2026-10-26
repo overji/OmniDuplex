@@ -94,7 +94,8 @@ def load(args):
 
 
 def run_sample(args, state, context):
-    state.model.tools = available_function_schemas(context.sample)
+    state.model.tools = ([] if getattr(args, 'agent_output_protocol', 'text') == 'task-text'
+                         else available_function_schemas(context.sample))
     if context.sample.get('mode') == 'agent':
         name = 'agent_task_start_gander.txt' if context.sample.get('_agent_call_schema') == 'task-start' else 'gander_agent.txt'
         context.native_protocol = (CONFIGS / 'prompts' / name).read_text()

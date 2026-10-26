@@ -101,6 +101,7 @@ def sampled_frames(probe, args):
 
 
 def generate_minicpmo(args, state, probe):
+    from benchmark.probe.output import GeneratedText, decoded_output
     contents = []
     audio = audio_samples(probe.video) if probe.has_audio else None
     for t, frame in sampled_frames(probe, args):
@@ -116,6 +117,15 @@ def generate_minicpmo(args, state, probe):
         if tensor is not None:
             check_context(state.model, tensor.shape[1], args.max_new_tokens)
     handle = state.model.llm.register_forward_pre_hook(guard, with_kwargs=True)
+    original_generate = state.model.generate
+    captured = {}
+    def generate_with_status(*values, **kwargs):
+        output = original_generate(*values, **kwargs)
+        if isinstance(output, tuple) and len(output) > 1 and hasattr(output[1], 'sequences'):
+            captured['output'] = decoded_output('', output[1].sequences, 0, state.processor.tokenizer,
+                args.max_new_tokens, kwargs.get('eos_token_id'))
+        return output
+    state.model.generate = generate_with_status
     try:
         result = state.model.chat(msgs=messages, processor=state.processor, generate_audio=False,
                                   omni_mode=probe.has_audio, do_sample=False, enable_thinking=False,
@@ -123,7 +133,10 @@ def generate_minicpmo(args, state, probe):
                                   max_slice_nums=1, use_image_id=False)
     finally:
         handle.remove()
-    return result if isinstance(result, str) else result[0]
+        state.model.generate = original_generate
+    text = result if isinstance(result, str) else result[0]
+    info = captured.get('output', GeneratedText(''))
+    return GeneratedText(text, complete=info.generation_complete, token_count=info.generated_tokens)
 
 
 def generate_baichuan(args, state, probe):
@@ -158,7 +171,10 @@ def generate_baichuan(args, state, probe):
     length = inputs['input_ids'].shape[1]
     check_context(model, length, args.max_new_tokens)
     output = model.generate(**inputs, do_sample=False, max_new_tokens=args.max_new_tokens)
-    return p.tokenizer.decode(output[0, length:], skip_special_tokens=True)
+    from benchmark.probe.output import decoded_output
+    return decoded_output(p.tokenizer.decode(output[0, length:], skip_special_tokens=True),
+                          output, length, p.tokenizer, args.max_new_tokens,
+                          getattr(model.generation_config, 'eos_token_id', None))
 
 
 def generate(args, state, probe):
@@ -217,7 +233,10 @@ def generate(args, state, probe):
                     do_sample=False, max_new_tokens=args.max_new_tokens)
             finally:
                 handle.remove()
-            return p.tokenizer.batch_decode(output, skip_special_tokens=True)[0].strip()
+            from benchmark.probe.output import decoded_output
+            return decoded_output(p.tokenizer.batch_decode(output, skip_special_tokens=True)[0].strip(),
+                                  output, 0, p.tokenizer, args.max_new_tokens,
+                                  getattr(model.generation_config, 'eos_token_id', None))
         inputs = inputs.to(model.device)
         for key, value in inputs.items():
             if getattr(value, 'is_floating_point', lambda: False)():
@@ -226,4 +245,8 @@ def generate(args, state, probe):
         check_context(model, length, args.max_new_tokens)
         kwargs = {'eos_token_id': p.gen_terminator} if args.probe_model == 'ming_omni' else {}
         output = model.generate(**inputs, do_sample=False, max_new_tokens=args.max_new_tokens, **kwargs)
-        return p.batch_decode(output[:, length:], skip_special_tokens=True)[0].strip()
+        from benchmark.probe.output import decoded_output
+        tokenizer = getattr(p, 'tokenizer', p)
+        return decoded_output(p.batch_decode(output[:, length:], skip_special_tokens=True)[0].strip(),
+                              output, length, tokenizer, args.max_new_tokens,
+                              kwargs.get('eos_token_id', getattr(model.generation_config, 'eos_token_id', None)))

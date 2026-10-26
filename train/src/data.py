@@ -134,19 +134,12 @@ def target_chunks(record, tokenizer, budget, *, protocol=PROTOCOL):
         kind = sample.get('sample_type', sample.get('generation_context', {}).get('sample_type'))
         if kind in ('missing_tool', 'no_context') and calls:
             raise ValueError('Negative Agent reference must not contain a tool call')
-        calls = json.loads(json.dumps(calls))
-        for call in calls:
-            args = call['function'].get('arguments')
-            if isinstance(args, str):
-                call['function']['arguments'] = json.loads(args)
-        from benchmark.data.agent_token import TOKEN
+        from train.src.agent import instruction, SEPARATOR, target_text
+        target_text(reference)  # Validate the same two-field target used by JEV.
+        task = instruction(reference)
         parts = [(encode(reference['response']), 2)]
-        if calls:
-            token_id = tokenizer.convert_tokens_to_ids(TOKEN)
-            if encode(TOKEN) != [token_id] or TOKEN not in tokenizer.get_vocab():
-                raise ValueError('Missing atomic Agent token')
-            parts.extend([([token_id], 1),
-                          (encode(json.dumps(calls[0]['function'], ensure_ascii=False)), 3)])
+        if task is not None:
+            parts.extend([(encode(SEPARATOR), 1), (encode(task), 3)])
     else:
         parts = [(encode(reference['response']), 2)]
     body = [(token, group) for tokens, group in parts for token in tokens]

@@ -723,8 +723,8 @@ API 报错、缺少输出转写、会话到期或网络中断会中止当前样�
 
 Probe 测试模型在看到一个完整视频前缀后，能否判断“是否已出现新的应回复机会”。
 它使用普通非双工推理，与在线模型自主决定何时发声的 timing benchmark 分开保存、评分。
-第一版提供 `qwen3_omni` 和 `qwen25_omni` 两个本地 adapter；实现尚未执行模型或测试，
-后续运行需要先配置独立环境和本地权重。
+目前支持 `minicpmo`、`qwen3_omni`、`qwen25_omni`、`ming_omni`、`qwen3_vl`、
+`baichuan_omni`、`humanomni_v2` 和 `omnivinci`；运行前需配置各自环境和本地权重。
 
 ### 正负样本与已处理次数
 
@@ -787,12 +787,14 @@ python -m pip install -r benchmark/requirements-probe.txt
 python -m benchmark probe run qwen25_omni \
   --manifest benchmark/probes/default/probe_manifest.jsonl \
   --model-path /remote-home/yushengliao/speech/jimodels/openmodels/Qwen2.5-Omni-7B \
-  --output-dir benchmark/results/probe/qwen25_omni
+  --output-protocol reply-task-text --prompt-layout task-specific --max-new-tokens 512 \
+  --output-dir benchmark/results/probe/qwen25_omni_reply_task_text
 
 python -m benchmark probe run qwen3_omni \
   --manifest benchmark/probes/default/probe_manifest.jsonl \
   --model-path /remote-home/yushengliao/speech/jimodels/openmodels/Qwen3-Omni-30B-A3B-Instruct \
-  --output-dir benchmark/results/probe/qwen3_omni
+  --output-protocol reply-task-text --prompt-layout task-specific --max-new-tokens 512 \
+  --output-dir benchmark/results/probe/qwen3_omni_reply_task_text
 ```
 
 `--model-path` 必须指向已准备好的本地 checkpoint，不自动下载权重。
@@ -800,13 +802,48 @@ python -m benchmark probe run qwen3_omni \
 这只是单进程模型分片，不是 GPU data parallel。可显式设置 `--dtype`、`--device-map`
 或 `--attn-implementation flash_attention_2`；后者需另行安装兼容的 FlashAttention。
 
-默认 1 FPS、每帧最大像素 `360×420`、greedy 解码、最大新 token 数 256，
+默认 1 FPS、每帧最大像素 `360×420`、确定性非采样解码、最大新 token 数 256，
 分别由 `--fps`、`--max-pixels`、`--max-new-tokens` 覆盖。默认值集中在 `src/config/defaults.py`。
+CLI 保留历史 256-token 默认；当前队列显式设置 512。MiniCPM 原生 chat 的确定性解码仍沿用其默认 3-beam，
+不能将它称为单 beam greedy；本次没有改变该解码设置。
 两模型关闭 Talker，仅输出文本；每个 probe 建立全新的对话，不把另一侧的答案作为历史。
 有音轨时输入音视频，无音轨时只输入视频。完整前缀超过模型上下文或显存时记录失败，不截短输入。
 `--max-pairs` 可限制固定配对子集；限制先于续跑跳过已完成请求执行。
 
 ### 保存、续跑与评分
+
+后续实验显式使用 `--output-protocol reply-task-text`，所有八个 probe 模型及其消融共用以下输出约定：
+
+```text
+# 尚无额外回复机会（实际输出不含注释）
+<silent>
+
+# RTD / PR 应回复
+杯子现在变成红色了。
+
+# Agent 应回复
+我来查一下替换配件。<|task_start|>查询视频中已经识别出的配件的可售替换选项。
+```
+
+模型直接生成回复，不输出 YES/NO 决策标签或调用 JSON。推荐同时使用 `--prompt-layout task-specific`：
+系统提示由 `probe_common.txt` 与当前任务的 `probe_rtd.txt`、`probe_pr.txt` 或 `probe_agent.txt` 拼接。
+User 指令也按任务区分，RTD/PR 不再出现 Agent 分隔符要求或工具列表；只有 Agent 追加 available 能力。
+RTD/PR 各有一正一负的独立虚构示例；Agent 的笔记示例仅在 `note_write` 可用时追加，不引入不可用能力。
+示例不是评测样本，模型不接收当前样本的参考答案、窗口、instruction 或旧函数 schema。
+`--system-prompt` 在 task-specific 模式下覆盖公共部分，任务部分和能力过滤仍保留。
+默认 `--prompt-layout shared` 维持旧共享模板行为，使用 `probe_reply_task_text.txt`，用于历史条件复现。
+layout、公共提示、任务模板及示例指纹都会进入续跑校验；切换条件必须使用新结果目录。
+原有前缀截断、配对和已处理机会计数不变。负侧是时间前缀上的沉默测试，不是新增 Agent 负样本数据。
+
+内部仍把精确 `<silent>` 映射为 NO、回复映射为 YES，沿用原二分类指标。
+Agent 缺少 instruction 仍表示模型开口，调用格式另外计错。空输出、混合沉默和正文、旧 YES/NO 标签是 invalid。
+`probe_predictions.jsonl` 另外保存 `response_text`、`agent_instruction`、`tool_calls`、
+`output_format_valid` 和生成结束状态；`tool_calls` 由显式分隔符解析，仅用于评测，不执行工具。
+达到生成上限且未看到结束 token 时记录 truncated，不补齐调用；拿不到可靠结束证据时保留 unknown。
+报告增加格式有效率、Agent 调用数、截断数和结束状态未知数。格式有效不等于语义正确；内容 judge 通过下文独立离线命令执行，不自动调用。
+
+未指定新开关时保留历史 `yes-no` 接口；旧结果仍按 YES/NO 解析。
+新旧协议必须使用不同目录，聚合时拒绝混用；不要将旧结果改标签伪装成新协议输出。
 
 前缀经 FFmpeg 分别 trim 音视频后重编码，保留流之间的时间偏移，避免关键帧复制包含未来内容。
 缓存键包含源文件指纹、截断时间及处理命令；源视频变化后需重新 prepare。
@@ -822,16 +859,75 @@ python -m benchmark probe run qwen3_omni \
 ```bash
 python -m benchmark probe score \
   --manifest benchmark/probes/default/probe_manifest.jsonl \
-  --predictions benchmark/results/probe/qwen25_omni/probe_predictions.jsonl \
-  --output-dir benchmark/results/probe/qwen25_omni
+  --predictions benchmark/results/probe/qwen25_omni_reply_task_text/probe_predictions.jsonl \
+  --output-dir benchmark/results/probe/qwen25_omni_reply_task_text
 ```
 
 主指标为正/负准确率、整体准确率、balanced accuracy 和 paired accuracy；
 paired accuracy 要求一对两侧均正确，只在完整配对上计算，同时显示完整配对覆盖率。
-无法解析为 YES/NO 的文本记为 invalid，在上述准确率中计错，不默认为 NO。
+历史协议中无法解析为 YES/NO、新协议中无法解析为回复/沉默的文本记为 invalid，在上述准确率中计错，不默认为 NO。
 推理失败属于未完成覆盖，不伪装成模型的 NO。
 Precision/recall/F1 仅基于可解析的已完成结果，并同时报告 parse coverage、invalid rate、
-失败数；结果按 `mode` 和 `ability` 汇总。该结果不交给在线 timing scorer 或内容 judge 混合计分。
+失败数；结果按 `mode` 和 `ability` 汇总。决策结果不交给在线 timing scorer，与内容 judge 分开报告。
+
+### Probe 的 TP 内容 LLM judge
+
+`probe-judge` 只评新版 `reply-task-text` 的 TP：参考要求回复，且从原始输出重新解析出的决策为回复。
+FP、FN、TN 和 invalid 不请求内容裁判，不以 0 分混入 TP 均分；因此内容分是“已经正确决定开口的条件下”的质量，
+必须与召回率、paired accuracy 和覆盖率一起看。旧 YES/NO 协议或混合协议输入会明确拒绝，不能把旧版解释自动视作实际回复。
+
+| 任务 | 内容分数 |
+| --- | --- |
+| RTD / PR | `response_score` |
+| Agent | `(response_score + call_score) / 2` |
+
+两个分项均沿用 realtime 的 **0、0.5、1、1.5、2** 五档，Agent 平均分不再取整，可出现 1.25、1.75。
+只解析显式生成的 instruction；缺失、非法、无 available 能力或明确截断的调用计 0 分，不让裁判补造调用。
+乱码、重复文本、截断回复仍保留为 TP 候选交给裁判按实际内容评分，不通过丢弃坏输出提高均分。
+每个 probe 按 `sample_index + response_index` 找当前参考，不伪造 onset 或再匹配时间窗口。
+只发送问题、当前参考及前缀内证据、允许能力、实际回复和调用，不发送视频、后续工具返回或完成回复。
+
+先检查输入与 TP 数，不需要密钥或裁判模型，不会调用 API，也不会改写原始结果：
+
+```bash
+python -m benchmark probe-judge benchmark/results/probe/qwen25_omni_reply_task_text \
+  --data "$BENCH_DATA" \
+  --manifest benchmark/probes/default/probe_manifest.jsonl \
+  --output-dir benchmark/results/probe_content_judge \
+  --dry-run
+```
+
+正式评分沿用 realtime judge 的 `--provider`、`--model`、`--base-url`、`--env-file`、`--concurrency`、
+`--timeout` 和 `--retries` 配置。下面的模型名是占位符，需替换成服务端实际支持的裁判模型：
+
+```bash
+python -m benchmark probe-judge benchmark/results/probe/qwen25_omni_reply_task_text \
+  --data "$BENCH_DATA" \
+  --manifest benchmark/probes/default/probe_manifest.jsonl \
+  --provider openai --model YOUR_JUDGE_MODEL \
+  --env-file .env --output-dir benchmark/results/probe_content_judge
+```
+
+OpenAI-compatible 服务从 `OPENAI_API_KEY`、`OPENAI_BASE_URL` 读取配置，Gemini 使用
+`--provider gemini` 配合 `GEMINI_API_KEY`、`GEMINI_BASE_URL`。密钥不写入评分配置或日志。
+可传多个结果目录，目录名需互异。默认并发 4、超时 120 秒、重试 2 次；修改调用信息使用现有参数，无需改代码。
+
+每个结果目录对应 `OUTPUT/RUN_NAME/` 下的 `judgments.jsonl`、`judge_metrics.json`、
+`judge_report.md`、`judge_config.json`、`input_index.json` 和 `api_usage.json`。
+输出根目录另有 `judge_comparison.json` / `.csv`。API 失败保留未评分，记录重试及 token 用量，不伪装成 0 分。
+`scored_task_mean` 是成功评分部分的均分；只有当前输入快照的所有 TP 评分成功，`task_mean_tp` 才有完整均分，否则为 N/A。
+“评分完成”只表示本次读取的快照已完成，不表示仍在生成的模型已跑完全量。
+
+生成期间也可以重复执行离线命令：只读完整 JSONL 行，保留原始预测文件，缓存已成功评分的单条 probe，
+新增 TP 增量评分、失败 TP 重试。若已有预测被修改或删除，或数据、manifest、提示词、裁判及评分实现改变，需换新输出目录。
+本轮仅实现离线入口和无网络验证，没有把付费 judge 加入后台推理队列。
+
+当前后台队列另有每 15 分钟检查一次的自动看护程序：进程/服务故障按原命令断点重启，
+连续一小时无有效进展才判为卡死；保留已有结果，不改生成或评测设置。
+配置见 `configs/watchdog.json`，启动、暂停及日志位置见
+[队列运行说明](docs/reply_task_text_queue_20261024.md#每-15-分钟自动看护)。
+当前已切换到拆分提示词、512-token 的新队列，实际状态路径见
+[本轮切换说明](docs/task_specific_probe_512_20261025.md)。
 
 ## 完整 2110 条数据：本轮模型准备（尚未启动推理）
 
@@ -950,3 +1046,53 @@ benchmark/.venv/bin/python benchmark/scripts/run_agent_recheck.py \
 `results/full_2110_dp6_after_task_start_20261023`。
 调用统计区分语法可解析与 schema 合法；简化协议不再统计模型输出的 suggested_capabilities
 或 extracted_parameters。语义正确性仍需另外运行内容 judge，工具不会实际执行。
+
+
+## 当前后台队列与模态消融（2026-10-23）
+
+本轮保持原始合并集输入、固定 probe manifest 和已有结果复用方式，不切换为新的 AOI
+默认路径，也不改变评分窗口。Gander Agent 重评结束后，先完成剩余 realtime：
+Gander 非 Agent 补测 → JoyAI → LiveStar。后续由
+`configs/suites/post_realtime_8gpu_20261023.json` 指定：
+
+| 阶段 | 模型 / 实验（按执行顺序） | GPU |
+|---|---|---|
+| 第一阶段 probe | MiniCPM-o-4.5 → Qwen3-Omni-30B-A3B → Qwen2.5-Omni-7B | 0、1、2、3、4、5、6、7 |
+| 第二阶段消融 | MiniCPM realtime no audio → no vision；Qwen2.5-Omni probe no audio → no vision | 0、1、2、3、4、5、6、7 |
+| 第三阶段 probe | Ming-Lite-Omni-1.5 → Qwen3-VL-8B → Baichuan-Omni-1.5 → HumanOmniV2 → OmniVinci | 0、1、2、3、4、5、6、7 |
+
+模型/实验依次执行，单个实验内做数据并行。Qwen3-Omni 每实例两卡、共四个实例；
+其他模型及四组消融均使用八个单卡实例。
+每个新模型/消融先跑一对 probe 或一条完整 realtime QA，失败会保存失败状态并跳过全量。
+
+新等待器的状态和计划位于 `results/full_2110_phased_8gpu_20261023/`，
+实验结果位于其 `suite/` 子目录。旧六卡/两卡计划的等待器已在尚未启动子任务时停止；活动 Agent 仍按原六卡分片收尾，结束后新队列使用全部八卡。
+这轮没有 MMDuet2。模态消融输出使用独立 `*_no_audio`、`*_no_vision` 目录，不复用完整模态预测。
+
+消融开关为 `--input-modality video-only`（no audio）或 `--input-modality audio-only`
+（no vision）。仅 MiniCPM realtime 和 Qwen2.5-Omni probe 提供该开关；省略时保留完整模态。
+MiniCPM 在原生 `streaming_prefill` 边界实际移除音频或图像参数；Qwen 在消息构造、官方
+多模态工具及 processor 边界实际移除对应模态，不用静音或黑帧替代。
+纯音频 Qwen 遇到无音轨素材会记录错误，不伪造音轨；当前固定 probe manifest 中无此类输入。
+
+若需要在新输出目录重建相同队列计划，可执行以下 CPU dry-run；不要在活动实验旁重复启动推理：
+
+```bash
+benchmark/.venv/bin/python benchmark/scripts/resume_after_agent.py \
+  --wait-for benchmark/results/agent_task_start_v1_20261023 \
+  --commands benchmark/probes/full_2110/run_commands.json \
+  --previous-root benchmark/results/full_2110_dp6_20261021 \
+  --output-dir /path/to/new_queue_directory \
+  --gpus 0 1 2 3 4 5 6 7 \
+  --schedule benchmark/configs/suites/post_realtime_8gpu_20261023.json \
+  --dry-run
+```
+
+CPU 单测已验证顺序、GPU 分组、独立输出路径和输入过滤；真实 Qwen processor 的两秒媒体检查
+确认 video-only 无音频特征、audio-only 无视觉特征。尚未立即执行消融的 GPU 前向；
+其真实推理验证会按上述 smoke 顺序在 realtime 和前三个 probe 结束后执行。
+
+
+## Agent 纯文本协议试验
+
+新增显式 `--agent-output-protocol task-text`，模型输出 `回复<|task_start|>instruction`，不输出 JSON。仅支持 MiniCPM、Gander 和 JoyAI；旧协议及训练格式保持原样。三模型各 100 条插队试验、完整提示词、状态和自动续跑说明见 [试验说明](docs/task_text_agent100_20261024.md)。

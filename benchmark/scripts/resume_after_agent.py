@@ -33,6 +33,46 @@ def process_identity(pid):
         return None
 
 
+def scheduled_commands(entries, remaining, schedule, gpus, agent_schema):
+    """Keep remaining realtime first, then explicit probe/ablation phases."""
+    lookup = {(entry['mode'], entry['adapter']): entry for entry in entries}
+    reduced = schedule.get('later_gpus', schedule.get('reduced_gpus'))
+    if not reduced or len(set(reduced)) != len(reduced) or not set(reduced) <= set(gpus):
+        raise ValueError('Later phases require distinct GPUs from the suite')
+    first, last = schedule['probe_first'], schedule['probe_last']
+    probes = {entry['adapter'] for entry in entries if entry['mode'] == 'probe'}
+    if len(first + last) != len(set(first + last)) or set(first + last) != probes:
+        raise ValueError('Probe phases must cover every probe model exactly once')
+    realtime_order = {'minicpmo': 0, 'gander': 1, 'livestar': 2, 'joyai': 3}
+    if 'realtime_order' in schedule:
+        names = schedule['realtime_order']
+        expected = {e['adapter'] for e in remaining if e['mode'] == 'realtime'}
+        if len(names) != len(set(names)) or set(names) != expected:
+            raise ValueError('Realtime order must list every remaining realtime model once')
+        realtime_order = {name: i for i, name in enumerate(names)}
+    realtime = sorted((e for e in remaining if e['mode'] == 'realtime'),
+                      key=lambda e: realtime_order.get(e['adapter'], 4))
+    result = [{**e, 'gpus': gpus} for e in realtime]
+    result += [{**lookup['probe', name], 'gpus': gpus} for name in first]
+    for ablation in schedule['ablations']:
+        mode, name, modality = ablation['mode'], ablation['adapter'], ablation['input_modality']
+        if (mode, name) not in {('realtime', 'minicpmo'), ('probe', 'qwen25_omni')}:
+            raise ValueError('Unsupported media ablation model/mode')
+        if modality not in ('video-only', 'audio-only'):
+            raise ValueError('Ablation must omit audio or vision')
+        entry = lookup[mode, name]
+        argv = option(entry['argv'], '--input-modality', modality)
+        if mode == 'realtime':
+            argv = option(argv, '--agent-call-schema', agent_schema)
+        result.append({**entry, 'argv': argv, 'gpus': reduced,
+                       'variant': 'no_audio' if modality == 'video-only' else 'no_vision'})
+    result += [{**lookup['probe', name], 'gpus': reduced} for name in last]
+    keys = [(e['mode'], e['adapter'], e.get('variant')) for e in result]
+    if len(keys) != len(set(keys)):
+        raise ValueError('Duplicate scheduled model/variant')
+    return [{**e, 'sequence': i} for i, e in enumerate(result)]
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--wait-for', type=Path, required=True)
@@ -41,14 +81,15 @@ def main():
     p.add_argument('--output-dir', type=Path, required=True)
     p.add_argument('--gpus', nargs='+', required=True)
     p.add_argument('--dry-run', action='store_true')
+    p.add_argument('--schedule', type=Path, help='Explicit post-realtime probe and ablation phases')
     a = p.parse_args()
     root = a.output_dir.resolve(); root.mkdir(parents=True, exist_ok=True)
     lock = (root / '.continuation.lock').open('a')
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     agent = a.wait_for.resolve()
     recheck = json.loads((agent / 'recheck_plan.json').read_text())
-    if a.gpus != recheck['gpus']:
-        raise ValueError('Continuation GPUs must match the Agent recheck')
+    if len(set(a.gpus)) != len(a.gpus) or not set(recheck['gpus']) <= set(a.gpus):
+        raise ValueError('Continuation GPUs must include the Agent recheck GPUs without duplicates')
     entries = json.loads(a.commands.read_text())
     base = entries[0]['argv']
     data = Path(base[base.index('--data') + 1])
@@ -72,6 +113,9 @@ def main():
         if entry['mode'] == 'realtime':
             entry = {**entry, 'argv': option(entry['argv'], '--agent-call-schema', recheck.get('agent_call_schema', 'legacy'))}
         commands.append(entry)
+    schedule = json.loads(a.schedule.read_text()) if a.schedule else None
+    if schedule:
+        commands = scheduled_commands(entries, commands, schedule, a.gpus, recheck.get('agent_call_schema', 'legacy'))
     command_path = root / 'remaining_commands.json'
     write_json(command_path, commands)
     argv = [sys.executable, str(REPO / 'benchmark/scripts/run_prepared_suite.py'),
@@ -83,6 +127,8 @@ def main():
                 name: {'nonagent': str(previous / 'realtime' / name), 'agent': str(agent / name)}
                 for name in ('minicpmo', 'gander')},
             'note': 'Use only non-Agent rows from previous results; Agent rows come from the recheck.'}
+    if schedule:
+        plan['schedule'] = schedule
     plan_path = root / 'continuation_plan.json'
     if plan_path.exists() and json.loads(plan_path.read_text()) != plan:
         raise ValueError('Continuation plan changed; use a new output directory')

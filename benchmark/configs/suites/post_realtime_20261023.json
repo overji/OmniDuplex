@@ -1,0 +1,11 @@
+{
+  "probe_first": ["minicpmo", "qwen3_omni", "qwen25_omni"],
+  "reduced_gpus": ["0", "1"],
+  "ablations": [
+    {"mode": "realtime", "adapter": "minicpmo", "input_modality": "video-only"},
+    {"mode": "realtime", "adapter": "minicpmo", "input_modality": "audio-only"},
+    {"mode": "probe", "adapter": "qwen25_omni", "input_modality": "video-only"},
+    {"mode": "probe", "adapter": "qwen25_omni", "input_modality": "audio-only"}
+  ],
+  "probe_last": ["ming_omni", "qwen3_vl", "baichuan_omni", "humanomni_v2", "omnivinci"]
+}

@@ -77,11 +77,12 @@ JEV_train/.venv/bin/python -m JEV_train --config /path/to/separate_sft.json trai
 输出格式统一为自然语言，以及可选的：
 
 ```text
-我来查询替换配件。<|agent|>{"name":"task_start","arguments":{"instruction":"查询已观察到的配件的可售替换选项。"}}
+我来查询替换配件。<|task_start|>查询已观察到的配件的可售替换选项。
 ```
 
-这里的 `<|agent|>` 是 Qwen 原词表编码的**文本分隔串**，不会给冻结基座添加未训练 token；与 `train/` 中 MiniCPM 原子 Agent token 的权重协议不同。
-无 Agent 时仅输出自然语言。只接受单个、完整且 instruction 非空的调用 JSON；不执行工具。
+这里的 `<|task_start|>` 是原词表编码的普通文本分隔串，后面直接为非空 instruction，不输出 JSON；与 train/ 的回复目标一致，不扩展后端词表。无 Agent 时仅输出自然语言；只接受一次分隔符、非空回复和 instruction，不执行工具。
+
+JEV 协议已升级为 `jev_gate_qwen25_task_text_v2`；旧 prepared、分类器和后端 adapter 不自动迁移，需要重新 prepare/训练。gate 仍预测 `<|silent|>` / `<|response|>`，原有两个决策 token 的训练方式不变；只有后端回复格式和相关上下文提示切换。
 
 训练产物包含 adapter、tokenizer/行权重（分类器）、协议和基座身份、配置、数据 manifest 指纹、loss 与验证指标。
 输出目录必须是新目录；本实现不恢复 optimizer，不自动运行后续训练。超出上下文限制会记录/报错，不偷偷丢弃媒体。

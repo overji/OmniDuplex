@@ -11,6 +11,7 @@ COMMANDS = {
     'prepare': 'benchmark.runtime.preparation',
     "probe": "benchmark.probe.runner",
     "judge": "benchmark.evaluation.judge",
+    "probe-judge": "benchmark.evaluation.probe_judge",
     "collect": "benchmark.evaluation.collection",
     "compare": "benchmark.evaluation.comparison",
     "download": "benchmark.data.download",
@@ -28,6 +29,9 @@ def build_parser():
         for name in MODELS + (REMOTE_MODELS if command == 'run' else ()):
             model_parser = models.add_parser(name)
             getattr(options, f"configure_{name}")(model_parser)
+            if name == 'minicpmo':
+                model_parser.add_argument('--input-modality', choices=('audio-video', 'video-only', 'audio-only'),
+                                          default=argparse.SUPPRESS, help='Explicit media ablation; omitted keeps the baseline')
             if command == "parallel":
                 options.configure_parallel(model_parser, joyai=name == "joyai")
             else:
@@ -73,7 +77,9 @@ def main(argv=None):
             assignment = plan["assignments"][rank]
         elif rank is not None:
             raise ValueError("internal-rank requires internal-shard-plan")
-        adapter = importlib.import_module(f"benchmark.adapters.{adapter_name}")
+        module = ('minicpmo_ablation' if adapter_name == 'minicpmo'
+                  and getattr(args, 'input_modality', 'audio-video') != 'audio-video' else adapter_name)
+        adapter = importlib.import_module(f"benchmark.adapters.{module}")
         from benchmark.runtime.runner import run
         run(args, adapter, assignment=assignment)
     else:

@@ -31,30 +31,47 @@ def build_plan(commands, gpus, output, reuse_root=None):
     tasks = []
     # Start with the previously exercised native streaming adapter.
     order = {'minicpmo': 0, 'gander': 1, 'livestar': 2, 'joyai': 3}
-    commands = sorted(commands, key=lambda c: (c['mode'] != 'realtime', order.get(c['adapter'], 4)))
+    if any('sequence' in entry for entry in commands):
+        sequences = [entry['sequence'] for entry in commands]
+        if any(type(n) is not int for n in sequences) or len(set(sequences)) != len(sequences):
+            raise ValueError('Scheduled commands require distinct integer sequence values')
+        commands = sorted(commands, key=lambda c: c['sequence'])
+    else:
+        commands = sorted(commands, key=lambda c: (c['mode'] != 'realtime', order.get(c['adapter'], 4)))
     for entry in commands:
         mode, name = entry['mode'], entry['adapter']
-        directory = output / mode / name
+        task_gpus = entry.get('gpus', gpus)
+        if not task_gpus or len(set(task_gpus)) != len(task_gpus) or not set(task_gpus) <= set(gpus):
+            raise ValueError('Task GPUs must be a nonempty distinct subset of suite GPUs')
+        variant = entry.get('variant')
+        label = f'{name}_{variant}' if variant else name
+        if Path(label).name != label or label in ('.', '..'):
+            raise ValueError('Unsafe task label')
+        directory = output / mode / label
         reuse = reuse_root and mode == 'realtime' and (reuse_root / mode / name / 'parallel_plan.json').exists()
+        if variant:
+            reuse = False
         if reuse:
             directory = reuse_root / mode / name
         command = option(entry['argv'], '--output-dir', directory)
         if mode == 'realtime':
             command[command.index('run')] = 'parallel'
-            command += ['--gpus', *gpus]
+            command += ['--gpus', *task_gpus]
             if '--sample-indices' not in command:
                 command += ['--sample-indices', str((reuse_root if reuse else output) / 'available_sample_indices.json')]
-            if name != 'gander':
+            if name != 'gander' and '--agent-output-protocol' not in command:
                 command += ['--agent-output-protocol', 'structured']
-            if name == 'joyai':
+            if name == 'joyai' and '--joyai-services' not in command:
                 command += ['--joyai-services', str(REPO / 'benchmark/probes/full_2110/joyai_services.json')]
             # MiniCPM uses an already exercised adapter; new adapters first run one full video.
             smoke = None
-            if name != 'minicpmo':
+            if (name != 'minicpmo' or variant) and not entry.get('skip_smoke', False):
                 smoke = list(command)
                 start = smoke.index('--gpus')
-                del smoke[start + 2:start + 1 + len(gpus)]
-                smoke = option(smoke, '--output-dir', output / 'smoke' / mode / name)
+                del smoke[start + 2:start + 1 + len(task_gpus)]
+                smoke = option(smoke, '--output-dir', output / 'smoke' / mode / label)
+                if entry.get('smoke_sample_indices'):
+                    smoke = option(smoke, '--sample-indices', entry['smoke_sample_indices'])
                 smoke += ['--max-samples', '1']
             tasks.append(dict(mode=mode, adapter=name, smoke=smoke, commands=[command], output=str(directory)))
         else:
@@ -63,13 +80,13 @@ def build_plan(commands, gpus, output, reuse_root=None):
             pairs = list(dict.fromkeys(r['pair_id'] for r in rows))
             # The complete Qwen3-Omni checkpoint needs two 80 GB GPUs per replica.
             width = 2 if name == 'qwen3_omni' else 1
-            groups = [gpus[i:i+width] for i in range(0, len(gpus), width)]
+            groups = [task_gpus[i:i+width] for i in range(0, len(task_gpus), width)]
             if any(len(group) != width for group in groups):
                 raise ValueError('GPU count must be divisible by replica width')
             workers = []
             for rank, group in enumerate(groups):
                 selected = set(pairs[rank::len(groups)])
-                shard = output / 'manifests' / f'{name}_{rank}.jsonl'
+                shard = output / 'manifests' / f'{label}_{rank}.jsonl'
                 shard.parent.mkdir(parents=True, exist_ok=True)
                 content = ''.join(json.dumps(r, ensure_ascii=False) + '\n' for r in rows if r['pair_id'] in selected)
                 if shard.exists() and shard.read_text() != content:
@@ -78,7 +95,17 @@ def build_plan(commands, gpus, output, reuse_root=None):
                 cmd = option(command, '--manifest', shard)
                 cmd = option(cmd, '--output-dir', directory / f'worker_{rank}')
                 workers.append({'argv': cmd, 'gpus': group})
-            smoke = option(command, '--output-dir', output / 'smoke' / mode / name) + ['--max-pairs', '1']
+            smoke = option(command, '--output-dir', output / 'smoke' / mode / label) + ['--max-pairs', '1']
+            if entry.get('smoke_agent'):
+                first = next((row['pair_id'] for row in rows if row['mode'] == 'agent'), None)
+                if first is None:
+                    raise ValueError('Agent smoke requested but manifest has no Agent pairs')
+                path = output / 'manifests' / f'{label}_agent_smoke.jsonl'
+                content = ''.join(json.dumps(row, ensure_ascii=False) + '\n' for row in rows if row['pair_id'] == first)
+                if path.exists() and path.read_text() != content:
+                    raise ValueError('Existing smoke manifest changed')
+                atomic_write_text(path, content)
+                smoke = option(smoke, '--manifest', path)
             tasks.append(dict(mode=mode, adapter=name, smoke=smoke, smoke_gpus=groups[0],
                               commands=workers, output=str(directory), manifest=str(manifest)))
     return tasks
@@ -90,6 +117,8 @@ def main():
     p.add_argument('--gpus', nargs='+', required=True)
     p.add_argument('--output-dir', type=Path, required=True)
     p.add_argument('--dry-run', action='store_true')
+    p.add_argument('--probe-retry-errors-once', action='store_true',
+                   help='Retry probe failures once after the first pass, then continue with partial results')
     p.add_argument('--reuse-root', type=Path, help='Resume existing realtime shards without changing their plans')
     p.add_argument('--joyai-services', type=Path, help='Explicit compatible JoyAI service configuration')
     args = p.parse_args()
@@ -100,8 +129,11 @@ def main():
     lock = (output / '.suite.lock').open('a')
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     commands = json.loads(args.commands.read_text())
-    data = Path(commands[0]['argv'][commands[0]['argv'].index('--data') + 1])
-    videos = Path(commands[0]['argv'][commands[0]['argv'].index('--videos-dir') + 1])
+    source = next((c['argv'] for c in commands if '--data' in c['argv'] and '--videos-dir' in c['argv']), None)
+    if source is None:
+        p.error('Suite needs one realtime entry supplying --data and --videos-dir')
+    data = Path(source[source.index('--data') + 1])
+    videos = Path(source[source.index('--videos-dir') + 1])
     samples = json.loads(data.read_text())
     available = [i for i, sample in enumerate(samples) if (videos / sample['video']).is_file()]
     write_json(output / 'available_sample_indices.json', available)
@@ -167,7 +199,8 @@ def main():
                 children.append(launch(task['commands'][0], directory / 'supervisor.log'))
             else:
                 for rank, worker in enumerate(task['commands']):
-                    children.append(launch(worker['argv'], directory / f'worker_{rank}' / 'worker.log', worker['gpus']))
+                    command = worker['argv'] + (['--retry-errors-once'] if args.probe_retry_errors_once else [])
+                    children.append(launch(command, directory / f'worker_{rank}' / 'worker.log', worker['gpus']))
             item.update(status='running', pids=[c.pid for c in children]); save()
             while any(c.poll() is None for c in children):
                 if task['mode'] == 'probe':
@@ -191,19 +224,28 @@ def main():
                 atomic_write_text(directory / 'probe_errors.jsonl', ''.join(json.dumps(r, ensure_ascii=False)+'\n' for r in errors))
                 write_report(load_manifest(Path(task['manifest'])), records, directory, errors)
                 item['completed_probes'] = len(records)
-            item.update(status='complete' if all(c.returncode == 0 for c in children) else 'incomplete',
+            failed_status = ('incomplete_final' if task['mode'] == 'probe' and args.probe_retry_errors_once
+                             else 'incomplete')
+            item.update(status='complete' if all(c.returncode == 0 for c in children) else failed_status,
                         exit_codes=[c.returncode for c in children])
             for c in children: processes.remove(c)
             save()
             print(f"END {task['mode']}/{task['adapter']} {item['status']}", flush=True)
-        status['status'] = 'complete' if all(j['status'] == 'complete' for j in status['jobs']) else 'incomplete'
+        if all(j['status'] == 'complete' for j in status['jobs']):
+            status['status'] = 'complete'
+        elif all(j['status'] in ('complete', 'incomplete_final') for j in status['jobs']):
+            status['status'] = 'complete_with_errors'
+        else:
+            status['status'] = 'incomplete'
     except KeyboardInterrupt:
         status['status'] = 'interrupted'
     finally:
         terminate_owned(processes)
         for log in logs: log.close()
         save()
+        lock.close()
+    return int(status['status'] not in ('complete', 'complete_with_errors'))
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

@@ -1,0 +1,17 @@
+Task: conditional reminder (PR).
+Respond only when the requested condition is confirmed by observed evidence.
+An unhandled qualifying occurrence earlier in this prefix still counts even if it
+is no longer visible in the last frame. Ignore occurrences already handled.
+Output only the actual brief reminder. Do not delegate work or append action instructions.
+
+Example 1 — condition not confirmed:
+Request: Tell me when the indicator turns blue.
+Previously handled qualifying occurrences: 0.
+Observed prefix: the indicator stays orange; no blue state has been seen.
+Output: <silent>
+
+Example 2 — condition confirmed earlier in the prefix:
+Request: Tell me when the indicator turns blue.
+Previously handled qualifying occurrences: 0.
+Observed prefix: the indicator turned blue and then switched off before the prefix ended.
+Output: The indicator turned blue.

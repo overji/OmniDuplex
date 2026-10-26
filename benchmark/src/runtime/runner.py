@@ -25,10 +25,14 @@ class SampleContext:
     system_prompt: str = ""
     agent_output_protocol: str = "text"
     native_protocol: str = ""
+    task_text_model: str = 'minicpmo'
 
     def build_prompt(self, native_protocol=""):
         native_protocol = native_protocol or self.native_protocol
         self.system_prompt = build_system_prompt(self.base_prompt, self.sample, native_protocol)
+        if self.agent_output_protocol == 'task-text' and self.sample.get('mode') == 'agent':
+            from benchmark.data.task_text import build_prompt
+            self.system_prompt = build_prompt(self.sample, self.task_text_model)
         if self.agent_output_protocol == "structured" and self.sample.get("mode") == "agent":
             from benchmark.config.paths import CONFIGS
             name = 'agent_task_start_structured.txt' if self.sample.get('_agent_call_schema') == 'task-start' else 'agent_structured.txt'
@@ -80,6 +84,13 @@ def run(args, adapter, *, assignment=None):
     if assignment is not None:
         recover_jsonl_tail(prediction_path)
     predictions = read_jsonl(prediction_path)
+    if hasattr(adapter, 'reuse_predictions') and getattr(args, 'reuse_non_agent', None):
+        reused = adapter.reuse_predictions(args, samples, assignment, config, base_prompt)
+        completed_before = {p['sample_index'] for p in predictions}
+        for prediction in reused:
+            if prediction['sample_index'] not in completed_before:
+                append_jsonl(prediction_path, prediction)
+                predictions.append(prediction)
     completed = {prediction["sample_index"] for prediction in predictions}
     if assignment is None:
         selected = select_samples(samples, completed, args,
@@ -100,7 +111,8 @@ def run(args, adapter, *, assignment=None):
         ) if key in sample}
         context = SampleContext(index, model_sample, base_prompt, args.output_dir,
                                 started=time.perf_counter(),
-                                agent_output_protocol=getattr(args, "agent_output_protocol", "text"))
+                                agent_output_protocol=getattr(args, "agent_output_protocol", "text"),
+                                task_text_model=getattr(adapter, '__name__', 'minicpmo').rsplit('.', 1)[-1].replace('_ablation', ''))
         result: SampleResult = adapter.run_sample(args, state, context)
         if sample.get('mode') == 'agent' and (getattr(args, 'agent_output_protocol', 'text') == 'structured'
                 or sample.get('_agent_call_schema') == 'task-start'):

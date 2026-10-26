@@ -7,6 +7,11 @@ def input_protocol(args):
     import hashlib
     protocol = getattr(args, 'agent_output_protocol', 'text')
     schema = getattr(args, 'agent_call_schema', 'legacy')
+    if protocol == 'task-text':
+        if schema != 'task-start' or getattr(args, 'lora_adapter', None):
+            raise ValueError('task-text requires task-start schema and unmodified checkpoint weights')
+        from benchmark.data.task_text import identity
+        return AGENT_INPUT_PROTOCOL + ':task_text_v1:' + identity()
     if schema == 'task-start':
         from types import SimpleNamespace
         if protocol == 'agent-token':

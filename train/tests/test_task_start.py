@@ -4,7 +4,9 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from benchmark.data.agent_token import AgentStream, PROTOCOL, adapter_identity, full_model_identity
+from benchmark.data.task_text import TaskTextStream as AgentStream
+from train.src.agent import PROTOCOL
+from train.src.checkpoints import adapter_identity, full_model_identity
 from benchmark.evaluation.timing import match_windows
 from train.src.agent import training_sample, training_record, validate_prepared
 from train.src.data import target_chunks, load_config
@@ -24,6 +26,29 @@ def source_sample():
 
 
 class TaskStartTrainingTests(unittest.TestCase):
+    def test_full_export_records_plain_separator_without_vocab_expansion(self):
+        from tokenizers import Tokenizer
+        from tokenizers.models import WordLevel
+        from tokenizers.pre_tokenizers import Whitespace
+        from transformers import PreTrainedTokenizerFast, Qwen2Config, Qwen2ForCausalLM
+        from train.src.full import finalize_export
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);base=root/'base';base.mkdir();output=root/'export';output.mkdir()
+            raw=Tokenizer(WordLevel({'[UNK]':0,'<|':1,'task_start':2,'|>':3},unk_token='[UNK]'))
+            raw.pre_tokenizer=Whitespace()
+            tokenizer=PreTrainedTokenizerFast(tokenizer_object=raw,unk_token='[UNK]')
+            model=Qwen2ForCausalLM(Qwen2Config(vocab_size=4,hidden_size=8,intermediate_size=16,
+                num_hidden_layers=1,num_attention_heads=1,num_key_value_heads=1))
+            model.save_pretrained(base);model.save_pretrained(output);tokenizer.save_pretrained(output)
+            finalize_export(output,root/'checkpoint',{'model_path':str(base),'agent_output_protocol':PROTOCOL},tokenizer)
+            meta=full_model_identity(output)
+            self.assertEqual(meta['vocab_size'],4)
+            self.assertEqual(meta['separator'],'<|task_start|>')
+            self.assertEqual(meta['separator_token_ids'],[1,2,3])
+            meta['separator_token_ids']=[0]
+            (output/'full_training_model.json').write_text(json.dumps(meta))
+            with self.assertRaises(ValueError):full_model_identity(output)
+
     def test_adapter_is_pure_idempotent_and_preserves_timing(self):
         source=source_sample();before=deepcopy(source);adapted=training_sample(source)
         self.assertEqual(source,before);self.assertEqual(training_sample(adapted),adapted)
@@ -35,7 +60,7 @@ class TaskStartTrainingTests(unittest.TestCase):
     def test_training_target_and_parser_round_trip(self):
         s=source_sample();r=dict(sample=s,reference=s['responses'][0],response_index=0)
         before=deepcopy(r);t=ByteTokenizer();chunks=target_chunks(r,t,12)
-        self.assertEqual(r,before);self.assertEqual(sum(ids.count(t.agent_id) for ids,_ in chunks),1)
+        self.assertEqual(r,before);self.assertEqual(sum(ids.count(t.agent_id) for ids,_ in chunks),0)
         parser=AgentStream(t);event=None
         for clock,(ids,groups) in enumerate(chunks,1):
             event=parser.feed(ids,clock,ended=clock==len(chunks))
@@ -53,7 +78,7 @@ class TaskStartTrainingTests(unittest.TestCase):
                          dict(name='task_start',arguments={'instruction':'search','extra':'x'}),
                          dict(name='agent_call',arguments={'instruction':'search'})]:
             event=AgentStream(t).feed([t.agent_id]+t.encode(json.dumps(function)),2,ended=True)
-            self.assertEqual(event['agent_parse_status'],'malformed');self.assertEqual(event['tool_calls'],[])
+            self.assertEqual(event['tool_calls'],[])
         s=training_sample(source_sample());s['responses'][0]['tool_calls'][0]['function']['arguments']['extra']='x'
         with self.assertRaises(ValueError):training_sample(s)
 

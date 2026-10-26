@@ -29,7 +29,7 @@ def estimate(config, lengths):
     gib = 2**30
     base = 2 * (counts['llm'] + counts['encoders']) / gib
     if config.get('training_method', 'lora_sft') != 'lora_sft':
-        parameters = counts['llm'] + counts['encoders'] + 2 * h
+        parameters = counts['llm'] + counts['encoders']
         return {'parameter_counts': dict(counts), 'trainable_parameters': parameters,
             'bf16_model_gib': 2 * parameters / gib,
             'bf16_gradients_gib': 2 * parameters / gib,
@@ -37,7 +37,7 @@ def estimate(config, lengths):
             'total_unsharded_state_gib': 16 * parameters / gib,
             'assumptions': 'All LLM/vision/audio/connector parameters; no TTS. ZeRO-3 partitions GPU weights/gradients and CPU-offloaded FP32 masters/Adam by world size. Activations, communication buffers, native rollout KV and checkpoints are additional; CPU-offload uses substantial RAM. GRPO beta=0 uses no reference model. Not a measured peak.'}
     # PEFT adapters use fp32: weights, grads and two fp32 Adam states.
-    token_parameters = 2 * h if config.get('agent_output_protocol') == 'agent_token_task_start_v1' else 0
+    token_parameters = 0  # The separator uses existing vocabulary pieces.
     adapter = 16 * (lora + token_parameters) / gib
     rows = []
     for length in lengths:

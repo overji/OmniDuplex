@@ -95,13 +95,18 @@ def prepare_rows(samples, predictions):
 
 
 def evaluate(row, config, key, system, request=completion):
+    return evaluate_content(row, config, key, system, request, matched=row['event_index'] is not None)
+
+
+def evaluate_content(row, config, key, system, request=completion, *, matched=True):
+    """Shared content scoring; probe callers have no synthetic timing event."""
     record = {k: v for k, v in row.items() if k != 'payload'}
     record['usage_attempts'] = []
     payload = row['payload']
-    if row['event_index'] is None or (not payload['candidate_response'].strip() and not payload['judge_call']):
+    if not matched or (not payload['candidate_response'].strip() and not payload['judge_call']):
         return {**record, 'status': 'complete', 'response_score': 0,
             'call_score': 0 if row['call_applicable'] else None,
-            'response_reason': 'No matched response' if row['event_index'] is None else 'Empty response',
+            'response_reason': 'No matched response' if not matched else 'Empty response',
             'call_reason': 'No valid call' if row['call_applicable'] else 'Not applicable',
             'error_types': ['missing_output']}
     for attempt in range(config['retries'] + 1):

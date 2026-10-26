@@ -17,7 +17,7 @@ class ByteTokenizer:
         return [300] if text == TOKEN else list(text.encode())
     def convert_tokens_to_ids(self, token):
         return {TOKEN: 300, '<|speak|>': 301, '<|listen|>': 302,
-                '<|turn_eos|>': 303, '<|chunk_eos|>': 304, '</unit>': 305}[token]
+                '<|turn_eos|>': 303, '<|chunk_eos|>': 304, '</unit>': 305}.get(token, -1)
     def decode(self, ids, **kwargs):
         return bytes(ids).decode()
 
@@ -66,73 +66,63 @@ class TargetTests(unittest.TestCase):
         tokenizer = ByteTokenizer()
         record = {'sample': {'mode': 'agent'}, 'reference': {'response': 'I will check.',
             'tool_calls': [{'function': {'name': 'agent_call', 'arguments': '{"instruction":"search"}'}}]}}
-        chunks = target_chunks(record, tokenizer, 8, protocol='agent_token_task_start_v1')
-        self.assertEqual(sum(ids.count(300) for ids, _ in chunks), 1)
+        chunks = target_chunks(record, tokenizer, 8, protocol='task_text_sft_v1')
+        self.assertEqual(sum(ids.count(300) for ids, _ in chunks), 0)
+        self.assertIn('<|task_start|>', bytes(t for ids, groups in chunks for t,g in zip(ids,groups) if g and t < 256).decode())
         content = bytes(t for ids, groups in chunks for t,g in zip(ids,groups) if g == 3).decode()
-        self.assertEqual(json.loads(content)['arguments']['instruction'], 'search')
+        self.assertEqual(content, 'search')
         self.assertEqual(bytes(t for ids, groups in chunks for t,g in zip(ids,groups) if g == 2).decode(), 'I will check.')
         record['reference']['tool_calls'] = []
-        chunks = target_chunks(record, tokenizer, 8, protocol='agent_token_task_start_v1')
+        chunks = target_chunks(record, tokenizer, 8, protocol='task_text_sft_v1')
         self.assertFalse(any(300 in ids or 3 in groups for ids, groups in chunks))
 
 
-class RowTests(unittest.TestCase):
-    def test_rows_gradients_save_reload_and_old_vocab_frozen(self):
+class AdapterTests(unittest.TestCase):
+    def test_lora_save_reload_keeps_vocab_and_embedding_weights_frozen(self):
         import torch
         from types import SimpleNamespace
         from tokenizers import Tokenizer
         from tokenizers.models import WordLevel
         from tokenizers.pre_tokenizers import Whitespace
         from transformers import PreTrainedTokenizerFast, Qwen2Config, Qwen2ForCausalLM
-        from train.src.token_rows import register_token, save_adapter, load_adapter
+        from train.src.checkpoints import save_adapter, load_adapter
         from train.src.model import add_lora, loss_for_record
         torch.manual_seed(11)
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); basepath = root / 'base'; basepath.mkdir()
-            raw = Tokenizer(WordLevel({'[UNK]': 0, 'hello': 1, 'search': 2, 'world': 3}, unk_token='[UNK]'))
+            root = Path(directory);basepath = root / 'base';basepath.mkdir()
+            raw = Tokenizer(WordLevel({'[UNK]':0,'hello':1,'search':2,'world':3,'<|':4,'task_start':5,'|>':6},unk_token='[UNK]'))
             raw.pre_tokenizer = Whitespace()
-            tokenizer = PreTrainedTokenizerFast(tokenizer_object=raw, unk_token='[UNK]')
+            tokenizer = PreTrainedTokenizerFast(tokenizer_object=raw,unk_token='[UNK]')
             tokenizer.save_pretrained(basepath)
-            initial = Qwen2ForCausalLM(Qwen2Config(vocab_size=4, hidden_size=16, intermediate_size=32,
-                num_hidden_layers=2, num_attention_heads=2, num_key_value_heads=1, tie_word_embeddings=False))
+            initial = Qwen2ForCausalLM(Qwen2Config(vocab_size=7,hidden_size=16,intermediate_size=32,
+                num_hidden_layers=2,num_attention_heads=2,num_key_value_heads=1,tie_word_embeddings=False))
             initial.save_pretrained(basepath)
-            model = SimpleNamespace(llm=copy.deepcopy(initial), config=copy.deepcopy(initial.config))
+            model = SimpleNamespace(llm=copy.deepcopy(initial),config=copy.deepcopy(initial.config))
+            model.llm.requires_grad_(False)
             before_in = model.llm.get_input_embeddings().weight.detach().clone()
             before_out = model.llm.get_output_embeddings().weight.detach().clone()
-            model.agent_metadata = register_token(model, tokenizer, basepath)
-            new_id = model.agent_metadata['token_id']
-            self.assertEqual(new_id, 4)
-            self.assertEqual(tokenizer.encode(TOKEN, add_special_tokens=False), [new_id])
-            encoded = {'inputs_embeds': model.llm.get_input_embeddings()(torch.tensor([1, new_id, 2, 3])).detach(),
-                'labels': torch.tensor([-100, new_id, 2, 3]), 'groups': torch.tensor([0, 1, 3, 3]),
-                'agent_positions': [1]}
-            cfg = dict(lora_rank=2, lora_alpha=4, lora_dropout=0., target_modules=['q_proj','v_proj'],
-                decision_weight=1., content_weight=1., call_weight=1., loss_projection_chunk=2)
-            llm = add_lora(model, cfg)
-            loss_for_record(llm, encoded, cfg, 'cpu').backward()
-            base = llm.get_base_model()
-            self.assertGreater(base.get_input_embeddings().row.grad.abs().sum().item(), 0)
-            self.assertGreater(base.get_output_embeddings().row.grad.abs().sum().item(), 0)
-            self.assertTrue(any(p.grad is not None and p.grad.abs().sum() > 0 for n,p in llm.named_parameters() if 'lora_' in n))
-            self.assertIsNone(base.get_input_embeddings().base.weight.grad)
-            self.assertIsNone(base.get_output_embeddings().base.weight.grad)
-            optim = torch.optim.AdamW([p for p in llm.parameters() if p.requires_grad], lr=.01)
-            optim.step()
-            self.assertTrue(torch.equal(base.get_input_embeddings().weight[:4], before_in))
-            self.assertTrue(torch.equal(base.get_output_embeddings().weight[:4], before_out))
-            llm.eval()
-            ids = torch.tensor([[1, new_id, 2]])
-            expected = llm(ids).logits.detach()
-            save_adapter(llm, tokenizer, model.agent_metadata, root / 'adapter')
-            restored = SimpleNamespace(llm=copy.deepcopy(initial), config=copy.deepcopy(initial.config),
-                prepare_processor=lambda **kw: None)
-            load_adapter(restored, basepath, root / 'adapter')
-            restored.llm.eval()
-            self.assertTrue(torch.allclose(expected, restored.llm(ids).logits.detach(), atol=1e-5))
-            metadata_path = root / 'adapter/agent_protocol.json'
-            metadata = json.loads(metadata_path.read_text()); metadata['token_id'] += 1
-            metadata_path.write_text(json.dumps(metadata))
-            with self.assertRaises(ValueError): load_adapter(restored, basepath, root / 'adapter')
+            encoded = {'inputs_embeds':model.llm.get_input_embeddings()(torch.tensor([1,4,5,6,2,3])).detach(),
+                       'labels':torch.tensor([-100,4,5,6,2,3]),'groups':torch.tensor([0,1,1,1,3,2])}
+            cfg = dict(lora_rank=2,lora_alpha=4,lora_dropout=0.,target_modules=['q_proj','v_proj'],
+                       decision_weight=1.,content_weight=1.,call_weight=1.,loss_projection_chunk=2)
+            llm = add_lora(model,cfg)
+            loss_for_record(llm,encoded,cfg,'cpu').backward()
+            self.assertTrue(any(p.grad is not None and p.grad.abs().sum()>0 for n,p in llm.named_parameters() if 'lora_' in n))
+            self.assertIsNone(llm.get_input_embeddings().weight.grad)
+            self.assertIsNone(llm.get_output_embeddings().weight.grad)
+            torch.optim.AdamW([p for p in llm.parameters() if p.requires_grad],lr=.01).step()
+            self.assertTrue(torch.equal(llm.get_input_embeddings().weight,before_in))
+            self.assertTrue(torch.equal(llm.get_output_embeddings().weight,before_out))
+            self.assertEqual(len(tokenizer),7)
+            llm.eval();ids=torch.tensor([[1,4,5,6,2]])
+            expected=llm(ids).logits.detach()
+            save_adapter(llm,tokenizer,basepath,root/'adapter')
+            self.assertFalse((root/'adapter/agent_rows.safetensors').exists())
+            restored=SimpleNamespace(llm=copy.deepcopy(initial),config=copy.deepcopy(initial.config),prepare_processor=lambda **kw:None)
+            load_adapter(restored,basepath,root/'adapter');restored.llm.eval()
+            self.assertTrue(torch.allclose(expected,restored.llm(ids).logits.detach(),atol=1e-5))
+            meta_path=root/'adapter/agent_protocol.json';meta=json.loads(meta_path.read_text())
+            meta['separator_token_ids']=[0];meta_path.write_text(json.dumps(meta))
+            with self.assertRaises(ValueError):load_adapter(restored,basepath,root/'adapter')
 
-if __name__ == '__main__':
-    unittest.main()
+if __name__ == '__main__':unittest.main()

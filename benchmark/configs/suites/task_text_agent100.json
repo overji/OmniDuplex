@@ -1,0 +1,14 @@
+{
+  "seed": 42,
+  "sample_count": 100,
+  "models": ["minicpmo", "gander", "joyai"],
+  "gpus": ["0", "1", "2", "3", "4", "5", "6", "7"],
+  "commands": "benchmark/probes/full_2110/run_commands.json",
+  "queue_root": "benchmark/results/full_2110_phased_8gpu_20261023",
+  "baselines": {
+    "minicpmo": "benchmark/results/agent_task_start_v1_20261023/minicpmo",
+    "gander": "benchmark/results/agent_task_start_v1_20261023/gander",
+    "joyai": "benchmark/results/full_2110_phased_8gpu_20261023/suite/realtime/joyai"
+  },
+  "joyai_services": "benchmark/probes/full_2110/joyai_services.json"
+}
