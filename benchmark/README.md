@@ -726,6 +726,152 @@ Probe 测试模型在看到一个完整视频前缀后，能否判断“是否�
 目前支持 `minicpmo`、`qwen3_omni`、`qwen25_omni`、`ming_omni`、`qwen3_vl`、
 `baichuan_omni`、`humanomni_v2` 和 `omnivinci`；运行前需配置各自环境和本地权重。
 
+### 从 Probe 推理到 DeepSeek Flash 内容评分
+
+以下命令均在仓库根目录执行，以 Qwen2.5-Omni-7B 为例。流程分为两个独立阶段：
+先在 GPU 上生成模型回复，再通过 DeepSeek API 对保存的文本做 judge。第二阶段不加载本地权重、不占 GPU，
+也不会重新生成模型回复。数据下载和视频别名准备先按本文开头的“全量数据集与闭源 Realtime 快速开始”第 1 步完成。
+
+**1. 配置独立推理环境及路径。**
+
+```bash
+python3.11 -m venv benchmark/.venv-probe
+source benchmark/.venv-probe/bin/activate
+python -m pip install -r benchmark/requirements-probe.txt
+# 下文用 --env-file 读取密钥，需要这个轻量依赖。
+python -m pip install python-dotenv
+ffmpeg -version
+ffprobe -version
+
+export BENCH_ROOT=/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench
+export BENCH_DATA="$BENCH_ROOT/all_qa.json"
+export BENCH_VIDEOS="$PWD/benchmark/cache/aoi_bench_videos"
+export PROBE_MODEL=/remote-home/yushengliao/speech/jimodels/openmodels/Qwen2.5-Omni-7B
+export PROBE_MANIFEST_DIR="$PWD/benchmark/probes/aoi_bench_probe"
+export PROBE_RUN="$PWD/benchmark/results/probe/qwen25_omni_task_specific_512"
+export PROBE_JUDGE="$PWD/benchmark/results/probe_judge/qwen25_omni_deepseek_flash"
+```
+
+将数据和模型路径替换为本机位置；模型必须已下载，所有模型统一放在 `openmodels` 目录。
+不要为了运行 Probe 升级已有 MiniCPM/Gander 的 Transformers 环境。
+本例使用 Qwen 的独立 Transformers 4.57.3 环境；其他模型的专用环境见下文及 suite 配置。
+
+**2. 准备正负前缀清单。**
+
+```bash
+python -m benchmark probe prepare \
+  --data "$BENCH_DATA" --videos-dir "$BENCH_VIDEOS" \
+  --output-dir "$PROBE_MANIFEST_DIR"
+```
+
+清单目录必须为空；已经准备过且数据未改变时，直接复用原清单，不重复执行 `prepare`。
+每个参考 response 构造 pre/post 两个独立请求：负前缀截至 `window_start - 1s`，
+正前缀截至 `window_end`。清单记录排除原因；这里还没有加载模型或批量编码视频。
+
+**3. 运行 Probe，必须显式启用能输出回复的协议。**
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python -m benchmark probe run qwen25_omni \
+  --manifest "$PROBE_MANIFEST_DIR/probe_manifest.jsonl" \
+  --model-path "$PROBE_MODEL" \
+  --output-protocol reply-task-text \
+  --prompt-layout task-specific \
+  --max-new-tokens 512 \
+  --retry-errors-once \
+  --output-dir "$PROBE_RUN"
+```
+
+`0` 只是示例设备号，请改为可用 GPU。显存不足时可让单个模型在多卡分片，例如
+`CUDA_VISIBLE_DEVICES=0,1`；这不等于 data parallel，也不保证超长前缀能容纳。
+如需先检查链路，可在这条命令末尾加 `--max-pairs 2`，同时使用另一个 smoke 输出目录；
+正式运行去掉限制并使用新目录，因为 `max_pairs` 也参与配置指纹。
+
+模型应输出精确 `<silent>`，或实际回复；Agent 输出 `回复<|task_start|>instruction`。
+请勿省略 `--output-protocol reply-task-text`：历史默认 `yes-no` 结果不能用于内容 judge。
+`--prompt-layout task-specific` 为 RTD/PR/Agent 分别提供提示词及示例。
+512 是本示例显式设置的输出预算，CLI 历史默认仍为 256。
+
+相同命令重跑会复用成功结果。启用 `--retry-errors-once` 后，未尝试的请求先跑，失败项最后重试一次，
+额度保存在 `probe_retry_policy.json`，重启不重置；仍有失败时命令以非零退出，保留结果并报告覆盖率。
+达到输出预算的截断、内容错误和格式错误属于已经生成的结果，不会被挑选重跑到答对。
+完整前缀超出上下文或显存时记录失败，不偷偷截掉视频。
+
+**4. 配置 DeepSeek key，并先做不收费的输入检查。**
+
+在仓库根目录 `.env` 中设置以下变量；已有文件只更新相应字段，不覆盖其他配置：
+
+```dotenv
+OPENAI_API_KEY=YOUR_DEEPSEEK_API_KEY
+```
+
+这里需要的是能访问 DeepSeek 的 key；变量名沿用 OpenAI-compatible 接口约定，
+不代表使用 OpenAI 官方模型。API 地址在命令中显式指定为 `https://api.deepseek.com`。
+密钥不写入评分配置或日志，不要提交包含真实密钥的 `.env`。
+
+```bash
+python -m benchmark probe-judge "$PROBE_RUN" \
+  --data "$BENCH_DATA" \
+  --manifest "$PROBE_MANIFEST_DIR/probe_manifest.jsonl" \
+  --output-dir "$PROBE_JUDGE" \
+  --dry-run
+```
+
+`--dry-run` 不需要密钥，不调用 API，也不写评分结果；它检查数据、清单和预测的一致性，
+列出 TP 数及首次评分预计请求数。**QA 数不等于 API 请求数**：一条 QA 可有多个 response，
+每个正侧 TP 各自评分；没有 TP 时不产生内容评分请求。
+
+**5. 用 DeepSeek Flash 正式评分。**
+
+```bash
+env -u OPENAI_API_KEY python -m benchmark probe-judge "$PROBE_RUN" \
+  --data "$BENCH_DATA" \
+  --manifest "$PROBE_MANIFEST_DIR/probe_manifest.jsonl" \
+  --provider openai --model deepseek-flash \
+  --base-url https://api.deepseek.com \
+  --env-file "$PWD/.env" \
+  --concurrency 4 --timeout 120 --retries 2 \
+  --output-dir "$PROBE_JUDGE"
+```
+
+`env -u OPENAI_API_KEY` 仅对本次命令移除进程里可能遗留的同名 key，让裁判读取 `.env` 中的值，
+不改 `.env` 或父 shell 环境。当前读取规则是“命令行 key > 进程环境 > env 文件”，
+所以仅传 `--env-file` 不会覆盖已导出的错误 key。
+如选择用 `export OPENAI_API_KEY=...` 配置，则去掉 `env -u OPENAI_API_KEY` 并可省略 `--env-file`；
+不要将真实 key 放入 `--api-key` 命令行参数。模型名与endpoint见
+[DeepSeek API文档](https://api-docs.deepseek.com/api/responses)。
+
+这条命令会向 DeepSeek 发送问题、当前参考回复和前缀内证据、模型回复；Agent另含允许能力及解析后的instruction。
+不发送视频/音频，不发送后续工具返回或完成回复。工具只记录，不执行。
+评分是参考标注一致性，不是裁判重新观看视频后的独立核验。
+
+**6. 查看分数及覆盖率。**
+
+推理决策指标在 `$PROBE_RUN/probe_metrics.json` 和 `probe_report.md`。
+评分产物在 `$PROBE_JUDGE/$(basename "$PROBE_RUN")/`：
+
+| 文件 | 用途 |
+| --- | --- |
+| `judge_report.md` | 整体、三种交互类型和12个任务的内容均分 |
+| `judge_metrics.json` | TP判定、内容评分覆盖及机器可读分组统计 |
+| `judgments.jsonl` | 每个参考response的分数、简短理由及裁判原始返回 |
+| `api_usage.json` | API请求数、失败尝试和token用量 |
+| `judge_config.json` / `input_index.json` | 裁判设置、提示词/数据指纹和已评分输入索引 |
+
+输出根目录还有 `judge_comparison.json` / `.csv`。例如本例单模型报告为
+`benchmark/results/probe_judge/qwen25_omni_deepseek_flash/qwen25_omni_task_specific_512/judge_report.md`。
+
+RTD/PR任务分为回复正确性；Agent任务分是回复分和instruction分的平均。
+分项均为 0、0.5、1、1.5、2；缺失或非法委托由代码计0，裁判不补造调用。
+只对 TP 做内容judge；FP/FN/TN/invalid不混入TP均分。非空乱码或思考循环也可能被决策解析为回复，
+因此 TP 不保证内容正确，应继续看内容分，不能只看正侧准确率。
+推理失败保持为缺失覆盖；API失败保持为未评分，不冒充内容0分。
+只有当前快照全部 TP 评分成功，`task_mean_tp` 才有完整均分，否则看 `judge_coverage` 和 `scored_task_mean`。
+
+同配置重复第5步会复用成功判分、重试失败判分；Probe有新增结果时可增量评分。
+这不会重跑推理。修改参考数据、清单、已有预测、裁判模型或评分提示后必须换新评分目录。
+Probe内容均分是TP条件分，Realtime内容均分通常是时间命中条件分，两者不能直接比较；
+需要对照时，按同一 `sample_index + response_index` 对齐并同时报告样本数和覆盖率。
+
 ### 正负样本与已处理次数
 
 对每个可评分 response，固定构造两个独立请求：
@@ -745,12 +891,13 @@ Probe 测试模型在看到一个完整视频前缀后，能否判断“是否�
 对重复事件告知“此前已有 N 次回复机会被处理”，判断是否出现第 N+1 次或更多新机会。
 同一配对的两侧使用相同 N；N 基于全部可评分窗口的时间顺序，而不是保留的配对数量。
 这是带 GT 既往计数辅助的诊断设置，不代表完全自主的在线判断能力。
-本项目统一评 YES/NO，未照搬 OmniPro 部分任务的计数或选择题指标；截断点也固定为上表规则。
+本项目的回复决策统一归约为 YES/NO，未照搬 OmniPro 部分任务的计数或选择题指标；截断点也固定为上表规则。
 
-模型不接收目标窗口、标签、参考回复、标注证据或目标事件定义。Probe prompt 位于
-`configs/prompts/probe.txt`，结合原问题、可用工具/schema、前缀时长和已处理次数生成。
+模型不接收目标窗口、标签、参考回复、标注证据或目标事件定义。推荐配置的Probe prompt由
+`configs/prompts/probe_common.txt`与任务模板组成，结合原问题、允许能力、前缀时长和已处理次数生成。
 它判断的是“截至此处是否已应回复”，而非“最后一帧是否还处在回复窗口内”。
-输出要求为 `NO` 或 `YES: 简短说明`；裸 `YES` 也可解析，YES 说明仅保留供分析，不做内容评分。
+`reply-task-text`要求沉默标记或实际回复，并支持下文内容评分。历史`yes-no`协议使用
+`configs/prompts/probe.txt`，输出 `NO` 或 `YES: 简短说明`；其说明仅保留供分析，不做内容评分。
 
 负截断点不晚于问题时间、前缀为空、窗口越界或媒体缺失时排除该对；
 既往机会尚未在负前缀中出现时，也不会向模型错误宣称这些机会已处理。
@@ -920,7 +1067,9 @@ OpenAI-compatible 服务从 `OPENAI_API_KEY`、`OPENAI_BASE_URL` 读取配置，
 
 生成期间也可以重复执行离线命令：只读完整 JSONL 行，保留原始预测文件，缓存已成功评分的单条 probe，
 新增 TP 增量评分、失败 TP 重试。若已有预测被修改或删除，或数据、manifest、提示词、裁判及评分实现改变，需换新输出目录。
-本轮仅实现离线入口和无网络验证，没有把付费 judge 加入后台推理队列。
+该入口仍为独立离线评分，不会因推理结束而自动调用付费API。
+已使用DeepSeek Flash完成MiniCPM的同一批平衡200条QA的Probe/Realtime抽样评分，
+结果在本机 `results/judge_minicpmo_balanced200_deepseek_flash_20261026/`；其他机器按上述步骤生成自己的结果。
 
 当前后台队列另有每 15 分钟检查一次的自动看护程序：进程/服务故障按原命令断点重启，
 连续一小时无有效进展才判为卡死；保留已有结果，不改生成或评测设置。
