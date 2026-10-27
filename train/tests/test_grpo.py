@@ -171,6 +171,25 @@ class TinyDuplex:
 class ReplayGradientTests(unittest.TestCase):
     @patch('train.src.models.streaming.user_request', return_value='question')
     @patch('train.src.models.streaming.system_prompt', return_value='system')
+    def test_sft_saved_activation_offload_preserves_loss_and_full_gradients(self, *_):
+        from train.src.infrastructure.offload import saved_on_cpu
+        graph, record, clip = self.setup_graph()
+        graph.eval()
+        baseline = graph(record, clip)
+        baseline.backward()
+        expected = {n: p.grad.clone() for n, p in graph.named_parameters() if p.grad is not None}
+        graph.zero_grad(set_to_none=True)
+        with saved_on_cpu() as stats:
+            actual = graph(record, clip)
+            actual.backward()
+        torch.testing.assert_close(actual, baseline)
+        self.assertGreater(stats['saved_bytes'], 0)
+        for name, parameter in graph.named_parameters():
+            if name in expected:
+                torch.testing.assert_close(parameter.grad, expected[name], msg=name)
+
+    @patch('train.src.models.streaming.user_request', return_value='question')
+    @patch('train.src.models.streaming.system_prompt', return_value='system')
     def test_atomic_task_start_is_replayed_and_trained_as_an_action(self, *_):
         graph, record, clip = self.setup_graph()
         graph.eval()

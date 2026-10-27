@@ -66,6 +66,8 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 train/.venv/bin/torchrun --standalone --nproc_per_n
 
 多卡分片模型、梯度和优化器，各rank处理相同QA以保持原生条件媒体路径的ZeRO collective顺序；逻辑batch不随卡数增加，不是独立样本数据并行。CPU状态约百GiB量级，另需激活、媒体缓存及保存空间；旧2k–8k短程显存记录不能作为当前32k上界。日志记录全部目标的实际发声/结束时间、序列长度、监督token及排除原因。
 
+全参SFT也可在复制的配置中显式启用 `sft_activation_offload=true`，通过 `sft_activation_cpu_budget_gib` 设置每个rank保存张量的CPU预算（启用时默认128 GiB）。默认关闭，不改变目标、loss或样本长度；只转移反向传播保存的张量，会增加CPU内存和传输开销。metrics记录卸载量和参数缓存命中。
+
 ## 全参 GRPO
 
 GRPO沿用相同的原子Agent协议和完整QA，需用GRPO配置单独prepare，保证**每个**可评分窗口的结尾都在rollout上限内。rollout从视频起点到 `min(max_prefix_seconds, floor(video_duration))`；若任一窗口超出实际视频长度，运行时整条排除。它不会在最后一次参考回复后立即结束，因此也会惩罚尾部额外开口。本机已生成 `train/prepared/full_grpo_task_token_20261027`：3996训练QA、1004验证QA，prepare阶段未排除记录；实际媒体长度和token上限仍需运行时检查。`supervise_silence`控制SFT标签；GRPO的沉默由采样动作和时间奖励学习，不另加silence交叉熵。

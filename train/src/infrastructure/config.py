@@ -31,6 +31,13 @@ def load_config(path):
             raise ValueError(f'{key} must be a positive integer')
     if config['max_speak_tokens_per_chunk'] < 4:
         raise ValueError('Chunk budget must fit speak, text, turn and chunk terminators')
+    if 'sft_activation_offload' in config and type(config['sft_activation_offload']) is not bool:
+        raise ValueError('sft_activation_offload must be a boolean')
+    if config.get('sft_activation_offload', False):
+        import math
+        budget = config.get('sft_activation_cpu_budget_gib', 128)
+        if isinstance(budget, bool) or not isinstance(budget, (int, float)) or not math.isfinite(budget) or budget <= 0:
+            raise ValueError('sft_activation_cpu_budget_gib must be positive and finite')
     if method == 'full_grpo':
         if type(config.get('group_size', 4)) is not int or config.get('group_size', 4) < 2 or config.get('kl_beta', 0) != 0:
             raise ValueError('GRPO requires group_size >= 2 and kl_beta=0 in this implementation')

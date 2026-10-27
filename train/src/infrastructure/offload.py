@@ -36,7 +36,7 @@ def saved_on_cpu(budget_gib=128):
         storage_elements = (1 + sum((n - 1) * s for n, s in zip(tensor.shape, tensor.stride()))) if tensor.numel() else 0
         size = storage_elements * tensor.element_size()
         if budget and stats['saved_bytes'] + size > budget:
-            raise RuntimeError('GRPO saved activations exceed grpo_activation_cpu_budget_gib; shorten the horizon or explicitly increase the CPU budget')
+            raise RuntimeError('Saved activations exceed CPU budget; explicitly increase the SFT/GRPO activation CPU budget or reduce memory use')
         value = copy_strided(tensor, 'cpu')
         stats['saved_bytes'] += size
         if key is not None:

@@ -199,11 +199,19 @@ def run(args, config):
                 result.update(ratio_mean=sum(ratios) / len(ratios), replay_max_logprob_error=max(errors),
                     sampled_action_tokens=sum(len(c['actions']) for t in trajectories for c in t['chunks']))
             else:
-                loss = engine(record, clip)
-                if not torch.isfinite(loss):
-                    raise RuntimeError('Nonfinite SFT loss')
-                value = loss.item()
-                engine.backward(loss)
+                from train.src.infrastructure.offload import saved_on_cpu
+                context = (saved_on_cpu(config.get('sft_activation_cpu_budget_gib', 128))
+                           if config.get('sft_activation_offload', False) else nullcontext())
+                # Only relocate saved tensors; preserve the complete trajectory and loss.
+                with context as offload_stats:
+                    loss = engine(record, clip)
+                    if not torch.isfinite(loss):
+                        raise RuntimeError('Nonfinite SFT loss')
+                    value = loss.item()
+                    engine.backward(loss)
+                if offload_stats is not None:
+                    result['activation_cpu_saved_gib_max'] = offload_stats['saved_bytes'] / 2**30
+                    result['parameter_offload_cache_hits'] = offload_stats['parameter_cache_hits']
             boundary = engine.is_gradient_accumulation_boundary()
             # DeepSpeed uses BF16 partitioned grads; collect norms before step/reset.
             if boundary and args.profile:
