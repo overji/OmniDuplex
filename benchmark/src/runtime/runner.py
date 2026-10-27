@@ -63,6 +63,8 @@ def select_samples(samples, completed, args, *, before_resume=False):
 
 
 def run(args, adapter, *, assignment=None):
+    if hasattr(adapter, 'prepare_args'):
+        adapter.prepare_args(args)
     samples = [adapt_sample(s, getattr(args, 'agent_call_schema', 'legacy')) for s in json.loads(args.data.read_text())]
     base_prompt = args.system_prompt.read_text()
     args.output_dir.mkdir(parents=True, exist_ok=True)

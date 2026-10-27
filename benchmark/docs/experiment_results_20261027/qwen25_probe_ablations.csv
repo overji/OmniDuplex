@@ -1,0 +1,4 @@
+Model,Positive Acc.,Negative Acc.,Balanced Acc.,Paired Acc.,Format Valid,Agent Call Valid
+Audio + video,5.18,86.09,45.63,1.89,89.96,--
+Video only,8.80,86.78,47.79,3.20,93.96,100.00
+Audio only,1.98,94.51,48.25,0.85,96.20,--

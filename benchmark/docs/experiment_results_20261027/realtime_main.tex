@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Realtime timing on 2008 shared completed QA. MiniCPM and Gander receive audio-video; JoyAI is vision-only. Agent uses the task-text rerun; RTD/PR reuse previous runs. No content correctness is required for a timing hit.}
+\label{tab:realtime-main}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+Model & QA & Windows & Outputs & Hits & Recall & Precision & F1 \\
+\midrule
+MiniCPM-o-4.5 & 2008 & 4669 & 3976 & 1094 & 23.43 & 27.52 & 25.31 \\
+Gander & 2008 & 4669 & 1449 & 565 & 12.10 & 38.99 & 18.47 \\
+JoyAI-VL-Interaction & 2008 & 4669 & 11991 & 1238 & 26.52 & 10.32 & 14.86 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

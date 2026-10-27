@@ -4,14 +4,12 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from train.src.data import first_record, target_chunks, prepare
+from train.src.domain.records import first_record
+from train.src.domain.targets import target_chunks
+from train.src.application.prepare import prepare
 
 
-class Tokenizer:
-    def encode(self, text, **kw):
-        return list(text.encode())
-    def convert_tokens_to_ids(self, token):
-        return {'<|speak|>': 1000, '<|turn_eos|>': 1001, '<|chunk_eos|>': 1002}[token]
+from train.tests.helpers import ByteTokenizer as Tokenizer
 
 
 class DataTests(unittest.TestCase):
@@ -46,7 +44,7 @@ class DataTests(unittest.TestCase):
         self.assertTrue(all(len(ids) <= 10 for ids, _ in chunks))
         content = bytes(t for ids, kinds in chunks for t, k in zip(ids, kinds) if k == 2).decode()
         self.assertEqual(content, record['reference']['response'])
-        self.assertEqual(sum(1001 in ids for ids, _ in chunks), 1)
+        self.assertEqual(sum(303 in ids for ids, _ in chunks), 1)
         self.assertTrue(all(kinds[-1] == 0 for _, kinds in chunks))
 
     def test_agent_serialization_and_tool_result_exclusion(self):
@@ -59,7 +57,7 @@ class DataTests(unittest.TestCase):
         sample['responses'].append({'role': 'tool', 'response': 'future secret',
                                     'window_start': '00:07', 'window_end': '00:09'})
         row, _ = first_record(sample, 0, self.config)
-        from train.tests.test_agent_token import ByteTokenizer
+        from train.tests.helpers import ByteTokenizer
         chunks = target_chunks(row, ByteTokenizer(), 10)
         content = bytes(t for ids, kinds in chunks for t, k in zip(ids, kinds) if k == 3).decode()
         self.assertEqual(content, 'Look up the object')
@@ -79,22 +77,24 @@ class DataTests(unittest.TestCase):
         manifest = json.loads((self.root / 'a/manifest.json').read_text())
         self.assertFalse(set(manifest['videos']['train']) & set(manifest['videos']['validation']))
 
-    def test_grpo_excludes_whole_qa_when_a_later_window_exceeds_horizon(self):
-        config = dict(self.config, training_method='full_grpo', max_prefix_seconds=32)
+    def test_grpo_prepare_requires_every_response_window_to_fit(self):
         samples = []
         for i in range(10):
             (self.root / f'{i}.mp4').touch()
-            item = copy.deepcopy(self.sample); item['video'] = f'{i}.mp4'
+            item = copy.deepcopy(self.sample)
+            item['video'] = f'{i}.mp4'
             samples.append(item)
-            long_item = copy.deepcopy(item)
-            long_item['responses'].append(dict(window_start='00:31', window_end='00:33', response='later'))
-            samples.append(long_item)
-        data = self.root / 'grpo.json'; data.write_text(json.dumps(samples))
-        prepare(data, self.root / 'grpo', config, 8, .2)
+        invalid = copy.deepcopy(samples[0])
+        invalid['responses'].append(dict(response='later', window_start='00:10', window_end='00:40'))
+        samples.append(invalid)
+        data = self.root / 'grpo.json'
+        data.write_text(json.dumps(samples))
+        config = dict(self.config, training_method='full_grpo')
+        prepare(data, self.root / 'grpo', config, 20, .2)
         manifest = json.loads((self.root / 'grpo/manifest.json').read_text())
-        self.assertEqual(manifest['skipped']['window_exceeds_rollout_horizon'], 10)
-        for split in ('train', 'validation'):
-            self.assertTrue(all(len(r['sample']['responses']) == 1 for r in json.loads((self.root / f'grpo/{split}.json').read_text())))
+        self.assertEqual(manifest['skipped'], {'window_exceeds_rollout_horizon': 1})
+        self.assertEqual(manifest['exclusions'][0]['sample_index'], 10)
+
 
 if __name__ == '__main__':
     unittest.main()

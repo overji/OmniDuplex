@@ -23,6 +23,14 @@ STRICT_CONFIG = True
 SELECT_BEFORE_RESUME = True
 
 
+def prepare_args(args):
+    """新全参模型的格式写入有效配置，再构建数据适配/提示词，避免只改解析器。"""
+    metadata = args.model_path / 'full_training_model.json'
+    if metadata.is_file() and json.loads(metadata.read_text()).get('protocol') == 'task_start_token_sft_v1':
+        args.agent_output_protocol = 'task-text'
+        args.agent_call_schema = 'task-start'
+
+
 def run_config(args, prompt):
     import torch
     import transformers
@@ -72,13 +80,22 @@ def load(args):
     ).eval().to(args.device)
     if (args.model_path / 'full_training_model.json').is_file():
         from transformers import AutoTokenizer
-        from benchmark.data.agent_token import full_model_identity
+        exported = json.loads((args.model_path / 'full_training_model.json').read_text())
+        if exported.get('protocol') == 'task_start_token_sft_v1':
+            from train.src.checkpoints import full_model_identity
+        else:
+            from benchmark.data.agent_token import full_model_identity
         full_model_identity(args.model_path)
         model.prepare_processor(tokenizer=AutoTokenizer.from_pretrained(str(model_alias), trust_remote_code=True))
         model.init_tts = lambda **kwargs: None
     if getattr(args, 'lora_adapter', None):
+        if ((args.model_path / 'full_training_model.json').is_file()
+                and exported.get('protocol') == 'task_start_token_sft_v1'):
+            raise ValueError('Do not combine a full SFT model with a legacy adapter')
         from train.src.token_rows import load_adapter
         load_adapter(model, model_alias, args.lora_adapter)
+    atomic_task_start = ((args.model_path / 'full_training_model.json').is_file()
+                         and exported.get('protocol') == 'task_start_token_sft_v1')
     if args.unused_tts_device == "cpu":
         # Text-only runs never invoke TTS. Move its loaded weights off-device and
         # skip Token2wav initialization, which otherwise transiently allocates
@@ -95,7 +112,10 @@ def load(args):
         torch.cuda.empty_cache()
     print("Native full-duplex model ready", flush=True)
 
-    return SimpleNamespace(model=model)
+    if atomic_task_start:
+        from train.src.infrastructure.tokens import validate_duplex_token
+        validate_duplex_token(model)
+    return SimpleNamespace(model=model, atomic_task_start=atomic_task_start)
 
 
 def run_sample(args, state, context):
@@ -122,7 +142,7 @@ def run_sample(args, state, context):
         if getattr(args, 'agent_output_protocol', 'text') == 'agent-token':
             from benchmark.data.agent_token import AgentStream
             token_stream = AgentStream(model.tokenizer)
-        task_text = getattr(args, 'agent_output_protocol', 'text') == 'task-text'
+        task_text = getattr(state, 'atomic_task_start', False) or getattr(args, 'agent_output_protocol', 'text') == 'task-text'
         if task_text:
             from benchmark.data.task_text import TaskTextStream
             token_stream = TaskTextStream(model.tokenizer)

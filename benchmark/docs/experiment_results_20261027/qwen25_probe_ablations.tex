@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Qwen2.5-Omni Probe modality ablations. All values are percentages. Models share 4593 fully completed pre/post pairs (9186 requests from 2047 QA). Agent call validity is conditional on an Agent reply, not semantic correctness. }
+\label{tab:qwen25-probe-ablations}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Model & Positive Acc. & Negative Acc. & Balanced Acc. & Paired Acc. & Format Valid & Agent Call Valid \\
+\midrule
+Audio + video & 5.18 & 86.09 & 45.63 & 1.89 & 89.96 & -- \\
+Video only & 8.80 & 86.78 & 47.79 & 3.20 & 93.96 & 100.00 \\
+Audio only & 1.98 & 94.51 & 48.25 & 0.85 & 96.20 & -- \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

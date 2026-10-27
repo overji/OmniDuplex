@@ -67,6 +67,10 @@ class TaskTextStream:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
         self.special = set(tokenizer.all_special_ids)
+        # 已训练MiniCPM的委托分隔符是原子特殊token；它有语义，不能像控制符一样删掉。
+        marker = tokenizer.encode(SEPARATOR, add_special_tokens=False) if hasattr(tokenizer, 'encode') else []
+        if len(marker) == 1 and marker[0] in self.special:
+            self.special.discard(marker[0])
         # MiniCPM native control IDs are not all marked special in its tokenizer.
         if hasattr(tokenizer, 'convert_tokens_to_ids'):
             for token in ('<unit>', '</unit>', '<|listen|>', '<|speak|>', '<|turn_eos|>',

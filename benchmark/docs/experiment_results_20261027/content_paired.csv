@@ -1,0 +1,5 @@
+Task,Pairs,Realtime Response,Probe Response,Realtime Instruction,Probe Instruction
+OVERALL,90,1.317,1.244,0.000,1.857
+RTD,42,1.214,1.012,--,--
+PR,41,1.500,1.500,--,--
+AGENT,7,0.857,1.143,0.000,1.857

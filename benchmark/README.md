@@ -603,7 +603,7 @@ Judge 沿用已有字段和时间匹配规则。默认 benchmark 输出协议仍
 
 ## 全参数训练模型
 
-`train` 同时提供全参 SFT 和完整流式 GRPO，参见 [训练说明](../train/README.md)。将 ZeRO checkpoint 用 `python -m train export` 导出后，可将导出目录作为 MiniCPM 的 `--model-path`，并指定 `--agent-output-protocol agent-token`；不需要再传 LoRA adapter。导出身份、config/index 和 tokenizer 会加入评测协议校验。
+`train` 仅提供全参 SFT，使用原子特殊 token `<|task_start|>`，参见 [训练说明](../train/README.md)。将新协议 ZeRO checkpoint 用 `python -m train export` 导出后，将完整导出目录作为 MiniCPM 的 `--model-path`，使用新的结果目录，不传 LoRA adapter。Realtime 在生成有效配置与提示词前自动选择 `task-text` 输出和 `task-start` schema；从原始生成ID保留分隔符，普通基座和历史adapter不变。Probe 也支持该导出的身份校验和原始ID恢复，建议使用 `--output-protocol reply-task-text --prompt-layout task-specific`。导出身份、config/index 和扩展tokenizer会校验；旧普通文本/Agent-token训练checkpoint不能自动当作新协议使用。
 
 ## 云端 Realtime：Qwen3.5 Omni 与 Gemini 2.5 Flash Live
 

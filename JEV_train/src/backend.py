@@ -51,34 +51,32 @@ def merge_packets(packets):
 
 
 def load(config,training=False):
+    """加载原始Thinker或完整SFT导出，不支持PEFT；训练时媒体和文本模型一起更新。"""
     import torch
     from transformers import Qwen2_5OmniThinkerForConditionalGeneration,Qwen2_5OmniProcessor
-    model=Qwen2_5OmniThinkerForConditionalGeneration.from_pretrained(config['backend_model'],
+    source = config.get('backend_checkpoint') or config['backend_model']
+    if config.get('backend_checkpoint'):
+        meta=json.loads((Path(source)/'jev_backend.json').read_text())
+        if meta.get('protocol')!=PROTOCOL or meta.get('base')!=config['backend_model'] or meta.get('base_identity')!=base_identity(config['backend_model']):
+            raise ValueError('Backend full-SFT/base identity mismatch')
+    model=Qwen2_5OmniThinkerForConditionalGeneration.from_pretrained(source,
         torch_dtype=getattr(torch,config['dtype']),attn_implementation=config['attention_backend'],local_files_only=True)
-    model.to(config['backend_device']);model.requires_grad_(False);model.eval()
-    processor=Qwen2_5OmniProcessor.from_pretrained(config['backend_model'],local_files_only=True,
+    model.to(config['backend_device']);model.requires_grad_(training);model.eval()
+    processor=Qwen2_5OmniProcessor.from_pretrained(source,local_files_only=True,
                                                 use_fast=config.get('processor_use_fast',False))
-    if config.get('backend_adapter'):
-        if training:raise ValueError('Use original backend weights for a new SFT run')
-        from peft import PeftModel
-        adapter=Path(config['backend_adapter']);meta=json.loads((adapter/'jev_backend.json').read_text())
-        if meta['protocol']!=PROTOCOL or meta['base']!=config['backend_model'] or meta['tokenizer']!=digest(processor.tokenizer.get_vocab()) or meta['base_identity']!=base_identity(config['backend_model']):
-            raise ValueError('Backend adapter identity mismatch')
-        model=PeftModel.from_pretrained(model,str(adapter))
+    if config.get('backend_checkpoint'):
+        if meta['tokenizer']!=digest(processor.tokenizer.get_vocab()) or meta['files']!=base_identity(source):
+            raise ValueError('Backend tokenizer/model identity mismatch')
     if training:
-        from peft import LoraConfig,get_peft_model
-        names='|'.join(config['target_modules'])
-        model=get_peft_model(model,LoraConfig(r=config['lora_rank'],lora_alpha=config['lora_alpha'],
-            lora_dropout=config['lora_dropout'],target_modules=f'model[.]layers[.][0-9]+[.](self_attn|mlp)[.]({names})',
-            bias='none',task_type='CAUSAL_LM'))
         model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant':False})
+        model.config.use_cache=False
     return Qwen25Session(model,processor,config)
 
 
 class Qwen25Session:
     def __init__(self,model,processor,config):
         self.model=model;self.processor=processor;self.config=config
-        self.base=model.get_base_model() if hasattr(model,'peft_config') else model
+        self.base=model
         self.tokenizer=processor.tokenizer
         for token in ('<|im_start|>','<|im_end|>'):
             if token not in self.tokenizer.get_vocab():raise ValueError('Unexpected Qwen template')

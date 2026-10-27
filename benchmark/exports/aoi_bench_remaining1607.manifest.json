@@ -1,0 +1,39 @@
+{
+  "created_utc": "2026-10-27T01:42:27.537040+00:00",
+  "source": "/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench/all_qa.json",
+  "source_sha256": "a9382251c48c6fa791cd0d24a5314fb8715056b861895919347061ac0457f537",
+  "source_qa": 2107,
+  "excluded_export": "benchmark/exports/aoi_bench_first500.json",
+  "excluded_sha256": "bdab5bb9d184abcb79904a6a2ea2a95e3df162e461e734ceb4953a7229882430",
+  "excluded_qa": 500,
+  "output": "benchmark/exports/aoi_bench_remaining1607.json",
+  "output_sha256": "52f8c45d7a599489f46b1d1e03871e3e6912db86c2a7c16d85aa52ac8b7794c6",
+  "output_qa": 1607,
+  "source_indices": {
+    "start_inclusive": 500,
+    "end_exclusive": 2107
+  },
+  "modes": {
+    "pr": 526,
+    "agent": 541,
+    "rtd": 540
+  },
+  "abilities": {
+    "emotion_recognition": 94,
+    "event_understanding": 212,
+    "grounding": 146,
+    "spatial_understanding": 102,
+    "action_counting": 88,
+    "object_counting": 66,
+    "object_perception": 112,
+    "prospective_reasoning": 81,
+    "text_rich_understanding": 236,
+    "attribute_perception": 124,
+    "causal_reasoning": 132,
+    "action_perception": 214
+  },
+  "unique_videos": 724,
+  "qa_overlap_with_first500": 0,
+  "shared_videos_with_first500": 1,
+  "policy": "Preserve source order and every QA field. Complement by QA, not a video-disjoint split. Uses public 2107 QA release; excludes the three missing-media QA in historical 2110 runs."
+}

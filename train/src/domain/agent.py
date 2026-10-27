@@ -1,0 +1,115 @@
+"""Agent协议与只读数据适配。这里决定训练契约，不负责执行工具或模型推理。"""
+
+from benchmark.data.agent_schema import adapt_sample, validate_task_start
+from benchmark.data.task_text import SEPARATOR
+
+PROTOCOL = 'task_start_token_sft_v1'
+RECORD_FORMAT = 'qa_trajectory_v1'
+from benchmark.evaluation.agent_calls import normalize_call
+
+
+def training_sample(sample):
+    """只读转换生成数据中的Agent调用为task_start(instruction)，保留时序和事实，不执行工具。"""
+    if sample.get('mode') != 'agent':
+        return sample
+    for ref in sample.get('responses', []):
+        calls = ref.get('tool_calls') or []
+        if len(calls) > 1:
+            raise ValueError('Training supports exactly one task_start per response')
+        for call in calls:
+            call = normalize_call(call)
+            name = call['function']['name']
+            if name not in ('agent_call', 'task_start'):
+                raise ValueError('Unsupported source Agent function')
+            if name == 'task_start' and not validate_task_start(call):
+                raise ValueError('task_start requires only a nonempty instruction')
+    result = adapt_sample(sample, 'task-start')
+    for ref in result.get('responses', []):
+        if ref.get('tool_calls'):
+            ref['tool_calls'] = [normalize_call(call) for call in ref['tool_calls']]
+    return result
+
+
+def training_record(record):
+    """校验targets恰好覆盖全部可评分response，并核对每个reference与原sample一致。"""
+    if 'targets' in record:
+        from benchmark.evaluation.timing import reference_windows
+        sample = training_sample(record['sample'])
+        targets = []
+        for target in record['targets']:
+            adapted = training_record({'sample': sample, **target})
+            if adapted['reference'] != sample['responses'][target['response_index']]:
+                raise ValueError('Training reference disagrees with sample.responses')
+            targets.append({k: adapted[k] for k in ('response_index', 'onset_seconds', 'reference')})
+        indices = [t['response_index'] for t in targets]
+        expected = [ri for ri, _ in reference_windows(sample)]
+        if len(indices) != len(set(indices)) or set(indices) != set(expected) or not targets:
+            raise ValueError('Trajectory must contain every scored response exactly once')
+        return {**record, 'sample': sample, 'targets': targets}
+    if record['sample'].get('mode') != 'agent':
+        return record
+    sample = training_sample(record['sample'])
+    reference = training_sample({**record['sample'], 'responses': [record['reference']]})['responses'][0]
+    if 'response_index' in record and sample.get('responses'):
+        if reference != sample['responses'][record['response_index']]:
+            raise ValueError('Training reference disagrees with sample.responses')
+    return {**record, 'sample': sample, 'reference': reference}
+
+
+def require_protocol(config):
+    if config.get('agent_output_protocol') != PROTOCOL:
+        raise ValueError(f'Training requires {PROTOCOL}; regenerate prepared data or retrain old checkpoints')
+
+
+def validate_prepared(manifest, config):
+    """核对输出协议与记录版本；旧单回复prepared必须重新生成，不能当作多回复数据读取。"""
+    require_protocol(config)
+    if manifest.get('protocol') != PROTOCOL:
+        raise ValueError('Prepared data uses an old protocol; run prepare again')
+    require_protocol(manifest['config'])
+    if manifest.get('record_format') != RECORD_FORMAT:
+        raise ValueError('Prepared data uses single-response records; run prepare again')
+
+
+def instruction(reference):
+    calls = reference.get('tool_calls') or []
+    if not calls:
+        return None
+    if len(calls) != 1:
+        raise ValueError('Training supports one delegation per response')
+    call = normalize_call(calls[0])
+    if call['function']['name'] not in ('agent_call', 'task_start'):
+        raise ValueError('Unsupported source Agent function')
+    text = call['function']['arguments'].get('instruction')
+    if not isinstance(text, str) or not text.strip() or SEPARATOR in text:
+        raise ValueError('Expected one nonempty plain instruction without a separator')
+    return text.strip()
+
+
+def target_text(reference):
+    response = reference['response']
+    if SEPARATOR in response:
+        raise ValueError('Reserved task_start separator in reference response')
+    task = instruction(reference)
+    if task is not None and not response.strip():
+        raise ValueError('Agent target requires a nonempty user-facing response')
+    return response + (SEPARATOR + task if task is not None else '')
+
+
+def plain_prompt(base, sample):
+    from benchmark.data.prompts import TOOLS, describe_tool
+    tools = sample.get('available_tools') or []
+    if len(tools) != len(set(tools)) or any(t not in TOOLS for t in tools):
+        raise ValueError('Invalid available tools')
+    return base.strip() + '\n\nAvailable backend capabilities (only these may be delegated):\n' + (
+        '\n'.join(f'- {t}: {describe_tool(t)}' for t in tools) or 'None')
+
+
+def system_prompt(sample, config):
+    """仅渲染任务规则和available能力；reference、窗口和后续response不可进入system输入。"""
+    from pathlib import Path
+    from benchmark.data.prompts import build_system_prompt
+    sample = training_sample(sample)
+    if sample.get('mode') == 'agent':
+        return plain_prompt(Path(config['agent_prompt']).read_text(), sample)
+    return build_system_prompt(Path(config['system_prompt']).read_text(), sample)

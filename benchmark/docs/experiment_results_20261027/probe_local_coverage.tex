@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Local full-run snapshots with each model's own completion coverage. These rows do not share an identical denominator and are descriptive only.}
+\label{tab:probe-local-coverage}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Completed & Expected & Positive Acc. & Negative Acc. & Paired Acc. \\
+\midrule
+MiniCPM-o-4.5 & 8650 & 9188 & 94.51 & 10.99 & 7.96 \\
+Qwen3-Omni-30B-A3B & 9187 & 9188 & 92.38 & 13.97 & 7.23 \\
+Qwen2.5-Omni-7B & 9187 & 9188 & 5.18 & 86.09 & 1.89 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

@@ -9,13 +9,19 @@ def main():
     parser.add_argument('--config',type=Path,default=ROOT/'JEV_train/configs/default.json')
     commands=parser.add_subparsers(dest='command',required=True)
     p=commands.add_parser('prepare');p.add_argument('--data',type=Path,help='QA JSON; defaults to config.data');p.add_argument('--output',type=Path,required=True)
+    export=commands.add_parser('export');export.add_argument('--checkpoint',type=Path,required=True);export.add_argument('--output',type=Path,required=True)
     for name in ('train-classifier','train-backend','evaluate','stream'):
         p=commands.add_parser(name);p.add_argument('--prepared',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
+        if name in ('train-classifier','train-backend'):
+            p.add_argument('--local_rank','--local-rank',type=int,default=0)
         if name in ('evaluate','stream'):
             p.add_argument('--split',choices=('validation','test'),default='test')
             p.add_argument('--sample-index',type=int)
             p.add_argument('--realtime',action='store_true',help='Pace media production at one second per wall second')
     args=parser.parse_args();config=load(args.config)
+    if args.command=='export':
+        from .training import export_checkpoint
+        export_checkpoint(args.checkpoint,args.output);return
     from .data import prepare,load_rows
     if args.command=='prepare':
         if args.data is None:
@@ -33,4 +39,5 @@ def main():
         run(rows,config,args.output,args.realtime);return
     from . import training
     rows=load_rows(args.prepared,'train',config);validation=load_rows(args.prepared,'validation',config)
+    config['local_rank']=args.local_rank
     getattr(training,'classifier' if args.command=='train-classifier' else 'backend')(rows,validation,config,args.output)

@@ -1,0 +1,3 @@
+Model,Requests,Complete Pairs,Positive Acc.,Negative Acc.,Balanced Acc.,Paired Acc.,Format Valid,Agent Call Valid
+Gemini-3.7-flash,2273,1136,95.33,46.09,70.71,43.05,96.35,90.91
+Qwen3.8Omni,2261,1124,93.22,31.11,62.17,26.87,99.96,99.65

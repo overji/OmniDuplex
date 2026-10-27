@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{Existing DeepSeek Flash judging on the same balanced 200 QA. Scores range from 0 to 2; Agent averages response and instruction scores. Realtime uses timing-matched replies; Probe uses positive-prefix true positives. These are different conditional subsets.}
+\label{tab:content-judge}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+Mode & Task & Replies & Response & Instruction & Task Score \\
+\midrule
+realtime & RTD & 47 & 1.181 & -- & 1.181 \\
+realtime & PR & 42 & 1.500 & -- & 1.500 \\
+realtime & AGENT & 7 & 0.857 & 0.000 & 0.429 \\
+probe & RTD & 233 & 0.768 & -- & 0.768 \\
+probe & PR & 108 & 1.259 & -- & 1.259 \\
+probe & AGENT & 57 & 0.754 & 1.193 & 0.974 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

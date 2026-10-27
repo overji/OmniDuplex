@@ -59,7 +59,7 @@ def run(rows,config,output,realtime=False):
     from .media import units
     from .metrics import evaluate
     if output.exists():raise ValueError('Use a fresh evaluation directory')
-    if not config.get('classifier_adapter'):raise ValueError('A trained classifier_adapter is required')
+    if not config.get('classifier_checkpoint'):raise ValueError('A trained classifier_checkpoint is required')
     state=load(config);gate=GateSession(state,config);backend=BACKENDS[config['backend']](config)
     predictions=[];output.mkdir(parents=True)
     write(output/'run_config.json',{**config,'agent_call_schema':'task-start'})

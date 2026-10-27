@@ -1,2 +1,2 @@
-from train.src.cli import main
+from train.src.application.cli import main
 main()

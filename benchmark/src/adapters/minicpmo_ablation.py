@@ -6,6 +6,7 @@ from benchmark.adapters import minicpmo
 
 STRICT_CONFIG = minicpmo.STRICT_CONFIG
 SELECT_BEFORE_RESUME = minicpmo.SELECT_BEFORE_RESUME
+prepare_args = minicpmo.prepare_args
 
 
 def run_config(args, prompt):

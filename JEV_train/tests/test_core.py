@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from JEV_train.src.config import load,ROOT,PROTOCOL
+from JEV_train.src.config import load,ROOT
 from JEV_train.src.data import record,sampled_labels,prepare,load_rows
 from JEV_train.src.backend import parse_reply
 from JEV_train.src.metrics import binary_metrics,evaluate
@@ -88,7 +88,7 @@ class PipelineTests(unittest.TestCase):
                 if u.second==6:raise ValueError('context overflow')
             def generate_response(self):return parse_reply('A reply')
             def close_session(self):pass
-        config=load(ROOT/'JEV_train/configs/default.json');config['classifier_adapter']='mock'
+        config=load(ROOT/'JEV_train/configs/default.json');config['classifier_checkpoint']='mock'
         with tempfile.TemporaryDirectory() as tmp, \
              patch('JEV_train.src.gate.load',return_value=object()), \
              patch('JEV_train.src.gate.GateSession',Gate), \
@@ -134,14 +134,6 @@ class MetricTests(unittest.TestCase):
         self.assertEqual(m['f1'],1);self.assertEqual(m['auroc'],1);self.assertEqual(m['auprc'],1)
         self.assertEqual(binary_metrics([0,1],[.5,.5],.5)['auroc'],.5)
         self.assertIsNone(binary_metrics([1],[.9],.5)['auroc'])
-    def test_rows_receive_gradient_and_old_rows_do_not(self):
-        import torch
-        from JEV_train.src.rows import DecisionEmbedding
-        base=torch.nn.Embedding(10,8);base.requires_grad_(False);before=base.weight.detach().clone()
-        embed=DecisionEmbedding(base,[8,9]);head=torch.nn.Linear(8,2)
-        loss=torch.nn.functional.cross_entropy(head(embed(torch.tensor([8,9]))),torch.tensor([0,1]));loss.backward()
-        self.assertIsNone(base.weight.grad);self.assertGreater(embed.rows.grad.abs().sum(),0)
-        self.assertGreater(head.weight.grad.abs().sum(),0);torch.testing.assert_close(base.weight,before)
 
 
 if __name__=='__main__':unittest.main()

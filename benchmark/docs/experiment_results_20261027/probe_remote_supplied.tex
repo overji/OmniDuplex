@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{Scores from all supplied remote predictions, using each model's own coverage. Accuracy denominators contain completed requests; paired accuracy uses only completed pre/post pairs. Values are percentages. Use the shared-subset table for comparisons with local models.}
+\label{tab:probe-remote-supplied}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Model & Requests & Complete Pairs & Positive Acc. & Negative Acc. & Balanced Acc. & Paired Acc. & Format Valid & Agent Call Valid \\
+\midrule
+Gemini-3.7-flash & 2273 & 1136 & 95.33 & 46.09 & 70.71 & 43.05 & 96.35 & 90.91 \\
+Qwen3.8Omni & 2261 & 1124 & 93.22 & 31.11 & 62.17 & 26.87 & 99.96 & 99.65 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

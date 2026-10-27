@@ -14,7 +14,7 @@ import torch
 class ZeroCheckpointTests(unittest.TestCase):
     def test_optimizer_cursor_and_rng_restore_match_uninterrupted_update(self):
         import deepspeed
-        from train.src.full import rng_state, restore_rng
+        from train.src.infrastructure.distributed import rng_state, restore_rng
         os.environ.update(RANK='0', WORLD_SIZE='1', LOCAL_RANK='0',
                           MASTER_ADDR='127.0.0.1', MASTER_PORT='29549')
         torch.cuda.set_device(0)

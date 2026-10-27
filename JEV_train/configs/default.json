@@ -8,8 +8,6 @@
   "cache_dir": "JEV_train/cache",
   "classifier_device": "cuda:0",
   "backend_device": "cuda:1",
-  "classifier_adapter": null,
-  "backend_adapter": null,
   "dtype": "bfloat16",
   "attention_backend": "sdpa",
   "seed": 42,
@@ -22,10 +20,7 @@
   "negative_ratio": 4,
   "boundary_seconds": 3,
   "threshold": 0.5,
-  "lora_rank": 16,
-  "lora_alpha": 32,
-  "lora_dropout": 0.0,
-  "learning_rate": 0.00001,
+  "learning_rate": 1e-05,
   "weight_decay": 0.01,
   "epochs": 2,
   "gradient_accumulation_steps": 4,
@@ -33,5 +28,9 @@
   "max_new_tokens": 256,
   "cache_atol": 0.03,
   "cache_rtol": 0.03,
-  "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+  "training_method": "full_sft",
+  "deepspeed_config": "train/configs/zero3_cpu.json",
+  "classifier_checkpoint": null,
+  "backend_checkpoint": null,
+  "cpu_threads": 4
 }

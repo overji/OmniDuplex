@@ -1,6 +1,5 @@
 """CPU native Thinker cache checks; media encoders are deliberately mocked."""
 import unittest
-from types import SimpleNamespace
 from unittest.mock import Mock,patch
 
 import torch
@@ -59,17 +58,20 @@ def session():
 
 
 class QwenCacheTests(unittest.TestCase):
-    def test_backend_lora_trains_only_text_layers_and_has_real_gradients(self):
+    def test_backend_full_sft_trains_text_and_media_with_real_gradients(self):
         from JEV_train.src.backend import load
         from JEV_train.src.config import load as load_config,ROOT
         config=load_config(ROOT/'JEV_train/configs/default.json')
-        config.update(mode='separate_sft',backend_device='cpu',dtype='float32',lora_rank=2,lora_alpha=4)
+        config.update(mode='separate_sft',backend_device='cpu',dtype='float32')
         tiny=session()
         with patch('transformers.Qwen2_5OmniThinkerForConditionalGeneration.from_pretrained',return_value=tiny.model), \
              patch('transformers.Qwen2_5OmniProcessor.from_pretrained',return_value=tiny.processor):
             s=load(config,training=True)
         trainable=[n for n,p in s.model.named_parameters() if p.requires_grad]
-        self.assertTrue(trainable);self.assertTrue(all('.model.layers.' in n and 'lora_' in n for n in trainable))
+        self.assertTrue(trainable);self.assertTrue(all(p.requires_grad for p in s.model.parameters()))
+        image=next(s.model.visual.parameters());audio=next(s.model.audio_tower.parameters())
+        s.model.get_image_features=Mock(side_effect=lambda pixels,grid:torch.ones(len(grid),32)*image.mean())
+        s.model.get_audio_features=Mock(side_effect=lambda features,**kw:torch.ones(len(features)*2,32)*audio.mean())
         s.start_session(dict(mode='pr',question='Tell me',question_time='00:00'),execute=False)
         s.append_media(MediaUnit(1,frame=object(),audio=object()),execute=False)
         s.begin_reply(execute=False);index=len(s.packets);s.end_reply('Response')
@@ -78,6 +80,7 @@ class QwenCacheTests(unittest.TestCase):
         n=s.packets[index]['input_ids'].shape[1];labels[:,offset:offset+n]=batch['input_ids'][:,offset:offset+n]
         loss=s.model(**batch,labels=labels,use_cache=False).loss;loss.backward()
         self.assertTrue(torch.isfinite(loss));self.assertGreater(sum(p.grad.abs().sum() for p in s.model.parameters() if p.grad is not None),0)
+        self.assertGreater(image.grad.abs().sum(),0);self.assertGreater(audio.grad.abs().sum(),0)
     def test_actual_native_kv_matches_causal_full_forward_with_media(self):
         s=session();sample=dict(mode='pr',question='Tell me',question_time='00:00')
         with torch.inference_mode():

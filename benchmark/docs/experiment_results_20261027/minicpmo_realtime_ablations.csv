@@ -1,0 +1,4 @@
+Input,QA,Recall,Precision,F1,RTD F1,PR F1,Agent F1
+Audio + video,2107,23.30,27.53,25.24,26.96,31.41,11.29
+Video only,2107,19.47,21.93,20.63,20.97,24.15,13.80
+Audio only,2107,6.79,14.34,9.21,9.21,12.17,4.05

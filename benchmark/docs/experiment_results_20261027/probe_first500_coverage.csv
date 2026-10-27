@@ -1,0 +1,6 @@
+Model,Requests,Expected,Complete Pairs,Expected Pairs,QA
+MiniCPM-o-4.5,2232,2308,1115,1154,486
+Qwen3-Omni-30B-A3B,2308,2308,1154,1154,494
+Qwen2.5-Omni-7B,2308,2308,1154,1154,494
+Gemini-3.7-flash,2273,2308,1136,1154,493
+Qwen3.8Omni,2261,2308,1124,1154,493

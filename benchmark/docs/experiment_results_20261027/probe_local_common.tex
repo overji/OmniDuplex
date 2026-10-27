@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Local Probe comparison on the full shared subset. All values are percentages. Models share 4318 fully completed pre/post pairs (8636 requests from 1991 QA). Agent call validity is conditional on an Agent reply, not semantic correctness. }
+\label{tab:probe-local-common}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Model & Positive Acc. & Negative Acc. & Balanced Acc. & Paired Acc. & Format Valid & Agent Call Valid \\
+\midrule
+MiniCPM-o-4.5 & 94.51 & 11.02 & 52.77 & 7.97 & 80.78 & 76.72 \\
+Qwen3-Omni-30B-A3B & 91.92 & 14.78 & 53.35 & 7.62 & 99.61 & 97.16 \\
+Qwen2.5-Omni-7B & 5.42 & 85.41 & 45.41 & 1.97 & 89.43 & -- \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

@@ -31,6 +31,12 @@ def load(args):
                   torch_dtype='auto' if args.dtype == 'auto' else getattr(torch, args.dtype),
                   device_map=args.device_map, attn_implementation=args.attn_implementation)
     name = args.probe_model
+    atomic_task_start = False
+    metadata = args.model_path / 'full_training_model.json'
+    if name == 'minicpmo' and metadata.is_file() and json.loads(metadata.read_text()).get('protocol') == 'task_start_token_sft_v1':
+        from train.src.checkpoints import full_model_identity
+        full_model_identity(args.model_path)
+        atomic_task_start = True
     if name == 'qwen3_vl':
         model = tf.Qwen3VLForConditionalGeneration.from_pretrained(str(path), **kwargs)
         processor = tf.AutoProcessor.from_pretrained(str(path), local_files_only=True)
@@ -67,7 +73,7 @@ def load(args):
             kwargs.update(init_vision=True, init_audio=True, init_tts=False)
         model = tf.AutoModel.from_pretrained(str(path), **kwargs)
         processor = tf.AutoProcessor.from_pretrained(str(path), trust_remote_code=True, local_files_only=True)
-    return SimpleNamespace(model=model.eval(), processor=processor, torch=torch)
+    return SimpleNamespace(model=model.eval(), processor=processor, torch=torch, atomic_task_start=atomic_task_start)
 
 
 def check_context(model, length, extra):
@@ -124,6 +130,7 @@ def generate_minicpmo(args, state, probe):
         if isinstance(output, tuple) and len(output) > 1 and hasattr(output[1], 'sequences'):
             captured['output'] = decoded_output('', output[1].sequences, 0, state.processor.tokenizer,
                 args.max_new_tokens, kwargs.get('eos_token_id'))
+            captured['ids'] = output[1].sequences[0].tolist()
         return output
     state.model.generate = generate_with_status
     try:
@@ -135,6 +142,12 @@ def generate_minicpmo(args, state, probe):
         handle.remove()
         state.model.generate = original_generate
     text = result if isinstance(result, str) else result[0]
+    if getattr(state, 'atomic_task_start', False):
+        if 'ids' not in captured:
+            raise RuntimeError('Atomic task_start probe requires raw generated token IDs')
+        from benchmark.data.task_text import TaskTextStream
+        special = TaskTextStream(state.processor.tokenizer).special
+        text = state.processor.tokenizer.decode([i for i in captured['ids'] if i not in special], skip_special_tokens=False)
     info = captured.get('output', GeneratedText(''))
     return GeneratedText(text, complete=info.generation_complete, token_count=info.generated_tokens)
 

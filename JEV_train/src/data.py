@@ -19,6 +19,9 @@ def target(reference):
 
 def record(sample, index, horizon):
     sample = training_sample(sample)
+    kind=sample.get('sample_type',sample.get('generation_context',{}).get('sample_type'))
+    if sample.get('mode')=='agent' and kind in ('negative','no_context','missing_tool'):
+        return None,'agent_negative'
     q = seconds(sample['question_time'])
     windows = reference_windows(sample)
     if not windows:

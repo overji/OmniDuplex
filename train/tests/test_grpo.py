@@ -1,20 +1,37 @@
-import copy
 import unittest
+import json
+from pathlib import Path
+import tempfile
 from types import SimpleNamespace
 from unittest.mock import patch
 
 import torch
 from transformers import Qwen2Config, Qwen2ForCausalLM
 
-from train.src.grpo import action_log_probs, advantages, policy_loss
-from train.src.rewards import reward, text_f1, value_score
-from train.src.stream import TrainGraph, Clip
-from train.tests.test_agent_token import ByteTokenizer
+from train.src.domain.grpo import action_log_probs, advantages, policy_loss
+from train.src.domain.rewards import reward, text_f1, value_score
+from train.src.models.graph import TrainGraph
+from train.src.infrastructure.media import Clip
+from train.tests.helpers import ByteTokenizer
 
 
 class GRPOMathTests(unittest.TestCase):
+    def test_grpo_config_enforces_native_replay_assumptions(self):
+        from train.src.infrastructure.config import ROOT, load_config
+        config = load_config(ROOT / 'train/configs/minicpmo_full_grpo.json')
+        self.assertEqual(config['agent_output_protocol'], 'task_start_token_sft_v1')
+        self.assertEqual(config['group_size'], 4)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'config.json'
+            for key, value in (('group_size', 1), ('temperature', .7), ('kl_beta', .1),
+                               ('clip_epsilon', 0), ('replay_logprob_tolerance', 0)):
+                with self.subTest(key=key):
+                    path.write_text(json.dumps(dict(config, **{key: value})))
+                    with self.assertRaises(ValueError):
+                        load_config(path)
+
     def test_saved_cpu_parameter_views_deduplicate_without_changing_gradients(self):
-        from train.src.offload import saved_on_cpu
+        from train.src.infrastructure.offload import saved_on_cpu
         layer = torch.nn.Linear(8, 4)
         x = torch.randn(3, 8, requires_grad=True)
         expected = sum(layer(x).square().mean() for _ in range(4))
@@ -34,7 +51,7 @@ class GRPOMathTests(unittest.TestCase):
                 layer(x).sum().backward()
 
     def test_activation_offload_preserves_padded_and_broadcast_strides(self):
-        from train.src.offload import saved_on_cpu, copy_strided
+        from train.src.infrastructure.offload import saved_on_cpu, copy_strided
         padded = torch.randn(3, 8)[:, :6]
         restored = copy_strided(padded, 'cpu')
         self.assertEqual(restored.stride(), padded.stride())
@@ -152,6 +169,26 @@ class TinyDuplex:
 
 
 class ReplayGradientTests(unittest.TestCase):
+    @patch('train.src.models.streaming.user_request', return_value='question')
+    @patch('train.src.models.streaming.system_prompt', return_value='system')
+    def test_atomic_task_start_is_replayed_and_trained_as_an_action(self, *_):
+        graph, record, clip = self.setup_graph()
+        graph.eval()
+        # The separator is a sampled action and also conditions the instruction.
+        ids = [301, 97, 300, 98, 303, 304, 305]
+        trajectory = dict(chunks=[dict(ids=ids, actions=[
+            dict(offset=i, turn_open=i > 0, old_log_prob=0.) for i in range(4)])])
+        with torch.no_grad():
+            current, _ = graph(record, clip, trajectory)
+        for action, lp in zip(trajectory['chunks'][0]['actions'], current.tolist()):
+            action['old_log_prob'] = lp
+        trajectory['advantage'] = 1.
+        loss, metrics = graph(record, clip, trajectory)
+        self.assertLess(metrics['replay_max_logprob_error'], 1e-5)
+        loss.backward()
+        self.assertGreater(graph.model.llm.get_input_embeddings().weight.grad[300].abs().sum(), 0)
+        self.assertGreater(graph.model.llm.lm_head.weight.grad[300].abs().sum(), 0)
+
     def test_cached_audio_restores_streaming_processor_state(self):
         class Processor:
             def __init__(self):
@@ -180,17 +217,23 @@ class ReplayGradientTests(unittest.TestCase):
         model = TinyMedia(); model.requires_grad_(False)
         duplex = TinyDuplex(model)
         config = dict(max_sequence_tokens=1024, max_speak_tokens_per_chunk=20,
-            agent_output_protocol='task_text_sft_v1', supervise_silence=False,
+            agent_output_protocol='task_start_token_sft_v1', supervise_silence=False,
             decision_weight=1., content_weight=1., call_weight=1., loss_projection_chunk=2)
+        from pathlib import Path
+        import tempfile
+        directory = tempfile.TemporaryDirectory(); self.addCleanup(directory.cleanup)
+        Path(directory.name, 'video.mp4').touch()
+        config.update(videos_dir=directory.name, max_prefix_seconds=32)
         graph = TrainGraph(model, duplex, config)
-        record = dict(onset_seconds=1, sample=dict(mode='rtd', question_time='00:00'),
-                      reference=dict(response='a', window_start='00:01'))
+        ref = dict(response='a', window_start='00:01', window_end='00:02')
+        record = dict(sample_index=0, sample=dict(mode='rtd', question_time='00:00', video='video.mp4', responses=[ref]),
+                      targets=[dict(response_index=0, onset_seconds=1, reference=ref)])
         from contextlib import nullcontext
         clip = SimpleNamespace(chunks=[{}], question_time=0, preprocessing_cache=lambda p: nullcontext())
         return graph, record, clip
 
-    @patch('train.src.stream.user_request', return_value='question')
-    @patch('train.src.stream.system_prompt', return_value='system')
+    @patch('train.src.models.streaming.user_request', return_value='question')
+    @patch('train.src.models.streaming.system_prompt', return_value='system')
     def test_full_sft_updates_all_modalities_and_keeps_tts_frozen(self, *_):
         graph, record, clip = self.setup_graph()
         before = {k: v.detach().clone() for k, v in graph.model.named_parameters()}
@@ -203,8 +246,8 @@ class ReplayGradientTests(unittest.TestCase):
         for module in ('llm', 'vpm', 'apm', 'resampler', 'audio_projection_layer'):
             self.assertTrue(any(not torch.equal(before[k], p) for k,p in graph.model.named_parameters() if k.startswith(module + '.')), module)
 
-    @patch('train.src.stream.user_request', return_value='question')
-    @patch('train.src.stream.system_prompt', return_value='system')
+    @patch('train.src.models.streaming.user_request', return_value='question')
+    @patch('train.src.models.streaming.system_prompt', return_value='system')
     def test_controlled_grpo_replay_and_nonzero_full_parameter_gradients(self, *_):
         graph, record, clip = self.setup_graph()
         graph.eval()

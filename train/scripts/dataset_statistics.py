@@ -12,7 +12,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from benchmark.data.timestamps import seconds
 from benchmark.evaluation.timing import reference_windows
-from train.src.data import first_record, load_config
+from train.src.domain.records import first_record
+from train.src.infrastructure.config import load_config
 
 
 def distribution(values):
@@ -36,7 +37,7 @@ def modality_label(parts):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--config', type=Path, default=ROOT / 'train/configs/minicpmo_lora.json')
+    parser.add_argument('--config', type=Path, default=ROOT / 'train/configs/minicpmo_full_sft.json')
     parser.add_argument('--dataset-dir', type=Path)
     parser.add_argument('--output-dir', type=Path, default=ROOT / 'train/docs')
     parser.add_argument('--plots', action='store_true', help='Requires existing matplotlib; no model loading')

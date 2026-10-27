@@ -60,7 +60,8 @@ Qwen 或 DeepSeek 的推理 API key。
 脚本输出 `validation.json`，有缺失视频时退出报错。迁移目录后重新运行；别名目录若指向
 旧素材，应先另选 `--output-dir`，并将新目录传给 `--videos-dir`。
 
-训练配置 `train/configs/minicpmo_{lora,full_sft,full_grpo}.json` 和
+全参SFT/GRPO配置 `train/configs/minicpmo_full_sft.json`、
+`train/configs/minicpmo_full_grpo.json` 和
 `JEV_train/configs/default.json` 已默认指向 AOI-Dataset。`prepare` 可省略 `--data`，
 显式传入时优先使用命令行路径；详细环境和运行方法见 [train README](train/README.md)
 和 [JEV_train README](JEV_train/README.md)。例如：

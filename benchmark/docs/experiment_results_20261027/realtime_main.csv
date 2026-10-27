@@ -1,0 +1,4 @@
+Model,QA,Windows,Outputs,Hits,Recall,Precision,F1
+MiniCPM-o-4.5,2008,4669,3976,1094,23.43,27.52,25.31
+Gander,2008,4669,1449,565,12.10,38.99,18.47
+JoyAI-VL-Interaction,2008,4669,11991,1238,26.52,10.32,14.86
