@@ -12,6 +12,8 @@ COMMANDS = {
     "probe": "benchmark.probe.runner",
     "judge": "benchmark.evaluation.judge",
     "probe-judge": "benchmark.evaluation.probe_judge",
+    "judge-export": "benchmark.evaluation.judge_export",
+    "judge-bundle": "benchmark.evaluation.judge_bundle",
     "collect": "benchmark.evaluation.collection",
     "compare": "benchmark.evaluation.comparison",
     "download": "benchmark.data.download",

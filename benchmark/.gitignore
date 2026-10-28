@@ -8,3 +8,7 @@ __pycache__/
 /*.log
 
 .venv-*/
+
+# Portable judge data/results are transferred separately, never committed.
+/exports/llm_judge_*.json
+/exports/judge_results_*.json*

@@ -244,3 +244,25 @@ def configure_probe_judge(parser):
             action.help = 'Directories containing new-protocol probe_predictions.jsonl'
     parser.add_argument('--manifest', type=Path, required=True)
     parser.add_argument('--dry-run', action='store_true', help='Validate and count TP requests without API calls')
+
+
+def configure_judge_export(parser):
+    parser.add_argument('--sources', type=Path, required=True, help='Explicit source registry; paths relative to repo root')
+    parser.add_argument('--output', type=Path, required=True, help='Portable input JSON file')
+
+
+def configure_judge_bundle(parser):
+    parser.add_argument('--input', type=Path, required=True, help='Portable judge-export JSON, no original data needed')
+    parser.add_argument('--output', type=Path, required=True, help='Single JSON file to return to the dataset owner')
+    parser.add_argument('--provider', choices=('openai',))
+    parser.add_argument('--model')
+    parser.add_argument('--base-url')
+    parser.add_argument('--env-file', type=Path)
+    parser.set_defaults(api_key=None)
+    parser.add_argument('--concurrency', type=int, default=4)
+    parser.add_argument('--timeout', type=float, default=120)
+    parser.add_argument('--retries', type=int, default=2)
+    parser.add_argument('--max-tokens', type=int, default=1024)
+    parser.add_argument('--thinking', choices=('disabled', 'enabled', 'provider-default'), default='disabled')
+    parser.add_argument('--retry-failed', action='store_true', help='Explicitly retry failed requests, never completed ones')
+    parser.add_argument('--dry-run', action='store_true', help='Validate inputs/count requests without credentials, writes or API')

@@ -4,6 +4,7 @@
 endpoint 与运行命令见[云端 Realtime 配置](#云端-realtimeqwen35-omni-与-gemini-25-flash-live)。
 普通 Qwen3-Omni / Qwen2.5-Omni 的前缀二分类评测见
 [Probe 模式](#probe-模式普通-omni-llm-的回复决策评测)。
+已有结果需要交给别人评分时，见[单文件Judge移交指引](docs/portable_llm_judge.md)。
 
 ## 全量数据集与闭源 Realtime 快速开始
 
@@ -1245,3 +1246,10 @@ CPU 单测已验证顺序、GPU 分组、独立输出路径和输入过滤；真
 ## Agent 纯文本协议试验
 
 新增显式 `--agent-output-protocol task-text`，模型输出 `回复<|task_start|>instruction`，不输出 JSON。仅支持 MiniCPM、Gander 和 JoyAI；旧协议及训练格式保持原样。三模型各 100 条插队试验、完整提示词、状态和自动续跑说明见 [试验说明](docs/task_text_agent100_20261024.md)。
+## 单文件移交 LLM Judge
+
+如果别人只负责对已有结果评分，使用[单文件Judge移交指引](docs/portable_llm_judge.md)：发送一个输入JSON，对方只需CPU环境和DeepSeek key，最后回传一个结果JSON。支持Realtime/Probe的现有评分口径、断点恢复、请求去重与失败项补跑，无需视频、模型或原始预测目录。
+
+```bash
+python -m benchmark judge-bundle --input INPUT.json --output RESULTS.json --dry-run
+```

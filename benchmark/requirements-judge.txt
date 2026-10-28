@@ -1,0 +1,2 @@
+# CPU-only portable judge. API requests themselves use Python's standard library.
+python-dotenv>=1.0

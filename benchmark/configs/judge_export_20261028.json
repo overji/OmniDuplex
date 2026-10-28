@@ -1,0 +1,147 @@
+{
+  "data": "benchmark/results/full_omni_duplex_plus_ab_gemini37_20261021/inputs/all_qa.json",
+  "data_sha256": "1a6511a667e48d1da573f3000783132853d9f506b38db28b098e0d51f3c6843c",
+  "manifest": "benchmark/probes/full_2110/probe/probe_manifest.jsonl",
+  "manifest_sha256": "9ff16dfafda11d14700fc876380b8ed202035325ac0bbd3cdf1feaabbdaf96bc",
+  "public_qa": 2107,
+  "system_prompt": "benchmark/configs/prompts/judge.txt",
+  "runs": [
+    {
+      "run_id": "realtime/minicpmo/baseline",
+      "model": "MiniCPM-o-4.5",
+      "mode": "realtime",
+      "variant": "baseline",
+      "input_modality": "audio-video",
+      "sources": [
+        {
+          "file": "benchmark/results/full_2110_dp6_20261021/realtime/minicpmo/predictions.jsonl",
+          "selection": "non-agent"
+        },
+        {
+          "file": "benchmark/results/task_text_agent100_20261024_v2/continuation/realtime/minicpmo_task_text_agent_full/predictions.jsonl",
+          "selection": "agent"
+        }
+      ]
+    },
+    {
+      "run_id": "realtime/gander/baseline",
+      "model": "Gander",
+      "mode": "realtime",
+      "variant": "baseline",
+      "input_modality": "audio-video",
+      "sources": [
+        {
+          "file": "benchmark/results/full_2110_dp6_20261021/realtime/gander/predictions.jsonl",
+          "selection": "non-agent"
+        },
+        {
+          "file": "benchmark/results/full_2110_phased_8gpu_20261023/suite/realtime/gander/predictions.jsonl",
+          "selection": "non-agent"
+        },
+        {
+          "file": "benchmark/results/task_text_agent100_20261024_v2/continuation/realtime/gander_task_text_agent_full/predictions.jsonl",
+          "selection": "agent"
+        }
+      ]
+    },
+    {
+      "run_id": "realtime/joyai/baseline",
+      "model": "JoyAI-VL-Interaction",
+      "mode": "realtime",
+      "variant": "baseline",
+      "input_modality": "video-only",
+      "sources": [
+        {
+          "file": "benchmark/results/full_2110_phased_8gpu_20261023/suite/realtime/joyai/predictions.jsonl",
+          "selection": "non-agent"
+        },
+        {
+          "file": "benchmark/results/task_text_agent100_20261024_v2/continuation/realtime/joyai_task_text_agent_full/predictions.jsonl",
+          "selection": "agent"
+        }
+      ]
+    },
+    {
+      "run_id": "realtime/minicpmo/no_audio",
+      "model": "MiniCPM-o-4.5",
+      "mode": "realtime",
+      "variant": "no_audio",
+      "input_modality": "video-only",
+      "sources": [
+        {
+          "file": "benchmark/results/task_text_agent100_20261024_v2/task_specific_probe_512_v3/suite/realtime/minicpmo_no_audio_reply_task_text/predictions.jsonl",
+          "selection": "all"
+        }
+      ]
+    },
+    {
+      "run_id": "realtime/minicpmo/no_vision",
+      "model": "MiniCPM-o-4.5",
+      "mode": "realtime",
+      "variant": "no_vision",
+      "input_modality": "audio-only",
+      "sources": [
+        {
+          "file": "benchmark/results/task_text_agent100_20261024_v2/task_specific_probe_512_v3/suite/realtime/minicpmo_no_vision_reply_task_text/predictions.jsonl",
+          "selection": "all"
+        }
+      ]
+    },
+    {
+      "run_id": "probe/minicpmo/baseline",
+      "model": "MiniCPM-o-4.5",
+      "mode": "probe",
+      "variant": "baseline",
+      "input_modality": "audio-video",
+      "predictions": "benchmark/results/task_text_agent100_20261024_v2/task_specific_probe_512_v3/suite/probe/minicpmo_reply_task_text/probe_predictions.jsonl"
+    },
+    {
+      "run_id": "probe/qwen3_omni/baseline",
+      "model": "Qwen3-Omni-30B-A3B",
+      "mode": "probe",
+      "variant": "baseline",
+      "input_modality": "audio-video",
+      "predictions": "benchmark/results/task_text_agent100_20261024_v2/task_specific_probe_512_v3/suite/probe/qwen3_omni_reply_task_text/probe_predictions.jsonl"
+    },
+    {
+      "run_id": "probe/qwen25_omni/baseline",
+      "model": "Qwen2.5-Omni-7B",
+      "mode": "probe",
+      "variant": "baseline",
+      "input_modality": "audio-video",
+      "predictions": "benchmark/results/task_text_agent100_20261024_v2/task_specific_probe_512_v3/suite/probe/qwen25_omni_reply_task_text/probe_predictions.jsonl"
+    },
+    {
+      "run_id": "probe/qwen25_omni/no_audio",
+      "model": "Qwen2.5-Omni-7B",
+      "mode": "probe",
+      "variant": "no_audio",
+      "input_modality": "video-only",
+      "predictions": "benchmark/results/task_text_agent100_20261024_v2/task_specific_probe_512_v3/suite/probe/qwen25_omni_no_audio_reply_task_text/probe_predictions.jsonl"
+    },
+    {
+      "run_id": "probe/qwen25_omni/no_vision",
+      "model": "Qwen2.5-Omni-7B",
+      "mode": "probe",
+      "variant": "no_vision",
+      "input_modality": "audio-only",
+      "predictions": "benchmark/results/task_text_agent100_20261024_v2/task_specific_probe_512_v3/suite/probe/qwen25_omni_no_vision_reply_task_text/probe_predictions.jsonl"
+    },
+    {
+      "run_id": "probe/gemini37/baseline",
+      "model": "Gemini-3.7-flash",
+      "mode": "probe",
+      "variant": "baseline",
+      "input_modality": "not-recorded",
+      "predictions": "benchmark/results/from_remote_1027/merged_full/gemini/probe_predictions.jsonl"
+    },
+    {
+      "run_id": "probe/qwen38/baseline",
+      "model": "Qwen3.8Omni",
+      "mode": "probe",
+      "variant": "baseline",
+      "input_modality": "not-recorded",
+      "predictions": "benchmark/results/from_remote_1027/merged_full/qwen/probe_predictions.jsonl"
+    }
+  ]
+}
