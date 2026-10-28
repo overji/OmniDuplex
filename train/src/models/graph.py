@@ -23,7 +23,7 @@ class TrainGraph(torch.nn.Module):
         self.last_stats = dict(sequence_tokens=len(encoded['inputs_embeds']),
                                supervised_tokens=int((encoded['labels'] != -100).sum()))
         if trajectory is None:
-            self.last_stats.update({k: encoded[k] for k in ('targets', 'response_count', 'target_chunks')})
+            self.last_stats.update({k: encoded[k] for k in ('targets', 'response_count', 'target_chunks', 'tail_silence_seconds')})
         if trajectory is None:
             hidden = llm.model(inputs_embeds=encoded['inputs_embeds'][None], use_cache=False,
                                return_dict=True).last_hidden_state[0]

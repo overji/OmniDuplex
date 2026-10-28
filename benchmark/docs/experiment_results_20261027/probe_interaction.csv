@@ -1,6 +1,6 @@
 Model,RTD,PR,Agent
-MiniCPM-o-4.5,1.36,13.23,17.20
-Qwen3-Omni-30B-A3B,1.52,7.39,21.51
-Qwen2.5-Omni-7B,2.12,2.33,0.00
-Gemini-3.7-flash,27.42,64.98,66.67
-Qwen3.8Omni,18.18,38.52,40.86
+MiniCPM-o-4.5,1.88,14.47,19.18
+Qwen3-Omni-30B-A3B,1.30,9.68,25.95
+Qwen2.5-Omni-7B,2.68,1.50,0.00
+Gemini-3.7-flash,27.45,64.00,63.61
+Qwen3.8Omni,17.82,41.64,38.22

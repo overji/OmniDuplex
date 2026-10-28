@@ -1,6 +1,6 @@
 # Benchmark实验结果汇总
 
-快照：2026-10-27T01:08:35.893253+00:00。
+快照：2026-10-27T11:36:39.168807+00:00。
 
 可独立编译：`cd benchmark/docs/experiment_results_20261027 && pdflatex main.tex`。
 主表、消融附表及正文分析均在`experiments.tex`内，可直接复制或通过\input引入论文，无需其他表格文件。
@@ -9,23 +9,69 @@ LaTeX正文聚焦一张分组主表和一张消融附表；其余覆盖率、细
 
 ## 数据对应和比较范围
 
-- 两份远端JSONL全部通过前500条导出文件的pair ID校验；模型名由用户确认：Gemini-3.7-flash、Qwen3.8Omni。
+- 远端模型名由用户确认：Gemini-3.7-flash、Qwen3.8Omni；原始文本不修改，pair ID按各自导出数据校验后统一索引。
+- 当前主表范围：merged full sources。
 - 500条QA中494条有合法Probe配对，共1154对。
 - 导出集和旧2110条运行数据的sample_index有479处不同，已按整条QA指纹建立唯一映射；原始文件没有修改。
-- 五模型主表仅比较共同完成两侧的配对；另列各模型原始覆盖与本地全量交集，不把这些分母混用。
+- 五模型主表仅比较当前主表范围内共同完成两侧的配对；前500条表保留为历史子集诊断，不与全量分母混用。
 - 远端模型的API部署ID、prompt、媒体采样和token预算未随文件提供，比较仍受运行配置差异限制。
 - 前500条不是随机样本；原始预测的缺失不能直接认定为API失败。
 - 以下均沿用官方scorer，没有修复/恢复模型答案；解析决策与保存值不一致数：{"minicpmo": 0, "qwen3_omni": 0, "qwen25_omni": 0, "remote_gemini": 0, "remote_qwen": 0}
 
 ## 主要发现
 
-- 五模型共同完成1103对、2206次请求；Gemini-3.7-flash与Qwen3.8Omni的成对准确率分别为42.79%、26.75%。
-- MiniCPM和Qwen3的正侧准确率超过90%，负侧不足15%，主要问题是过早开口；Qwen2.5表现为相反的沉默倾向。这里只判断是否开口，不判断内容正确性。
+- 当前主表五模型共同完成4163对、8326次请求（1953条QA）；Gemini-3.7-flash与Qwen3.8Omni的成对准确率分别为42.95%、27.38%。
+- Probe只判断是否应开口，不判断回复内容正确性；各分组使用共同完成配对，总体按计数汇总。
 - Realtime共同2008条QA上，MiniCPM/Gander/JoyAI的时间F1为25.31%/18.47%/14.86%。Gander更保守、精确率更高；JoyAI输出更多，召回较高而精确率偏低。JoyAI仅输入视觉。
 - MiniCPM在2107条QA上，音视频/仅视觉/仅音频的时间F1为25.24%/20.63%/9.21%；Agent子集并未呈现相同的优势顺序。
 - 既有内容judge中，两种模式都回复的90个reference response上，Realtime/Probe回复均分为1.317/1.244（满分2）。QA聚类bootstrap差值区间跨0，不能据此确认总体优劣；Agent调用评分只有7对。
 
 ## 实验表格
+
+### 远端500+1607合并覆盖
+
+输入共2107条公开QA，合法Probe为9188次请求。
+
+| 模型 | 前500请求 | 后1607请求 | 合计成功请求 | 完整配对 | 覆盖QA |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Gemini-3.7-flash | 2273 | 6486 | 8759 | 4378 | 2002 |
+| Qwen3.8Omni | 2261 | 6466 | 8727 | 4350 | 2001 |
+
+缺失请求保持缺失，不按静默或错误补齐。完整来源、哈希和索引映射保存在 `benchmark/results/from_remote_1027/merged_full/`。
+
+### 分组主表：probe
+
+| Model | Metric | RTD | PR | Agent | Perception | Comprehension | Reasoning | Short | Medium | Long | Overall |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| MiniCPM-o-4.5 | Pre | 2.38 | 17.67 | 30.89 | 10.86 | 13.88 | 6.07 | 15.52 | 9.17 | 5.86 | 11.15 |
+| MiniCPM-o-4.5 | Post | 98.08 | 94.45 | 82.09 | 94.71 | 92.81 | **97.17** | 93.84 | 94.44 | 95.88 | 94.43 |
+| MiniCPM-o-4.5 | Pair | 1.88 | 14.47 | 19.18 | 7.83 | 9.87 | 4.72 | 11.02 | 6.60 | 4.75 | 8.05 |
+| Qwen3-Omni-30B-A3B | Pre | 1.63 | 11.56 | 64.46 | 14.91 | 16.74 | 10.80 | 15.95 | 14.15 | 14.26 | 14.87 |
+| Qwen3-Omni-30B-A3B | Post | **99.50** | **97.65** | 57.40 | 92.00 | 91.53 | 92.17 | 91.93 | 92.09 | 90.97 | 91.86 |
+| Qwen3-Omni-30B-A3B | Pair | 1.30 | 9.68 | 25.95 | 7.73 | 9.10 | 4.32 | 9.11 | 7.13 | 5.39 | 7.64 |
+| Qwen2.5-Omni-7B | Pre | **93.01** | **99.72** | 39.49 | **84.28** | **87.71** | **84.48** | **86.45** | **85.17** | **84.79** | **85.61** |
+| Qwen2.5-Omni-7B | Post | 8.03 | 1.69 | 0.00 | 7.62 | 1.65 | 5.80 | 5.48 | 5.03 | 3.96 | 5.04 |
+| Qwen2.5-Omni-7B | Pair | 2.68 | 1.50 | 0.00 | 2.81 | 0.76 | 2.16 | 2.65 | 1.68 | 0.79 | 1.92 |
+| Gemini-3.7-flash | Pre | 30.59 | 66.73 | **65.59** | 44.79 | 52.77 | 33.47 | 50.25 | 45.70 | 34.55 | 45.78 |
+| Gemini-3.7-flash | Post | 94.77 | 96.52 | **97.60** | **95.73** | **96.63** | 93.66 | **94.46** | **96.23** | **97.31** | **95.70** |
+| Gemini-3.7-flash | Pair | **27.45** | **64.00** | **63.61** | **42.36** | **50.35** | **28.74** | **46.74** | **42.98** | **33.12** | **42.95** |
+| Qwen3.8Omni | Pre | 20.42 | 46.62 | 39.92 | 27.98 | 37.75 | 21.05 | 31.47 | 31.71 | 23.93 | 30.43 |
+| Qwen3.8Omni | Post | 94.94 | 93.23 | 97.46 | 94.71 | 94.72 | 95.95 | 94.21 | 95.18 | 96.04 | 94.93 |
+| Qwen3.8Omni | Pair | 17.82 | 41.64 | 38.22 | 25.01 | 34.31 | 18.62 | 27.83 | 28.77 | 22.03 | 27.38 |
+
+### 分组主表：realtime
+
+| Model | Metric | RTD | PR | Agent | Perception | Comprehension | Reasoning | Short | Medium | Long | Overall |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| MiniCPM-o-4.5 | Recall | 21.98 | **33.86** | **12.95** | 22.00 | 26.89 | **19.21** | **28.67** | 24.83 | 11.05 | 23.43 |
+| MiniCPM-o-4.5 | Precision | 35.79 | 29.89 | 10.01 | 26.13 | 31.50 | 22.07 | 32.63 | 27.56 | **15.88** | 27.52 |
+| MiniCPM-o-4.5 | F1 | **27.23** | **31.75** | 11.29 | **23.89** | **29.01** | **20.54** | **30.52** | **26.12** | **13.03** | **25.31** |
+| Gander | Recall | 9.44 | 19.63 | 10.44 | 13.12 | 11.97 | 9.85 | 15.55 | 12.93 | 4.14 | 12.10 |
+| Gander | Precision | **36.15** | **40.61** | **45.66** | **37.73** | **47.71** | **28.07** | **47.80** | **42.81** | 13.73 | **38.99** |
+| Gander | F1 | 14.97 | 26.47 | **16.99** | 19.47 | 19.13 | 14.59 | 23.47 | 19.86 | 6.37 | 18.47 |
+| JoyAI-VL-Interaction | Recall | **34.56** | 20.42 | 6.34 | **26.10** | **30.71** | 18.10 | 26.22 | **28.73** | **22.21** | **26.52** |
+| JoyAI-VL-Interaction | Precision | 9.94 | 16.07 | 5.22 | 9.68 | 11.72 | 8.49 | 14.01 | 11.29 | 5.76 | 10.32 |
+| JoyAI-VL-Interaction | F1 | 15.44 | 17.99 | 5.72 | 14.13 | 16.96 | 11.56 | 18.26 | 16.21 | 9.14 | 14.86 |
 
 ### Probe comparison on the first-500 subset
 
@@ -55,14 +101,14 @@ Coverage of provided predictions on the first-500 QA export. Missing rows are no
 
 LaTeX：`probe_first500_coverage.tex`；CSV：`probe_first500_coverage.csv`。
 
-### Remote results on all supplied predictions
+### Remote first-500 results (historical subset)
 
 | Model | Requests | Complete Pairs | Positive Acc. | Negative Acc. | Balanced Acc. | Paired Acc. | Format Valid | Agent Call Valid |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Gemini-3.7-flash | 2273 | 1136 | 95.33 | 46.09 | 70.71 | 43.05 | 96.35 | 90.91 |
 | Qwen3.8Omni | 2261 | 1124 | 93.22 | 31.11 | 62.17 | 26.87 | 99.96 | 99.65 |
 
-Scores from all supplied remote predictions, using each model's own coverage. Accuracy denominators contain completed requests; paired accuracy uses only completed pre/post pairs. Values are percentages. Use the shared-subset table for comparisons with local models.
+Scores from the original first-500 remote files only, using each model's own coverage. Accuracy denominators contain completed requests; paired accuracy uses only completed pre/post pairs. Values are percentages. Use the shared-subset table for comparisons with local models.
 
 LaTeX：`probe_remote_supplied.tex`；CSV：`probe_remote_supplied.csv`。
 
@@ -70,15 +116,43 @@ LaTeX：`probe_remote_supplied.tex`；CSV：`probe_remote_supplied.csv`。
 
 | Model | RTD | PR | Agent |
 | --- | --- | --- | --- |
-| MiniCPM-o-4.5 | 1.36 | 13.23 | 17.20 |
-| Qwen3-Omni-30B-A3B | 1.52 | 7.39 | 21.51 |
-| Qwen2.5-Omni-7B | 2.12 | 2.33 | 0.00 |
-| Gemini-3.7-flash | 27.42 | 64.98 | 66.67 |
-| Qwen3.8Omni | 18.18 | 38.52 | 40.86 |
+| MiniCPM-o-4.5 | 1.88 | 14.47 | 19.18 |
+| Qwen3-Omni-30B-A3B | 1.30 | 9.68 | 25.95 |
+| Qwen2.5-Omni-7B | 2.68 | 1.50 | 0.00 |
+| Gemini-3.7-flash | 27.45 | 64.00 | 63.61 |
+| Qwen3.8Omni | 17.82 | 41.64 | 38.22 |
 
-Paired accuracy by interaction on the same shared first-500 subset. Values are percentages; both pre and post decisions must be correct.
+Paired accuracy by interaction on the same primary shared subset. Values are percentages; both pre and post decisions must be correct.
 
 LaTeX：`probe_interaction.tex`；CSV：`probe_interaction.csv`。
+
+### Probe comparison after merging first500 and remaining1607
+
+| Model | Positive Acc. | Negative Acc. | Balanced Acc. | Paired Acc. | Format Valid | Agent Call Valid |
+| --- | --- | --- | --- | --- | --- | --- |
+| MiniCPM-o-4.5 | 94.43 | 11.15 | 52.79 | 8.05 | 81.11 | 76.89 |
+| Qwen3-Omni-30B-A3B | 91.86 | 14.87 | 53.36 | 7.64 | 99.60 | 97.22 |
+| Qwen2.5-Omni-7B | 5.04 | 85.61 | 45.33 | 1.92 | 89.26 | -- |
+| Gemini-3.7-flash | 95.70 | 45.78 | 70.74 | 42.95 | 96.96 | 90.81 |
+| Qwen3.8Omni | 94.93 | 30.43 | 62.68 | 27.38 | 99.93 | 99.46 |
+
+Probe comparison after merging first500 and remaining1607. All values are percentages. Models share 4163 fully completed pre/post pairs (8326 requests from 1953 QA). Agent call validity is conditional on an Agent reply, not semantic correctness. Raw source text is unchanged. Split IDs are normalized through full-QA fingerprints and verified pair IDs.
+
+LaTeX：`probe_full_common.tex`；CSV：`probe_full_common.csv`。
+
+### Full-source Probe coverage and descriptive scores
+
+| Model | Requests | Expected | Complete Pairs | Expected Pairs | QA | Pre Acc. | Post Acc. | Pair Acc. |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| MiniCPM-o-4.5 | 8650 | 9188 | 4319 | 4594 | 1994 | 10.99 | 94.51 | 7.96 |
+| Qwen3-Omni-30B-A3B | 9187 | 9188 | 4593 | 4594 | 2047 | 13.97 | 92.38 | 7.23 |
+| Qwen2.5-Omni-7B | 9187 | 9188 | 4593 | 4594 | 2047 | 86.09 | 5.18 | 1.89 |
+| Gemini-3.7-flash | 8759 | 9188 | 4378 | 4594 | 2002 | 45.45 | 95.59 | 42.55 |
+| Qwen3.8Omni | 8727 | 9188 | 4350 | 4594 | 2001 | 30.35 | 94.74 | 27.17 |
+
+Each model uses its own successful coverage here. Missing requests remain missing; use the shared-pair table for model comparisons.
+
+LaTeX：`probe_full_coverage.tex`；CSV：`probe_full_coverage.csv`。
 
 ### Local Probe comparison on the full shared subset
 
@@ -156,20 +230,20 @@ LaTeX：`minicpmo_realtime_ablations.tex`；CSV：`minicpmo_realtime_ablations.c
 
 | Ability | Pairs | MiniCPM-o-4.5 | Qwen3-Omni-30B-A3B | Qwen2.5-Omni-7B | Gemini-3.7-flash | Qwen3.8Omni |
 | --- | --- | --- | --- | --- | --- | --- |
-| Attribute Perception | 79 | 13.92 | 8.86 | 2.53 | 45.57 | 27.85 |
-| Temporal Grounding | 129 | 3.10 | 6.98 | 0.00 | 33.33 | 23.26 |
-| Action Perception | 172 | 6.40 | 6.40 | 4.65 | 39.53 | 18.02 |
-| Object Perception | 69 | 5.80 | 11.59 | 1.45 | 53.62 | 33.33 |
-| Emotion Recognition | 42 | 7.14 | 4.76 | 2.38 | 30.95 | 19.05 |
-| Event Understanding | 146 | 4.79 | 4.11 | 1.37 | 26.03 | 17.12 |
-| Text-Rich Understanding | 149 | 10.07 | 10.07 | 0.00 | 67.11 | 48.32 |
-| Object Counting | 43 | 13.95 | 6.98 | 0.00 | 53.49 | 25.58 |
-| Action Counting | 72 | 8.33 | 1.39 | 1.39 | 68.06 | 51.39 |
-| Spatial Understanding | 81 | 3.70 | 4.94 | 4.94 | 48.15 | 28.40 |
-| Prospective Reasoning | 60 | 1.67 | 3.33 | 0.00 | 16.67 | 6.67 |
-| Causal Reasoning | 61 | 6.56 | 1.64 | 1.64 | 26.23 | 14.75 |
+| Attribute Perception | 316 | 11.39 | 9.49 | 3.80 | 46.20 | 28.80 |
+| Temporal Grounding | 401 | 6.73 | 6.98 | 1.25 | 40.90 | 26.43 |
+| Action Perception | 633 | 7.58 | 5.85 | 4.11 | 41.07 | 22.27 |
+| Object Perception | 291 | 8.59 | 13.40 | 2.06 | 56.70 | 34.36 |
+| Emotion Recognition | 210 | 4.29 | 4.29 | 1.43 | 23.33 | 11.90 |
+| Event Understanding | 540 | 6.11 | 5.93 | 1.48 | 30.19 | 17.04 |
+| Text-Rich Understanding | 609 | 14.45 | 14.45 | 0.49 | 62.23 | 44.83 |
+| Object Counting | 170 | 8.82 | 7.65 | 0.00 | 56.47 | 38.82 |
+| Action Counting | 252 | 7.54 | 3.97 | 0.40 | 60.71 | 42.86 |
+| Spatial Understanding | 295 | 4.75 | 5.08 | 4.07 | 39.66 | 29.49 |
+| Prospective Reasoning | 184 | 4.89 | 4.89 | 0.54 | 21.20 | 8.70 |
+| Causal Reasoning | 262 | 4.58 | 3.05 | 1.15 | 21.76 | 13.36 |
 
-Paired decision accuracy by ability on the shared first-500 subset. Percentages; no response-content judge is applied.
+Paired decision accuracy by ability on the primary shared subset. Percentages; no response-content judge is applied.
 
 LaTeX：`probe_abilities.tex`；CSV：`probe_abilities.csv`。
 
@@ -177,9 +251,9 @@ LaTeX：`probe_abilities.tex`；CSV：`probe_abilities.csv`。
 
 | Level | Pairs | MiniCPM-o-4.5 | Qwen3-Omni-30B-A3B | Qwen2.5-Omni-7B | Gemini-3.7-flash | Qwen3.8Omni |
 | --- | --- | --- | --- | --- | --- | --- |
-| Perception | 491 | 6.72 | 7.54 | 2.44 | 40.12 | 23.22 |
-| Comprehension | 410 | 8.29 | 6.10 | 0.73 | 51.22 | 35.37 |
-| Reasoning | 202 | 3.96 | 3.47 | 2.48 | 32.18 | 17.82 |
+| Perception | 1851 | 7.83 | 7.73 | 2.81 | 42.36 | 25.01 |
+| Comprehension | 1571 | 9.87 | 9.10 | 0.76 | 50.35 | 34.31 |
+| Reasoning | 741 | 4.72 | 4.32 | 2.16 | 28.74 | 18.62 |
 
 Cognitive levels follow the specified taxonomy: T1--T5 perception, T6--T9 comprehension, and T10--T12 reasoning. Counts are pooled before computing accuracy.
 
@@ -224,7 +298,8 @@ LaTeX：`content_paired.tex`；CSV：`content_paired.csv`。
 
 ## 复现
 
-`python benchmark/scripts/build_experiment_report.py --output-dir benchmark/docs/experiment_results_20261027`
+`python benchmark/scripts/merge_remote_probe_results.py`
+`python benchmark/scripts/build_experiment_report.py --remote-merged-dir benchmark/results/from_remote_1027/merged_full --output-dir benchmark/docs/experiment_results_20261027`
 
 可传`--remote-gemini-name`和`--remote-qwen-name`修改展示标签；不改变原始分数。
 `metrics.json`保存统计、来源路径及读取快照哈希；`first500_index_mapping.csv`保存索引映射。

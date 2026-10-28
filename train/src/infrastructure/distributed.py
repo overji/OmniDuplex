@@ -27,18 +27,20 @@ def restore_rng(state):
 
 
 def gradient_norms(model):
-    from deepspeed.utils import safe_get_local_grad
+    from deepspeed.utils import safe_get_local_grad, safe_get_full_grad
     result = {}
+    sharded = any(hasattr(p, 'ds_id') for p in model.parameters())
     for name, parameter in model.named_parameters():
         if not parameter.requires_grad:
             continue
         group = name.split('.')[0]
-        grad = safe_get_local_grad(parameter)
+        grad = safe_get_local_grad(parameter) if sharded else safe_get_full_grad(parameter)
         if grad is not None:
             result[group] = result.get(group, 0.) + grad.float().square().sum().item()
     for group in sorted(result):
         value = torch.tensor(result[group], device=torch.cuda.current_device(), dtype=torch.float64)
-        torch.distributed.all_reduce(value)
+        if sharded:
+            torch.distributed.all_reduce(value)
         result[group] = value.sqrt().item()
     return result
 

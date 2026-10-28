@@ -117,6 +117,23 @@ assert json.loads(Path('prepared/manifest.json').read_text())['record_format'] =
         finally:
             random.setstate(saved_python); np.random.set_state(saved_numpy); torch.set_rng_state(saved_torch)
 
+    def test_checkpoint_retention_preserves_final_and_unrelated_directories(self):
+        from train.src.infrastructure.checkpoints import prune_checkpoints
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ('checkpoint-1', 'checkpoint-50', 'checkpoint-final', 'user-folder'):
+                path = root / name
+                path.mkdir()
+                (path/'training_config.json').write_text('{}')
+            (root/'checkpoint-999').mkdir()  # Not a completed checkpoint owned by save().
+            with patch('torch.distributed.barrier'):
+                prune_checkpoints(root, 1, 0)
+            self.assertFalse((root/'checkpoint-1').exists())
+            self.assertTrue((root/'checkpoint-50').exists())
+            self.assertTrue((root/'checkpoint-final').exists())
+            self.assertTrue((root/'user-folder').exists())
+            self.assertTrue((root/'checkpoint-999').exists())
+
     def test_checkpoint_save_keeps_cursor_and_rank_state_without_cuda(self):
         from train.src.infrastructure.checkpoints import save
         engine, tokenizer = MagicMock(), MagicMock()

@@ -48,8 +48,20 @@ def compile_trajectory(record, tokenizer, config, duration=None):
         targets.append({'response_index': ri, 'onset_seconds': onset,
                         'end_seconds': end, 'chunks': len(body)})
         windows.append((seconds(ref['window_start']), seconds(ref['window_end'])))
+    # The closed response windows are ambiguous silence positions. Start tail
+    # supervision strictly after every window and after all response chunks.
+    tail_start = math.floor(max(end, *(stop for _, stop in windows))) + 1
+    horizon = end
+    tail = config.get('post_response_silence_seconds', 0)
+    if tail:
+        stop = min(tail_start + tail - 1, config['max_prefix_seconds'])
+        if duration is not None:
+            stop = min(stop, math.floor(duration))
+        horizon = max(end, stop)
     return {'chunks': chunks, 'targets': targets, 'windows': windows,
-            'horizon': end, 'target_chunks': len(chunks), 'response_count': len(targets)}
+            'horizon': horizon, 'response_end_seconds': end, 'tail_start_seconds': tail_start,
+            'tail_silence_seconds': max(0, horizon - tail_start + 1),
+            'target_chunks': len(chunks), 'response_count': len(targets)}
 
 
 def second_target(schedule, second, tokenizer, config, question_sent):
@@ -62,4 +74,4 @@ def second_target(schedule, second, tokenizer, config, question_sent):
 
 
 def schedule_stats(schedule):
-    return {k: schedule[k] for k in ('targets', 'response_count', 'target_chunks')}
+    return {k: schedule[k] for k in ('targets', 'response_count', 'target_chunks', 'tail_silence_seconds')}

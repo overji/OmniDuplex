@@ -1,0 +1,171 @@
+{
+  "checked_at": "2026-10-27T10:56:14.339598+00:00",
+  "wandb": {
+    "id": "m74nub8n",
+    "url": "https://forge.coreweave.com/wandb/overji-shanghai-jiao-tong-university/OmniDuplex-SFT/runs/m74nub8n",
+    "project": "OmniDuplex-SFT",
+    "entity": "overji-shanghai-jiao-tong-university"
+  },
+  "remote_history": [
+    {
+      "_step": 1,
+      "train/step": 1,
+      "train/loss": 4.949970364570618
+    }
+  ],
+  "first_batch": [
+    {
+      "forward_wall_seconds": 81.43296265602112,
+      "backward_wall_seconds": 117.17345254123211,
+      "activation_cpu_saved_gib_max": 69.80306493118405,
+      "activation_gpu_kept_gib": 4.0,
+      "parameter_offload_cache_hits": 75718,
+      "local_loss": 9.21460247039795,
+      "local_valid": true,
+      "valid_qa": 4,
+      "global_batch_size": 4,
+      "sample_index": 2321,
+      "epoch": 0,
+      "slot": 0,
+      "step": 1,
+      "loss": 4.949970364570618,
+      "optimizer_boundary": true,
+      "peak_allocated_gib": 27.16052007675171,
+      "elapsed_seconds": 338.03654313087463,
+      "step_wall_seconds": 209.88884188234806,
+      "sequence_tokens": 23236,
+      "supervised_tokens": 307,
+      "targets": [
+        {
+          "response_index": 0,
+          "onset_seconds": 290,
+          "end_seconds": 290,
+          "chunks": 1
+        }
+      ],
+      "response_count": 1,
+      "target_chunks": 1,
+      "qa_per_second": 0.019057706756237077
+    },
+    {
+      "forward_wall_seconds": 81.16051799803972,
+      "backward_wall_seconds": 115.65726923942566,
+      "activation_cpu_saved_gib_max": 59.175954807549715,
+      "activation_gpu_kept_gib": 4.0,
+      "parameter_offload_cache_hits": 65238,
+      "local_loss": 4.129898548126221,
+      "local_valid": true,
+      "valid_qa": 4,
+      "global_batch_size": 4,
+      "sample_index": 106,
+      "epoch": 0,
+      "slot": 0,
+      "step": 1,
+      "loss": 4.949970364570618,
+      "optimizer_boundary": true,
+      "peak_allocated_gib": 26.424113750457764,
+      "elapsed_seconds": 336.02622985839844,
+      "step_wall_seconds": 207.60594949126244,
+      "sequence_tokens": 20095,
+      "supervised_tokens": 142,
+      "targets": [
+        {
+          "response_index": 0,
+          "onset_seconds": 148,
+          "end_seconds": 149,
+          "chunks": 2
+        },
+        {
+          "response_index": 1,
+          "onset_seconds": 250,
+          "end_seconds": 250,
+          "chunks": 1
+        }
+      ],
+      "response_count": 2,
+      "target_chunks": 3,
+      "qa_per_second": 0.01926727056619516
+    },
+    {
+      "forward_wall_seconds": 87.04699237644672,
+      "backward_wall_seconds": 115.6527597270906,
+      "activation_cpu_saved_gib_max": 57.658736530691385,
+      "activation_gpu_kept_gib": 4.0,
+      "parameter_offload_cache_hits": 63666,
+      "local_loss": 2.1654343605041504,
+      "local_valid": true,
+      "valid_qa": 4,
+      "global_batch_size": 4,
+      "sample_index": 392,
+      "epoch": 0,
+      "slot": 0,
+      "step": 1,
+      "loss": 4.949970364570618,
+      "optimizer_boundary": true,
+      "peak_allocated_gib": 26.42411231994629,
+      "elapsed_seconds": 335.5009286403656,
+      "step_wall_seconds": 212.9673608355224,
+      "sequence_tokens": 19628,
+      "supervised_tokens": 248,
+      "targets": [
+        {
+          "response_index": 0,
+          "onset_seconds": 128,
+          "end_seconds": 129,
+          "chunks": 2
+        },
+        {
+          "response_index": 1,
+          "onset_seconds": 244,
+          "end_seconds": 244,
+          "chunks": 1
+        }
+      ],
+      "response_count": 2,
+      "target_chunks": 3,
+      "qa_per_second": 0.01878222082626668
+    },
+    {
+      "forward_wall_seconds": 81.55575568601489,
+      "backward_wall_seconds": 116.35731447860599,
+      "activation_cpu_saved_gib_max": 57.65549600496888,
+      "activation_gpu_kept_gib": 4.0,
+      "parameter_offload_cache_hits": 63666,
+      "local_loss": 4.28994607925415,
+      "local_valid": true,
+      "valid_qa": 4,
+      "global_batch_size": 4,
+      "sample_index": 2000,
+      "epoch": 0,
+      "slot": 0,
+      "step": 1,
+      "loss": 4.949970364570618,
+      "optimizer_boundary": true,
+      "peak_allocated_gib": 28.839590072631836,
+      "elapsed_seconds": 335.6014428138733,
+      "step_wall_seconds": 207.576640419662,
+      "sequence_tokens": 19617,
+      "supervised_tokens": 275,
+      "targets": [
+        {
+          "response_index": 0,
+          "onset_seconds": 3,
+          "end_seconds": 4,
+          "chunks": 2
+        },
+        {
+          "response_index": 1,
+          "onset_seconds": 244,
+          "end_seconds": 244,
+          "chunks": 1
+        }
+      ],
+      "response_count": 2,
+      "target_chunks": 3,
+      "qa_per_second": 0.019269991035181594
+    }
+  ],
+  "effective_batch_size": 4,
+  "planned_steps": 1998,
+  "notes": "First batch consists of different long QA, not a controlled speed ratio against previous batches"
+}

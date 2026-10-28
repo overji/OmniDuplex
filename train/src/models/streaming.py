@@ -5,7 +5,7 @@ import torch
 from benchmark.data.prompts import user_request
 from benchmark.data.task_text import TaskTextStream
 from train.src.domain.trajectory import compile_trajectory, second_target, schedule_stats, TrajectoryError
-from train.src.domain.grpo import action_log_probs
+from train.src.domain.grpo import action_log_probs, new_response_started
 
 
 class SequenceTooLong(TrajectoryError):
@@ -79,29 +79,46 @@ def replay(model, duplex, record, clip, config, trajectory=None):
         prompt = '<|im_start|>system\n' + system_prompt(record, config) + '<|im_end|>'
         append(duplex.tokenizer.encode(prompt, add_special_tokens=False))
         sent = False
+        processed_seconds = 0
         with clip.preprocessing_cache(duplex.processor):
             for i, inputs in enumerate(clip.chunks):
                 second = i + 1
-                if not sent and i >= clip.question_time:
-                    result = type(duplex).streaming_prefill.__wrapped__(duplex, text_list=[user_request(record['sample'])])
+                checkpoint = (len(recorder.parts), recorder.length, len(labels))
+                try:
+                    if not sent and i >= clip.question_time:
+                        result = type(duplex).streaming_prefill.__wrapped__(duplex, text_list=[user_request(record['sample'])])
+                        if not result['success']:
+                            raise RuntimeError(result)
+                        sent = True
+                    result = type(duplex).streaming_prefill.__wrapped__(duplex, **inputs)
                     if not result['success']:
                         raise RuntimeError(result)
-                    sent = True
-                result = type(duplex).streaming_prefill.__wrapped__(duplex, **inputs)
-                if not result['success']:
-                    raise RuntimeError(result)
-                align()
-                if trajectory is not None:
-                    chunk = trajectory['chunks'][i]
-                    append(chunk['ids'], actions=chunk['actions'])
-                else:
-                    ids, kinds = second_target(schedule, second, duplex.tokenizer, config, sent)
-                    append(ids, kinds)
-                    append([duplex.tokenizer.convert_tokens_to_ids('</unit>')])
+                    align()
+                    if trajectory is not None:
+                        chunk = trajectory['chunks'][i]
+                        append(chunk['ids'], actions=chunk['actions'])
+                    else:
+                        ids, kinds = second_target(schedule, second, duplex.tokenizer, config, sent)
+                        append(ids, kinds)
+                        append([duplex.tokenizer.convert_tokens_to_ids('</unit>')])
+                except SequenceTooLong:
+                    if not (schedule is not None and config.get('post_response_silence_seconds', 0)
+                            and second > schedule['response_end_seconds']):
+                        raise
+                    # Optional tail may shrink; never discard a valid response to
+                    # make room for extra silence or retain a partial input second.
+                    parts, length, label_count = checkpoint
+                    del recorder.parts[parts:]
+                    recorder.length = length
+                    del labels[label_count:]
+                    del groups[label_count:]
+                    break
+                processed_seconds = second
         encoded = dict(inputs_embeds=torch.cat(recorder.parts), segments=recorder.parts, labels=torch.tensor(labels),
             groups=torch.tensor(groups), positions=positions, token_ids=token_ids, turns=turns)
         if schedule is not None:
             encoded.update(schedule_stats(schedule))
+            encoded['tail_silence_seconds'] = max(0, processed_seconds - schedule['tail_start_seconds'] + 1)
         return encoded
     finally:
         # Release stateful graph references, including audio history, after each trajectory.
@@ -163,7 +180,12 @@ def rollout(model, duplex, record, clip, config, seed):
                     decode_mode='sampling', temperature=1., top_k=0, top_p=1.,
                     text_repetition_penalty=1., listen_prob_scale=1.)
                 ids = list(duplex.total_ids[before:])
-                chunks.append(dict(ids=ids, actions=actions))
+                # A new utterance is distinct from continuation tokens in an open
+                # turn; count even an empty attempted response, not only parsed text.
+                terminators = set(getattr(duplex, 'chunk_terminator_token_ids',
+                                          [duplex.listen_token_id, duplex.chunk_eos_token_id]))
+                new_response = new_response_started(ids, actions, terminators)
+                chunks.append(dict(ids=ids, actions=actions, new_response=new_response))
                 if duplex.decoder.get_cache_length() > config['max_sequence_tokens']:
                     raise SequenceTooLong('Rollout exceeds token limit; discard whole group')
                 if sent:

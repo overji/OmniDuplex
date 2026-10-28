@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Recompute comparable experiment tables, preserving raw predictions and source identities."""
 import argparse
-from collections import Counter, defaultdict
+from collections import defaultdict
 import csv
 import hashlib
 import json
@@ -124,6 +124,7 @@ def main():
     parser.add_argument('--output-dir',type=Path,default=ROOT/'benchmark/docs/experiment_results_20261027')
     parser.add_argument('--remote-gemini-name',default='Gemini-3.7-flash')
     parser.add_argument('--remote-qwen-name',default='Qwen3.8Omni')
+    parser.add_argument('--remote-merged-dir', type=Path, help='Verified full canonical results from merge_remote_probe_results.py')
     args=parser.parse_args();args.output_dir.mkdir(parents=True,exist_ok=True)
     report=Report(args.output_dir)
     full=json_file(FULL);subset=json_file(SUBSET);manifest=report.records(MANIFEST)
@@ -169,6 +170,38 @@ def main():
             if prediction.get('output_protocol')!='probe_reply_task_text_v1':
                 raise ValueError('Unsupported remote output protocol')
         first500[name]=unique_predictions(records)
+    canonical_lookup = {r['probe_id']: r for r in manifest}
+    subset_to_canonical = {v['probe_id']: canonical_lookup[k] for k, v in old_to_new.items()}
+    primary_rows = [r for r in manifest if r['sample_index'] in full_to_subset]
+    primary_models = {}
+    for name, predictions in first500.items():
+        normalized = []
+        for prediction in predictions.values():
+            row = subset_to_canonical[prediction['probe_id']]
+            normalized.append({**prediction, **{k: row[k] for k in ('sample_index', 'pair_id', 'probe_id')}})
+        primary_models[name] = unique_predictions(normalized)
+    merge_metadata = None
+    full_remote_metrics = {}
+    if args.remote_merged_dir:
+        merge_metadata = json_file(args.remote_merged_dir/'merge_manifest.json')
+        if (merge_metadata['canonical_data_sha256'] != hashlib.sha256(FULL.read_bytes()).hexdigest()
+                or merge_metadata['canonical_manifest_sha256'] != hashlib.sha256(MANIFEST.read_bytes()).hexdigest()):
+            raise ValueError('Remote merged data or canonical manifest changed')
+        primary_rows = manifest
+        primary_models = dict(local)
+        for name in ('remote_gemini', 'remote_qwen'):
+            source = Path(merge_metadata['models'][name]['path'])
+            if hashlib.sha256(source.read_bytes()).hexdigest() != merge_metadata['models'][name]['sha256']:
+                raise ValueError('Merged remote predictions changed')
+            records = report.records(source)
+            for prediction in records:
+                row = canonical_lookup.get(prediction['probe_id'])
+                if row is None or any(prediction[k] != row[k] for k in ('sample_index', 'response_index', 'pair_id', 'side')):
+                    raise ValueError('Merged prediction does not match full canonical identity')
+            primary_models[name] = unique_predictions(records)
+            full_remote_metrics[name] = probe_scores(manifest, records)
+    primary_probe = common_probe_scores(primary_rows, primary_models)
+    report.primary_probe_rows, report.primary_probe_models = primary_rows, primary_models
     for name,predictions in first500.items():
         pairs=defaultdict(set)
         for row in predictions.values():pairs[row['pair_id']].add(row['side'])
@@ -185,22 +218,34 @@ def main():
         'Coverage of provided predictions on the first-500 QA export. Missing rows are not assumed to be model errors or correct silence.')
     remote_metrics={name:probe_scores(subset_manifest,list(first500[name].values()))
                     for name in ('remote_gemini','remote_qwen')}
-    report.table('probe_remote_supplied','Remote results on all supplied predictions',
+    report.table('probe_remote_supplied','Remote first-500 results (historical subset)',
         ['Model','Requests','Complete Pairs','Positive Acc.','Negative Acc.','Balanced Acc.',
          'Paired Acc.','Format Valid','Agent Call Valid'],
         [[labels[name],s['completed_probes'],s['complete_pairs'],
           *[fmt(s[k]) for k in ('positive_accuracy','negative_accuracy','balanced_accuracy',
               'paired_accuracy','output_format_valid_rate','agent_valid_call_rate')]]
          for name,d in remote_metrics.items() for s in [d['groups']['overall']]],
-        'Scores from all supplied remote predictions, using each model\'s own coverage. '
+        'Scores from the original first-500 remote files only, using each model\'s own coverage. '
         'Accuracy denominators contain completed requests; paired accuracy uses only completed pre/post pairs. '
         'Values are percentages. Use the shared-subset table for comparisons with local models.')
     probe_interaction=[]
-    for name,d in main_probe['metrics'].items():
+    for name,d in primary_probe['metrics'].items():
         probe_interaction.append([labels[name],*[fmt(d['groups']['mode:'+m]['paired_accuracy']) for m in ('rtd','pr','agent')]])
     report.table('probe_interaction','Probe paired accuracy by interaction',
         ['Model','RTD','PR','Agent'],probe_interaction,
-        'Paired accuracy by interaction on the same shared first-500 subset. Values are percentages; both pre and post decisions must be correct.')
+        'Paired accuracy by interaction on the same primary shared subset. Values are percentages; both pre and post decisions must be correct.')
+    if merge_metadata is not None:
+        add_probe_table(report, 'probe_full_common', 'Probe comparison after merging first500 and remaining1607', primary_probe, labels,
+                        'Raw source text is unchanged. Split IDs are normalized through full-QA fingerprints and verified pair IDs.')
+        coverage_rows = []
+        for name, predictions in primary_models.items():
+            score = probe_scores(manifest, list(predictions.values()))['groups']['overall']
+            coverage_rows.append([labels[name], len(predictions), len(manifest), score['complete_pairs'],
+                                  score['eligible_pairs'], len({p['sample_index'] for p in predictions.values()}),
+                                  fmt(score['negative_accuracy']), fmt(score['positive_accuracy']), fmt(score['paired_accuracy'])])
+        report.table('probe_full_coverage', 'Full-source Probe coverage and descriptive scores',
+                     ['Model', 'Requests', 'Expected', 'Complete Pairs', 'Expected Pairs', 'QA', 'Pre Acc.', 'Post Acc.', 'Pair Acc.'],
+                     coverage_rows, 'Each model uses its own successful coverage here. Missing requests remain missing; use the shared-pair table for model comparisons.')
     local_probe=common_probe_scores(manifest,local)
     add_probe_table(report,'probe_local_common','Local Probe comparison on the full shared subset',local_probe,labels)
     coverage_full=[]
@@ -267,18 +312,18 @@ def main():
         f'MiniCPM modality ablations on {len(mini_common)} shared QA. Historical baseline reuse, DP differences and single-seed sampling limit causal interpretation.')
     ability_rows=[]
     for a,title in ABILITIES.items():
-        count=next(iter(main_probe['metrics'].values()))['groups']['ability:'+a]['complete_pairs']
-        ability_rows.append([title,count,*[fmt(d['groups']['ability:'+a]['paired_accuracy']) for d in main_probe['metrics'].values()]])
+        count=next(iter(primary_probe['metrics'].values()))['groups']['ability:'+a]['complete_pairs']
+        ability_rows.append([title,count,*[fmt(d['groups']['ability:'+a]['paired_accuracy']) for d in primary_probe['metrics'].values()]])
     report.table('probe_abilities','Probe paired accuracy across twelve abilities',
-        ['Ability','Pairs',*[labels[n] for n in main_probe['metrics']]],ability_rows,
-        'Paired decision accuracy by ability on the shared first-500 subset. Percentages; no response-content judge is applied.')
+        ['Ability','Pairs',*[labels[n] for n in primary_probe['metrics']]],ability_rows,
+        'Paired decision accuracy by ability on the primary shared subset. Percentages; no response-content judge is applied.')
     level_rows=[]
     for level,abilities in LEVELS.items():
-        rr=[r for r in main_probe['rows'] if r['ability'] in abilities];ids={r['probe_id'] for r in rr}
+        rr=[r for r in primary_probe['rows'] if r['ability'] in abilities];ids={r['probe_id'] for r in rr}
         level_rows.append([level,len(rr)//2,*[fmt(probe_scores(rr,[p for k,p in model.items() if k in ids])['groups']['overall']['paired_accuracy'])
-                                    for model in first500.values()]])
+                                    for model in primary_models.values()]])
     report.table('probe_levels','Probe paired accuracy by cognitive level',
-        ['Level','Pairs',*[labels[n] for n in main_probe['metrics']]],level_rows,
+        ['Level','Pairs',*[labels[n] for n in primary_probe['metrics']]],level_rows,
         'Cognitive levels follow the specified taxonomy: T1--T5 perception, T6--T9 comprehension, and T10--T12 reasoning. Counts are pooled before computing accuracy.')
     content_root=ROOT/'benchmark/results/judge_minicpmo_balanced200_deepseek_flash_20261026'
     content=json_file(content_root/'summary.json');paired=json_file(content_root/'paired_comparison.json')
@@ -308,16 +353,19 @@ def main():
         'shifted_sample_indices':sum(i!=j for i,j in subset_to_full.items()),
         'parser_decision_mismatches':parser_mismatches,
         'probe_first500':{k:v for k,v in main_probe.items() if k!='rows'},
+        'probe_primary':{k:v for k,v in primary_probe.items() if k!='rows'},
+        'probe_primary_scope':'merged full sources' if merge_metadata else 'first500',
+        'remote_merge':merge_metadata, 'probe_remote_full_supplied':full_remote_metrics,
         'probe_remote_supplied':remote_metrics,
         'probe_local_common':{k:v for k,v in local_probe.items() if k!='rows'},
         'probe_qwen25_ablations':{k:v for k,v in qwen_comparison.items() if k!='rows'},
         'realtime':{'common_qa':len(common_rt),'metrics':rt_metrics},
         'minicpmo_ablations':{'common_qa':len(mini_common),'metrics':mini_metrics},
         'content_judge':content,'content_paired':paired,'tables':report.tables,'sources':report.sources}
-    (args.output_dir/'metrics.json').write_text(json.dumps(report.data,ensure_ascii=False,indent=2)+'\n')
     write_documents(report)
+    (args.output_dir/'metrics.json').write_text(json.dumps(report.data,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps({'output':str(args.output_dir),'first500_expected_pairs':len(subset_manifest)//2,
-        'five_model_shared_pairs':main_probe['pairs'],'local_shared_pairs':local_probe['pairs'],
+        'five_model_first500_pairs':main_probe['pairs'],'five_model_primary_pairs':primary_probe['pairs'],'local_shared_pairs':local_probe['pairs'],
         'realtime_shared_qa':len(common_rt),'tables':len(report.tables),
         'parser_mismatches':parser_mismatches},ensure_ascii=False,indent=2))
 
@@ -369,23 +417,10 @@ def reader_main_table(report):
         if group in LEVELS:return sample['ability'] in LEVELS[group]
         duration=durations[Path(sample['video']).name]
         return {'Short':duration<=120,'Medium':120<duration<=300,'Long':duration>300}[group]
-    with (report.output/'first500_index_mapping.csv').open() as stream:
-        mapping={int(r['first500_index']):int(r['full2110_index']) for r in csv.DictReader(stream)}
-    rows=[r for r in manifest if r['sample_index'] in set(mapping.values())]
-    lookup={(r['sample_index'],r['response_index'],r['side']):r for r in rows}
-    models={}
-    for name in ('minicpmo','qwen3_omni','qwen25_omni'):
-        models[name]=unique_predictions(report.records(SUITE/'probe'/(name+'_reply_task_text')/'probe_predictions.jsonl'))
-        known={r['probe_id'] for r in rows}
-        models[name]={k:p for k,p in models[name].items() if k in known}
-    for name,file in [('remote_gemini','gemini_probe_predictions.jsonl'),('remote_qwen','qwen_probe_predictions.jsonl')]:
-        predictions=[]
-        for p in report.records(ROOT/'benchmark/results/from_remote_1027'/file):
-            row=lookup[(mapping[p['sample_index']],p['response_index'],p['side'])]
-            predictions.append({**p,**{k:row[k] for k in ('sample_index','pair_id','probe_id')}})
-        models[name]=unique_predictions(predictions)
-    shared=common_probe_scores(rows,models)
-    assert shared['pairs']==report.data['probe_first500']['pairs']
+    rows = report.primary_probe_rows
+    models = report.primary_probe_models
+    shared = common_probe_scores(rows, models)
+    assert shared['pairs'] == report.data['probe_primary']['pairs']
     labels={'minicpmo':'MiniCPM-o-4.5','qwen3_omni':'Qwen3-Omni-30B-A3B',
             'qwen25_omni':'Qwen2.5-Omni-7B','gander':'Gander','joyai':'JoyAI-VL-Interaction',
             'remote_gemini':report.data['remote_model_labels']['gemini'],
@@ -437,7 +472,7 @@ def reader_main_table(report):
         r'Perc./Compr./Reason. group T1--T5/T6--T9/T10--T12, respectively. '
         r'Short: $d\leq120$ s; Medium: $120<d\leq300$ s; Long: $d>300$ s. '
         r'Overall pools all evaluated pairs or timing counts (micro average), rather than averaging overlapping groups. '
-        f"Probe shares {shared['pairs']:,} complete pairs across all five models from the first-500 export; "
+        f"Probe shares {shared['pairs']:,} complete pairs across all five models from {report.data['probe_primary_scope']}; "
         f"Realtime shares {report.data['realtime']['common_qa']:,} completed QA across three models. "
         r'The two panels have different metrics and evaluation sets. JoyAI is vision-only. '
         r'\textbf{Bold} indicates the best displayed value within each mode, metric and column, including ties. '
@@ -475,19 +510,30 @@ def write_documents(report):
         r'Tools are not executed, and returned tool results are not fed back. '
         r'The cancelled reference-history trial is excluded throughout. '
         r'No new model inference or paid judging was performed to construct this report.')
-    probe=report.data['probe_first500']
+    if report.data['remote_merge'] is not None:
+        limitations = (
+            r'The remote names Gemini-3.7-flash and Qwen3.8Omni were operator-confirmed. '
+            r'First-500 and remaining-1607 results were merged only after verifying split hashes, full-QA fingerprints, '
+            r'and every original pair ID against the annotated prefix windows. Canonical indices match the historical '
+            r'2110-QA runtime; these exports contain the public 2107-QA set, excluding three missing-media records. '
+            r'Original predictions and text were preserved, with split IDs retained in provenance. '
+            r'Incomplete remote coverage remains missing; the main Probe panel uses only common completed pairs. '
+            r'Exact remote deployment IDs and inference configurations were not packaged with these files, '
+            r'so equal example identity does not establish identical prompts, sampling or token budgets. '
+            r'Shared coverage can omit difficult requests. Decision and timing scores do not measure content correctness. '
+            r'Agent format validity does not demonstrate successful execution; no tools or returned results are executed. '
+            r'The cancelled reference-history trial is excluded. No new model inference or paid judging was performed.')
+    probe=report.data['probe_primary']
     scores={name:d['groups']['overall'] for name,d in probe['metrics'].items()}
     gemini=report.data['remote_model_labels']['gemini'];qwen=report.data['remote_model_labels']['qwen']
     probe_analysis=(
-        f"On {probe['pairs']:,} shared complete pairs, {latex(gemini)} and {latex(qwen)} achieve "
+        f"On {probe['pairs']:,} shared complete pairs ({probe['qa']:,} QA), {latex(gemini)} and {latex(qwen)} achieve "
         f"paired accuracies of {fmt(scores['remote_gemini']['paired_accuracy'])}\\% and "
         f"{fmt(scores['remote_qwen']['paired_accuracy'])}\\%, respectively. "
-        r'The local MiniCPM and Qwen3 models respond on more than 90\% of positive prefixes, '
-        r'but reject fewer than 15\% of negative prefixes on this subset. '
-        r'Their low paired accuracy therefore reflects difficulty withholding premature responses, '
-        r'rather than an inability to emit a response. Qwen2.5 exhibits the opposite decision imbalance, '
-        r'with low positive accuracy despite high negative accuracy. '
-        r'These decision metrics do not establish whether generated response content is correct.')
+        f"MiniCPM and Qwen3 attain positive-prefix accuracies of {fmt(scores['minicpmo']['positive_accuracy'])}\\% and "
+        f"{fmt(scores['qwen3_omni']['positive_accuracy'])}\\%, with negative-prefix accuracies of "
+        f"{fmt(scores['minicpmo']['negative_accuracy'])}\\% and {fmt(scores['qwen3_omni']['negative_accuracy'])}\\%. "
+        'These decision metrics do not establish whether generated response content is correct.')
     rt_analysis=(r'On the 2,008 shared realtime QA, MiniCPM achieves timing F1 of 25.31\%, '
         r'compared with 18.47\% for Gander and 14.86\% for JoyAI. '
         r'Gander has the highest timing precision (38.99\%) but lower recall (12.10\%). '
@@ -540,20 +586,50 @@ def write_documents(report):
         'LaTeX正文聚焦一张分组主表和一张消融附表；其余覆盖率、细粒度任务和内容judge统计保留在本Markdown及CSV中。',
         '主表逐组数据见`grouped_main_results.csv`，分母及未舍入分数见`grouped_main_results.json`。短/中/长视频按≤120秒、120–300秒（不含120）、>300秒分组。总体为micro汇总；最优值按模式、指标、分组加粗，并列最优同样加粗。',
         '', '## 数据对应和比较范围','',
-        '- 两份远端JSONL全部通过前500条导出文件的pair ID校验；模型名由用户确认：'+gemini+'、'+qwen+'。',
+        '- 远端模型名由用户确认：'+gemini+'、'+qwen+'；原始文本不修改，pair ID按各自导出数据校验后统一索引。',
+        '- 当前主表范围：'+report.data['probe_primary_scope']+'。',
         f"- 500条QA中{report.data['first500_eligible_qa']}条有合法Probe配对，共{report.data['first500_eligible_pairs']}对。",
         '- 导出集和旧2110条运行数据的sample_index有479处不同，已按整条QA指纹建立唯一映射；原始文件没有修改。',
-        '- 五模型主表仅比较共同完成两侧的配对；另列各模型原始覆盖与本地全量交集，不把这些分母混用。',
+        '- 五模型主表仅比较当前主表范围内共同完成两侧的配对；前500条表保留为历史子集诊断，不与全量分母混用。',
         '- 远端模型的API部署ID、prompt、媒体采样和token预算未随文件提供，比较仍受运行配置差异限制。',
         '- 前500条不是随机样本；原始预测的缺失不能直接认定为API失败。',
         '- 以下均沿用官方scorer，没有修复/恢复模型答案；解析决策与保存值不一致数：'+json.dumps(report.data['parser_decision_mismatches']),
         '', '## 主要发现','',
-        f"- 五模型共同完成{probe['pairs']}对、{probe['requests']}次请求；{gemini}与{qwen}的成对准确率分别为{fmt(scores['remote_gemini']['paired_accuracy'])}%、{fmt(scores['remote_qwen']['paired_accuracy'])}%。",
-        '- MiniCPM和Qwen3的正侧准确率超过90%，负侧不足15%，主要问题是过早开口；Qwen2.5表现为相反的沉默倾向。这里只判断是否开口，不判断内容正确性。',
+        f"- 当前主表五模型共同完成{probe['pairs']}对、{probe['requests']}次请求（{probe['qa']}条QA）；{gemini}与{qwen}的成对准确率分别为{fmt(scores['remote_gemini']['paired_accuracy'])}%、{fmt(scores['remote_qwen']['paired_accuracy'])}%。",
+        '- Probe只判断是否应开口，不判断回复内容正确性；各分组使用共同完成配对，总体按计数汇总。',
         '- Realtime共同2008条QA上，MiniCPM/Gander/JoyAI的时间F1为25.31%/18.47%/14.86%。Gander更保守、精确率更高；JoyAI输出更多，召回较高而精确率偏低。JoyAI仅输入视觉。',
         '- MiniCPM在2107条QA上，音视频/仅视觉/仅音频的时间F1为25.24%/20.63%/9.21%；Agent子集并未呈现相同的优势顺序。',
         '- 既有内容judge中，两种模式都回复的90个reference response上，Realtime/Probe回复均分为1.317/1.244（满分2）。QA聚类bootstrap差值区间跨0，不能据此确认总体优劣；Agent调用评分只有7对。',
         '', '## 实验表格','']
+    if report.data['remote_merge'] is not None:
+        merged = report.data['remote_merge']
+        lines += ['### 远端500+1607合并覆盖', '',
+                  f"输入共{merged['public_qa']}条公开QA，合法Probe为{merged['eligible_requests']}次请求。", '',
+                  '| 模型 | 前500请求 | 后1607请求 | 合计成功请求 | 完整配对 | 覆盖QA |',
+                  '| --- | ---: | ---: | ---: | ---: | ---: |']
+        for name, details in merged['models'].items():
+            lines.append('| '+(' | '.join(map(str, [gemini if name=='remote_gemini' else qwen,
+                details['first500_requests'], details['remaining1607_requests'], details['merged_requests'],
+                details['overall']['complete_pairs'], details['qa_with_predictions']])))+' |')
+        lines += ['', '缺失请求保持缺失，不按静默或错误补齐。完整来源、哈希和索引映射保存在 `benchmark/results/from_remote_1027/merged_full/`。', '']
+    groups = report.data['reader_groups']
+    group_names = ['RTD','PR','Agent','Perception','Comprehension','Reasoning','Short','Medium','Long','Overall']
+    display = {'minicpmo':'MiniCPM-o-4.5','qwen3_omni':'Qwen3-Omni-30B-A3B','qwen25_omni':'Qwen2.5-Omni-7B',
+               'remote_gemini':gemini,'remote_qwen':qwen,'gander':'Gander','joyai':'JoyAI-VL-Interaction'}
+    for mode, key_metrics in [('probe', [('Pre','negative_accuracy'),('Post','positive_accuracy'),('Pair','paired_accuracy')]),
+                              ('realtime', [('Recall','recall'),('Precision','precision'),('F1','f1')])]:
+        lines += ['### 分组主表：'+mode, '', '| Model | Metric | '+' | '.join(group_names)+' |',
+                  '| --- | --- | '+' | '.join('---:' for _ in group_names)+' |']
+        for name in groups[mode]['Overall']:
+            for title, key in key_metrics:
+                cells=[]
+                for group in group_names:
+                    value=fmt(groups[mode][group][name][key])
+                    valid=[float(fmt(v[key])) for v in groups[mode][group].values() if v[key] is not None]
+                    best=value!='--' and float(value)==max(valid)
+                    cells.append('**'+value+'**' if best else value)
+                lines.append('| '+display[name]+' | '+title+' | '+' | '.join(cells)+' |')
+        lines.append('')
     for table in report.tables:
         lines += ['### '+table['title'],'','| '+' | '.join(table['headers'])+' |',
                   '| '+' | '.join('---' for _ in table['headers'])+' |']
@@ -567,7 +643,8 @@ def write_documents(report):
         '- LiveStar及尚未完成的其他模型不以旧协议或不完整子集填入主表；本报告仅记录已明确来源的结果。',
         '- 已撤销的GT历史负侧实验完全排除。没有执行新推理或付费API。',
         '', '## 复现','',
-        '`python benchmark/scripts/build_experiment_report.py --output-dir benchmark/docs/experiment_results_20261027`',
+        '`python benchmark/scripts/merge_remote_probe_results.py`',
+        '`python benchmark/scripts/build_experiment_report.py --remote-merged-dir benchmark/results/from_remote_1027/merged_full --output-dir benchmark/docs/experiment_results_20261027`',
         '', '可传`--remote-gemini-name`和`--remote-qwen-name`修改展示标签；不改变原始分数。',
         '`metrics.json`保存统计、来源路径及读取快照哈希；`first500_index_mapping.csv`保存索引映射。',
         'LaTeX在当前机器尚未编译（未发现pdflatex/tectonic）；已检查生成表格和输入引用。']

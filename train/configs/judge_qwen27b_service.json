@@ -1,0 +1,13 @@
+{
+  "python": "benchmark/.venv-joyai/bin/python",
+  "model_path": "/remote-home/yushengliao/speech/jimodels/openmodels/Qwen3.8-27B",
+  "served_model_name": "Qwen3.8-27B",
+  "gpu": 7,
+  "host": "127.0.0.1",
+  "port": 8917,
+  "dtype": "bfloat16",
+  "max_model_len": 8192,
+  "max_num_seqs": 8,
+  "gpu_memory_utilization": 0.9,
+  "max_occupied_memory_mib": 2048
+}

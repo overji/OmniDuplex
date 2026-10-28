@@ -55,6 +55,48 @@ class TrajectoryTests(unittest.TestCase):
             self.assertEqual((ids,groups),([302],[expected]))
         self.assertEqual(second_target(schedule,6,self.tokenizer,dict(self.config,supervise_silence=False),True)[1],[0])
 
+    def test_optional_tail_starts_after_closed_windows_and_is_bounded(self):
+        config = dict(self.config, post_response_silence_seconds=10)
+        record = self.record()
+        original = compile_trajectory(record, self.tokenizer, self.config)
+        self.assertEqual(original['horizon'], 10)
+        schedule = compile_trajectory(record, self.tokenizer, config)
+        self.assertEqual(schedule['targets'], original['targets'])
+        self.assertEqual(schedule['horizon'], 21)
+        self.assertEqual(schedule['tail_silence_seconds'], 10)
+        self.assertEqual(second_target(schedule, 11, self.tokenizer, config, True)[1], [0])
+        self.assertEqual(second_target(schedule, 12, self.tokenizer, config, True), ([302], [1]))
+        short = compile_trajectory(record, self.tokenizer, config, duration=15.9)
+        self.assertEqual((short['horizon'], short['tail_silence_seconds']), (15, 4))
+        capped = compile_trajectory(record, self.tokenizer, dict(config, max_prefix_seconds=12))
+        self.assertEqual((capped['horizon'], capped['tail_silence_seconds']), (12, 1))
+        no_room = compile_trajectory(record, self.tokenizer, config, duration=10.9)
+        self.assertEqual((no_room['horizon'], no_room['tail_silence_seconds']), (10, 0))
+        with self.assertRaisesRegex(TrajectoryError, 'target_exceeds_video_duration'):
+            compile_trajectory(record, self.tokenizer, config, duration=9.9)
+
+    @patch('train.src.models.streaming.user_request', return_value='question')
+    @patch('train.src.models.streaming.system_prompt', return_value='system')
+    def test_tail_replay_preserves_all_content_and_trims_only_optional_token_overflow(self, *_):
+        model = TinyMedia(); duplex = TinyDuplex(model)
+        record = self.record()
+        def clip(end):
+            return SimpleNamespace(chunks=[{}] * end, question_time=1, horizon=end, duration=15,
+                                   preprocessing_cache=lambda p: nullcontext())
+        baseline = replay(model, duplex, record, clip(10), self.config)
+        config = dict(self.config, post_response_silence_seconds=10)
+        complete = replay(model, duplex, record, clip(15), config)
+        self.assertEqual(complete['tail_silence_seconds'], 4)
+        self.assertEqual(complete['labels'][complete['groups'] == 2].tolist(), list(b'abcdefghXYZ'))
+        limited = replay(model, duplex, record, clip(15),
+                         dict(config, max_sequence_tokens=len(baseline['labels']) + 12))
+        self.assertEqual(len(limited['labels']), len(baseline['labels']) + 12)
+        self.assertEqual(limited['tail_silence_seconds'], 2)
+        self.assertEqual(limited['labels'][limited['groups'] == 2].tolist(), list(b'abcdefghXYZ'))
+        self.assertEqual(limited['labels'][-2:].tolist(), [302, -100])
+        with self.assertRaises(SequenceTooLong):
+            replay(model, duplex, record, clip(15), dict(config, max_sequence_tokens=35))
+
     def test_conflict_moves_onset_only_inside_unchanged_window(self):
         self.sample['responses'][1].update(window_start='00:03',window_end='00:06',trigger_time='00:03')
         schedule = compile_trajectory(self.record(),self.tokenizer,self.config)

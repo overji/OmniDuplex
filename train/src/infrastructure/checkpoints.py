@@ -56,6 +56,13 @@ def fingerprints(prepared, config):
     files['base_model'] = base_identity(config['model_path'])
     from train.src.infrastructure.tokens import load_training_tokenizer
     files['tokenizer'] = tokenizer_metadata(load_training_tokenizer(config))
+    if config.get('reward_backend') == 'llm':
+        from train.src.infrastructure.judge import identity
+        files['judge'] = identity(config['judge'])
+        source = Path(__file__).parents[1]
+        files['grpo_reward_code'] = {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest()
+                                    for p in (source / 'domain/rewards.py', source / 'domain/grpo.py', source / 'infrastructure/judge.py',
+                                              source / 'training/grpo_judged.py', source / 'models/streaming.py')}
     return files
 
 
@@ -134,3 +141,19 @@ def read_zero_state(checkpoint):
     """仅在显式导出时于CPU合并分片；普通身份检查不导入DeepSpeed。"""
     from deepspeed.utils.zero_to_fp32 import get_fp32_state_dict_from_zero_checkpoint
     return get_fp32_state_dict_from_zero_checkpoint(str(checkpoint), tag='state')
+
+
+def prune_checkpoints(output, keep, rank):
+    """Prune only numbered checkpoints from this fresh run, after a completed save."""
+    if not keep:
+        return
+    import shutil
+    import torch
+    if rank == 0:
+        numbered = [p for p in output.glob('checkpoint-*')
+                    if p.is_dir() and p.name.removeprefix('checkpoint-').isdigit()
+                    and (p/'training_config.json').is_file()]
+        numbered.sort(key=lambda p: int(p.name.removeprefix('checkpoint-')))
+        for path in numbered[:-keep]:
+            shutil.rmtree(path)
+    torch.distributed.barrier()

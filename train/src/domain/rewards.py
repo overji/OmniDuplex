@@ -1,4 +1,4 @@
-"""本地规则奖励：一对一时间匹配、文本相似度与调用匹配，不等价于语义judge。"""
+"""规则奖励与语义分数组合；HTTP评分在基础设施层，时序/沉默与聚合保持纯函数。"""
 
 import json
 import unicodedata
@@ -76,3 +76,55 @@ def reward(sample, events, config):
     total -= weights.get('invalid_call_penalty', .1) * invalid
     return dict(total=total, timing=timing, content=content, call=calls,
                 invalid_calls=invalid, hits=matched['hits'], silent=not events)
+
+
+def silence_score(sample, chunks):
+    """Score new-response decisions outside closed windows, not valid continuations."""
+    import math
+    from benchmark.data.timestamps import seconds
+    from benchmark.evaluation.timing import reference_windows
+    start = math.ceil(seconds(sample['question_time'])) + 1
+    windows = [(seconds(r['window_start']), seconds(r['window_end']))
+               for _, r in reference_windows(sample)]
+    negative = [chunk for second, chunk in enumerate(chunks, 1)
+                if second >= start and not any(a <= second <= b for a, b in windows)]
+    if any(type(chunk.get('new_response')) is not bool for chunk in negative):
+        raise ValueError('Silence reward requires native new_response decisions for every negative second')
+    quiet = sum(not chunk['new_response'] for chunk in negative)
+    return dict(silence=2 * quiet / len(negative) - 1 if negative else 0.,
+                negative_seconds=len(negative), silent_negative_seconds=quiet,
+                negative_response_starts=len(negative) - quiet)
+
+
+def judged_reward(sample, trajectory, judgments, config):
+    """Semantic scores are validated 0..2 values; unmatched windows remain zero."""
+    from train.src.domain.agent import training_sample
+    from benchmark.evaluation.judge import SCORES
+    sample = training_sample(sample)
+    events = trajectory['events']
+    matched = match_windows(sample, events)
+    n = max(matched['windows'], 1)
+    content = calls = 0.
+    for match in matched['matches']:
+        item = judgments[match['response_index']]
+        if item['status'] != 'complete':
+            raise ValueError('Failed judge must exclude the whole QA group')
+        if type(item['response_score']) not in (int, float) or item['response_score'] not in SCORES:
+            raise ValueError('Invalid judge response score')
+        content += item['response_score'] / (2 * n)
+        if sample['mode'] == 'agent':
+            if type(item['call_score']) not in (int, float) or item['call_score'] not in SCORES:
+                raise ValueError('Invalid judge call score')
+            calls += item['call_score'] / (2 * n)
+    timing = 2 * matched['hits'] / max(matched['windows'] + len(events), 1)
+    silence = silence_score(sample, trajectory['chunks'])
+    invalid = sum(e.get('agent_parse_status') in ('malformed', 'truncated', 'duplicate_separator') for e in events)
+    weights = config['reward_weights']
+    prefix = 'agent_' if sample['mode'] == 'agent' else ''
+    total = weights[prefix + 'timing'] * timing + weights[prefix + 'content'] * content
+    if prefix:
+        total += weights['agent_call'] * calls
+    total += weights['silence'] * silence['silence'] - weights['invalid_call_penalty'] * invalid
+    silent = not events and not any(c.get('new_response', False) for c in trajectory['chunks'])
+    return dict(total=total, timing=timing, content=content, call=calls, **silence,
+                invalid_calls=invalid, hits=matched['hits'], silent=silent)

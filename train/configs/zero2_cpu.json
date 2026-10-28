@@ -1,0 +1,29 @@
+{
+  "bf16": {
+    "enabled": true
+  },
+  "train_micro_batch_size_per_gpu": 1,
+  "gradient_accumulation_steps": 1,
+  "gradient_clipping": 1.0,
+  "zero_optimization": {
+    "stage": 2,
+    "offload_optimizer": {
+      "device": "cpu",
+      "pin_memory": false
+    },
+    "reduce_bucket_size": 50000000,
+    "ignore_unused_parameters": true
+  },
+  "optimizer": {
+    "type": "AdamW",
+    "params": {
+      "lr": 1e-06,
+      "weight_decay": 0.01,
+      "torch_adam": true
+    }
+  },
+  "zero_force_ds_cpu_optimizer": false,
+  "zero_allow_untested_optimizer": true,
+  "steps_per_print": 1000000,
+  "wall_clock_breakdown": false
+}

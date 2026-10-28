@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{Probe comparison after merging first500 and remaining1607. All values are percentages. Models share 4163 fully completed pre/post pairs (8326 requests from 1953 QA). Agent call validity is conditional on an Agent reply, not semantic correctness. Raw source text is unchanged. Split IDs are normalized through full-QA fingerprints and verified pair IDs.}
+\label{tab:probe-full-common}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Model & Positive Acc. & Negative Acc. & Balanced Acc. & Paired Acc. & Format Valid & Agent Call Valid \\
+\midrule
+MiniCPM-o-4.5 & 94.43 & 11.15 & 52.79 & 8.05 & 81.11 & 76.89 \\
+Qwen3-Omni-30B-A3B & 91.86 & 14.87 & 53.36 & 7.64 & 99.60 & 97.22 \\
+Qwen2.5-Omni-7B & 5.04 & 85.61 & 45.33 & 1.92 & 89.26 & -- \\
+Gemini-3.7-flash & 95.70 & 45.78 & 70.74 & 42.95 & 96.96 & 90.81 \\
+Qwen3.8Omni & 94.93 & 30.43 & 62.68 & 27.38 & 99.93 & 99.46 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}

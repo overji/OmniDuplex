@@ -1,13 +1,13 @@
 Ability,Pairs,MiniCPM-o-4.5,Qwen3-Omni-30B-A3B,Qwen2.5-Omni-7B,Gemini-3.7-flash,Qwen3.8Omni
-Attribute Perception,79,13.92,8.86,2.53,45.57,27.85
-Temporal Grounding,129,3.10,6.98,0.00,33.33,23.26
-Action Perception,172,6.40,6.40,4.65,39.53,18.02
-Object Perception,69,5.80,11.59,1.45,53.62,33.33
-Emotion Recognition,42,7.14,4.76,2.38,30.95,19.05
-Event Understanding,146,4.79,4.11,1.37,26.03,17.12
-Text-Rich Understanding,149,10.07,10.07,0.00,67.11,48.32
-Object Counting,43,13.95,6.98,0.00,53.49,25.58
-Action Counting,72,8.33,1.39,1.39,68.06,51.39
-Spatial Understanding,81,3.70,4.94,4.94,48.15,28.40
-Prospective Reasoning,60,1.67,3.33,0.00,16.67,6.67
-Causal Reasoning,61,6.56,1.64,1.64,26.23,14.75
+Attribute Perception,316,11.39,9.49,3.80,46.20,28.80
+Temporal Grounding,401,6.73,6.98,1.25,40.90,26.43
+Action Perception,633,7.58,5.85,4.11,41.07,22.27
+Object Perception,291,8.59,13.40,2.06,56.70,34.36
+Emotion Recognition,210,4.29,4.29,1.43,23.33,11.90
+Event Understanding,540,6.11,5.93,1.48,30.19,17.04
+Text-Rich Understanding,609,14.45,14.45,0.49,62.23,44.83
+Object Counting,170,8.82,7.65,0.00,56.47,38.82
+Action Counting,252,7.54,3.97,0.40,60.71,42.86
+Spatial Understanding,295,4.75,5.08,4.07,39.66,29.49
+Prospective Reasoning,184,4.89,4.89,0.54,21.20,8.70
+Causal Reasoning,262,4.58,3.05,1.15,21.76,13.36

@@ -4,6 +4,11 @@ import torch
 import torch.nn.functional as F
 
 
+def new_response_started(ids, actions, terminators):
+    """Count a fresh turn, including empty attempts; never count continuation."""
+    return any(not action['turn_open'] and ids[action['offset']] not in terminators for action in actions)
+
+
 def action_log_probs(logits, forbidden, eos, listen, speak, turn_open):
     """Marginalize native EOS coin flip and listen -> tts_bos remapping.
 
