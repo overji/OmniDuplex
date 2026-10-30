@@ -5,7 +5,7 @@ import importlib
 from benchmark.cli import options
 
 
-MODELS = ("minicpmo", "gander", "mmduet2", "livestar", "roma", "joyai")
+MODELS = ("minicpmo", "gander", "mmduet2", "livestar", "roma", "joyai", "moss_vl")
 REMOTE_MODELS = ("qwen_realtime", "gemini_live")
 COMMANDS = {
     'prepare': 'benchmark.runtime.preparation',

@@ -41,19 +41,16 @@ class TrainGraph(torch.nn.Module):
             hidden = torch.cat(states)
         if trajectory is None:
             labels, groups = encoded['labels'].to(hidden.device), encoded['groups'].to(hidden.device)
-            loss = hidden.sum() * 0
-            active = False
-            for group, key in ((1, 'decision_weight'), (2, 'content_weight'), (3, 'call_weight')):
-                positions = torch.where((labels[1:] != -100) & (groups[1:] == group))[0]
-                if not len(positions) or not config[key]:
-                    continue
-                active = True
-                for ix in positions.split(config['loss_projection_chunk']):
-                    def project(h, targets):
-                        return torch.nn.functional.cross_entropy(llm.lm_head(h).float(), targets, reduction='sum')
-                    loss = loss + config[key] * checkpoint(project, hidden[ix], labels[ix + 1], use_reentrant=False) / len(positions)
-            if not active:
-                raise ValueError('No supervised tokens with nonzero loss weight')
+            from train.src.models.sft_loss import grouped_loss
+            from train.src.domain.loss_metrics import statistics
+            tokenizer = self.duplex.tokenizer
+            loss, self.sft_loss_metrics = grouped_loss(llm.lm_head, hidden, labels, groups, config,
+                tokenizer.convert_tokens_to_ids('<|listen|>'), tokenizer.convert_tokens_to_ids('<|speak|>'),
+                decision_roles=encoded['decision_roles'].to(hidden.device),
+                event_roles=encoded['event_roles'].to(hidden.device),
+                event_ids=encoded['event_ids'].to(hidden.device))
+            self.last_stats.update(statistics(self.sft_loss_metrics))
+            self.last_stats.update(statistics(self.sft_loss_metrics, prefix='local_'))
             return loss
         positions = torch.tensor(encoded['positions'], device=hidden.device)
         ids = torch.tensor(encoded['token_ids'], device=hidden.device)

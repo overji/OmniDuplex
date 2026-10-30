@@ -1,5 +1,5 @@
-"""原子委托token的唯一注册与词表扩展入口；不修改磁盘上的基座模型。"""
-from train.src.domain.agent import SEPARATOR
+"""文本分隔符和词表校验；保留历史导出读取及JEV分类token扩展工具。"""
+from train.src.domain.agent import SEPARATOR, validate_text_separator
 
 
 def load_training_tokenizer(config):
@@ -9,7 +9,7 @@ def load_training_tokenizer(config):
     alias = model_alias(config)
     path = alias if alias.exists() and alias.resolve() == Path(config['model_path']).resolve() else Path(config['model_path'])
     tokenizer = AutoTokenizer.from_pretrained(str(path), trust_remote_code=True, local_files_only=True)
-    register_task_token(tokenizer)
+    validate_text_separator(tokenizer)
     return tokenizer
 
 
@@ -72,3 +72,21 @@ def validate_duplex_token(duplex):
         forbidden.add(getattr(duplex, name, None))
     if token in forbidden:
         raise ValueError('task_start conflicts with a native control or forbidden token')
+
+
+
+
+def validate_vocabulary(model, tokenizer):
+    """Text SFT cannot append or delete input/output vocabulary rows."""
+    llm = getattr(model, 'llm', model)
+    if any(table.weight.shape[0] != len(tokenizer) for table in
+           (llm.get_input_embeddings(), llm.get_output_embeddings())):
+        raise ValueError('Tokenizer/input/output vocabulary mismatch; text SFT never resizes vocabulary')
+
+
+def validate_text_duplex(duplex):
+    ids = validate_text_separator(duplex.tokenizer)
+    forbidden = set(getattr(duplex, 'forbidden_token_ids', ()))
+    forbidden.update(getattr(duplex.decoder, 'forbidden_token_ids', ()))
+    if forbidden.intersection(ids):
+        raise ValueError('Text separator contains forbidden native tokens')

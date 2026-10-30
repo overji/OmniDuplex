@@ -78,7 +78,7 @@ def prepare(config):
                   '--videos-dir', config['videos_dir'], '--model-path', config['export_model'],
                   '--output-dir', str(directory / 'suite/realtime/minicpmo'),
                   '--system-prompt', str(ROOT / 'benchmark/configs/prompts/system_prompt.txt'),
-                  '--cache-dir', str(ROOT / 'benchmark/cache'),
+                  '--cache-dir', str(config.get('cache_dir', ROOT / 'benchmark/cache')),
                   '--agent-call-schema', 'task-start', '--agent-output-protocol', 'task-text']}]
     write_json(directory / 'commands.json', commands)
     suite = [python, str(ROOT / 'benchmark/scripts/run_prepared_suite.py'),

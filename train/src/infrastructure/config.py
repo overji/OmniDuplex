@@ -28,6 +28,20 @@ def load_config(path):
     gpu_budget = config.get('sft_activation_gpu_budget_gib', 0)
     if isinstance(gpu_budget, bool) or not isinstance(gpu_budget, (int, float)) or not 0 <= gpu_budget < float('inf'):
         raise ValueError('sft_activation_gpu_budget_gib must be finite and nonnegative')
+    loss_mode = config.get('decision_loss_mode', 'token_mean')
+    if loss_mode not in ('token_mean', 'balanced_gate', 'event_balanced'):
+        raise ValueError('Invalid decision_loss_mode')
+    if loss_mode in ('balanced_gate', 'event_balanced'):
+        import math
+        if method != 'full_sft':
+            raise ValueError('Balanced gate loss requires full_sft')
+        for key, default in (('gate_weight', .8), ('structure_weight', .2),
+                             ('silent_weight', .5), ('onset_weight', .5)):
+            value = config.setdefault(key, default)
+            if type(value) not in (int, float) or not math.isfinite(value) or value < 0:
+                raise ValueError(f'Invalid {key}')
+        if config['gate_weight'] + config['structure_weight'] <= 0 or config['silent_weight'] + config['onset_weight'] <= 0:
+            raise ValueError('Balanced loss weights must have positive totals')
     if 'wandb' in config:
         settings = config['wandb']
         if not isinstance(settings, dict) or set(settings) - {'project', 'entity', 'name', 'mode'}:
@@ -49,6 +63,12 @@ def load_config(path):
                 'gradient_accumulation_steps', 'epochs', 'loss_projection_chunk'):
         if type(config[key]) is not int or config[key] < 1:
             raise ValueError(f'{key} must be a positive integer')
+    horizon = config.get('sft_horizon', 'response_tail')
+    if horizon not in ('response_tail', 'full_video'):
+        raise ValueError('Invalid sft_horizon')
+    if horizon == 'full_video' and (method != 'full_sft' or not config['supervise_silence']
+                                   or config.get('post_response_silence_seconds', 0) != 0):
+        raise ValueError('Full-video SFT requires supervise_silence=true and post_response_silence_seconds=0')
     tail = config.get('post_response_silence_seconds', 0)
     if type(tail) is not int or tail < 0:
         raise ValueError('post_response_silence_seconds must be a nonnegative integer')

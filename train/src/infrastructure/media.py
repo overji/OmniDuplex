@@ -15,7 +15,7 @@ class Clip:
         import numpy as np
         from PIL import Image
         cache, metadata, audio = media_cache(Path(config['videos_dir']) / record['sample']['video'], Path(config['media_cache']))
-        self.horizon = min(horizon, math.floor(metadata['duration']))
+        self.horizon = math.floor(metadata['duration']) if horizon is None else min(horizon, math.floor(metadata['duration']))
         self.duration = metadata['duration']
         self.chunks, self.processed = [], {}
         self.question_time = seconds(record['sample']['question_time'])

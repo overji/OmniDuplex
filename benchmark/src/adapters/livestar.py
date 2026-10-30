@@ -6,11 +6,13 @@ import json
 import math
 import os
 import re
+import signal
 import sys
 import time
 from types import SimpleNamespace, MethodType
 
 from benchmark.config.models import MODEL_SETTINGS, NATIVE_SETTINGS
+from benchmark.config.defaults import DEFAULTS
 from benchmark.data.prompts import user_request
 from benchmark.data.media import media_cache
 from benchmark.data.types import SampleResult
@@ -39,7 +41,8 @@ def reuse_predictions(a, samples, assignment, config, base_prompt):
     result, seen = [], set()
     for worker in sorted(source.glob('worker_*')):
         old = json.loads((worker / 'run_config.json').read_text())
-        expected = {key: value for key, value in config.items() if key != 'agent_input_protocol'}
+        expected = {key: value for key, value in config.items()
+                    if key not in ('agent_input_protocol', 'sample_timeout_seconds')}
         if any(old.get(key) != value for key, value in expected.items()):
             raise ValueError('LiveStar native model/sampling configuration changed')
         for record in read_jsonl(worker / 'predictions.jsonl', complete_only=True):
@@ -61,10 +64,14 @@ def reuse_predictions(a, samples, assignment, config, base_prompt):
 
 
 def run_config(a, base):
+    limit = getattr(a, 'sample_timeout_seconds', DEFAULTS['livestar']['sample_timeout_seconds'])
+    if not math.isfinite(limit) or limit < 0:
+        raise ValueError('sample-timeout-seconds must be finite and nonnegative')
     config = {
         **MODEL_SETTINGS['livestar'],
         'model_path': str(a.model_path),
         'data_sha256': hashlib.sha256(a.data.read_bytes()).hexdigest(),
+        'sample_timeout_seconds': limit,
     }
     return config
 
@@ -102,7 +109,57 @@ def load(a):
     return SimpleNamespace(torch=torch, Image=Image, native=native, model=model, tokenizer=tokenizer, gen_cfg=gen_cfg)
 
 
+class SampleTimeout(TimeoutError):
+    """A bounded sample attempt; persisted so resume does not retry it."""
+
+
 def run_sample(a, state, context):
+    """Bound preprocessing and native decoding, restoring hooks even on timeout.
+
+    SIGALRM interrupts Python execution on the worker's main thread. A native
+    CUDA call already in progress must return before Python handles the alarm.
+    Model loading is outside this per-sample deadline.
+    """
+    limit = getattr(a, 'sample_timeout_seconds', DEFAULTS['livestar']['sample_timeout_seconds'])
+    if not math.isfinite(limit) or limit < 0:
+        raise ValueError('sample-timeout-seconds must be finite and nonnegative')
+    original_chat = state.model.chat
+    original_generate = getattr(state.model, 'generate', None)
+    previous_handler = None
+    previous_timer = (0., 0.)
+    started = time.perf_counter()
+    context.started = started
+
+    def expired(signum, frame):
+        raise SampleTimeout(f'LiveStar sample exceeded {limit:g} seconds')
+
+    if limit:
+        previous_handler = signal.signal(signal.SIGALRM, expired)
+        previous_timer = signal.setitimer(signal.ITIMER_REAL, limit)
+    try:
+        return _run_sample(a, state, context)
+    except SampleTimeout as error:
+        # Persist a terminal failure, not a successful silent prediction. The
+        # ordinary runner writes this row and moves directly to the next sample.
+        with context.open_raw('.json') as stream:
+            json.dump(dict(sample_index=context.index, status='timeout', error=str(error),
+                           sample_timeout_seconds=limit,
+                           wall_seconds=time.perf_counter() - started), stream, indent=2)
+        print(f'TIMEOUT sample={context.index} limit={limit:g}s; continuing', flush=True)
+        return SampleResult(events=[], observed_seconds=0., status='timeout')
+    finally:
+        if limit:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            signal.signal(signal.SIGALRM, previous_handler)
+            delay, interval = previous_timer
+            if delay:
+                signal.setitimer(signal.ITIMER_REAL, max(1e-6, delay - (time.perf_counter() - started)), interval)
+        state.model.chat = original_chat
+        if original_generate is not None:
+            state.model.generate = original_generate
+
+
+def _run_sample(a, state, context):
     index, sample = context.index, context.sample
     torch = state.torch
     Image = state.Image

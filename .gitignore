@@ -31,3 +31,6 @@ data_generation/videos/
 *.mov
 *.avi
 *.mkv
+
+# Isolated AOI-Bench media cache (local generated frames/audio).
+/benchmark/cache_aoi_bench/

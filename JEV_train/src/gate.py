@@ -22,7 +22,7 @@ def core(llm):
 def load(config, training=False):
     import torch
     from transformers import AutoModel, AutoTokenizer
-    from train.src.infrastructure.tokens import register_task_token, resize_vocabulary, validate_task_token
+    from train.src.infrastructure.tokens import validate_text_separator, resize_vocabulary
     source=Path(config.get('classifier_checkpoint') or config['classifier_model']).resolve()
     meta=None
     if config.get('classifier_checkpoint'):
@@ -37,7 +37,7 @@ def load(config, training=False):
     model.init_tts=lambda **kwargs:None
     tokenizer=AutoTokenizer.from_pretrained(str(alias),trust_remote_code=True,local_files_only=True)
     base_vocab=model.llm.get_input_embeddings().weight.shape[0]
-    task_id=register_task_token(tokenizer)
+    task_ids=validate_text_separator(tokenizer)
     if meta is None:
         if any(t in tokenizer.get_vocab() for t in (SILENT,RESPONSE)):
             raise ValueError('Use a base without decision tokens, or supply a full classifier_checkpoint')
@@ -45,7 +45,7 @@ def load(config, training=False):
     ids=[tokenizer.convert_tokens_to_ids(t) for t in (SILENT,RESPONSE)]
     if any(tokenizer.encode(t,add_special_tokens=False)!=[i] or i not in tokenizer.all_special_ids for t,i in zip((SILENT,RESPONSE),ids)):
         raise ValueError('Gate tokens must be registered atomic special tokens')
-    if len(set([task_id,*ids]))!=3:raise ValueError('Gate and delegation token IDs overlap')
+    if len(set(ids))!=2 or set(task_ids).intersection(ids):raise ValueError('Gate and delegation token IDs overlap')
     resize_vocabulary(model,tokenizer)
     head_init=model.llm.get_output_embeddings().weight[[tokenizer.convert_tokens_to_ids('<|listen|>'),tokenizer.convert_tokens_to_ids('<|speak|>')]].detach().float().clone()
     head=torch.nn.Linear(head_init.shape[1],2,bias=False,device=model.device,dtype=torch.float32)
@@ -54,7 +54,7 @@ def load(config, training=False):
         from safetensors.torch import load_file
         tensors=load_file(str(source/'jev_gate_head.safetensors'))
         with torch.no_grad():head.weight.copy_(tensors['weight'])
-        if meta['token_ids']!=ids or meta['task_start_id']!=validate_task_token(tokenizer) or meta['tokenizer_sha256']!=digest(tokenizer.get_vocab()):
+        if meta['token_ids']!=ids or meta['task_start_ids']!=validate_text_separator(tokenizer) or meta['tokenizer_sha256']!=digest(tokenizer.get_vocab()):
             raise ValueError('Classifier token identity mismatch')
     if training:
         from train.src.models.loading import enable_full_training

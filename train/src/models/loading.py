@@ -1,11 +1,11 @@
-"""加载MiniCPM原生双工模型。模型追加原子task_start，禁用TTS；不管理训练步骤。"""
+"""加载MiniCPM原生双工模型。task_start使用已有文本词表，禁用TTS；不管理训练步骤。"""
 
 from pathlib import Path
 from train.src.infrastructure.config import model_alias
 
 
 def load_model(config, device):
-    """返回(model, duplex)；保持BF16/无TTS配置，并在创建duplex前对齐原子词表。这里只加载适配，不创建优化器或执行训练步。"""
+    """返回(model, duplex)；保持BF16/无TTS配置，并在创建duplex前校验原始词表。这里只加载适配，不创建优化器或执行训练步。"""
     from train.src.domain.agent import require_protocol
     require_protocol(config)
     import torch
@@ -25,16 +25,15 @@ def load_model(config, device):
     from transformers import AutoTokenizer
     from train.src.infrastructure.checkpoints import tokenizer_metadata, full_model_identity
     tokenizer = AutoTokenizer.from_pretrained(str(alias), trust_remote_code=True, local_files_only=True)
-    from train.src.infrastructure.tokens import register_task_token, resize_vocabulary, validate_duplex_token
-    if not (path / 'full_training_model.json').is_file():
-        register_task_token(tokenizer)
+    from train.src.infrastructure.tokens import validate_text_separator, validate_vocabulary, validate_text_duplex
+    validate_text_separator(tokenizer)
     tokenizer_metadata(tokenizer)
-    resize_vocabulary(model, tokenizer)
+    validate_vocabulary(model, tokenizer)
     if (path / 'full_training_model.json').is_file():
         full_model_identity(path)
     model.prepare_processor(tokenizer=tokenizer)
     duplex = model.as_duplex(generate_audio=False, sliding_window_mode='off')
-    validate_duplex_token(duplex)
+    validate_text_duplex(duplex)
     return model, duplex
 
 

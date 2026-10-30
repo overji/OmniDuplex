@@ -19,7 +19,7 @@ class GRPOMathTests(unittest.TestCase):
     def test_grpo_config_enforces_native_replay_assumptions(self):
         from train.src.infrastructure.config import ROOT, load_config
         config = load_config(ROOT / 'train/configs/minicpmo_full_grpo.json')
-        self.assertEqual(config['agent_output_protocol'], 'task_start_token_sft_v1')
+        self.assertEqual(config['agent_output_protocol'], 'task_start_text_sft_v1')
         self.assertEqual(config['group_size'], 4)
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'config.json'
@@ -236,7 +236,7 @@ class ReplayGradientTests(unittest.TestCase):
         model = TinyMedia(); model.requires_grad_(False)
         duplex = TinyDuplex(model)
         config = dict(max_sequence_tokens=1024, max_speak_tokens_per_chunk=20,
-            agent_output_protocol='task_start_token_sft_v1', supervise_silence=False,
+            agent_output_protocol='task_start_text_sft_v1', supervise_silence=False,
             decision_weight=1., content_weight=1., call_weight=1., loss_projection_chunk=2)
         from pathlib import Path
         import tempfile

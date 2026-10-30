@@ -55,10 +55,21 @@ DEFAULTS = {
         **COMMON,
         'cache_dir': CACHE,
         'output_dir': RESULTS / "livestar",
+        'sample_timeout_seconds': 1200.0,
     },
     'roma': {
         **COMMON,
         'output_dir': RESULTS / "roma",
+    },
+    'moss_vl': {
+        **COMMON,
+        'output_dir': RESULTS / 'moss_vl_realtime',
+        'cache_dir': CACHE,
+        'sample_timeout_seconds': 1200.,
+        'drain_seconds': 15.,
+        'max_tokens_per_second': 12,
+        'max_new_tokens': 4096,
+        'attention_backend': 'flash_attention_2',
     },
     'joyai': {
         **COMMON,

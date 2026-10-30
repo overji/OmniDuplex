@@ -4,7 +4,7 @@ from pathlib import Path
 
 SEPARATOR = '<|task_start|>'
 PROTOCOL = 'task_text_v1'
-MODELS = ('minicpmo', 'gander', 'joyai', 'livestar')
+MODELS = ('minicpmo', 'gander', 'joyai', 'livestar', 'moss_vl')
 
 
 def identity():

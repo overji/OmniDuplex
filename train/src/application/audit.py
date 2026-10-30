@@ -20,11 +20,11 @@ def audit(data, output, config, metadata=None):
     from transformers import AutoTokenizer
     from train.src.infrastructure.config import model_alias
     from train.src.infrastructure.checkpoints import tokenizer_metadata
-    from train.src.infrastructure.tokens import register_task_token
+    from train.src.infrastructure.tokens import validate_text_separator
     alias = model_alias(config)
     path = alias if alias.exists() and alias.resolve() == Path(config['model_path']).resolve() else Path(config['model_path'])
     tokenizer = AutoTokenizer.from_pretrained(str(path), trust_remote_code=True, local_files_only=True)
-    register_task_token(tokenizer)
+    validate_text_separator(tokenizer)
     metadata = metadata or Path(config['videos_dir']) / 'video_metadata.json'
     durations = {}
     if metadata.is_file():

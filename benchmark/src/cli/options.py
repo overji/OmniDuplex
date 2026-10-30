@@ -9,7 +9,7 @@ def _configure_common(parser, model, *, local_model=True):
     parser.add_argument('--agent-call-schema', choices=('task-start', 'legacy'), default='task-start',
                         help='Benchmark call schema; legacy preserves the original agent_call contract')
     protocols = (('text', 'structured', 'agent-token', 'task-text') if model == 'minicpmo'
-                 else ('text', 'structured', 'task-text') if model in ('joyai', 'livestar') else ('text', 'structured'))
+                 else ('text', 'structured', 'task-text') if model in ('joyai', 'livestar', 'moss_vl') else ('text', 'structured'))
     parser.add_argument("--agent-output-protocol", choices=protocols, default=argparse.SUPPRESS,
                         help="Optional structured Agent output; default preserves existing text protocol")
     defaults = DEFAULTS[model]
@@ -71,11 +71,26 @@ def configure_gander(parser):
 
 def configure_livestar(p):
     _configure_common(p, 'livestar')
+    p.add_argument('--sample-timeout-seconds', type=float,
+                   default=DEFAULTS['livestar']['sample_timeout_seconds'],
+                   help='Wall-clock limit per sample, including preprocessing; timeout is recorded and skipped (0 disables)')
     p.add_argument("--cache-dir", type=Path, default=DEFAULTS["livestar"]["cache_dir"])
     p.add_argument("--official-code", type=Path, required=True,
                    help="Pinned LiveStar checkout")
     p.add_argument('--reuse-non-agent', type=Path, default=argparse.SUPPRESS,
                    help='Import compatible completed RTD/PR from an old LiveStar parallel run; Agent always regenerates')
+
+
+def configure_moss_vl(p):
+    _configure_common(p, 'moss_vl')
+    defaults = DEFAULTS['moss_vl']
+    p.add_argument('--cache-dir', type=Path, default=defaults['cache_dir'])
+    p.add_argument('--sample-timeout-seconds', type=float, default=defaults['sample_timeout_seconds'])
+    p.add_argument('--drain-seconds', type=float, default=defaults['drain_seconds'])
+    p.add_argument('--max-tokens-per-second', type=int, default=defaults['max_tokens_per_second'])
+    p.add_argument('--max-new-tokens', type=int, default=defaults['max_new_tokens'])
+    p.add_argument('--attention-backend', choices=('flash_attention_2', 'eager'),
+                   default=defaults['attention_backend'])
 
 
 def configure_roma(p):

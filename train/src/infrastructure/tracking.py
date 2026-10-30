@@ -25,14 +25,23 @@ class Tracking:
                 values['train/' + key] = value
         if record.get('rewards'):
             values['train/reward_mean'] = sum(record['rewards']) / len(record['rewards'])
+        from train.src.domain.loss_metrics import COMPONENTS, CONTRIBUTIONS
+        names = [key for name in COMPONENTS for key in ('loss_' + name, name + '_tokens', name + '_qa')]
+        names += ['loss_' + name + '_contribution' for name in CONTRIBUTIONS]
+        for key in names:
+            if isinstance(record.get(key), (int, float)):
+                values['train/' + key] = record[key]
         self.run.log(values)
 
-    def log_validation(self, step, loss, scored, excluded):
+    def log_validation(self, step, loss, scored, excluded, components=None):
         if self.run is not None:
             values = {'train/step': step, 'validation/scored': scored,
                       'validation/excluded': excluded}
             if loss is not None:
                 values['validation/loss'] = loss
+            if components:
+                values.update({'validation/' + key: value for key, value in components.items()
+                               if isinstance(value, (int, float))})
             self.run.log(values)
 
     def finish(self, report):
@@ -50,8 +59,9 @@ def start_tracking(config, output, rank, world_size):
     # Upload numeric hyperparameters, never QA, generated text, weights or arbitrary config keys.
     keys = ('training_method', 'agent_output_protocol', 'learning_rate', 'epochs',
             'gradient_accumulation_steps', 'max_prefix_seconds', 'max_sequence_tokens',
-            'max_speak_tokens_per_chunk', 'supervise_silence', 'post_response_silence_seconds', 'seed', 'attention_backend',
-            'decision_weight', 'content_weight', 'call_weight', 'sft_activation_offload',
+            'sft_horizon', 'max_speak_tokens_per_chunk', 'supervise_silence', 'post_response_silence_seconds', 'seed', 'attention_backend',
+            'decision_weight', 'content_weight', 'call_weight', 'decision_loss_mode',
+            'gate_weight', 'structure_weight', 'silent_weight', 'onset_weight', 'sft_activation_offload',
             'sft_activation_cpu_budget_gib', 'sft_activation_gpu_budget_gib', 'parallel_mode',
             'reward_backend', 'group_size', 'clip_epsilon', 'kl_beta', 'temperature')
     hyperparameters = {k: config[k] for k in keys if k in config}
@@ -65,7 +75,8 @@ def start_tracking(config, output, rank, world_size):
     run.define_metric('train/step')
     run.define_metric('train/*', step_metric='train/step')
     run.define_metric('validation/*', step_metric='train/step')
-    run.log({'train/step': 0, 'system/world_size': world_size})
+    if not getattr(run, 'resumed', False):
+        run.log({'train/step': 0, 'system/world_size': world_size})
     (output / 'wandb_run.json').write_text(json.dumps(
         {'id': run.id, 'url': run.url, 'project': run.project, 'entity': run.entity}, indent=2) + '\n')
     print('W&B run: ' + str(run.url), flush=True)

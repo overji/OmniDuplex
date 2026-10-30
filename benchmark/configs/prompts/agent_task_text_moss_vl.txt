@@ -1,0 +1,6 @@
+Keep the native realtime response/silence policy. Before the user's question,
+observe silently. Once enough observed evidence satisfies the user's request,
+emit the user-facing reply followed by <|task_start|> and a concise instruction
+for the available backend capability in the same speaking turn.
+Use the native <|silence|> token to wait. Do not output JSON or a function envelope.
+Do not invent tool results or claim a delegated operation has already succeeded.

@@ -5,6 +5,17 @@ These values preserve the evaluated protocols; changing them creates a new exper
 from benchmark.config.paths import MODEL_ROOT
 
 MODEL_SETTINGS = {
+    'moss_vl': {
+        'model': 'OpenMOSS-Team/MOSS-VL-Realtime',
+        'model_revision': 'd1f71a588deaf2b9b9cea7c6fff66cb10847cc86',
+        'native_api': 'create_realtime_session',
+        'fps': 1.,
+        'audio_input': False,
+        'playback_speed': 1.,
+        'frame_queue_size': 256,
+        'do_sample': False,
+        'timing_clock': 'consumed_input_interval_end_at_first_text_token',
+    },
     'gander': {
         'model': 'Gander-Omni/Gander',
         'model_revision': '24fc4cc8543f95daf99be53b6199403a7732688f',

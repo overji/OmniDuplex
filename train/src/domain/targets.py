@@ -8,9 +8,8 @@ def target_chunks(record, tokenizer, budget, *, protocol=PROTOCOL):
     
     返回[(token_ids, loss_groups)]。0为mask，1为控制/分隔符，2为回复，3为instruction；跨chunk不重复分隔符。"""
     require_protocol({'agent_output_protocol': protocol})
-    marker = tokenizer.encode('<|task_start|>', add_special_tokens=False)
-    if len(marker) != 1 or marker[0] not in tokenizer.all_special_ids:
-        raise ValueError('Training requires atomic special task_start token')
+    from train.src.domain.agent import validate_text_separator
+    validate_text_separator(tokenizer)
     record = training_record(record)
     reference, sample = record['reference'], record['sample']
     encode = lambda text: tokenizer.encode(text, add_special_tokens=False)

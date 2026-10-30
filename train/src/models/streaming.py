@@ -4,7 +4,7 @@ import math
 import torch
 from benchmark.data.prompts import user_request
 from benchmark.data.task_text import TaskTextStream
-from train.src.domain.trajectory import compile_trajectory, second_target, schedule_stats, TrajectoryError
+from train.src.domain.trajectory import compile_trajectory, second_target, schedule_stats, supervision_metadata, TrajectoryError
 from train.src.domain.grpo import action_log_probs, new_response_started
 
 
@@ -52,9 +52,14 @@ def replay(model, duplex, record, clip, config, trajectory=None):
     recorder = GraphRecorder(model.llm.get_input_embeddings(), config['max_sequence_tokens'])
     duplex.decoder = recorder
     labels, groups, positions, token_ids, turns = [], [], [], [], []
+    event_roles, event_ids = [], []
+    decision_roles = []  # 1=idle listen, 2=fresh response onset, 3=structure
     def align():
         labels.extend([-100] * (recorder.length - len(labels)))
         groups.extend([0] * (recorder.length - len(groups)))
+        decision_roles.extend([0] * (recorder.length - len(decision_roles)))
+        event_roles.extend([0] * (recorder.length - len(event_roles)))
+        event_ids.extend([-1] * (recorder.length - len(event_ids)))
     def append(ids, kinds=None, actions=None):
         start = recorder.length
         if trajectory is not None and actions is not None:
@@ -99,10 +104,20 @@ def replay(model, duplex, record, clip, config, trajectory=None):
                         append(chunk['ids'], actions=chunk['actions'])
                     else:
                         ids, kinds = second_target(schedule, second, duplex.tokenizer, config, sent)
+                        start = recorder.length
                         append(ids, kinds)
+                        fine, events = supervision_metadata(schedule, second, ids, kinds, duplex.tokenizer)
+                        event_roles[start:start + len(ids)] = fine
+                        event_ids[start:start + len(ids)] = events
+                        fresh = any(t['onset_seconds'] == second for t in schedule['targets'])
+                        for offset, (token, kind) in enumerate(zip(ids, kinds)):
+                            if kind == 1:
+                                decision_roles[start + offset] = (1 if token == duplex.tokenizer.convert_tokens_to_ids('<|listen|>')
+                                    else 2 if fresh and offset == 0 else 3)
                         append([duplex.tokenizer.convert_tokens_to_ids('</unit>')])
                 except SequenceTooLong:
-                    if not (schedule is not None and config.get('post_response_silence_seconds', 0)
+                    if not (schedule is not None and config.get('sft_horizon') != 'full_video'
+                            and config.get('post_response_silence_seconds', 0)
                             and second > schedule['response_end_seconds']):
                         raise
                     # Optional tail may shrink; never discard a valid response to
@@ -112,10 +127,13 @@ def replay(model, duplex, record, clip, config, trajectory=None):
                     recorder.length = length
                     del labels[label_count:]
                     del groups[label_count:]
+                    del decision_roles[label_count:]
+                    del event_roles[label_count:]
+                    del event_ids[label_count:]
                     break
                 processed_seconds = second
         encoded = dict(inputs_embeds=torch.cat(recorder.parts), segments=recorder.parts, labels=torch.tensor(labels),
-            groups=torch.tensor(groups), positions=positions, token_ids=token_ids, turns=turns)
+            groups=torch.tensor(groups), event_roles=torch.tensor(event_roles), event_ids=torch.tensor(event_ids), decision_roles=torch.tensor(decision_roles), positions=positions, token_ids=token_ids, turns=turns)
         if schedule is not None:
             encoded.update(schedule_stats(schedule))
             encoded['tail_silence_seconds'] = max(0, processed_seconds - schedule['tail_start_seconds'] + 1)

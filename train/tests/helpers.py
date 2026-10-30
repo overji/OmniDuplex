@@ -6,24 +6,12 @@ from train.src.domain.agent import SEPARATOR
 
 
 class ByteTokenizer:
-    all_special_ids=[300,301,302,303,304,305]
-    def get_vocab(self):return {**{str(i):i for i in range(300)},SEPARATOR:300,'<|speak|>':301,'<|listen|>':302,'<|turn_eos|>':303,'<|chunk_eos|>':304,'</unit>':305}
+    all_special_ids=[301,302,303,304,305]
+    def get_vocab(self):return {**{str(i):i for i in range(301)},'<|speak|>':301,'<|listen|>':302,'<|turn_eos|>':303,'<|chunk_eos|>':304,'</unit>':305}
     def __len__(self):return 306
-    def encode(self,text,**kwargs):
-        parts=text.split(SEPARATOR);ids=[]
-        for index,part in enumerate(parts):
-            if index:ids.append(300)
-            ids.extend(part.encode())
-        return ids
+    def encode(self,text,**kwargs):return list(text.encode())
     def convert_tokens_to_ids(self,token):return self.get_vocab().get(token,-1)
-    def decode(self,ids,**kwargs):
-        parts=[];buf=[]
-        for token in ids:
-            if token==300:
-                parts.append(bytes(buf).decode());buf=[]
-                if not kwargs.get('skip_special_tokens',False):parts.append(SEPARATOR)
-            elif token<256:buf.append(token)
-        parts.append(bytes(buf).decode());return ''.join(parts)
+    def decode(self,ids,**kwargs):return bytes(i for i in ids if i<256).decode()
 
 
 class TinyMedia(torch.nn.Module):

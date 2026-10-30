@@ -31,7 +31,7 @@ def validate_gate_export(path,config):
 def export_checkpoint(checkpoint,output):
     import torch
     from transformers import AutoModel,AutoTokenizer,Qwen2_5OmniThinkerForConditionalGeneration,Qwen2_5OmniProcessor
-    from train.src.infrastructure.tokens import resize_vocabulary,validate_task_token
+    from train.src.infrastructure.tokens import resize_vocabulary,validate_text_separator
     from train.src.infrastructure.checkpoints import copy_runtime_files,read_zero_state
     if output.exists():raise ValueError('Use a fresh export directory')
     config=json.loads((checkpoint/'training_config.json').read_text())
@@ -48,7 +48,7 @@ def export_checkpoint(checkpoint,output):
         if not alias.exists():alias.symlink_to(source,target_is_directory=True)
         if alias.resolve()!=source:raise ValueError('Classifier export alias changed')
         model=AutoModel.from_pretrained(str(alias),trust_remote_code=True,torch_dtype=torch.bfloat16,init_tts=False,low_cpu_mem_usage=True)
-        validate_task_token(tokenizer);resize_vocabulary(model,tokenizer);model.load_state_dict(weights,strict=True)
+        validate_text_separator(tokenizer);resize_vocabulary(model,tokenizer);model.load_state_dict(weights,strict=True)
         model.save_pretrained(output,safe_serialization=True,max_shard_size='5GB');tokenizer.save_pretrained(output)
         runtime=copy_runtime_files(source,output)
         head=state['head.weight'].detach().float().cpu().contiguous()
@@ -56,7 +56,7 @@ def export_checkpoint(checkpoint,output):
         save_file({'weight':head},str(output/'jev_gate_head.safetensors'))
         write(output/'jev_gate.json',dict(protocol=PROTOCOL,training_method='full_sft',base=str(source),base_identity=base_identity(source),
               token_ids=[tokenizer.convert_tokens_to_ids(t) for t in ('<|silent|>','<|response|>')],
-              task_start_id=validate_task_token(tokenizer),tokenizer_sha256=digest(tokenizer.get_vocab()),files=base_identity(output),
+              task_start_ids=validate_text_separator(tokenizer),tokenizer_sha256=digest(tokenizer.get_vocab()),files=base_identity(output),
               runtime_files=runtime,head_sha256=hashlib.sha256((output/'jev_gate_head.safetensors').read_bytes()).hexdigest(),export_id=str(uuid.uuid4())))
     elif stage=='backend':
         model=Qwen2_5OmniThinkerForConditionalGeneration.from_pretrained(config['backend_model'],torch_dtype=torch.bfloat16,local_files_only=True)

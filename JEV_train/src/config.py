@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PROTOCOL = 'jev_gate_qwen25_full_sft_token_v3'
+PROTOCOL = 'jev_gate_qwen25_full_sft_text_v4'
 SILENT, RESPONSE = '<|silent|>', '<|response|>'
 AGENT = '<|task_start|>'
 

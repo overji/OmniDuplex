@@ -79,6 +79,26 @@ class ParallelTests(unittest.TestCase):
                 parallel.assignments(self.samples, self.args, 4, invalid)
         self.assertEqual(parallel.assignments(self.samples, self.args, 4, []), [[], [], [], []])
 
+    def test_moss_restarts_only_failed_shard_and_keeps_terminal_failures(self):
+        script = FAKE_WORKER.replace("'status': 'complete'", "'status': 'timeout' if not done else 'complete'")
+        script = script.replace('    time.sleep(0.02)', '    if not done:\n        sys.exit(75)\n    time.sleep(0.02)')
+        self.script.write_text(script)
+        original = parallel.worker_command
+        def command(*args, **kwargs):
+            native = original(*args, **kwargs)
+            return [sys.executable, str(self.script), *native[4:]]
+        with patch.object(parallel, 'worker_command', side_effect=command), \
+                contextlib.redirect_stdout(io.StringIO()):
+            for _ in range(2):
+                self.assertEqual(parallel.run_parallel(self.args, 'moss_vl', ['6', '7'],
+                                                      poll_seconds=.01), 0)
+        rows = read_jsonl(self.args.output_dir / 'predictions.jsonl')
+        self.assertEqual(len(rows), len(self.samples))
+        self.assertEqual(len({r['sample_index'] for r in rows}), len(self.samples))
+        self.assertEqual(sum(r['status'] == 'timeout' for r in rows), 2)
+        status = json.loads((self.args.output_dir / 'parallel_status.json').read_text())
+        self.assertEqual(status['status'], 'complete_with_errors')
+
     def test_selected_indices_run_without_renumbering_and_resume(self):
         selection = Path(self.temp.name) / 'indices.json'
         selection.write_text(json.dumps([1, 2, 4, 5, 6]))

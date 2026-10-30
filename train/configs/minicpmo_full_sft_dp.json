@@ -21,7 +21,7 @@
   "supervise_silence": true,
   "post_response_silence_seconds": 10,
   "attention_backend": "flash_attention_2",
-  "agent_output_protocol": "task_start_token_sft_v1",
+  "agent_output_protocol": "task_start_text_sft_v1",
   "training_method": "full_sft",
   "deepspeed_config": "train/configs/zero2_cpu.json",
   "cpu_threads": 4,
@@ -31,5 +31,10 @@
   "sft_activation_cpu_budget_gib": 128,
   "sft_activation_gpu_budget_gib": 4,
   "sft_activation_gpu_reserve_gib": 12,
-  "length_bucket_size": 120
+  "length_bucket_size": 120,
+  "decision_loss_mode": "balanced_gate",
+  "gate_weight": 0.8,
+  "structure_weight": 0.2,
+  "silent_weight": 0.5,
+  "onset_weight": 0.5
 }

@@ -421,10 +421,62 @@ CUDA_VISIBLE_DEVICES=0 /tmp/roma-benchmark-venv/bin/python -m benchmark run roma
   --roma-code /tmp/OmniDuplex-ROMA
 ```
 
+LiveStar defaults to a 1,200-second wall-clock limit per QA, including frame
+preprocessing and inference (model loading is excluded). Override it with
+`--sample-timeout-seconds`; `0` disables the limit. A timeout is saved with
+`status: "timeout"`, no completed response, and diagnostics in `sample_*.json`.
+The worker continues to the next QA, and resume skips that attempted QA. Timing
+metrics currently count its reference windows as misses; it is not a successful
+silent prediction. The alarm is handled when Python regains control from any
+native CUDA operation already in progress.
+
 ROMA uses its pinned Transformers fork. JoyAI uses the official `services/webinfer`
 adapter with local vLLM main and summary endpoints, then
 `python -m benchmark run joyai --model-path ...` streams timestamped cached frames to
 the adapter. Its adapter keeps the native response/silence format and memory.
+
+## MOSS-VL-Realtime
+
+Use the realtime checkpoint `OpenMOSS-Team/MOSS-VL-Realtime`, not its offline
+Instruct variant. Install an isolated Python environment using
+`benchmark/requirements-moss-vl.txt` (`pip install --no-build-isolation -r ...`;
+install Torch first when building FlashAttention). The adapter uses the official
+`create_realtime_session` API with BF16, greedy decoding, 1 FPS paced replay and
+12 text tokens/second. It receives visual frames only. The tested environment
+uses Torch 2.8, Transformers 4.57.1 and FlashAttention 2.8.3; upstream lists
+FlashAttention 2.8.1, whose local build failed on this machine.
+
+Download outside the repository, explicitly without proxies:
+
+```bash
+env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY -u http_proxy -u https_proxy -u all_proxy \
+  HF_ENDPOINT=https://hf-mirror.com HF_HUB_DISABLE_XET=1 \
+  huggingface-cli download OpenMOSS-Team/MOSS-VL-Realtime \
+  --revision d1f71a588deaf2b9b9cea7c6fff66cb10847cc86 \
+  --local-dir /remote-home/yushengliao/speech/jimodels/openmodels/MOSS-VL-Realtime
+
+/path/to/moss-venv/bin/python -m benchmark parallel moss_vl \
+  --model-path /remote-home/yushengliao/speech/jimodels/openmodels/MOSS-VL-Realtime \
+  --data /path/to/all_qa.json --videos-dir /path/to/videos \
+  --output-dir benchmark/results/moss_vl_realtime \
+  --gpus 6 7 --agent-call-schema task-start --agent-output-protocol task-text \
+  --sample-timeout-seconds 1200
+```
+
+Frames carry the observed one-second interval's end time. Output timestamps
+are captured when native text is emitted, using the latest frame consumed by
+a completed model forward, never the latest frame merely queued by the producer.
+The question is injected at its timestamp; references and tool results are not
+fed to the model. Agent output remains `reply<|task_start|>instruction`.
+
+The default post-video drain is 15 seconds (`--drain-seconds`). Per-QA timeout
+includes preprocessing and inference. Timeouts/errors remain explicitly marked
+in predictions and raw diagnostics, are skipped on resume, and their unmatched
+windows count as misses. If a native session cannot close within five seconds,
+the worker saves the failure and asks its supervisor to restart only that shard.
+Once every assigned QA has a terminal record, a run with failures reports
+`complete_with_errors` and allows the suite to continue. Use a new output directory
+to rerun failed QA intentionally. No LiveStar predictions are reused for MOSS.
 
 ## Scoring and outputs
 

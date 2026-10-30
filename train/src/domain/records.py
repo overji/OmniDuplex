@@ -20,7 +20,7 @@ def response_record(sample, index, ri, ref, config):
     onset = math.ceil(max(earliest, preferred))
     if onset > seconds(ref['window_end']):
         return None, 'no_causal_integer_onset'
-    if onset > config['max_prefix_seconds']:
+    if config.get('sft_horizon') != 'full_video' and onset > config['max_prefix_seconds']:
         return None, 'prefix_too_long'
     if not (Path(config['videos_dir']) / sample['video']).is_file():
         return None, 'missing_video'

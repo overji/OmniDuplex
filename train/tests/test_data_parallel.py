@@ -69,7 +69,7 @@ class ParallelTests(unittest.TestCase):
     def setup_graph(self, directory):
         Path(directory, 'video.mp4').touch()
         config = dict(videos_dir=directory, max_prefix_seconds=32, max_sequence_tokens=1024,
-                      max_speak_tokens_per_chunk=20, agent_output_protocol='task_start_token_sft_v1',
+                      max_speak_tokens_per_chunk=20, agent_output_protocol='task_start_text_sft_v1',
                       supervise_silence=True, decision_weight=1., content_weight=1., call_weight=1.,
                       loss_projection_chunk=2, sft_activation_offload=True)
         model = TinyMedia()
@@ -131,6 +131,9 @@ class ParallelTests(unittest.TestCase):
                 _, result = step(engine, None, config, torch.device('cpu'), 2)
             self.assertFalse(result['local_valid'])
             self.assertEqual(engine.calls, 1)
+            self.assertEqual(graph.last_stats['silence_tokens'], 0)
+            self.assertEqual(graph.last_stats['response_tokens'], 0)
+            self.assertIsNone(graph.last_stats['loss_response'])
             for p in graph.parameters():
                 if p.requires_grad:
                     self.assertIsNotNone(p.grad)

@@ -27,7 +27,7 @@ class TrajectoryTests(unittest.TestCase):
         (self.root / 'v.mp4').touch()
         self.tokenizer = ByteTokenizer()
         self.config = dict(videos_dir=str(self.root), media_cache=str(self.root/'cache'), max_prefix_seconds=300, max_sequence_tokens=32768,
-            max_speak_tokens_per_chunk=8, supervise_silence=True, agent_output_protocol='task_start_token_sft_v1',
+            max_speak_tokens_per_chunk=8, supervise_silence=True, agent_output_protocol='task_start_text_sft_v1',
             seed=42, decision_weight=1., content_weight=1., call_weight=1., loss_projection_chunk=8)
         self.sample = dict(mode='rtd', video='v.mp4', question_time='00:01', responses=[
             dict(response='abcdefgh', window_start='00:03', window_end='00:05', trigger_time='00:03'),
@@ -48,12 +48,19 @@ class TrajectoryTests(unittest.TestCase):
         self.assertEqual(text, 'abcdefghXYZ')
         self.assertEqual(sum(ids.count(303) for ids,_ in schedule['chunks'].values()), 2)
 
-    def test_listen_between_replies_and_mask_entire_reference_window(self):
+    def test_all_idle_seconds_supervised_including_inside_reference_windows(self):
         schedule = compile_trajectory(self.record(), self.tokenizer, self.config)
-        for second, sent, expected in [(1,False,0),(2,True,1),(5,True,0),(6,True,1),(9,True,0),(11,True,0)]:
+        for second, sent, expected in [(1,False,0),(2,True,1),(5,True,1),(6,True,1),(9,True,1),(11,True,1)]:
             ids, groups = second_target(schedule, second, self.tokenizer, self.config, sent)
             self.assertEqual((ids,groups),([302],[expected]))
         self.assertEqual(second_target(schedule,6,self.tokenizer,dict(self.config,supervise_silence=False),True)[1],[0])
+        # Every scheduled response chunk retains its text/control supervision.
+        for second in (3, 4, 10):
+            self.assertEqual(second_target(schedule, second, self.tokenizer, self.config, True),
+                             schedule['chunks'][second])
+        for second in (5, 9, 11):
+            self.assertEqual(second_target(schedule, second, self.tokenizer,
+                dict(self.config, supervise_silence=False), True), ([302], [0]))
 
     def test_optional_tail_starts_after_closed_windows_and_is_bounded(self):
         config = dict(self.config, post_response_silence_seconds=10)
@@ -64,7 +71,7 @@ class TrajectoryTests(unittest.TestCase):
         self.assertEqual(schedule['targets'], original['targets'])
         self.assertEqual(schedule['horizon'], 21)
         self.assertEqual(schedule['tail_silence_seconds'], 10)
-        self.assertEqual(second_target(schedule, 11, self.tokenizer, config, True)[1], [0])
+        self.assertEqual(second_target(schedule, 11, self.tokenizer, config, True)[1], [1])
         self.assertEqual(second_target(schedule, 12, self.tokenizer, config, True), ([302], [1]))
         short = compile_trajectory(record, self.tokenizer, config, duration=15.9)
         self.assertEqual((short['horizon'], short['tail_silence_seconds']), (15, 4))
@@ -87,6 +94,18 @@ class TrajectoryTests(unittest.TestCase):
         config = dict(self.config, post_response_silence_seconds=10)
         complete = replay(model, duplex, record, clip(15), config)
         self.assertEqual(complete['tail_silence_seconds'], 4)
+        roles = complete['decision_roles']
+        self.assertEqual(int((roles == 2).sum()), 2)  # two responses, not three chunks
+        self.assertEqual(complete['labels'][roles == 2].tolist(), [301, 301])
+        self.assertEqual(int(((roles == 3) & (complete['labels'] == 301)).sum()), 1)
+        self.assertEqual(len(roles), len(complete['labels']))
+        fine, events = complete['event_roles'], complete['event_ids']
+        self.assertEqual(len(fine), len(complete['labels']))
+        self.assertEqual(events[fine == 3].tolist(), [0])
+        self.assertEqual(events[fine == 4].tolist(), [1])
+        self.assertEqual(int((fine == 5).sum()), 1)
+        self.assertEqual(int((fine == 6).sum()), 2)
+        self.assertTrue(bool((events[(fine == 1) | (fine == 2)] == -1).all()))
         self.assertEqual(complete['labels'][complete['groups'] == 2].tolist(), list(b'abcdefghXYZ'))
         limited = replay(model, duplex, record, clip(15),
                          dict(config, max_sequence_tokens=len(baseline['labels']) + 12))
@@ -94,8 +113,32 @@ class TrajectoryTests(unittest.TestCase):
         self.assertEqual(limited['tail_silence_seconds'], 2)
         self.assertEqual(limited['labels'][limited['groups'] == 2].tolist(), list(b'abcdefghXYZ'))
         self.assertEqual(limited['labels'][-2:].tolist(), [302, -100])
+        self.assertEqual(len(limited['event_roles']), len(limited['labels']))
+        self.assertEqual(len(limited['event_ids']), len(limited['labels']))
         with self.assertRaises(SequenceTooLong):
             replay(model, duplex, record, clip(15), dict(config, max_sequence_tokens=35))
+
+    @patch('train.src.models.streaming.user_request', return_value='question')
+    @patch('train.src.models.streaming.system_prompt', return_value='system')
+    def test_full_video_supervises_to_end_and_never_trims_overflow(self, *_):
+        config = dict(self.config, sft_horizon='full_video', post_response_silence_seconds=0,
+                      max_prefix_seconds=5, decision_loss_mode='event_balanced')
+        record, reason = qa_record(self.sample, 7, config)
+        self.assertIsNone(reason)  # Later response is beyond legacy prefix cap.
+        self.assertIsNone(compile_trajectory(record, self.tokenizer, config)['horizon'])
+        schedule = compile_trajectory(record, self.tokenizer, config, duration=15.9)
+        self.assertEqual(schedule['horizon'], 15)
+        model = TinyMedia(); duplex = TinyDuplex(model)
+        clip = SimpleNamespace(chunks=[{}]*15, question_time=1, duration=15.9,
+                               preprocessing_cache=lambda p: nullcontext())
+        encoded = replay(model, duplex, record, clip, config)
+        self.assertEqual(int((encoded['event_roles'] == 4).sum()), 1)
+        self.assertEqual(encoded['labels'][-2:].tolist(), [302, -100])
+        with self.assertRaises(SequenceTooLong):
+            replay(model, duplex, record, clip,
+                   dict(config, max_sequence_tokens=len(encoded['labels'])-1))
+        with self.assertRaisesRegex(TrajectoryError, 'target_exceeds_video_duration'):
+            compile_trajectory(record, self.tokenizer, config, duration=9.9)
 
     def test_conflict_moves_onset_only_inside_unchanged_window(self):
         self.sample['responses'][1].update(window_start='00:03',window_end='00:06',trigger_time='00:03')
@@ -178,7 +221,7 @@ class TrajectoryTests(unittest.TestCase):
         for i,token in enumerate(expected):
             if token is not None:
                 torch.testing.assert_close(encoded['inputs_embeds'][i],model.llm.get_input_embeddings().weight[token])
-        graph=TrainGraph(model,duplex,self.config)
+        graph=TrainGraph(model,duplex,dict(self.config, decision_loss_mode='event_balanced'))
         graph(record,clip).backward()
         self.assertEqual(graph.last_stats['response_count'],2)
         for module in ('llm','vpm','apm','resampler','audio_projection_layer'):

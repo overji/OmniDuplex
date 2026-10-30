@@ -26,7 +26,7 @@ SELECT_BEFORE_RESUME = True
 def prepare_args(args):
     """新全参模型的格式写入有效配置，再构建数据适配/提示词，避免只改解析器。"""
     metadata = args.model_path / 'full_training_model.json'
-    if metadata.is_file() and json.loads(metadata.read_text()).get('protocol') == 'task_start_token_sft_v1':
+    if metadata.is_file() and json.loads(metadata.read_text()).get('protocol') in ('task_start_token_sft_v1', 'task_start_text_sft_v1'):
         args.agent_output_protocol = 'task-text'
         args.agent_call_schema = 'task-start'
 
@@ -81,7 +81,7 @@ def load(args):
     if (args.model_path / 'full_training_model.json').is_file():
         from transformers import AutoTokenizer
         exported = json.loads((args.model_path / 'full_training_model.json').read_text())
-        if exported.get('protocol') == 'task_start_token_sft_v1':
+        if exported.get('protocol') in ('task_start_token_sft_v1', 'task_start_text_sft_v1'):
             from train.src.checkpoints import full_model_identity
         else:
             from benchmark.data.agent_token import full_model_identity

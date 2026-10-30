@@ -14,7 +14,7 @@ from tokenizers.models import WordLevel
 from transformers import PreTrainedTokenizerFast,Qwen2Config,Qwen2ForCausalLM
 
 from JEV_train.src.config import PROTOCOL
-from train.src.infrastructure.tokens import register_task_token,resize_vocabulary
+from train.src.infrastructure.tokens import validate_text_separator,resize_vocabulary
 
 
 class FullSFTTests(unittest.TestCase):
@@ -58,13 +58,14 @@ class FullSFTTests(unittest.TestCase):
             def as_duplex(self,**kwargs):return SimpleNamespace(tokenizer=self.processor.tokenizer)
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);base=root/'base';checkpoint=root/'checkpoint';output=root/'export';checkpoint.mkdir()
-            t=PreTrainedTokenizerFast(tokenizer_object=Tokenizer(WordLevel({'[UNK]':0,'<|listen|>':1,'<|speak|>':2,'</unit>':3,'text':4},unk_token='[UNK]')),unk_token='[UNK]')
-            original=Mini(Qwen2ForCausalLM(Qwen2Config(vocab_size=5,hidden_size=8,intermediate_size=16,num_hidden_layers=1,num_attention_heads=1,num_key_value_heads=1)))
+            from train.tests.test_task_start import tokenizer
+            t=tokenizer();size=len(t)
+            original=Mini(Qwen2ForCausalLM(Qwen2Config(vocab_size=size,hidden_size=8,intermediate_size=16,num_hidden_layers=1,num_attention_heads=1,num_key_value_heads=1)))
             original.save_pretrained(base);t.save_pretrained(base)
-            trained=copy.deepcopy(original);register_task_token(t)
+            trained=copy.deepcopy(original);task_ids=validate_text_separator(t)
             t.add_special_tokens({'additional_special_tokens':['<|silent|>','<|response|>']},replace_additional_special_tokens=False)
             resize_vocabulary(trained,t)
-            with torch.no_grad():trained.llm.get_input_embeddings().weight[-3:].fill_(.37)
+            with torch.no_grad():trained.llm.get_input_embeddings().weight[-2:].fill_(.37)
             head=torch.randn(2,8)
             state={**{'model.'+k:v.detach().clone() for k,v in trained.state_dict().items()},'head.weight':head}
             config=dict(protocol=PROTOCOL,training_method='full_sft',jev_stage='classifier',classifier_model=str(base),cache_dir=str(root/'cache'))
@@ -72,11 +73,11 @@ class FullSFTTests(unittest.TestCase):
             with patch('train.src.infrastructure.checkpoints.read_zero_state',return_value=state),patch('transformers.AutoModel.from_pretrained',return_value=copy.deepcopy(original)):
                 export_checkpoint(checkpoint,output)
             meta=validate_gate_export(output,config)
-            self.assertEqual(meta['task_start_id'],5);self.assertEqual(meta['token_ids'],[6,7])
+            self.assertEqual(meta['task_start_ids'],task_ids);self.assertEqual(meta['token_ids'],[size,size+1])
             reloaded=Mini(Qwen2ForCausalLM.from_pretrained(output))
             with patch('transformers.AutoModel.from_pretrained',return_value=reloaded):
                 loaded=load(dict(config,classifier_checkpoint=str(output),classifier_device='cpu',dtype='float32',attention_backend='eager'))
-            torch.testing.assert_close(loaded.model.llm.get_input_embeddings().weight[-3:],torch.full((3,8),.37))
+            torch.testing.assert_close(loaded.model.llm.get_input_embeddings().weight[-2:],torch.full((2,8),.37))
             torch.testing.assert_close(loaded.head.weight,head)
             self.assertEqual(digest(loaded.tokenizer.get_vocab()),meta['tokenizer_sha256'])
             self.assertTrue(all(not p.requires_grad for p in loaded.model.parameters()))

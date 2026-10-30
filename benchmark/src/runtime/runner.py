@@ -148,3 +148,5 @@ def run(args, adapter, *, assignment=None):
         if strict:
             message += f" aggregate={metrics['groups']['overall']}"
         print(message, flush=True)
+        if hasattr(adapter, 'after_sample'):
+            adapter.after_sample(args, state)

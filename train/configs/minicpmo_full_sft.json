@@ -20,9 +20,14 @@
   "loss_projection_chunk": 64,
   "supervise_silence": true,
   "attention_backend": "flash_attention_2",
-  "agent_output_protocol": "task_start_token_sft_v1",
+  "agent_output_protocol": "task_start_text_sft_v1",
   "training_method": "full_sft",
   "deepspeed_config": "train/configs/zero3_cpu.json",
   "cpu_threads": 4,
-  "save_every_steps": 0
+  "save_every_steps": 0,
+  "decision_loss_mode": "balanced_gate",
+  "gate_weight": 0.8,
+  "structure_weight": 0.2,
+  "silent_weight": 0.5,
+  "onset_weight": 0.5
 }

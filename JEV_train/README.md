@@ -25,7 +25,7 @@ JEV_train/.venv/bin/python -m JEV_train prepare --output JEV_train/prepared/full
 
 协议升级为 `jev_gate_qwen25_full_sft_token_v3`。旧prepared和LoRA权重不自动迁移；重新prepare并使用新的输出目录。按视频划分train/validation/test，使用完整媒体前缀；所有事件必须在horizon内，同秒冲突会排除，不丢掉后续事件。
 
-MiniCPM注册原子 `<|task_start|>`，再注册silent/response决策token，旧token ID保持不变。分类器历史中的Agent回复使用这个原子分隔符；其输出仍是二分类，不自行输出任务instruction。后端Qwen保持原词表，可见回复格式为 `回复<|task_start|>instruction`，没有Agent时仅自然语言。工具不执行、不输入返回和完成回复、不加入Agent负样本。
+MiniCPM仅注册silent/response决策token，旧token ID保持不变。`<|task_start|>` 不注册，分类器历史中的Agent回复使用已有普通token编码；其输出仍是二分类，不自行输出任务instruction。后端Qwen保持原词表，可见回复格式为 `回复<|task_start|>instruction`，没有Agent时仅自然语言。工具不执行、不输入返回和完成回复、不加入Agent负样本。
 
 问题前和参考窗口内非目标秒mask，窗口外负秒按现有比例抽样；分类器每秒先观察本秒媒体再决策。参考回复只在该秒决策之后作为历史输入，未来目标不可提前泄漏。
 

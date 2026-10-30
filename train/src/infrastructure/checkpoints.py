@@ -9,14 +9,16 @@ from benchmark.data.files import write_json
 from train.src.domain.agent import PROTOCOL, SEPARATOR
 
 
-def tokenizer_metadata(tokenizer):
-    from train.src.infrastructure.tokens import validate_task_token
-    token_id = validate_task_token(tokenizer)
-    ids = [token_id]
+def tokenizer_metadata(tokenizer, protocol=PROTOCOL):
+    from train.src.infrastructure.tokens import validate_task_token, validate_text_separator
+    atomic = protocol == 'task_start_token_sft_v1'
+    if protocol not in (PROTOCOL, 'task_start_token_sft_v1'):
+        raise ValueError('Unsupported tokenizer protocol')
+    ids = [validate_task_token(tokenizer)] if atomic else validate_text_separator(tokenizer)
     if '<|agent|>' in tokenizer.get_vocab():
-        raise ValueError('Legacy Agent token is incompatible with atomic task_start SFT')
-    return {'protocol': PROTOCOL, 'agent_call_schema': 'task-start', 'separator': SEPARATOR,
-            'separator_token_ids': ids, 'separator_is_special': True, 'vocab_size': len(tokenizer),
+        raise ValueError('Legacy Agent token is incompatible with task_start SFT')
+    return {'protocol': protocol, 'agent_call_schema': 'task-start', 'separator': SEPARATOR,
+            'separator_token_ids': ids, 'separator_is_special': atomic, 'vocab_size': len(tokenizer),
             'tokenizer_sha256': tokenizer_identity(tokenizer)}
 
 
@@ -30,10 +32,10 @@ def full_model_identity(path):
     from transformers import AutoTokenizer
     path = Path(path)
     meta = json.loads((path / 'full_training_model.json').read_text())
-    if meta.get('protocol') != PROTOCOL:
+    if meta.get('protocol') not in (PROTOCOL, 'task_start_token_sft_v1'):
         raise ValueError('Unsupported full-model protocol; retrain with plain-text instruction targets')
     tokenizer = AutoTokenizer.from_pretrained(str(path), trust_remote_code=True, local_files_only=True)
-    expected = tokenizer_metadata(tokenizer)
+    expected = tokenizer_metadata(tokenizer, meta['protocol'])
     if any(meta.get(k) != v for k, v in expected.items()) or meta.get('files') != base_identity(path):
         raise ValueError('Full-model tokenizer/config identity mismatch')
     index = path / 'model.safetensors.index.json'
@@ -50,6 +52,13 @@ def fingerprints(prepared, config):
     """计算prepared、提示词、ZeRO配置和基座身份，用于恢复时拒绝不一致输入；不修改这些文件。"""
     files = {name: hashlib.sha256((prepared / name).read_bytes()).hexdigest()
              for name in ('train.json', 'validation.json', 'manifest.json')}
+    if config.get('training_method') == 'full_sft':
+        # Reject optimizer resumes from the old window-masked SFT objective.
+        files['silence_supervision'] = 'all_post_question_idle_v1'
+        if config.get('sft_horizon') == 'full_video':
+            files['sft_horizon'] = 'full_video_integer_seconds_v1'
+        if config.get('decision_loss_mode') == 'event_balanced':
+            files['sft_objective'] = 'event_balanced_v2'
     for key in ('system_prompt', 'agent_prompt', 'deepspeed_config'):
         files[key] = hashlib.sha256(Path(config[key]).read_bytes()).hexdigest()
     from benchmark.data.agent_token import base_identity
@@ -98,9 +107,9 @@ def export_checkpoint(checkpoint, output):
     model = AutoModel.from_pretrained(str(alias), trust_remote_code=True, torch_dtype=torch.bfloat16,
                                      init_tts=False, low_cpu_mem_usage=True)
     tokenizer = AutoTokenizer.from_pretrained(str(checkpoint / 'tokenizer'), trust_remote_code=True)
-    from train.src.infrastructure.tokens import resize_vocabulary
+    from train.src.infrastructure.tokens import validate_vocabulary
     tokenizer_metadata(tokenizer)
-    resize_vocabulary(model, tokenizer)
+    validate_vocabulary(model, tokenizer)
     state = read_zero_state(checkpoint)
     state = {key.removeprefix('model.'): value for key, value in state.items()}
     model.load_state_dict(state, strict=True)

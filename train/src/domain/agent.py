@@ -3,7 +3,7 @@
 from benchmark.data.agent_schema import adapt_sample, validate_task_start
 from benchmark.data.task_text import SEPARATOR
 
-PROTOCOL = 'task_start_token_sft_v1'
+PROTOCOL = 'task_start_text_sft_v1'
 RECORD_FORMAT = 'qa_trajectory_v1'
 from benchmark.evaluation.agent_calls import normalize_call
 
@@ -113,3 +113,13 @@ def system_prompt(sample, config):
     if sample.get('mode') == 'agent':
         return plain_prompt(Path(config['agent_prompt']).read_text(), sample)
     return build_system_prompt(Path(config['system_prompt']).read_text(), sample)
+
+
+def validate_text_separator(tokenizer):
+    """No registration: the separator must use existing ordinary vocabulary IDs."""
+    ids = tokenizer.encode(SEPARATOR, add_special_tokens=False)
+    if len(ids) < 2 or any(i in tokenizer.all_special_ids for i in ids):
+        raise ValueError('Text task_start requires multiple ordinary tokens; use the original base tokenizer')
+    if tokenizer.decode(ids, skip_special_tokens=False) != SEPARATOR:
+        raise ValueError('Text task_start does not round-trip')
+    return ids

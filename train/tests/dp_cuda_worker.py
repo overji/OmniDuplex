@@ -41,7 +41,7 @@ def main():
     with tempfile.TemporaryDirectory() as directory:
         Path(directory, 'video.mp4').touch()
         config = dict(videos_dir=directory, max_prefix_seconds=32, max_sequence_tokens=1024,
-                      max_speak_tokens_per_chunk=20, agent_output_protocol='task_start_token_sft_v1',
+                      max_speak_tokens_per_chunk=20, agent_output_protocol='task_start_text_sft_v1',
                       supervise_silence=True, decision_weight=1., content_weight=1., call_weight=1.,
                       loss_projection_chunk=2, sft_activation_offload=True,
                       sft_activation_gpu_budget_gib=.01)

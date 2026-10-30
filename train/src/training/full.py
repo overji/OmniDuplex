@@ -110,6 +110,10 @@ def run(args, config):
             raise ValueError('Resume configuration or prepared data identity mismatch')
         epoch_start, cursor = state['epoch'], state['cursor']
         restore_rng(torch.load(args.resume / f'rng_rank{rank}.pt', weights_only=False))
+        if rank == 0:
+            write_json(args.output / 'resume_state.json', dict(checkpoint=str(args.resume),
+                optimizer_steps=engine.global_steps, epoch=epoch_start, cursor=cursor,
+                restored_optimizer=True, restored_rng=True))
     if config.get('reward_backend') == 'llm':
         from train.src.training.grpo_judged import run as run_judged
         return run_judged(engine, model, duplex, records, args, config, device, rank, world,
@@ -283,6 +287,9 @@ def run(args, config):
         if not grpo and validation and not stop:
             model.eval()
             values, skipped_validation = [], []
+            from train.src.domain.loss_metrics import METRIC_SIZE, COMPONENTS, COUNT_INDICES, statistics
+            component_totals = [0.] * METRIC_SIZE
+            component_presence = [0.] * len(COMPONENTS)
             local_val = validation[rank::world] if independent else validation
             with torch.no_grad():
                 for record in local_val:
@@ -291,19 +298,27 @@ def run(args, config):
                         clip = Clip(record, config, end)
                         compile_trajectory(record, duplex.tokenizer, config, duration=clip.duration)
                         values.append(engine(record, clip).item())
+                        raw = graph.sft_loss_metrics
+                        component_totals = [a + b for a, b in zip(component_totals, raw)]
+                        component_presence = [a + int(raw[COUNT_INDICES[i]] > 0) for i, a in enumerate(component_presence)]
                     except TrajectoryError as exc:
                         skipped_validation.append(dict(sample_index=record['sample_index'], reason=str(exc)))
             if independent:
-                summary = torch.tensor([sum(values), len(values), len(skipped_validation)], device=device, dtype=torch.float64)
+                summary = torch.tensor([sum(values), len(values), len(skipped_validation),
+                    *component_totals, *component_presence], device=device, dtype=torch.float64)
                 torch.distributed.all_reduce(summary)
-                total_loss, scored, excluded_val = summary.tolist()
+                aggregate = summary.tolist()
+                total_loss, scored, excluded_val = aggregate[:3]
+                component_totals, component_presence = aggregate[3:3 + METRIC_SIZE], aggregate[3 + METRIC_SIZE:]
                 mean = total_loss / scored if scored else None
             else:
                 mean, scored, excluded_val = sum(values) / len(values) if values else None, len(values), len(skipped_validation)
+            component_stats = statistics(component_totals, qa_count=int(scored), presence=component_presence)
             append_jsonl(metrics, dict(epoch=epoch, validation_loss=mean, validation_scored=int(scored),
+                                      **{'validation_' + key: value for key, value in component_stats.items()},
                                       validation_excluded=skipped_validation, validation_excluded_count=int(excluded_val)))
             if rank == 0:
-                tracking.log_validation(engine.global_steps, mean, int(scored), int(excluded_val))
+                tracking.log_validation(engine.global_steps, mean, int(scored), int(excluded_val), component_stats)
     # A skipped group can leave a partial accumulation; never silently save it as
     # an optimizer checkpoint. Persist only complete optimizer states.
     if engine.micro_steps % gas:

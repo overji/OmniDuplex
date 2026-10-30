@@ -37,6 +37,32 @@ class TrackingTests(unittest.TestCase):
                 tracker.finish({})
         sdk.init.assert_not_called()
 
+    def test_component_counts_nulls_and_validation_are_reported(self):
+        from train.src.infrastructure.tracking import Tracking
+        run = MagicMock()
+        tracker = Tracking(run)
+        tracker.log_train(dict(step=251, loss=1.9, loss_silence=.2, silence_tokens=30,
+            silence_qa=4, loss_agent_instruction=None, agent_instruction_tokens=0,
+            loss_response_contribution=1.1))
+        values = run.log.call_args.args[0]
+        self.assertEqual(values['train/loss_silence'], .2)
+        self.assertEqual(values['train/silence_tokens'], 30)
+        self.assertEqual(values['train/agent_instruction_tokens'], 0)
+        self.assertNotIn('train/loss_agent_instruction', values)
+        tracker.log_validation(250, 2., 12, 1, dict(loss_speak=.4, speak_tokens=20,
+                                                  loss_agent_instruction=None))
+        values = run.log.call_args.args[0]
+        self.assertEqual(values['validation/loss_speak'], .4)
+        self.assertNotIn('validation/loss_agent_instruction', values)
+
+    def test_resumed_wandb_run_does_not_log_a_new_zero_step(self):
+        run = MagicMock(id='existing', url='https://example.test/run', project='project', entity='team')
+        run.resumed = True
+        sdk = SimpleNamespace(init=MagicMock(return_value=run))
+        with tempfile.TemporaryDirectory() as directory, patch.dict(sys.modules, wandb=sdk):
+            start_tracking(dict(wandb={'project': 'project'}), Path(directory), 0, 4)
+        run.log.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -15,9 +15,9 @@ train/.venv/bin/python -m train --help
 
 需要 FFmpeg/ffprobe 和兼容 PyTorch/CUDA 的 FlashAttention 2。SFT配置为 [minicpmo_full_sft.json](configs/minicpmo_full_sft.json)，GRPO配置为 [minicpmo_full_grpo.json](configs/minicpmo_full_grpo.json)，相对路径按仓库根目录解析。两种配置的共同默认值为 BF16、FlashAttention 2、300秒发声前缀、32768 token、每秒chunk预算20、`supervise_silence=true`（监督标签仅SFT使用）、学习率1e-6、2轮、梯度累积1、seed=42。ZeRO-3配置为 [zero3_cpu.json](configs/zero3_cpu.json)，FP32 master/Adam状态卸载CPU。
 
-## 原子 task_start 与连续多回复目标
+## 文本 task_start 与连续多回复目标
 
-训练协议为 **`task_start_token_sft_v1`**。`<|task_start|>` 在内存中注册为一个特殊 token，保持原有token ID不变；原始MiniCPM词表由151748扩为151749，新增ID为151748。ID由tokenizer动态取得，不在代码中硬编码。
+训练协议为 **`task_start_text_sft_v1`**。`<|task_start|>` 是普通文本，用原始基座已有的多个token编码；不注册特殊token、不扩展词表、不初始化新embedding或lm_head行。输出保持 `回复<|task_start|>instruction`。分隔符的全部token参与结构监督，可跨chunk生成。旧原子token checkpoint只保留评测读取能力，不能用于新协议续训。
 输入embedding与lm_head一同扩表，新行分别用原权重均值初始化；它们随完整模型参与训练。加载已有新协议模型时只校验，不重复注册或重置。磁盘上的原始模型文件不改写。
 
 ```text
@@ -28,7 +28,7 @@ train/.venv/bin/python -m train --help
 
 每条QA是一段连续轨迹，覆盖全部可评分response。先输入 `[t-1,t)` 媒体，再监督时刻t的输出；后续回复能看到之前按时输入的真实回复，未来回复不会提前输入。每个目标都满足问题、证据、trigger及原窗口的时间约束；与前一回复跨chunk冲突时只在原窗口内顺延。输入结束于最后一个目标完成。
 
-`supervise_silence=true`：问题已输入、没有正在说话且处于所有参考窗口之外时监督listen，包含回复之间的等待。窗口内非目标位置、问题前和输入媒体均mask；不添加额外静默尾段。三组loss分别归一化：decision（含原子分隔符）、content、instruction。没有独立的listen/speak类别权重，标注遗漏和类别不平衡仍可能造成过度沉默。
+`supervise_silence=true`：在训练轨迹覆盖范围内，问题已输入且当前秒没有参考回复chunk时一律监督listen并计算loss，包括参考窗口内、参考回复前后的空闲秒。问题前和输入媒体仍mask；DP配置在最后一个窗口与回复结束后最多添加10秒静默尾段。当前全量SFT配置对RTD、PR、Agent统一启用 `decision_loss_mode=balanced_gate`：每条QA内新开口和空闲沉默分别求平均，再各占gate的0.5；decision由0.8 gate和0.2结构监督组成。结构监督包含续说的speak、turn_eos和task_start。content与instruction各自归一化。历史配置缺少该字段时仍使用原token均值loss。
 
 任一目标无法排入原窗口、回复超出视频、超过前缀/token上限时整条QA排除并写原因，不保留残缺轨迹，不静默截断。长序列尚需实际媒体编码和GPU显存验证。
 
@@ -88,9 +88,18 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 train/.venv/bin/torchrun --standalone --nproc_per_n
 
 可添加 `entity` 指定团队，省略时沿用账号默认工作区。仅rank0上传 `train/loss`、学习率、epoch、耗时、序列长度、显存和卸载量，以及epoch结束时的 `validation/loss`。横轴为 `train/step`，在W&B中调节平滑程度。不会上传QA、生成文本或模型权重。链接保存在输出目录 `wandb_run.json`，JSONL日志继续保留。默认不启用W&B，支持offline/disabled；初始化失败时所有rank共同退出。
 
+SFT还记录 `loss_silence`、`loss_speak`、`loss_control`、`loss_response` 和
+`loss_agent_instruction`，分别表示沉默、开口、其他控制token、回复文本和Agent指令的
+token平均CE，以及各自的 `*_tokens`、`*_qa`。训练指标在 `train/` 下，完整验证集指标
+在 `validation/` 下；没有该类token时不填零loss。跨卡统计排除padding和无效QA。
+新增 `loss_onset`、`loss_continuation_speak`、`loss_structure` 和gate/structure的实际加权贡献；总loss由decision、response、instruction三项贡献重构。新旧总loss数值不能直接比较。
+详见 [分项loss口径](docs/loss_metrics.md)。旧日志无法还原历史分项。断点续训仍使用新的
+外部输出目录；通过环境变量 `WANDB_RUN_ID` 和 `WANDB_RESUME=must` 续接原W&B run，
+不会在恢复时重新添加step 0点。
+
 ## 全参 GRPO
 
-GRPO沿用相同的原子Agent协议和完整QA，需用GRPO配置单独prepare，保证**每个**可评分窗口的结尾都在rollout上限内。rollout从视频起点到 `min(max_prefix_seconds, floor(video_duration))`；若任一窗口超出实际视频长度，运行时整条排除。它不会在最后一次参考回复后立即结束，因此也会惩罚尾部额外开口。本机已生成 `train/prepared/full_grpo_task_token_20261027`：3996训练QA、1004验证QA，prepare阶段未排除记录；实际媒体长度和token上限仍需运行时检查。`supervise_silence`控制SFT标签；GRPO的沉默由采样动作和时间奖励学习，不另加silence交叉熵。
+GRPO沿用相同的文本Agent协议和完整QA，需用GRPO配置单独prepare，保证**每个**可评分窗口的结尾都在rollout上限内。rollout从视频起点到 `min(max_prefix_seconds, floor(video_duration))`；若任一窗口超出实际视频长度，运行时整条排除。它不会在最后一次参考回复后立即结束，因此也会惩罚尾部额外开口。本机已生成 `train/prepared/full_grpo_task_token_20261027`：3996训练QA、1004验证QA，prepare阶段未排除记录；实际媒体长度和token上限仍需运行时检查。`supervise_silence`控制SFT标签；GRPO的沉默由采样动作和时间奖励学习，不另加silence交叉熵。
 
 推荐先做SFT，再复制GRPO配置，将 `model_path` 指向新协议SFT完整导出目录；加载导出时保留训练过的token行。**默认GRPO配置仍指向原始基座**，没有自动串联SFT，也不会自动找到最新checkpoint。不同阶段不续用SFT优化器状态。
 
@@ -214,7 +223,7 @@ benchmark Realtime支持新协议完整模型；检测到该metadata后，在生
 - `src/domain`：只读Agent适配、因果记录、跨chunk目标、整条轨迹调度、GRPO优势/裁剪损失与规则奖励。
 - `src/models`：模型加载、全参设置、原生可微prefill、GRPO采样/回放与损失图。
 - `src/training`：全参SFT/GRPO循环、SFT验证、停止与恢复。
-- `src/infrastructure`：配置、原子词表、媒体、ZeRO、分布式、checkpoint。
+- `src/infrastructure`：配置、文本分隔符校验、媒体、ZeRO、分布式、checkpoint。
 
 阅读顺序：CLI → prepare/records → targets/trajectory → loading/streaming → graph → training/full → checkpoints。模块和关键函数有职责、输入输出及状态释放注释。`train.src.agent`、`train.src.checkpoints`保留当前公共接口；`train.src.token_rows.load_adapter`仅供历史benchmark推理，使用旧adapter时才需要另装PEFT。
 
@@ -222,7 +231,7 @@ benchmark Realtime支持新协议完整模型；检测到该metadata后，在生
 train/.venv/bin/python -m unittest discover -s train/tests
 ```
 
-CPU检查覆盖原子注册、旧ID保持、新行梯度、微型模型保存加载、全参媒体梯度、连续回复与沉默mask、旧协议拒绝及checkpoint游标/RNG。GRPO检查还覆盖原生动作概率、裁剪损失、规则奖励、原子分隔符回放梯度与CPU激活卸载。DeepSpeed CUDA集成检查仍需显式启用 `RUN_ZERO_CHECKPOINT_TEST=1`。新Judge GRPO路径已完成72项训练层测试（71项通过，1项需显式CUDA开关而跳过）；包含本地HTTP假服务和微型模型梯度平均对照。未启动真实Judge/GRPO，单卡加载、ZeRO-3实卡累计与真实SFT导出接入仍待后续GPU验证。既有SFT训练独立运行。
+CPU检查覆盖文本分隔符、词表不变、多token梯度、微型模型保存加载、全参媒体梯度、连续回复与沉默mask、旧协议拒绝及checkpoint游标/RNG。GRPO检查还覆盖原生动作概率、裁剪损失、规则奖励、文本分隔符回放梯度与CPU激活卸载。DeepSpeed CUDA集成检查仍需显式启用 `RUN_ZERO_CHECKPOINT_TEST=1`。新Judge GRPO路径已完成72项训练层测试（71项通过，1项需显式CUDA开关而跳过）；包含本地HTTP假服务和微型模型梯度平均对照。未启动真实Judge/GRPO，单卡加载、ZeRO-3实卡累计与真实SFT导出接入仍待后续GPU验证。既有SFT训练独立运行。
 
 
 ## 当前训练完成后自动评测（仅 Realtime）
@@ -237,3 +246,46 @@ CPU检查覆盖原子注册、旧ID保持、新行梯度、微型模型保存加
 - 停止等待任务：在上述结果目录创建 `STOP` 文件。该标记在等待期间及导出前检查；已开始的评测需要停止对应suite进程。不会停止训练。
 
 任何模型权重、训练checkpoint和导出模型都不得实际存放在 `~/jimodels` 或其任意子目录。下载/导出模型使用外部 `openmodels`，训练checkpoint使用外部 `training_outputs`；仓库中可保留指向外部存储的符号链接。该自动工作流会检查checkpoint和导出目标的实际解析路径。
+
+
+### 普通文本协议与平衡 loss
+
+当前配置对 RTD/PR/Agent 使用 balanced_gate；分隔符的所有普通token均为structure，
+不算新开口。完整公式见 [loss说明](docs/loss_metrics.md)。原子token审计及
+`full_sft_task_token_20261027` 是历史结果，不可用于当前训练。
+新协议须重新prepare到独立目录，例如：
+
+```bash
+train/.venv/bin/python -m train --config train/configs/minicpmo_full_sft_dp.json prepare \
+  --output train/prepared/full_sft_task_text --max-samples 100000 --validation-fraction 0.2
+```
+
+保持视频级train/validation隔离；不能通过删除旧tokenizer注册来转换已有权重。
+新实验同时更换平衡loss和分隔符编码，评测时应记录两个变量，不能将收益归因于单一修改。
+
+### 可选：按回复事件平衡 SFT loss
+
+新配置 [`configs/minicpmo_full_sft_event_balanced_dp.json`](configs/minicpmo_full_sft_event_balanced_dp.json)
+显式启用 `decision_loss_mode=event_balanced`。在现有训练命令中替换 `--config`，
+使用新的输出目录开始实验；不要直接恢复旧目标的 optimizer checkpoint。
+原配置、正在运行的任务和自动队列不会切换。
+
+该模式分别平衡首次/后续开口，所有空闲位置合并计算一个沉默均值（不按回复前后等权拆分）；内容与 Agent instruction 按每次
+参考回复平均；续说、结束和普通文本 `<|task_start|>` 分隔符分别监督。
+默认总目标为 `0.8 × gate + 0.2 × structure + response + instruction`，
+缺失类别按层重新归一化。全部空闲位置（包含参考窗口内）继续监督沉默，参考回复
+连续输出不受影响。它加强错误开口的监督，但不直接按生成回复次数累计惩罚。
+公式、日志和兼容规则见 [loss 指标说明](docs/loss_metrics.md#event-balanced-objective-opt-in)。
+
+### 完整视频 SFT
+
+使用 `configs/minicpmo_full_sft_full_video_dp.json`：`sft_horizon=full_video`、
+`max_sequence_tokens=65536`、`supervise_silence=true`，并将固定静默尾段设为0。
+该模式从视频起点覆盖到 `floor(video_duration)` 秒，不应用旧的300秒回复起点限制。
+每条参考回复正常监督，其余问题后的空闲秒都监督 listen；参考时间窗口不变。
+最后不足一秒沿用现有整秒训练约定，不补造音视频。
+
+该模式必须重新 prepare，使用新的输出目录训练。序列超限会排除整条 QA，
+不再裁短视频尾部；CPU audit 只验证文本 token 下界，不保证包含媒体后的65536
+预算足够。应在空闲 GPU 上用真实媒体 profile 检查最长轨迹后，再决定是否继续扩大。
+完整视频监督会增加训练时间和主存/显存需求，现有实验与自动队列不会切换。

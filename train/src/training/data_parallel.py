@@ -74,7 +74,22 @@ def step(engine, record, config, device, world_size):
                           activation_gpu_kept_gib=stats['kept_bytes'] / 2**30,
                           parameter_offload_cache_hits=stats['parameter_cache_hits'])
     total = torch.tensor(local_value if eligible else 0., device=device, dtype=torch.float64)
-    torch.distributed.all_reduce(total)
+    raw_metrics = getattr(engine.module, 'sft_loss_metrics', None)
+    if raw_metrics is not None:
+        from train.src.domain.loss_metrics import COMPONENTS, COUNT_INDICES, METRIC_SIZE, statistics
+        raw = raw_metrics if eligible else [0.] * METRIC_SIZE
+        if not eligible:
+            engine.module.last_stats.update(statistics(raw, qa_count=0, prefix='local_'))
+        presence = [int(raw[COUNT_INDICES[i]] > 0) for i in range(len(COMPONENTS))]
+        packed = torch.tensor([total.item(), *raw, *presence], device=device, dtype=torch.float64)
+        # Same collective as total-loss reporting, with additive diagnostics.
+        torch.distributed.all_reduce(packed)
+        values = packed.tolist()
+        engine.module.last_stats.update(statistics(values[1:1 + METRIC_SIZE],
+            qa_count=valid_count, presence=values[1 + METRIC_SIZE:]))
+        total = packed[0]
+    else:
+        torch.distributed.all_reduce(total)
     result.update(local_loss=local_value, local_valid=eligible, valid_qa=valid_count,
                   global_micro_batch_size=world_size,
                   global_batch_size=world_size * config.get('gradient_accumulation_steps', 1),

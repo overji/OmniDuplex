@@ -158,10 +158,27 @@ def _supervise(args, model, gpus, worker_python, poll_seconds, services, sample_
         while True:
             metrics = collect(samples, shard_dirs, args.output_dir, live=True,
                               expected_indices=expected)
-            for worker, process, directory in zip(status["workers"], processes, shard_dirs):
+            for rank, (worker, process, directory) in enumerate(zip(status["workers"], processes, shard_dirs)):
                 worker["exit_code"] = process.poll()
                 worker["completed_samples"] = len(read_jsonl(directory / "predictions.jsonl",
                                                              complete_only=True))
+                # MOSS records the current failure before asking to replace a
+                # native session thread that could not close. Resume only this
+                # shard; the persisted terminal row prevents an infinite retry.
+                if model == 'moss_vl' and worker['exit_code'] == 75:
+                    previous_count = worker.get('restart_completed_samples', -1)
+                    if worker['completed_samples'] <= previous_count:
+                        raise RuntimeError('MOSS worker requested restart without sample progress')
+                    worker['restart_completed_samples'] = worker['completed_samples']
+                    environment = os.environ.copy()
+                    environment.update(CUDA_VISIBLE_DEVICES=str(gpus[rank]), CUDA_DEVICE_ORDER='PCI_BUS_ID')
+                    command = worker_command(args, model, worker_python, plan_path, rank)
+                    replacement = subprocess.Popen(command, cwd=ROOT.parent, env=environment,
+                        stdout=logs[rank], stderr=subprocess.STDOUT, start_new_session=True)
+                    processes[rank] = replacement
+                    worker.update(pid=replacement.pid, exit_code=None,
+                                  session_restarts=worker.get('session_restarts', 0) + 1)
+                    print(f'RESTART model=moss_vl rank={rank} pid={replacement.pid}', flush=True)
                 if worker["exit_code"] not in (None, 0):
                     worker["failure_tail"] = (directory / "worker.log").read_text(
                         errors="replace")[-4000:]
@@ -182,11 +199,14 @@ def _supervise(args, model, gpus, worker_python, poll_seconds, services, sample_
                 status["status"] = "failed" if failed else (
                     "incomplete" if status["missing_sample_indices"] or
                     status["partial_sample_indices"] else "complete")
+                if (model == 'moss_vl' and not failed and not status['missing_sample_indices']
+                        and status['partial_sample_indices']):
+                    status['status'] = 'complete_with_errors'
             write_json(status_path, status)
             print(f"PROGRESS model={model} {status['completed_samples']}/{len(expected)} "
                   f"status={status['status']}", flush=True)
             if done:
-                return 0 if status["status"] == "complete" else 1
+                return 0 if status["status"] in ('complete', 'complete_with_errors') else 1
             if service_manager is not None:
                 service_manager.check_alive()
             time.sleep(poll_seconds)
