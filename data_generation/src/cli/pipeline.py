@@ -23,17 +23,23 @@ def parse_args(argv=None):
                         help="historical output parent; with --resume, the specific run directory")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--check-existing", action="store_true",
+                        help="only report how many source videos have accepted QA and exit")
+    parser.add_argument("--skip-qa", action="append", type=Path, default=[], metavar="PATH",
+                        help="additional accepted QA JSON file or run directory to use for skip checks (repeatable)")
     parser.add_argument("--pr-probability", type=float, default=0.5)
     parser.add_argument("--agent-probability", type=float, default=0.75)
     parser.add_argument("--agent-positive-probability", type=float, choices=(1.0,), default=1.0,
                         help="Agent negative generation is disabled; only 1 is supported")
     add_api_arguments(parser)
-    args = resolve_api_arguments(parser.parse_args(argv))
+    args = parser.parse_args(argv)
     for name in ("pr_probability", "agent_probability", "agent_positive_probability"):
         if not 0 <= getattr(args, name) <= 1:
             parser.error(f"--{name.replace('_', '-')} must be between 0 and 1")
     if args.num_attempts is not None and args.num_attempts < 1:
         parser.error("--num-attempts must be positive")
+    if args.check_existing and args.resume:
+        parser.error("--check-existing cannot be combined with --resume")
     if args.dataset_dir is not None and args.split is None:
         parser.error("--dataset-dir requires --split A or B")
     if args.split is not None and args.dataset_dir is None:
@@ -47,15 +53,21 @@ def parse_args(argv=None):
                         args.videos_dir.expanduser().resolve()))
     if args.video_url_map:
         args.video_url_map = args.video_url_map.expanduser().resolve()
+    args.skip_qa = [path.expanduser().resolve() for path in args.skip_qa]
     args.tasks = list(TASK_CATALOG)
     args.samples_per_task = 1
+    if not args.check_existing:
+        args = resolve_api_arguments(args)
     return args
 
 
 def main(argv=None):
     try:
-        return pipeline.run(application_options(PipelineOptions, parse_args(argv)),
-                            progress=lambda message, failed: print(message, file=sys.stderr if failed else sys.stdout, flush=True))
+        args = parse_args(argv)
+        progress = lambda message, failed: print(message, file=sys.stderr if failed else sys.stdout, flush=True)
+        if args.check_existing:
+            return pipeline.check_existing(args, progress=progress)
+        return pipeline.run(application_options(PipelineOptions, args), progress=progress)
     except (OSError, ValueError, RuntimeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1

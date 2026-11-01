@@ -111,12 +111,43 @@ def build_plan(commands, gpus, output, reuse_root=None):
     return tasks
 
 
+def probe_assignments(workers, children, placements, pool, reserved):
+    """Move whole resumable shards between replicas; never change their manifests."""
+    busy = {gpu for rank, child in enumerate(children)
+            if child is not None and child.poll() is None for gpu in placements[rank]}
+    free = [gpu for gpu in pool if gpu not in busy and gpu not in reserved]
+    result = []
+    for rank, worker in enumerate(workers):
+        if children[rank] is not None:
+            continue
+        width = len(worker['gpus'])
+        if len(free) < width:
+            continue
+        preferred = worker['gpus']
+        selected = preferred if all(g in free for g in preferred) else free[:width]
+        result.append((rank, selected))
+        free = [gpu for gpu in free if gpu not in selected]
+    return result
+
+
+def reserved_gpus(path, pool):
+    if path is None or not path.exists():
+        return set()
+    value = json.loads(path.read_text())
+    reserved = {str(gpu) for gpu in value.get('gpus', [])}
+    if not reserved <= set(pool):
+        raise ValueError('Reserved GPUs must belong to this suite')
+    return reserved
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--commands', type=Path, required=True)
     p.add_argument('--gpus', nargs='+', required=True)
     p.add_argument('--output-dir', type=Path, required=True)
     p.add_argument('--dry-run', action='store_true')
+    p.add_argument('--probe-gpu-reservations', type=Path,
+                   help='Runtime JSON {owner, gpus}: reserve GPUs, scheduling unchanged probe shards on other replicas')
     p.add_argument('--probe-retry-errors-once', action='store_true',
                    help='Retry probe failures once after the first pass, then continue with partial results')
     p.add_argument('--probe-skip-failed', action='store_true',
@@ -211,13 +242,22 @@ def main():
             if task['mode'] == 'realtime':
                 children.append(launch(task['commands'][0], directory / 'supervisor.log'))
             else:
-                for rank, worker in enumerate(task['commands']):
-                    flags = (['--retry-errors-once'] if args.probe_retry_errors_once else
-                             ['--skip-failed'] if args.probe_skip_failed else [])
-                    command = worker['argv'] + flags
-                    children.append(launch(command, directory / f'worker_{rank}' / 'worker.log', worker['gpus']))
-            item.update(status='running', pids=[c.pid for c in children]); save()
-            while any(c.poll() is None for c in children):
+                children = [None] * len(task['commands'])
+            placements = {}
+            item.update(status='running', pids=[c.pid if c else None for c in children]); save()
+            while any(c is None or c.poll() is None for c in children):
+                if task['mode'] == 'probe':
+                    pool = list(dict.fromkeys(g for w in task['commands'] for g in w['gpus']))
+                    reserved = reserved_gpus(args.probe_gpu_reservations, args.gpus)
+                    for rank, selected in probe_assignments(task['commands'], children, placements, pool, reserved):
+                        flags = (['--retry-errors-once'] if args.probe_retry_errors_once else
+                                 ['--skip-failed'] if args.probe_skip_failed else [])
+                        children[rank] = launch(task['commands'][rank]['argv'] + flags,
+                                               directory / f'worker_{rank}' / 'worker.log', selected)
+                        placements[rank] = selected
+                    item.update(pids=[c.pid if c else None for c in children],
+                                worker_gpus=placements, reserved_gpus=sorted(reserved),
+                                pending_workers=[r for r, c in enumerate(children) if c is None])
                 if task['mode'] == 'probe':
                     records, errors = [], []
                     for rank in range(len(children)):
@@ -227,7 +267,7 @@ def main():
                     atomic_write_text(directory / 'probe_predictions.jsonl', ''.join(json.dumps(r, ensure_ascii=False)+'\n' for r in records))
                     write_report(load_manifest(Path(task['manifest'])), records, directory, errors)
                     item['completed_probes'] = len(records)
-                item['exit_codes'] = [c.poll() for c in children]; save()
+                item['exit_codes'] = [c.poll() if c else None for c in children]; save()
                 time.sleep(30)
             if task['mode'] == 'probe':
                 records, errors = [], []

@@ -1,5 +1,5 @@
 """Application inputs and generation results, independent of argparse."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +44,7 @@ class PipelineOptions(BatchOptions):
     agent_probability: float = 0.75
     agent_positive_probability: float = 1.0
     pr_probability: float = 0.5
+    skip_qa: list[Path] = field(default_factory=list)
 
 
 @dataclass

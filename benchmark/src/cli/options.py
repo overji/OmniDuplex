@@ -281,3 +281,15 @@ def configure_judge_bundle(parser):
     parser.add_argument('--thinking', choices=('disabled', 'enabled', 'provider-default'), default='disabled')
     parser.add_argument('--retry-failed', action='store_true', help='Explicitly retry failed requests, never completed ones')
     parser.add_argument('--dry-run', action='store_true', help='Validate inputs/count requests without credentials, writes or API')
+
+
+def configure_omnipro(parser):
+    commands = parser.add_subparsers(dest='omnipro_command', required=True)
+    prepare = commands.add_parser('prepare', help='Convert OmniPro with paper ±3s windows')
+    prepare.add_argument('--source', type=Path, required=True)
+    prepare.add_argument('--videos-dir', type=Path, required=True)
+    prepare.add_argument('--output-dir', type=Path, required=True)
+    prepare.add_argument('--training-metadata', type=Path)
+    for name in ('report', 'queue'):
+        sub = commands.add_parser(name)
+        sub.add_argument('--config', type=Path, required=True)

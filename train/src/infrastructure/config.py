@@ -86,6 +86,18 @@ def load_config(path):
     reserve = config.get('sft_activation_gpu_reserve_gib', 12)
     if isinstance(reserve, bool) or not isinstance(reserve, (int, float)) or not 0 <= reserve < float('inf'):
         raise ValueError('sft_activation_gpu_reserve_gib must be finite and nonnegative')
+    for key in ('grpo_candidate_parallel', 'grpo_precheck_replay'):
+        if key in config and type(config[key]) is not bool:
+            raise ValueError(f'{key} must be boolean')
+    depth = config.get('grpo_judge_pipeline_depth', 1)
+    if type(depth) is not int or depth < 1 or depth > config['gradient_accumulation_steps']:
+        raise ValueError('Judge pipeline depth must be between 1 and gradient_accumulation_steps')
+    if config.get('grpo_candidate_parallel') or depth > 1 or config.get('grpo_precheck_replay') is False:
+        if method != 'full_grpo' or config.get('reward_backend') != 'llm':
+            raise ValueError('GRPO optimizations require LLM-judged full_grpo')
+    if config.get('grpo_candidate_parallel'):
+        if json.loads(Path(config['deepspeed_config']).read_text())['zero_optimization']['stage'] != 2:
+            raise ValueError('Candidate parallel requires ZeRO-2')
     if method == 'full_grpo':
         if type(config.get('group_size', 4)) is not int or config.get('group_size', 4) < 2 or config.get('kl_beta', 0) != 0:
             raise ValueError('GRPO requires group_size >= 2 and kl_beta=0 in this implementation')
@@ -96,6 +108,16 @@ def load_config(path):
     backend = config.get('reward_backend', 'rules')
     if backend not in ('rules', 'llm'):
         raise ValueError('Unknown reward_backend')
+    reward_mode = config.get('reward_mode', 'legacy')
+    if reward_mode not in ('legacy', 'confusion_judge'):
+        raise ValueError('Invalid reward_mode')
+    if config.get('grpo_horizon', 'prefix') not in ('prefix', 'full_video'):
+        raise ValueError('Invalid grpo_horizon')
+    if config.get('grpo_horizon') == 'full_video' and (method != 'full_grpo' or backend != 'llm'):
+        raise ValueError('Full-video GRPO requires the judged training path')
+    if reward_mode == 'confusion_judge' and (method != 'full_grpo' or backend != 'llm'
+                                            or config.get('grpo_horizon') != 'full_video'):
+        raise ValueError('Confusion reward requires full-video LLM-judged GRPO')
     if backend == 'llm':
         import math
         from urllib.parse import urlparse
@@ -117,7 +139,9 @@ def load_config(path):
             judge[key] = str(path if path.is_absolute() else ROOT / path)
         if 'api_key' in judge:
             raise ValueError('Keep credentials in api_key_env, never in config')
-        for key in ('timing', 'content', 'agent_timing', 'agent_content', 'agent_call', 'silence', 'invalid_call_penalty'):
+        reward_keys = (('tp', 'fn', 'fp', 'tn', 'invalid_call_penalty') if reward_mode == 'confusion_judge' else
+                       ('timing', 'content', 'agent_timing', 'agent_content', 'agent_call', 'silence', 'invalid_call_penalty'))
+        for key in reward_keys:
             value = config['reward_weights'][key]
             if type(value) not in (float, int) or not math.isfinite(value) or value < 0:
                 raise ValueError(f'Invalid reward weight: {key}')

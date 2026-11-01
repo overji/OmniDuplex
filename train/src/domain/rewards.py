@@ -101,6 +101,9 @@ def judged_reward(sample, trajectory, judgments, config):
     from train.src.domain.agent import training_sample
     from benchmark.evaluation.judge import SCORES
     sample = training_sample(sample)
+    if config.get('reward_mode') == 'confusion_judge':
+        from train.src.domain.confusion_reward import confusion_reward
+        return confusion_reward(sample, trajectory, judgments, config)
     events = trajectory['events']
     matched = match_windows(sample, events)
     n = max(matched['windows'], 1)

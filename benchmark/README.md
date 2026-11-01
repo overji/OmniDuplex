@@ -1305,3 +1305,90 @@ CPU 单测已验证顺序、GPU 分组、独立输出路径和输入过滤；真
 ```bash
 python -m benchmark judge-bundle --input INPUT.json --output RESULTS.json --dry-run
 ```
+
+## OmniPro：使用AOI协议比较基座与SFT
+
+适配数据来自OmniPro原始 `benchmark.json`，而不是其训练数据。
+原论文Online主实验使用触发点±3秒容差：
+[OmniPro §3.2.1](https://arxiv.org/html/2605.18577v1#S3.SS2.SSS1)。
+这里保留该时间窗口，使用AOI的一对一时间匹配和独立0–2分内容Judge，
+因此报告不能直接当成论文中“内容也正确才命中”的原始F1。
+模型仍按AOI原生realtime方式接收音视频，问题只插入一次；没有额外轮询问题。
+
+转换命令（在仓库根目录执行）：
+
+```bash
+benchmark/.venv/bin/python -m benchmark omnipro prepare \
+  --source /remote-home/yushengliao/speech/jimodels/openDatasets/OmniPro/benchmark.json \
+  --videos-dir /remote-home/yushengliao/speech/jimodels/openDatasets/OmniPro \
+  --training-metadata /remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset/video_metadata.json \
+  --output-dir benchmark/results/omnipro_aoi_minicpmo_20261030/inputs
+```
+
+输出 `all_qa.json`、`manifest.json`、`source_mapping.json`，保留全部原始字段、ID和顺序。
+数值字段 `trigger_time_sec` 定义窗口；异常时间字符串会记录，绝不静默改成另一个触发。
+窗口重叠仍保留；超出视频的参考也保留在分母并单独审计。没有缺失视频时才生成输入。
+训练重合审计按metadata的原始视频ID检查，不等同于感知去重。
+PR/RTD是派生标签：提醒、条件提醒、定位、瞬时计数、步骤指导为PR；监控、累计计数、
+去重计数、事件叙述为RTD。源9类任务及三认知层级分别保留，不强行映射AOI的12类任务。
+
+`benchmark/scripts/prepare_omnipro_suite.py --help` 提供显式模型、训练输出、原队列、
+导出路径参数，冻结评测运行时并生成 `queue_config.json`。它只准备配置，不启动或停止任务。
+该suite按以下顺序运行：
+
+1. 暂停配置中指明的原队列及监护，只停止通过PID和命令身份检查的进程。
+2. 4–5卡评MiniCPM基座，6–7卡评旧SFT500，两组同时运行。先检查短视频、多触发和长视频，
+   再全量推理；原始sample_index、seed、prompt和解码设置相同。
+3. 两组推理都完成后，4–7卡各启动一个本地Qwen3.8-27B Judge，四实例负载均衡处理
+   匹配回复。复用AOI payload、评分prompt、分数和失败重试协议；不增加论文的二值内容阈值。
+4. 释放Judge并恢复原队列。等待最新SFT正常退出、全部rank完成报告与最终checkpoint齐全。
+5. 最终SFT就绪后再次暂停原队列，将权重导出到外部openmodels路径，在6–7卡评测，随后
+   再用四卡Judge。完成后恢复原队列。不会为等待训练而占住GPU，也不会停止前四卡训练。
+
+启动控制器（命令本身前台运行；需要后台执行时显式使用自己的任务管理方式）：
+
+```bash
+benchmark/.venv/bin/python -m benchmark omnipro queue \
+  --config benchmark/results/omnipro_aoi_minicpmo_20261030/queue_config.json
+```
+
+`queue_status.json`记录当前阶段，`runs/<模型>/worker_*`记录原始逐秒输出。
+控制器每15分钟记录健康状态，检测长时间无进展并进行有次数上限的恢复；数据、prompt或
+并行计划变更会明确失败。中断时释放自己拥有的进程并恢复原队列；使用同一配置可续跑。
+每次内容Judge保存模型指纹、输入指纹、原始回答、重试记录及评分，完成项不会重复请求。
+Qwen Judge仅在localhost提供服务，不使用代理；开放API transport显式关闭thinking，
+保留512 token预算与截断失败检查。整轮推理不完整和Judge失败不会当作有效沉默。
+
+重新汇总：
+
+```bash
+benchmark/.venv/bin/python -m benchmark omnipro report \
+  --config benchmark/results/omnipro_aoi_minicpmo_20261030/queue_config.json
+```
+
+输出 `comparison.md/json`、各模型 `aoi_report_metrics.json` 与 `judge/<模型>/judge_metrics.json`。
+时间主表采用共同有效QA交集，提供任务、认知层级、长度和交互类型分组；JSON另外包含
+首次/后续召回、每分钟FP及高误报QA。内容分数同时给出TP均分、含未命中零分的窗口均分、
+匹配和评分数量。不同模型的TP集合不同，不能只比较TP内容均分。错误/缺失QA与不可达
+参考窗口单独列出，主指标不会通过删除失控样本或移动窗口获得改善。
+
+OmniPro源数据按任务排列；需要让中途统计覆盖更多任务时，可随机化执行顺序后续跑：
+
+```bash
+# 默认只预览，不停止任务。
+benchmark/.venv/bin/python benchmark/scripts/shuffle_omnipro_queue.py \
+  --config benchmark/results/omnipro_aoi_minicpmo_20261030/queue_config.json \
+  --seed 20261031
+# 明确应用：暂停本控制器及推理进程，保留结果并重新启动。
+benchmark/.venv/bin/python benchmark/scripts/shuffle_omnipro_queue.py \
+  --config benchmark/results/omnipro_aoi_minicpmo_20261030/queue_config.json \
+  --seed 20261031 --apply
+```
+
+只随机各现有分片的执行顺序，不改变数据顺序、sample_index、`seed+sample_index`、
+分片归属或已完成结果。基座与SFT使用同一随机顺序，各自跳过已完成QA；未来最终SFT
+也使用同一顺序。原配置和计划保存在 `order_history/`，全部旧结果继续参与最终评测。
+已完成部分仍偏向原始前几个任务，重排不意味着当前中间结果已成为均衡随机样本。
+
+
+`run_prepared_suite.py --probe-gpu-reservations <JSON>` 可在运行中保留部分 GPU，例如 `{"owner":"grpo", "gpus":[7]}`。Probe 仍使用原分片、模型和输出目录，只把待运行分片放到其余空闲副本；已在被保留 GPU 上运行的 worker 会正常完成，不被中断。将 `gpus` 改为空列表即可恢复全部卡。Realtime 的 GPU 分配不受该参数控制。本机 GRPO 借卡只发生在 OmniPro 全部完成之后，剩余 probe 队列在 4–6 卡继续运行。

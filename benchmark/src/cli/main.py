@@ -8,6 +8,7 @@ from benchmark.cli import options
 MODELS = ("minicpmo", "gander", "mmduet2", "livestar", "roma", "joyai", "moss_vl")
 REMOTE_MODELS = ("qwen_realtime", "gemini_live")
 COMMANDS = {
+    'omnipro': 'benchmark.cli.omnipro',
     'prepare': 'benchmark.runtime.preparation',
     "probe": "benchmark.probe.runner",
     "judge": "benchmark.evaluation.judge",

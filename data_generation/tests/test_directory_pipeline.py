@@ -265,6 +265,26 @@ class DirectoryPipelineTests(unittest.TestCase):
         with contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
             parse_args(['--videos-dir','videos','--output-dir','out','--num-attempts','0'])
 
+    def test_check_existing_reads_external_qa_without_api_configuration(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            videos = root / 'videos'
+            videos.mkdir()
+            for name in ('already.mp4', 'pending.mp4'):
+                (videos / name).write_bytes(name.encode())
+            qa = root / 'all_qa.json'
+            qa.write_text(json.dumps([{
+                'schema': 'omni-interaction-v2', 'status': 'ok', 'video': 'videos/already.mp4',
+                'responses': [{'response': 'saved'}],
+            }]))
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(main([
+                    '--videos-dir', str(videos), '--output-dir', str(root / 'out'),
+                    '--num-attempts', '1', '--skip-qa', str(qa), '--check-existing',
+                ]), 0)
+            self.assertIn('1 of 2 videos will be skipped; 1 remain', output.getvalue())
+
     def test_split_selects_metadata_videos_and_skips_saved_qa_only(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

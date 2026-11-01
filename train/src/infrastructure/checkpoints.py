@@ -70,8 +70,8 @@ def fingerprints(prepared, config):
         files['judge'] = identity(config['judge'])
         source = Path(__file__).parents[1]
         files['grpo_reward_code'] = {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest()
-                                    for p in (source / 'domain/rewards.py', source / 'domain/grpo.py', source / 'infrastructure/judge.py',
-                                              source / 'training/grpo_judged.py', source / 'models/streaming.py')}
+                                    for p in (source / 'domain/rewards.py', source / 'domain/confusion_reward.py', source / 'domain/grpo.py', source / 'infrastructure/judge.py',
+                                              source / 'training/grpo_judged.py', source / 'training/grpo_candidates.py', source / 'models/streaming.py')}
     return files
 
 

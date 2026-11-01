@@ -89,6 +89,7 @@ def inspect(config, now):
             return result('repair', 'probe_worker_failed')
         finished = {f'worker_{rank}' for rank, code in enumerate(job.get('exit_codes', []))
                     if code == 0 or (bounded_probe and code is not None)}
+        finished.update(f'worker_{rank}' for rank in job.get('pending_workers', []))
         parallel = read(directory/'parallel_status.json')
     snapshot['key'] = str(directory)
     finished.update(f"worker_{w['rank']}" for w in parallel.get('workers', []) if w.get('exit_code') == 0)

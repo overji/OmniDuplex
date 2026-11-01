@@ -32,6 +32,11 @@ def run(args, config):
     from train.src.models.loading import load_model
     device, rank, world = initialize_distributed(args, config)
     config = dict(config)
+    if config.get('grpo_candidate_parallel', False):
+        from train.src.training.grpo_candidates import candidate_ids
+        candidate_ids(config, rank, world)
+        if json.loads(Path(config['deepspeed_config']).read_text())['zero_optimization']['stage'] != 2:
+            raise ValueError('Independent candidates require ZeRO-2: ZeRO-3 forward collectives would deadlock')
     if args.profile and config.get('reward_backend') != 'llm':
         config['gradient_accumulation_steps'] = 1
     exists = torch.tensor(int(args.output.exists()) if rank == 0 else 0, device=device)
@@ -97,7 +102,7 @@ def run(args, config):
     dsconfig['optimizer']['params'].update(lr=config['learning_rate'], weight_decay=config['weight_decay'])
     engine, optimizer, _, _ = deepspeed.initialize(model=graph,
         model_parameters=[p for p in graph.parameters() if p.requires_grad], config=dsconfig)
-    if independent:
+    if independent or config.get('grpo_candidate_parallel', False):
         from train.src.infrastructure.zero import preserve_cpu_accumulation
         preserve_cpu_accumulation(engine)
     wrap_audio_position_table(model)

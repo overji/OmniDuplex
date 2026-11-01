@@ -87,10 +87,11 @@ class AccumulationTests(unittest.TestCase):
                 if qa['question'] == 'fail':raise TimeoutError()
                 scores = [2] * 4 if qa['question'] == 'zero' else [0, .5, 1.5, 2]
                 return [{0:dict(status='complete',response_score=s,call_score=None)} for s in scores]
-        for count in (5, 6):
+        for count, depth in ((5,1),(6,1),(5,2),(6,2),(7,2),(8,4)):
             with self.subTest(count=count), tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
                 config = load_config(ROOT / 'train/configs/minicpmo_full_grpo_judge.json')
-                config.update(epochs=1, grpo_activation_offload=False, save_every_steps=0)
+                config.update(epochs=1, grpo_activation_offload=False, save_every_steps=0,
+                              grpo_judge_pipeline_depth=depth)
                 records=[]
                 for i in range(count):
                     qa=sample();qa['question']='fail' if i==0 else 'zero' if i==1 else str(i)
@@ -116,8 +117,9 @@ class AccumulationTests(unittest.TestCase):
                 self.assertEqual(report['valid_qa_this_run'],count-2)
                 self.assertEqual(report['excluded'],1)
                 self.assertEqual(report['zero_variance_groups'],1)
-                self.assertEqual(engine.global_steps,1)
-                self.assertEqual(engine.micro_steps,4)
+                expected_updates = (count-2+3)//4
+                self.assertEqual(engine.global_steps,expected_updates)
+                self.assertEqual(engine.micro_steps,expected_updates*4)
 
 
 if __name__ == '__main__':

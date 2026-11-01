@@ -272,33 +272,48 @@ manifest 中的视频集合，不会因其他人后来提交了新 QA 而跳过�
 ### 使用 train 生成数据
 
 先按上面的步骤安装 Gemini 依赖，设置 `GEMINI_API_KEY` 和 `GEMINI_MODEL`，并完成
-train 素材检查。然后在仓库根目录运行：
+train 素材检查。A/B 已合并的完整集合位于 `/remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/train/merged/`，
+包含 `videos/` 和 `video_metadata.json`。先运行预检查，统计默认生成结果、当前输出目录和
+AOI-Dataset 已有 QA 能跳过多少条；预检查不需要 API key，也不会调用模型：
 
 ```bash
 python data_generation/generate.py \
-  --videos-dir ../OmniInteractionDataset/train/videos \
+  --videos-dir /remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/train/merged/videos \
   --output-dir data_generation/data/pipeline_runs/train \
   --num-attempts 500 \
+  --skip-qa /remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset/all_qa.json \
+  --check-existing
+```
+
+确认预检查的跳过数和待生成数后，使用相同参数正式生成，去掉 `--check-existing`，并保留
+`--skip-qa`：
+
+```bash
+python data_generation/generate.py \
+  --videos-dir /remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/train/merged/videos \
+  --output-dir data_generation/data/pipeline_runs/train \
+  --num-attempts 500 \
+  --skip-qa /remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset/all_qa.json \
   --provider gemini \
   --seed 42
 ```
 
-当前 `--dataset-dir --split` 仅支持 A/B，train 请使用 `--videos-dir`，不要添加
-`--split train`。程序递归读取视频目录，只遍历一次；`500` 是 QA 任务尝试上限，
-失败和 `skip` 也计入，不保证生成 500 条成功 QA。已有有效、非空 QA 的视频会跳过，
-判断依据与 A/B 相同。
+`--skip-qa` 可重复指定 QA JSON 文件或生成运行目录。程序会把 QA 中的视频路径与源视频文件名
+匹配，因此 `videos/<uuid>.mp4` 也能匹配合并目录下的 `<uuid>.mp4`。默认仍会检查仓库内
+`data_generation/data` 和 `--output-dir` 已有的有效 QA；匹配到有效且非空 QA 的视频会跳过。
+`--num-attempts` 是 QA 任务尝试上限，失败和 `skip` 也计入，不保证生成相同数量的成功 QA。
 
 结果写入 `data_generation/data/pipeline_runs/train/<UTC时间戳>/`。该目录包含最终
 `all_qa.json`、`coverage.json`、`api_usage.json` 和完成后生成的 `dataset_report.pdf`；
 各视频子目录包含 `caption.json`、`route.json`、`qa/` 及单视频 `all_qa.json`。
 原视频仍保存在下载目录中。
 
-继续中断的 train 运行时，将下面的 `<UTC时间戳>` 替换为终端打印的实际目录，
-保持原视频路径、模型、尝试上限和 seed 不变：
+继续中断的 train 运行时，将下面的 `<UTC时间戳>` 替换为终端打印的实际目录，保持原视频路径、
+模型、尝试上限和 seed 不变：
 
 ```bash
 python data_generation/generate.py \
-  --videos-dir ../OmniInteractionDataset/train/videos \
+  --videos-dir /remote-home/yushengliao/speech/jimodels/datasets/OmniInteractionDataset/train/merged/videos \
   --output-dir data_generation/data/pipeline_runs/train/<UTC时间戳> \
   --num-attempts 500 \
   --provider gemini \

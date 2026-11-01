@@ -30,7 +30,7 @@ def prepare(data, output, config, max_samples, validation_fraction):
         record, reason = qa_record(sample, i, config)
         if record and config.get('training_method') == 'full_grpo':
             refs = reference_windows(sample)
-            if any(seconds(r['window_end']) > config['max_prefix_seconds'] for _, r in refs):
+            if config.get('grpo_horizon') != 'full_video' and any(seconds(r['window_end']) > config['max_prefix_seconds'] for _, r in refs):
                 record, reason = None, 'window_exceeds_rollout_horizon'
             elif any(seconds(r['window_end']) < math.ceil(seconds(sample['question_time'])) + 1 for _, r in refs):
                 record, reason = None, 'noncausal_window'

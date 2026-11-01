@@ -289,3 +289,28 @@ train/.venv/bin/python -m train --config train/configs/minicpmo_full_sft_dp.json
 不再裁短视频尾部；CPU audit 只验证文本 token 下界，不保证包含媒体后的65536
 预算足够。应在空闲 GPU 上用真实媒体 profile 检查最长轨迹后，再决定是否继续扩大。
 完整视频监督会增加训练时间和主存/显存需求，现有实验与自动队列不会切换。
+
+### GRPO：显式 TP/FP/FN/TN 奖励
+
+使用 [`configs/minicpmo_full_grpo_confusion_judge.json`](configs/minicpmo_full_grpo_confusion_judge.json)
+显式启用 `reward_mode=confusion_judge`，沿用本地 LLM Judge 服务配置和 GRPO 命令。
+先将 `model_path` 配置为实际采用普通文本 Agent 协议的 SFT 导出，再重新 prepare，
+使用新的外部输出目录训练；旧 judged-GRPO 配置不改变。
+
+TP由一对一窗口匹配确定，再用Judge质量转换为−1到+1；FN每次扣1，FP每次扣0.5，
+三项按参考窗口数归一化。真正等待的TN项按负侧秒数归一化，限制在±0.1；
+非法调用每次再扣 `0.1/窗口数`。空开口也计FP，续说不计新开口、也不赚TN。
+新配置使用完整视频rollout与65536 token预算，不裁短尾段；Judge失败排除整组。
+全部公式、分项日志与局限见 [奖励说明](docs/grpo_confusion_reward.md)。
+
+## SFT → Realtime benchmark → GRPO 自动衔接
+
+`train/scripts/sft_bench_grpo.py --config <chain.json>` 按操作配置顺序执行：验证 SFT 正常保存最终 checkpoint，导出到仓库外，运行已有 realtime DP suite，再启动本地 Judge、GRPO profile 和正式 GRPO。`--check-only` 只检查配置和视频级数据划分，不加载模型。配置显式指定 benchmark 配置、GRPO/profile 配置、prepared、外部权重目录、GPU、Judge、待完成的 OmniPro 状态和现有队列 transition 路径。
+
+本机 2026-10-31 的配置在 `train/outputs/sft_bench_grpo_fullvideo_20261031/chain.json`，状态在同目录 `status.json`，日志按阶段保存。0–3 卡先测最新 SFT 的 AOI-Bench realtime，之后仍用 0–3 卡运行 GRPO，7 卡运行 Qwen3.8-27B Judge。GRPO 使用 `confusion_judge`、完整视频、每 QA 4 条候选、累积 4 个 QA/更新、2 epoch、LR 1e-6；这里的有效 QA batch 是 **4**，不等于 SFT 的 16。复用 SFT 的视频隔离划分：3996 训练 QA、1004 验证 QA，验证 QA 不参加策略更新。
+
+借卡前等待整组 OmniPro 推理和 Judge 完成，然后通过 `probe_gpu_reservations.json` 只保留 7 卡给 Judge。4–6 卡持续派发 benchmark 分片，原分给 7 卡的分片在其他卡空闲时运行；分片 manifest、输出目录及已完成结果不变。已启动的 7 卡 worker 正常结束、释放显存后再启动 Judge。GRPO 结束或收到正常停止信号后解除保留，队列重新可用 4–7 卡；不暂停调度器，也不杀掉在途 benchmark worker 来抢卡。SFT 异常结束、benchmark 未完整完成、Judge 失败或 profile 未完成一次有限 loss 的优化更新时，链路报错停止，不会自动跳过检查。
+
+控制器只允许一个实例，保存 GPU 保留归属日志，释放时不会改写其他任务持有的保留。创建链路输出目录下的 `STOP` 文件可请求停止；若在等待 SFT，只停止等待任务，SFT 本身继续。重启控制器前需先排查失败原因；不自动覆盖已有 GRPO 输出或恢复旧优化器。运行时使用冻结的代码快照，避免等待期间仓库修改改变评测或训练语义。
+
+本机自动链路已启用 [四卡候选并行配置](configs/minicpmo_full_grpo_confusion_judge_dp4.json)：每卡生成并回放一个候选，ZeRO-2 同步梯度，Judge 深度为 2 的有界流水线与下一组采样重叠。每次更新前清空流水线，保持同策略采样。正式训练省去额外无梯度回放，但每次带梯度回放仍验证概率一致性；profile 保留双重检查，并覆盖约 50–299 秒视频。配置、归一化、日志和限制见 [GRPO 执行说明](docs/grpo_confusion_reward.md#four-gpu-candidate-parallel-execution)。真实显存及速度以 SFT 完成后的四卡 profile 为准，profile 失败则停止链路，不自动降低视频覆盖或候选数。

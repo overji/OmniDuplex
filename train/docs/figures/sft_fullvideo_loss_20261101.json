@@ -1,0 +1,14 @@
+{
+  "source": "/root/jimodels/OmniDuplex/train/outputs/full_sft_dp4_bs16_event_v2_fullvideo_65k_20261030/metrics.rank0.jsonl",
+  "last_step": 413,
+  "updates": 413,
+  "aggregation": "4 global microbatch objective means per optimizer update; raw CE components token-weighted within update; trailing 20-update smoothing",
+  "last20": {
+    "loss": 1.7938093754307676,
+    "loss_silence": 0.33274143337919415,
+    "loss_first_onset": 0.20668440799219145,
+    "loss_later_onset": 0.8655824427204065,
+    "loss_response": 1.285378446860029,
+    "loss_agent_instruction": 1.0222941549454252
+  }
+}

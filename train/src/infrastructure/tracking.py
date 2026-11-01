@@ -14,9 +14,14 @@ class Tracking:
                     'response_count', 'tail_silence_seconds', 'step_wall_seconds', 'elapsed_seconds',
                     'peak_allocated_gib', 'activation_cpu_saved_gib_max',
                     'learning_rate', 'valid_qa', 'global_batch_size', 'forward_wall_seconds',
-                    'backward_wall_seconds', 'qa_per_second', 'activation_gpu_kept_gib', 'reward_std', 'ratio_mean', 'replay_max_logprob_error',
+                    'backward_wall_seconds', 'rollout_wall_seconds', 'precheck_wall_seconds',
+                    'gather_wall_seconds', 'judge_wait_wall_seconds', 'qa_per_second', 'activation_gpu_kept_gib', 'reward_std', 'ratio_mean', 'replay_max_logprob_error',
                     'configured_qa_batch_size', 'candidate_trajectories', 'padding_slots', 'gradient_norm',
                     'reward_timing', 'reward_content', 'reward_call', 'reward_silence',
+                    'reward_tp', 'reward_fp', 'reward_fn', 'reward_tn', 'reward_reference_windows',
+                    'reward_negative_seconds', 'reward_unparsed_response_starts', 'reward_invalid_calls',
+                    'reward_tp_contribution', 'reward_fp_contribution', 'reward_fn_contribution',
+                    'reward_tn_contribution', 'reward_invalid_call_contribution',
                     'all_silent_fraction', 'zero_variance_groups', 'zero_variance_group_rate', 'excluded_groups',
                     'judge_requests', 'judge_score_requests', 'judge_cache_hits', 'judge_failures', 'judge_retries',
                     'judge_failure_rate', 'judge_cache_hit_rate'):
@@ -63,7 +68,8 @@ def start_tracking(config, output, rank, world_size):
             'decision_weight', 'content_weight', 'call_weight', 'decision_loss_mode',
             'gate_weight', 'structure_weight', 'silent_weight', 'onset_weight', 'sft_activation_offload',
             'sft_activation_cpu_budget_gib', 'sft_activation_gpu_budget_gib', 'parallel_mode',
-            'reward_backend', 'group_size', 'clip_epsilon', 'kl_beta', 'temperature')
+            'reward_backend', 'reward_mode', 'reward_weights', 'grpo_horizon',
+            'grpo_candidate_parallel', 'grpo_precheck_replay', 'grpo_judge_pipeline_depth', 'group_size', 'clip_epsilon', 'kl_beta', 'temperature')
     hyperparameters = {k: config[k] for k in keys if k in config}
     hyperparameters['world_size'] = world_size
     hyperparameters['effective_batch_size'] = config.get('gradient_accumulation_steps', 1) * (world_size if config.get('parallel_mode') == 'data_parallel' else 1)

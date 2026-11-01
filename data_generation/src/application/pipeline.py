@@ -48,19 +48,22 @@ def source_videos(args):
 
 
 def generated_video_names(*roots):
-    """Collect videos with saved, accepted QA data; ignore attempts and empty bundles."""
+    """Collect videos with saved, accepted QA data from JSON files or run directories."""
     names = set()
     seen = set()
     for root in roots:
-        root = Path(root).resolve()
-        if root in seen or not root.is_dir():
+        root = Path(root).expanduser().resolve()
+        if root in seen or not root.exists():
             continue
         seen.add(root)
-        for path in root.rglob("*.json"):
-            if path.name != "all_qa.json" and path.parent.parent != root:
+        paths = [root] if root.is_file() and root.suffix.lower() == ".json" else (
+            root.rglob("*.json") if root.is_dir() else ()
+        )
+        for path in paths:
+            if root.is_dir() and path.name != "all_qa.json" and path.parent.parent != root:
                 continue
-            if any(part in {"attempts", "aborted_attempts", "workers", ".state"}
-                   for part in path.relative_to(root).parts[:-1]):
+            if root.is_dir() and any(part in {"attempts", "aborted_attempts", "workers", ".state"}
+                                     for part in path.relative_to(root).parts[:-1]):
                 continue
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
@@ -71,8 +74,40 @@ def generated_video_names(*roots):
                 if (isinstance(sample, dict) and not is_agent_negative(sample) and sample.get("schema") == SAMPLE_SCHEMA
                         and sample.get("status") == "ok" and isinstance(sample.get("video"), str)
                         and isinstance(sample.get("responses"), list) and sample["responses"]):
-                    names.add(Path(sample["video"]).as_posix())
+                    reference = sample["video"].replace("\\", "/")
+                    names.add(Path(reference).as_posix())
     return names
+
+
+def pending_videos(videos, args):
+    existing = generated_video_names(DATA_ROOT, args.output_dir, *getattr(args, "skip_qa", ()))
+    pending = []
+    for video in videos:
+        relative = video.relative_to(args.videos_dir).as_posix()
+        if relative in existing:
+            continue
+        # AOI-Dataset QA stores paths as videos/<filename>, while merged train is flat.
+        if "/" not in relative and f"videos/{video.name}" in existing:
+            continue
+        pending.append(video)
+    return pending
+
+
+def check_existing(args, *, progress=None):
+    """Report which source videos already have accepted QA without making API calls."""
+    if args.video is not None and not args.video.is_file():
+        raise ValueError(f"video does not exist: {args.video}")
+    videos = source_videos(args)
+    if not videos:
+        raise ValueError('no source videos found')
+    pending = pending_videos(videos, args)
+    message = (f"Existing-QA check: {len(videos) - len(pending)} of {len(videos)} videos "
+               f"will be skipped; {len(pending)} remain to generate.")
+    if progress is not None:
+        progress(message, False)
+    else:
+        print(message)
+    return 0
 
 
 def resume_videos(args):
@@ -116,8 +151,7 @@ def run(args, *, progress=None):
     if args.resume:
         videos = resume_videos(args)
     else:
-        existing = generated_video_names(DATA_ROOT, args.output_dir)
-        pending = [video for video in videos if video.relative_to(args.videos_dir).as_posix() not in existing]
+        pending = pending_videos(videos, args)
         if progress is not None:
             progress(f"Skipping {len(videos) - len(pending)} videos with saved QA data; {len(pending)} remaining.", False)
         videos = pending
