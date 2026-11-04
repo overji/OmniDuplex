@@ -37,5 +37,10 @@
   "structure_weight": 0.2,
   "silent_weight": 0.5,
   "onset_weight": 0.5,
-  "sft_horizon": "full_video"
+  "sft_horizon": "full_video",
+  "tensorboard": {
+    "enabled": true,
+    "log_dir": "train/tensorboard",
+    "flush_seconds": 10
+  }
 }

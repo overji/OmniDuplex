@@ -4,6 +4,18 @@ from pathlib import Path
 from train.src.infrastructure.config import model_alias
 
 
+def ensure_alias(alias, path):
+    """Atomic shared alias creation: other ranks may win the symlink race."""
+    alias.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        alias.symlink_to(path, target_is_directory=True)
+    except FileExistsError:
+        pass
+    if alias.resolve() != path.resolve():
+        raise ValueError('Model alias points to a different checkpoint')
+    return alias
+
+
 def load_model(config, device):
     """返回(model, duplex)；保持BF16/无TTS配置，并在创建duplex前校验原始词表。这里只加载适配，不创建优化器或执行训练步。"""
     from train.src.domain.agent import require_protocol
@@ -12,12 +24,7 @@ def load_model(config, device):
     from transformers import AutoModel
     path = Path(config['model_path']).resolve()
     # Remote-code loading treats dots in local directory names as module separators.
-    alias = model_alias(config)
-    alias.parent.mkdir(parents=True, exist_ok=True)
-    if not alias.exists():
-        alias.symlink_to(path, target_is_directory=True)
-    if alias.resolve() != path:
-        raise ValueError('Model alias points to a different checkpoint')
+    alias = ensure_alias(model_alias(config), path)
     model = AutoModel.from_pretrained(str(alias), trust_remote_code=True, torch_dtype=torch.bfloat16,
         attn_implementation=config['attention_backend'], init_tts=False, low_cpu_mem_usage=True).eval().to(device)
     model.requires_grad_(False)

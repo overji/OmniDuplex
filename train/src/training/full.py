@@ -59,6 +59,11 @@ def run(args, config):
     records = json.loads((args.prepared / 'train.json').read_text())
     padding_candidates = records if independent else None
     validation = json.loads((args.prepared / 'validation.json').read_text())
+    if manifest.get('validation_groups'):
+        groups = list(manifest['validation_groups'].values())
+        indices = [i for group in groups for i in group]
+        if len(indices) != len(set(indices)) or set(indices) != {r['sample_index'] for r in validation}:
+            raise ValueError('Validation diagnostic subsets must partition validation QA')
     if args.profile:
         requested = ([args.sample_index] if args.sample_index is not None else config.get('profile_sample_indices'))
         if requested is not None:
@@ -295,9 +300,16 @@ def run(args, config):
             from train.src.domain.loss_metrics import METRIC_SIZE, COMPONENTS, COUNT_INDICES, statistics
             component_totals = [0.] * METRIC_SIZE
             component_presence = [0.] * len(COMPONENTS)
+            # Compare expanded-data training on the exact historical validation
+            # QA too, without a second forward pass or moving any video split.
+            historical = manifest.get('validation_groups')
+            old_ids = set(historical.get('previous', [])) if historical else set()
+            width = 3 + METRIC_SIZE + len(COMPONENTS)
+            subsets = {name: [0.] * width for name in ('previous', 'added')} if historical else {}
             local_val = validation[rank::world] if independent else validation
             with torch.no_grad():
                 for record in local_val:
+                    subset = subsets.get('previous' if record['sample_index'] in old_ids else 'added')
                     try:
                         end = compile_trajectory(record, duplex.tokenizer, config)['horizon']
                         clip = Clip(record, config, end)
@@ -306,8 +318,16 @@ def run(args, config):
                         raw = graph.sft_loss_metrics
                         component_totals = [a + b for a, b in zip(component_totals, raw)]
                         component_presence = [a + int(raw[COUNT_INDICES[i]] > 0) for i, a in enumerate(component_presence)]
+                        if subset is not None:
+                            subset[0] += values[-1]; subset[1] += 1
+                            for i, value in enumerate(raw):
+                                subset[3 + i] += value
+                            for i in range(len(COMPONENTS)):
+                                subset[3 + METRIC_SIZE + i] += int(raw[COUNT_INDICES[i]] > 0)
                     except TrajectoryError as exc:
                         skipped_validation.append(dict(sample_index=record['sample_index'], reason=str(exc)))
+                        if subset is not None:
+                            subset[2] += 1
             if independent:
                 summary = torch.tensor([sum(values), len(values), len(skipped_validation),
                     *component_totals, *component_presence], device=device, dtype=torch.float64)
@@ -319,6 +339,17 @@ def run(args, config):
             else:
                 mean, scored, excluded_val = sum(values) / len(values) if values else None, len(values), len(skipped_validation)
             component_stats = statistics(component_totals, qa_count=int(scored), presence=component_presence)
+            for name, vector in subsets.items():
+                packed = torch.tensor(vector, device=device, dtype=torch.float64)
+                if independent:
+                    torch.distributed.all_reduce(packed)
+                vector = packed.tolist()
+                count = int(vector[1])
+                details = statistics(vector[3:3 + METRIC_SIZE], qa_count=count,
+                                     presence=vector[3 + METRIC_SIZE:])
+                component_stats.update({name + '_' + key: value for key, value in details.items()})
+                component_stats.update({name + '_loss': vector[0] / count if count else None,
+                                        name + '_scored': count, name + '_excluded': int(vector[2])})
             append_jsonl(metrics, dict(epoch=epoch, validation_loss=mean, validation_scored=int(scored),
                                       **{'validation_' + key: value for key, value in component_stats.items()},
                                       validation_excluded=skipped_validation, validation_excluded_count=int(excluded_val)))

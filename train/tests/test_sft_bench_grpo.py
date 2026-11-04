@@ -52,3 +52,20 @@ def test_reservation_preserves_another_owner(tmp_path):
     with pytest.raises(RuntimeError):
         chain.acquire_lease(dict(gpu_reservations=str(reservation)),tmp_path/'lease.json')
     assert chain.read(reservation)['owner']=='other'
+
+
+def test_grpo_only_requires_verified_export_and_matching_training_model(tmp_path):
+    import hashlib
+    model=tmp_path/'model';model.mkdir();checkpoint=tmp_path/'training/checkpoint-final'
+    metadata=model/'full_training_model.json';metadata.write_text(json.dumps(dict(source_checkpoint=str(checkpoint))))
+    out=tmp_path/'bench';out.mkdir()
+    marker=out/'export_complete.json';marker.write_text(json.dumps(dict(model=str(model),metadata_sha256=hashlib.sha256(metadata.read_bytes()).hexdigest())))
+    b=tmp_path/'benchmark.json';b.write_text(json.dumps(dict(export_model=str(model),output=str(out))))
+    g=tmp_path/'grpo.json';g.write_text(json.dumps(dict(model_path=str(model))))
+    config=dict(benchmark_config=str(b),grpo_config=str(g),profile_config=str(g))
+    with patch('train.scripts.benchmark_after_training.completed_training',return_value=checkpoint):
+        assert chain.verified_sft_export(config)==model
+        g.write_text(json.dumps(dict(model_path=str(tmp_path/'wrong'))))
+        with pytest.raises(ValueError,match='model differs'):chain.verified_sft_export(config)
+        marker.write_text('{}')
+        with pytest.raises(ValueError,match='not verified'):chain.verified_sft_export(config)

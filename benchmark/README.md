@@ -1300,6 +1300,23 @@ CPU 单测已验证顺序、GPU 分组、独立输出路径和输入过滤；真
 新增显式 `--agent-output-protocol task-text`，模型输出 `回复<|task_start|>instruction`，不输出 JSON。仅支持 MiniCPM、Gander 和 JoyAI；旧协议及训练格式保持原样。三模型各 100 条插队试验、完整提示词、状态和自动续跑说明见 [试验说明](docs/task_text_agent100_20261024.md)。
 ## 单文件移交 LLM Judge
 
+本地 Qwen27B 的四实例内容评分也可直接复用 OmniPro 的服务配置，对 AOI-Bench
+已有预测运行，无需重新推理视频：
+
+```bash
+python benchmark/scripts/run_local_content_judge.py --config LOCAL_JUDGE_CONFIG.json
+```
+
+配置沿用 OmniPro 的 `judge`、`judge_service_configs`、`judge_service_script`、GPU 和
+服务启动参数；用 `data` 指定参考 JSON，`models` 指定 `label`，用
+`run_paths` 将每个 label 映射到已有预测目录。评分前须释放配置中的 GPU。
+该入口按各预测目录的实际 Agent schema 转接参考调用，保留原始数据，完成项支持恢复。
+输出包含 `judge/<label>/judgments.jsonl`、`judge_metrics.json`、`stage.json`，以及
+`comparison.md`、`normalized_summary.json`。后两者将每条 0–2 分先除以 2 再求均值；
+同时列出命中条件均分与未命中记零的全窗口均分，Agent 任务分合并回复和调用评分。
+失败请求保留缺失，不伪装成零分。SFT 自动链可通过 `content_judge_config` 在两路
+评测及 OmniPro Judge 完成后衔接本入口，避免遗漏 AOI-Bench 内容评分。
+
 如果别人只负责对已有结果评分，使用[单文件Judge移交指引](docs/portable_llm_judge.md)：发送一个输入JSON，对方只需CPU环境和DeepSeek key，最后回传一个结果JSON。支持Realtime/Probe的现有评分口径、断点恢复、请求去重与失败项补跑，无需视频、模型或原始预测目录。
 
 ```bash
@@ -1342,8 +1359,11 @@ PR/RTD是派生标签：提醒、条件提醒、定位、瞬时计数、步骤�
 3. 两组推理都完成后，4–7卡各启动一个本地Qwen3.8-27B Judge，四实例负载均衡处理
    匹配回复。复用AOI payload、评分prompt、分数和失败重试协议；不增加论文的二值内容阈值。
 4. 释放Judge并恢复原队列。等待最新SFT正常退出、全部rank完成报告与最终checkpoint齐全。
-5. 最终SFT就绪后再次暂停原队列，将权重导出到外部openmodels路径，在6–7卡评测，随后
-   再用四卡Judge。完成后恢复原队列。不会为等待训练而占住GPU，也不会停止前四卡训练。
+5. 本机最终SFT就绪后：0–3卡评AOI-Bench realtime，4–7卡四副本评OmniPro，随后
+   OmniPro仍用后四卡Judge。两路共用同一个最终checkpoint的外部HF导出；OmniPro等待
+   `export_ready_marker`，校验metadata哈希和source_checkpoint后再加载。运行中的其他后四卡
+   队列仅在最终SFT就绪后暂停，评测完成后恢复。`resume_final_only=true`允许控制器从等待
+   最终SFT阶段恢复，保留旧模型已完成的推理和Judge结果（包括终态失败记录）。
 
 启动控制器（命令本身前台运行；需要后台执行时显式使用自己的任务管理方式）：
 
@@ -1392,3 +1412,24 @@ benchmark/.venv/bin/python benchmark/scripts/shuffle_omnipro_queue.py \
 
 
 `run_prepared_suite.py --probe-gpu-reservations <JSON>` 可在运行中保留部分 GPU，例如 `{"owner":"grpo", "gpus":[7]}`。Probe 仍使用原分片、模型和输出目录，只把待运行分片放到其余空闲副本；已在被保留 GPU 上运行的 worker 会正常完成，不被中断。将 `gpus` 改为空列表即可恢复全部卡。Realtime 的 GPU 分配不受该参数控制。本机 GRPO 借卡只发生在 OmniPro 全部完成之后，剩余 probe 队列在 4–6 卡继续运行。
+
+## 自动刷新的结果 Markdown
+
+Realtime 的 `report.md` 本就随 DP 收集更新。需要简洁的基座/最新 SFT 对比时，可启动独立 CPU 监控器；它只读已有预测，不调用模型或 Judge，也不控制 GPU：
+
+```bash
+train/.venv/bin/python benchmark/scripts/watch_live_results.py \
+  --config train/outputs/sft_bench_grpo_fullvideo_20261031/live_reports.json
+```
+
+本机已后台运行，每 60 秒更新：
+
+- `benchmark/results/latest_sft_live.md`：总入口。
+- `benchmark/results/minicpmo_sft_fullvideo_aoi_dp4_20261031/live_summary.md`：AOI-Bench。
+- `benchmark/results/omnipro_aoi_minicpmo_20261030/live_summary.md`：OmniPro。
+
+报告显示各自进度及错误数、共同完成 QA 上的 Recall/Precision/F1、TP/FP/FN、任务与交互类型、视频长度、首次/后续窗口召回，以及已有 Judge 汇总。尚未启动显示 N/A；失败不当作零分成功项，未写完的 JSONL 尾行不读取。比较时只使用共同成功且实际 prompt 哈希与观察时长一致的样本；各模型独立进度表使用不同子集，不能直接当作公平横向比较。历史 AOI 基座需要按 QA 对齐到新索引，报告明确标出由索引重排引起的采样 seed 差异；不宣称控制了所有历史解码差异。
+
+其他实验可复用同一配置格式：顶层 `output`、正数 `interval_seconds`、`reports`；每份报告包含 `title`、`data`、`output` 和 `models`。每个模型指定 `name`、`run`（含 predictions.jsonl 或 worker_*）、可选 `data`（验证完整参考数据一致）和 `judge`（judge_metrics.json）。`--once` 仅更新一次；在总入口旁创建同名 `.STOP` 文件可结束监控。每份 Markdown 同时输出可解析 JSON，监控健康状态在 `.status.json`。后续自动评测启动后无需手工执行报告命令。
+
+实时总入口 `latest_sft_live.md` 会直接列出基座与最新 SFT 的配对 Recall、Precision、F1、首次/后续召回及各分组 F1，并显示最新 SFT 相对基座的 `↑ / ↓ / →` 变化，单位为百分点（pp）。尚无共同成功数据时显示 N/A，不把缺失当成 0。变化始终基于同一批已完成 QA，不与历史模型全量成绩混算。

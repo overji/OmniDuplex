@@ -29,8 +29,23 @@ def load_config(path):
     if isinstance(gpu_budget, bool) or not isinstance(gpu_budget, (int, float)) or not 0 <= gpu_budget < float('inf'):
         raise ValueError('sft_activation_gpu_budget_gib must be finite and nonnegative')
     loss_mode = config.get('decision_loss_mode', 'token_mean')
-    if loss_mode not in ('token_mean', 'balanced_gate', 'event_balanced'):
+    if loss_mode not in ('token_mean', 'balanced_gate', 'event_balanced', 'plain_ce'):
         raise ValueError('Invalid decision_loss_mode')
+    if loss_mode == 'plain_ce' and (method != 'full_sft' or any(
+            config[k] != 1 for k in ('decision_weight', 'content_weight', 'call_weight'))):
+        raise ValueError('plain_ce requires full_sft and unit decision/content/call weights')
+    replay_segments = config.get('grpo_replay_checkpoint_segments', 0)
+    if type(replay_segments) is not int or replay_segments < 0:
+        raise ValueError('grpo_replay_checkpoint_segments must be a nonnegative integer')
+    if config.get('grpo_evaluation') is not None:
+        settings = config['grpo_evaluation']
+        if (method != 'full_grpo' or not config.get('grpo_candidate_parallel')
+                or not isinstance(settings, dict) or set(settings) != {'sample_indices', 'seed', 'every_steps'}
+                or type(settings['every_steps']) is not int or settings['every_steps'] < 1
+                or type(settings['seed']) is not int or not isinstance(settings['sample_indices'], list)
+                or not settings['sample_indices'] or any(type(i) is not int or i < 0 for i in settings['sample_indices'])
+                or len(set(settings['sample_indices'])) != len(settings['sample_indices'])):
+            raise ValueError('Invalid fixed GRPO evaluation configuration')
     if loss_mode in ('balanced_gate', 'event_balanced'):
         import math
         if method != 'full_sft':
@@ -42,6 +57,13 @@ def load_config(path):
                 raise ValueError(f'Invalid {key}')
         if config['gate_weight'] + config['structure_weight'] <= 0 or config['silent_weight'] + config['onset_weight'] <= 0:
             raise ValueError('Balanced loss weights must have positive totals')
+    if 'tensorboard' in config:
+        settings = config['tensorboard']
+        if (not isinstance(settings, dict) or set(settings) - {'enabled', 'log_dir', 'flush_seconds'}
+                or type(settings.get('enabled', False)) is not bool
+                or type(settings.get('flush_seconds', 10)) is not int or settings.get('flush_seconds', 10) < 1
+                or ('log_dir' in settings and (not isinstance(settings['log_dir'], str) or not settings['log_dir'].strip()))):
+            raise ValueError('tensorboard accepts enabled/log_dir/positive flush_seconds')
     if 'wandb' in config:
         settings = config['wandb']
         if not isinstance(settings, dict) or set(settings) - {'project', 'entity', 'name', 'mode'}:

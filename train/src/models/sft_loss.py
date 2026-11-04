@@ -12,6 +12,8 @@ def grouped_loss(head, hidden, labels, groups, config, listen_id, speak_id, deci
     """
     loss = hidden.sum() * 0
     metrics = torch.zeros(METRIC_SIZE, device=hidden.device, dtype=torch.float64)
+    plain = config.get('decision_loss_mode') == 'plain_ce'
+    target_count = int(((labels[1:] != -100) & (groups[1:] > 0)).sum())
     balanced = config.get('decision_loss_mode', 'token_mean') == 'balanced_gate'
     if balanced and decision_roles is None:
         raise ValueError('Balanced gate loss requires explicit decision_roles')
@@ -63,7 +65,10 @@ def grouped_loss(head, hidden, labels, groups, config, listen_id, speak_id, deci
             part, token_ce, ce = checkpoint(project, hidden[ix], labels[ix + 1], group == 1,
                                         use_reentrant=False)
             # Historical mode preserves its reduction and weighting order.
-            if event_mode:
+            if plain:
+                # One denominator across decision, reply and instruction tokens.
+                contribution = part / target_count
+            elif event_mode:
                 weights = event_ce_weights[ix]
                 contribution = (ce * weights).sum()
             elif group == 1 and balanced:
@@ -79,16 +84,24 @@ def grouped_loss(head, hidden, labels, groups, config, listen_id, speak_id, deci
                 metrics[component] += part.detach().double()
                 metrics[6 + component] += len(ix)
                 metrics[11 + group] += contribution.detach().double()
-                if event_mode and group == 1:
+                if group == 1 and event_roles is not None:
                     fine = event_roles[ix + 1]
-                    weighted = ce.detach().double() * weights.detach().double()
+                    if event_mode:
+                        weighted = ce.detach().double() * weights.detach().double()
+                    elif plain:
+                        weighted = ce.detach().double() / target_count
+                    elif balanced:
+                        weighted = config[key] * ce.detach().double() * weights.detach().double()
+                    else:
+                        weighted = config[key] * ce.detach().double() / len(positions)
                     for role in range(1, 8):
                         mask = fine == role
                         metrics[22 + role] += ce.detach()[mask].double().sum()
                         metrics[29 + role] += mask.sum()
                         metrics[36 + role] += weighted[mask].sum()
-                    metrics[21] += weighted[fine <= 4].sum()
-                    metrics[22] += weighted[fine >= 5].sum()
+                    if not balanced:
+                        metrics[21] += weighted[fine <= 4].sum()
+                        metrics[22] += weighted[fine >= 5].sum()
                 if group == 1:
                     target = labels[ix + 1]
                     masks = (target == listen_id, target == speak_id,

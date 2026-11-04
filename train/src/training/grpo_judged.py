@@ -163,6 +163,10 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
             prune_checkpoints(args.output, config.get('save_total_limit', 0), rank)
         requested = broadcast((args.output / 'STOP').exists() if rank == 0 else None, rank)
         stop = bool(requested or (limit and engine.global_steps >= limit))
+        evaluation = config.get('grpo_evaluation')
+        if not args.profile and evaluation and engine.global_steps % evaluation['every_steps'] == 0:
+            from train.src.training.grpo_evaluation import evaluate
+            evaluate(engine, model, duplex, args, config, rank, world)
         batch_started = time.perf_counter()
 
     def log_skip(epoch, slot, **extra):
@@ -205,6 +209,11 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
         return group['slot']
 
     try:
+        if not args.profile and config.get('grpo_evaluation'):
+            if engine.global_steps:
+                raise ValueError('Fixed GRPO before/after evaluation currently requires a fresh run')
+            from train.src.training.grpo_evaluation import evaluate
+            evaluate(engine, model, duplex, args, config, rank, world)
         for epoch in range(epoch_start, config['epochs']):
             if stop:
                 break
@@ -234,6 +243,10 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
                     exclusions += 1
                     log_skip(epoch, slot, excluded=failure or 'peer_invalid_trajectory')
                     continue
+                if rank == 0:
+                    print(json.dumps(dict(stage='rollout_complete', epoch=epoch, slot=slot,
+                        sample_index=record['sample_index'], candidate_count=config['group_size'],
+                        rank0_rollout_seconds=rollout_seconds)), flush=True)
                 precheck_started = time.perf_counter()
                 if config.get('grpo_precheck_replay', True):
                     valid_replay = True
@@ -247,6 +260,10 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
                     if not all_true(valid_replay, device):
                         raise RuntimeError('Rollout/replay probability mismatch')
                 precheck_seconds = time.perf_counter() - precheck_started
+                if rank == 0:
+                    print(json.dumps(dict(stage='replay_precheck_complete', epoch=epoch, slot=slot,
+                        sample_index=record['sample_index'], enabled=config.get('grpo_precheck_replay', True),
+                        rank0_precheck_seconds=precheck_seconds)), flush=True)
                 gathering = time.perf_counter()
                 views = gather_candidates(trajectories, parallel, rank, world)
                 pipeline.submit(dict(record=record, clip=clip, trajectories=trajectories,

@@ -3,3 +3,4 @@
 deepspeed==0.16.9
 soundfile
 Pillow
+tensorboard==2.21.0

@@ -59,5 +59,10 @@
   "grpo_horizon": "full_video",
   "grpo_candidate_parallel": true,
   "grpo_precheck_replay": false,
-  "grpo_judge_pipeline_depth": 2
+  "grpo_judge_pipeline_depth": 2,
+  "tensorboard": {
+    "enabled": true,
+    "log_dir": "train/tensorboard",
+    "flush_seconds": 10
+  }
 }

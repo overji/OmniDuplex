@@ -29,5 +29,10 @@
   "gate_weight": 0.8,
   "structure_weight": 0.2,
   "silent_weight": 0.5,
-  "onset_weight": 0.5
+  "onset_weight": 0.5,
+  "tensorboard": {
+    "enabled": true,
+    "log_dir": "train/tensorboard",
+    "flush_seconds": 10
+  }
 }

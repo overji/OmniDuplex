@@ -69,6 +69,39 @@ class LossTests(unittest.TestCase):
             grouped_loss(self.head, self.hidden, self.labels, self.groups,
                          {**self.config, 'decision_weight': 0., 'content_weight': 0., 'call_weight': 0.}, 2, 3)
 
+    def test_plain_ce_matches_joint_token_mean_and_gradients(self):
+        reference_head = copy.deepcopy(self.head)
+        reference_hidden = self.hidden.detach().clone().requires_grad_()
+        labels = self.labels.clone()
+        labels[4] = -100  # masked targets must not contribute to the denominator
+        reference = torch.nn.functional.cross_entropy(reference_head(reference_hidden[:-1]), labels[1:])
+        config = dict(self.config, decision_loss_mode='plain_ce',
+                      decision_weight=1., content_weight=1., call_weight=1.)
+        loss, raw = grouped_loss(self.head, self.hidden, labels, self.groups, config, 2, 3)
+        torch.testing.assert_close(loss, reference)
+        loss.backward(); reference.backward()
+        torch.testing.assert_close(self.hidden.grad, reference_hidden.grad)
+        for actual, expected in zip(self.head.parameters(), reference_head.parameters()):
+            torch.testing.assert_close(actual.grad, expected.grad)
+        self.assertAlmostEqual(sum(raw[12:15]), loss.item(), places=6)
+
+    def test_plain_ce_fine_onset_metrics_do_not_change_loss_or_gradient(self):
+        labels = self.labels.clone(); labels[-1] = 3
+        roles = torch.tensor([0, 1, 3, 0, 0, 6, 0, 4])
+        cfg = dict(self.config, decision_loss_mode='plain_ce', decision_weight=1., content_weight=1., call_weight=1.)
+        h = self.hidden.detach().clone().requires_grad_()
+        head = copy.deepcopy(self.head)
+        original, _ = grouped_loss(head, h, labels, self.groups, cfg, 2, 3)
+        actual, raw = grouped_loss(self.head, self.hidden, labels, self.groups, cfg, 2, 3, event_roles=roles)
+        torch.testing.assert_close(actual, original)
+        actual.backward(); original.backward()
+        torch.testing.assert_close(self.hidden.grad, h.grad)
+        for a, b in zip(self.head.parameters(), head.parameters()):
+            torch.testing.assert_close(a.grad, b.grad)
+        stats = statistics(raw)
+        assert stats['first_onset_tokens'] == stats['later_onset_tokens'] == 1
+        assert stats['loss_first_onset'] is not None and stats['loss_later_onset'] is not None
+
 
 if __name__ == '__main__':
     unittest.main()

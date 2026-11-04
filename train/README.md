@@ -5,7 +5,7 @@
 ## 模型、数据和环境
 
 模型默认位于 `/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5`。
-数据为 `/remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset/all_qa.json`，`videos_dir` 指向 AOI-Dataset 根目录。数据下载、更新和媒体检查见[仓库README](../README.md)，训练统计见[数据报告](docs/aoi_dataset_statistics.md)。
+数据为 `/remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset/all_qa.json`，`videos_dir` 指向 AOI-Dataset 根目录。当前扩充版包含 19,210 条 QA、4,925 个视频；它是旧 5,000 条加新增 14,210 条。数据下载、更新和媒体检查见[仓库README](../README.md)，训练统计见[数据报告](docs/aoi_dataset_statistics.md)。
 
 ```bash
 python3.11 -m venv train/.venv
@@ -13,12 +13,12 @@ train/.venv/bin/pip install -r train/requirements.txt
 train/.venv/bin/python -m train --help
 ```
 
-需要 FFmpeg/ffprobe 和兼容 PyTorch/CUDA 的 FlashAttention 2。SFT配置为 [minicpmo_full_sft.json](configs/minicpmo_full_sft.json)，GRPO配置为 [minicpmo_full_grpo.json](configs/minicpmo_full_grpo.json)，相对路径按仓库根目录解析。两种配置的共同默认值为 BF16、FlashAttention 2、300秒发声前缀、32768 token、每秒chunk预算20、`supervise_silence=true`（监督标签仅SFT使用）、学习率1e-6、2轮、梯度累积1、seed=42。ZeRO-3配置为 [zero3_cpu.json](configs/zero3_cpu.json)，FP32 master/Adam状态卸载CPU。
+需要 FFmpeg/ffprobe 和兼容 PyTorch/CUDA 的 FlashAttention 2。当前普通 CE 八卡实验配置为 [minicpmo_full_sft_plain_ce_dp8.json](configs/minicpmo_full_sft_plain_ce_dp8.json)：有效 batch 16（8×1×2）、学习率 1e-6、两轮、65536 token、完整视频与沉默监督、ZeRO-2 CPU optimizer、TensorBoard。CLI 默认仍指向独立的 [minicpmo_full_sft.json](configs/minicpmo_full_sft.json)，使用时须显式选择配置。GRPO配置为 [minicpmo_full_grpo.json](configs/minicpmo_full_grpo.json)，相对路径按仓库根目录解析。各配置的 BF16、FlashAttention 2、每秒 chunk 预算20、seed=42 等参数以选中的 JSON 为准；`full_video` 模式不会按 `max_prefix_seconds=300` 截短视频。ZeRO-3配置为 [zero3_cpu.json](configs/zero3_cpu.json)，FP32 master/Adam状态卸载CPU。
 
 ## 文本 task_start 与连续多回复目标
 
 训练协议为 **`task_start_text_sft_v1`**。`<|task_start|>` 是普通文本，用原始基座已有的多个token编码；不注册特殊token、不扩展词表、不初始化新embedding或lm_head行。输出保持 `回复<|task_start|>instruction`。分隔符的全部token参与结构监督，可跨chunk生成。旧原子token checkpoint只保留评测读取能力，不能用于新协议续训。
-输入embedding与lm_head一同扩表，新行分别用原权重均值初始化；它们随完整模型参与训练。加载已有新协议模型时只校验，不重复注册或重置。磁盘上的原始模型文件不改写。
+输入 embedding 与 lm_head 随完整模型训练，但普通文本协议不扩表；磁盘上的原始模型文件不改写。
 
 ```text
 <|speak|>我来查找替换配件。<|task_start|>查询视频中配件的可售替换选项。<|turn_eos|>
@@ -28,7 +28,7 @@ train/.venv/bin/python -m train --help
 
 每条QA是一段连续轨迹，覆盖全部可评分response。先输入 `[t-1,t)` 媒体，再监督时刻t的输出；后续回复能看到之前按时输入的真实回复，未来回复不会提前输入。每个目标都满足问题、证据、trigger及原窗口的时间约束；与前一回复跨chunk冲突时只在原窗口内顺延。输入结束于最后一个目标完成。
 
-`supervise_silence=true`：在训练轨迹覆盖范围内，问题已输入且当前秒没有参考回复chunk时一律监督listen并计算loss，包括参考窗口内、参考回复前后的空闲秒。问题前和输入媒体仍mask；DP配置在最后一个窗口与回复结束后最多添加10秒静默尾段。当前全量SFT配置对RTD、PR、Agent统一启用 `decision_loss_mode=balanced_gate`：每条QA内新开口和空闲沉默分别求平均，再各占gate的0.5；decision由0.8 gate和0.2结构监督组成。结构监督包含续说的speak、turn_eos和task_start。content与instruction各自归一化。历史配置缺少该字段时仍使用原token均值loss。
+`supervise_silence=true`：问题输入后所有没有参考回复 chunk 的空闲秒都监督 listen，包括窗口内以及最后一次回复后直到视频结束；问题前与输入媒体位置仍 mask。当前普通 CE 实验使用 `decision_loss_mode=plain_ce`，每条 QA 的有效控制、回复和 instruction token 统一平均，再沿用按 QA 平均的 batch reduction。`balanced_gate`、`event_balanced` 是保留的可选对照配置；历史 `token_mean` 是分组均值相加，不能与普通 CE 混称。
 
 任一目标无法排入原窗口、回复超出视频、超过前缀/token上限时整条QA排除并写原因，不保留残缺轨迹，不静默截断。长序列尚需实际媒体编码和GPU显存验证。
 
@@ -47,7 +47,7 @@ train/.venv/bin/python -m train prepare \
 审计只加载真实tokenizer，使用metadata或ffprobe检查视频时长，不加载模型权重或解码媒体。`text_only_tokens_lower_bound`不含媒体embedding，不能证明完整序列不超32768。
 本次[原子token审计](docs/atomic_task_start_audit_20261027.json)：5000 QA / 10727 response 中4977 QA / 10636 response通过，20条QA回复越过视频末尾、3条QA发生无法在窗口内解决的冲突，整条排除23 QA / 91 response。
 
-prepare按UUID视频划分，默认验证视频比例20%。`--max-samples`按QA计数，默认仍为12；验证采样上限为 `round(max_samples * validation_fraction)`。本数据使用6000这个上限可容纳3996条训练、1004条验证候选，不会补足或重复到6000条。正式编码仍会剔除不可行轨迹。
+prepare按UUID视频划分，默认验证视频比例20%。`--max-samples`按QA计数，默认仍为12；验证采样上限为 `round(max_samples * validation_fraction)`。6000 只适用于旧 5k 数据；当前 19,210 条数据不要沿用此上限。正式全量准备使用足够大的上限，并核对 manifest 的 `sampling_omissions` 全为 0。正式编码仍会剔除不可行轨迹。
 本机已生成 `train/prepared/full_sft_task_token_20261027`，包含全部候选，未启动训练。
 
 ## Profile与训练
@@ -250,7 +250,7 @@ CPU检查覆盖文本分隔符、词表不变、多token梯度、微型模型保
 
 ### 普通文本协议与平衡 loss
 
-当前配置对 RTD/PR/Agent 使用 balanced_gate；分隔符的所有普通token均为structure，
+可选 balanced_gate 配置对 RTD/PR/Agent 使用分组平衡；分隔符的所有普通token均为structure，
 不算新开口。完整公式见 [loss说明](docs/loss_metrics.md)。原子token审计及
 `full_sft_task_token_20261027` 是历史结果，不可用于当前训练。
 新协议须重新prepare到独立目录，例如：
@@ -314,3 +314,104 @@ TP由一对一窗口匹配确定，再用Judge质量转换为−1到+1；FN每�
 控制器只允许一个实例，保存 GPU 保留归属日志，释放时不会改写其他任务持有的保留。创建链路输出目录下的 `STOP` 文件可请求停止；若在等待 SFT，只停止等待任务，SFT 本身继续。重启控制器前需先排查失败原因；不自动覆盖已有 GRPO 输出或恢复旧优化器。运行时使用冻结的代码快照，避免等待期间仓库修改改变评测或训练语义。
 
 本机自动链路已启用 [四卡候选并行配置](configs/minicpmo_full_grpo_confusion_judge_dp4.json)：每卡生成并回放一个候选，ZeRO-2 同步梯度，Judge 深度为 2 的有界流水线与下一组采样重叠。每次更新前清空流水线，保持同策略采样。正式训练省去额外无梯度回放，但每次带梯度回放仍验证概率一致性；profile 保留双重检查，并覆盖约 50–299 秒视频。配置、归一化、日志和限制见 [GRPO 执行说明](docs/grpo_confusion_reward.md#four-gpu-candidate-parallel-execution)。真实显存及速度以 SFT 完成后的四卡 profile 为准，profile 失败则停止链路，不自动降低视频覆盖或候选数。
+
+## 本地 TensorBoard：SFT / GRPO，无需 W&B
+
+训练环境安装：
+
+```bash
+train/.venv/bin/python -m pip install -r train/requirements-tensorboard.txt
+```
+
+在训练 JSON 中配置以下字段。现有 SFT 配置与 `minicpmo_full_grpo_confusion_judge_dp4.json` 已启用 TensorBoard；本机后续 GRPO 的 W&B 已关闭。正在运行的 SFT 配置保持原样，通过下文 JSONL 桥接观察，不重启训练。
+
+```json
+{
+  "wandb": {"mode": "disabled"},
+  "tensorboard": {
+    "enabled": true,
+    "log_dir": "train/tensorboard",
+    "flush_seconds": 10
+  }
+}
+```
+
+仅 rank 0 记录白名单数值，不上传文本、QA 或密钥。事件文件在 `<log_dir>/<训练输出目录名>`，独立新实验使用新的输出目录名，避免混合曲线。相对 log_dir 按仓库根目录解析。SFT 的 `train/loss` 按一次参数更新内的梯度累积微批求均值，每个更新一个点；分项原始 CE 在更新内按 token 数加权，缺失分项不计零。GRPO 每次更新记录实际 QA batch、候选数、奖励分项、零方差/排除组数、概率回放误差和 rollout/Judge 等耗时。`validation/*` 是参考轨迹验证 loss，并非 autonomous benchmark F1。
+
+启动本地服务：
+
+```bash
+CUDA_VISIBLE_DEVICES= train/.venv/bin/python -m tensorboard.main \
+  --logdir train/tensorboard --host 127.0.0.1 --port 6006 \
+  --reload_interval 5 --load_fast false
+```
+
+本机已后台启动服务及当前 SFT 的 JSONL 跟随器。通过 VS Code 转发训练机 6006 端口，或在自己的电脑执行 `ssh -L 6006:127.0.0.1:6006 <训练机SSH地址>`，然后访问 `http://localhost:6006`。无需 W&B 登录；日志保存在本地，不占 GPU。TensorFlow 未安装的提示不影响 Scalars 曲线。
+
+已有训练、旧实验或当前运行中的训练，可回填并跟随本地 JSONL：
+
+```bash
+CUDA_VISIBLE_DEVICES= train/.venv/bin/python train/scripts/tensorboard_from_jsonl.py \
+  --run-dir train/outputs/<run> --log-dir train/tensorboard --follow
+```
+
+不加 `--follow` 则只回填当前已有记录。跟随器忽略未写完的最后一行，保存字节偏移及未完成微批缓冲，正常重启不会重放已记录的历史；检测到文件替换或截断会拒绝续接。不要给已经原生记录 TensorBoard 的同一训练再启动桥接器。不要更改训练配置来给正在执行的任务追加日志，以免破坏恢复身份；使用桥接方式。
+
+已完成并验证最终 SFT 导出、希望直接开始 GRPO 时，可显式跳过 benchmark 前置任务：
+
+```bash
+train/.venv/bin/python train/scripts/sft_bench_grpo.py \
+  --config train/outputs/sft_bench_grpo_fullvideo_20261031/chain.json --grpo-only
+```
+
+该模式仍校验四卡 SFT 完成报告、最终 checkpoint、导出 metadata 哈希和 GRPO/profile 模型路径一致性，然后启动独立 Judge、profile 和正式 GRPO。它不会把已取消的 benchmark 标成成功。取消旧评测队列是独立的显式操作；先停其监督/自动恢复程序，保留已完成预测。`--grpo-only --check-only` 仅做校验，不加载模型。本机 2026-11-01 已按用户要求取消两路 benchmark 与旧队列自动恢复，并切换到该直启模式。
+
+### 普通交叉熵 SFT 与 GRPO 阶段检查
+
+普通 SFT 对照使用 `train/configs/minicpmo_full_sft_plain_ce_dp.json`，其中
+`decision_loss_mode: plain_ce` 将每条 QA 的全部有效输出 token 统一计算 CE 均值，
+保留完整视频、全部 response 和沉默监督，之后沿用按 QA 平均的 batch reduction。
+旧 `token_mean` 模式是各分项均值相加，并非此普通 CE 模式；已有配置默认行为不变。
+loss 分项仍可通过 TensorBoard 查看。
+
+GRPO 可配置 `grpo_evaluation: {sample_indices: [...], seed: 20261101, every_steps: 10}`，
+在第 0 步及固定更新间隔对 prepared validation 的固定 QA 自主生成，输出
+`timing_evaluation/report.md`。它对比同一批成功 QA 的 FP、precision、recall、F1，
+不将失败项当成零 FP，也不代替内容 Judge。详细运行安排和当前路径见
+[GRPO pilot 与普通 CE 对照](docs/grpo_pilot_plain_ce_20261101.md)。
+
+当前普通 CE 对照使用八卡 DP、梯度累计 2，保持有效 batch size 16；完成后自动
+用 0–3 卡评 AOI-Bench、4–7 卡评 OmniPro。状态、外部 checkpoint 路径和自动评测
+安排见[八卡普通 CE 训练说明](docs/plain_ce_dp8_20261101.md)。
+
+
+### 追加数据：固定旧验证集并使用全量 QA
+
+`--split-from` 指向上一轮 prepared 的 `manifest.json`（其旁边需要有
+`validation.json`）。已有视频保持原归属，新视频按 seed 和视频路径的 SHA256
+确定验证归属，比例约为 `--validation-fraction`；同一视频的 QA 不跨划分。
+不传该参数时仍使用原来的随机视频划分。`--audit-report` 仅接受相同数据哈希和
+相同配置的 CPU 审计，完整应用不可调度 QA 的排除记录。
+
+```bash
+train/.venv/bin/python -m train \
+  --config train/configs/minicpmo_full_sft_plain_ce_dp8.json audit \
+  --output train/prepared/expanded_audit.json
+
+train/.venv/bin/python -m train \
+  --config train/configs/minicpmo_full_sft_plain_ce_dp8.json prepare \
+  --output train/prepared/expanded_plain_ce \
+  --max-samples 100000 --validation-fraction 0.2 \
+  --split-from train/prepared/full_video_event_65536_20261029/manifest.json \
+  --audit-report train/prepared/expanded_audit.json
+```
+
+首次准备没有历史 manifest 时省略 `--split-from`。不要重复使用已存在的输出目录。
+旧 metadata 缺少新增视频时，audit 会用 ffprobe 补查；当前运行已保存完整时长快照，
+没有覆盖原 metadata 的来源信息。manifest 包含候选数、实际数量、采样遗漏及排除原因。
+带历史划分时，每轮同时记录 `validation/previous_loss*`（固定旧 QA）和
+`validation/added_loss*`，并保留全验证集指标。普通 CE 还会分别记录
+`loss_first_onset`、`loss_later_onset`；这些只用于诊断，不改变目标或梯度。
+
+当前全量运行的 1942 步训练、等待 Judge、八卡 profile 及自动分卡评测安排见
+[19,210 条数据实验说明](docs/plain_ce_full19210_20261103.md)。

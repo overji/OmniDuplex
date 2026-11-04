@@ -59,6 +59,8 @@ def fingerprints(prepared, config):
             files['sft_horizon'] = 'full_video_integer_seconds_v1'
         if config.get('decision_loss_mode') == 'event_balanced':
             files['sft_objective'] = 'event_balanced_v2'
+        elif config.get('decision_loss_mode') == 'plain_ce':
+            files['sft_objective'] = 'plain_ce_per_qa_v1'
     for key in ('system_prompt', 'agent_prompt', 'deepspeed_config'):
         files[key] = hashlib.sha256(Path(config[key]).read_bytes()).hexdigest()
     from benchmark.data.agent_token import base_identity

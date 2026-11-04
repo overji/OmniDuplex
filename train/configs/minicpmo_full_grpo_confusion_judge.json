@@ -56,5 +56,10 @@
     "retries": 2
   },
   "reward_mode": "confusion_judge",
-  "grpo_horizon": "full_video"
+  "grpo_horizon": "full_video",
+  "tensorboard": {
+    "enabled": true,
+    "log_dir": "train/tensorboard",
+    "flush_seconds": 10
+  }
 }

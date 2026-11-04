@@ -31,14 +31,18 @@ class TrainGraph(torch.nn.Module):
             # BF16 full-sequence recomputation can differ materially from native
             # chunked KV decoding. Preserve native feed boundaries and positions
             # for on-policy ratios; retain a differentiable KV cache for backward.
-            past, offset, states = None, 0, []
-            for segment in encoded['segments']:
-                pos = torch.arange(offset, offset + len(segment), device=segment.device)[None]
-                out = llm.model(inputs_embeds=segment[None], position_ids=pos,
-                    past_key_values=past, use_cache=True, return_dict=True)
-                past = out.past_key_values
-                states.append(out.last_hidden_state[0]); offset += len(segment)
-            hidden = torch.cat(states)
+            if config.get('grpo_replay_checkpoint_segments', 0):
+                from train.src.models.cached_replay import cached_hidden
+                hidden = cached_hidden(llm, encoded['segments'], config['grpo_replay_checkpoint_segments'])
+            else:
+                past, offset, states = None, 0, []
+                for segment in encoded['segments']:
+                    pos = torch.arange(offset, offset + len(segment), device=segment.device)[None]
+                    out = llm.model(inputs_embeds=segment[None], position_ids=pos,
+                        past_key_values=past, use_cache=True, return_dict=True)
+                    past = out.past_key_values
+                    states.append(out.last_hidden_state[0]); offset += len(segment)
+                hidden = torch.cat(states)
         if trajectory is None:
             labels, groups = encoded['labels'].to(hidden.device), encoded['groups'].to(hidden.device)
             from train.src.models.sft_loss import grouped_loss

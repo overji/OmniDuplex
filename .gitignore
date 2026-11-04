@@ -34,3 +34,6 @@ data_generation/videos/
 
 # Isolated AOI-Bench media cache (local generated frames/audio).
 /benchmark/cache_aoi_bench/
+
+# Local TensorBoard event files and JSONL bridge state.
+/train/tensorboard/

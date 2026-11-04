@@ -4,6 +4,7 @@ Only this controller may manipulate its original queue. Existing predictions
 and frozen configs are reused; training processes are never signalled.
 """
 import fcntl
+import hashlib
 import importlib.util
 import json
 import math
@@ -37,6 +38,42 @@ def final_ready(job, process):
     for p in reports:
         r=json.loads(p.read_text())
         if not r.get('checkpoint_saved') or r.get('optimizer_steps',0)<job['expected_steps'] or not math.isfinite(r['last_loss']):return False
+    return True
+
+
+def initial_stage_ready(root, jobs):
+    """Judge 'incomplete' is terminal: preserve failures without rerunning old jobs."""
+    root = Path(root)
+    for job in jobs:
+        inference = root/'runs'/job['label']/'omnipro_complete.json'
+        judged = root/'judge'/job['label']/'stage.json'
+        if not inference.is_file() or not judged.is_file():
+            return False
+        if not json.loads(inference.read_text()).get('complete'):
+            return False
+        if json.loads(judged.read_text()).get('status') not in ('complete', 'incomplete'):
+            return False
+    return True
+
+
+def shared_export_ready(job):
+    """Only reuse the final checkpoint export after its producer commits a marker."""
+    marker = Path(job['export_ready_marker'])
+    status = Path(job['export_status_file'])
+    if status.exists() and json.loads(status.read_text()).get('status') in ('failed', 'cancelled'):
+        raise RuntimeError('Shared SFT export producer failed or was cancelled')
+    if not marker.is_file():
+        return False
+    model = Path(job['model_path']).resolve()
+    record = json.loads(marker.read_text())
+    metadata = model/'full_training_model.json'
+    if (Path(record['model']).resolve() != model or not metadata.is_file()
+            or record['metadata_sha256'] != hashlib.sha256(metadata.read_bytes()).hexdigest()):
+        raise RuntimeError('Shared final export identity mismatch')
+    actual = Path(json.loads(metadata.read_text())['source_checkpoint']).resolve()
+    expected = (Path(job['training_output'])/'checkpoint-final').resolve()
+    if actual != expected:
+        raise RuntimeError('Shared export belongs to a different checkpoint')
     return True
 
 
@@ -178,6 +215,10 @@ class Queue:
             if s['missing_sample_indices']:raise RuntimeError('Inference has missing QA')
             # Terminal error rows are preserved and reported, not silently retried forever.
             write_json(directory/'omnipro_complete.json',dict(complete=True,partial_indices=s['partial_sample_indices']))
+        self.judge_models(jobs,lambda:report(self.path))
+
+    def judge_models(self,jobs,report_callback):
+        """Four existing local services can judge completed AOI or OmniPro runs."""
         self.wait_free(self.config['gpus'])
         self.state('judge_starting',gpus=self.config['gpus'])
         servers=[]
@@ -201,13 +242,17 @@ class Queue:
                 self.state('judging',model=job['label'],replicas=len(servers))
                 result=score_run(self.config,job['label'])
                 write_json(self.root/'judge'/job['label']/'stage.json',dict(status=result))
-                report(self.path)
+                report_callback()
         finally:self.stop_children()
-        self.wait_free(self.config['gpus']);report(self.path)
+        self.wait_free(self.config['gpus']);report_callback()
 
     def final_job(self, job):
         model=Path(job['model_path'])
-        if not (model/'full_training_model.json').is_file():
+        if job.get('export_ready_marker'):
+            self.state('waiting_for_shared_final_export',model=str(model))
+            while not shared_export_ready(job):
+                time.sleep(self.config['poll_seconds'])
+        elif not (model/'full_training_model.json').is_file():
             self.state('exporting_final_checkpoint')
             argv=[self.config['train_python'],'-m','train','--config',job['training_config'],'export',
                   '--checkpoint',str(Path(job['training_output'])/'checkpoint-final'),'--output',str(model)]
@@ -220,7 +265,11 @@ class Queue:
             fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
             initial=self.config['models'][:-1];final=self.config['models'][-1]
             try:
-                self.pause_previous();self.run_models(initial);self.resume_previous()
+                if self.config.get('resume_final_only', False):
+                    if not initial_stage_ready(self.root, initial):
+                        raise RuntimeError('Initial inference/Judge stages are not terminal; refusing final-only resume')
+                else:
+                    self.pause_previous();self.run_models(initial);self.resume_previous()
                 self.state('waiting_for_final_sft',training_output=final['training_output'])
                 while not final_ready(final,self.watch.process):
                     if not self.watch.process(final['training_pid']):

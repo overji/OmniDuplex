@@ -1,0 +1,2 @@
+# Add local monitoring to an existing training environment.
+tensorboard==2.21.0

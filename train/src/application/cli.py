@@ -17,6 +17,8 @@ def main():
     prepare.add_argument('--output', type=Path, required=True)
     prepare.add_argument('--max-samples', type=int, default=12)
     prepare.add_argument('--validation-fraction', type=float, default=.2)
+    prepare.add_argument('--split-from', type=Path, help='Preserve an older manifest video split; hash only new videos')
+    prepare.add_argument('--audit-report', type=Path, help='Apply an audit of the exact source/config before sampling')
     audit = commands.add_parser('audit', help='CPU-only all-response scheduling and video-duration audit')
     audit.add_argument('--data', type=Path, help='QA JSON; defaults to config.data')
     audit.add_argument('--metadata', type=Path, help='Video metadata; defaults to videos_dir/video_metadata.json')
@@ -43,7 +45,8 @@ def main():
             if not config.get('data'):
                 parser.error('prepare requires --data or config.data')
             args.data = Path(config['data'])
-        prepare(args.data, args.output, config, args.max_samples, args.validation_fraction)
+        prepare(args.data, args.output, config, args.max_samples, args.validation_fraction,
+                split_from=args.split_from, audit_report=args.audit_report)
     elif args.command == 'audit':
         from train.src.application.audit import audit
         audit(args.data or Path(config['data']), args.output, config, args.metadata)

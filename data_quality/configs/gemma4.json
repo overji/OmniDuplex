@@ -1,0 +1,28 @@
+{
+  "python": "/root/miniconda3/envs/omniduplex/bin/python",
+  "model_path": "/remote-home/yushengliao/speech/jimodels/openmodels/gemma-4-E4B-it",
+  "gpus": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7"
+  ],
+  "memory_fraction": 0.85,
+  "expand_kv_for_sdpa": true,
+  "cpu_threads": 4,
+  "media_workers": 12,
+  "frame_count": 24,
+  "dense_seconds": 8,
+  "image_soft_tokens": 280,
+  "max_input_tokens": 64000,
+  "max_new_tokens": 2048,
+  "attempts": 2,
+  "poll_seconds": 60,
+  "gpu_release_timeout_seconds": 180,
+  "minimum_success_fraction": 0.9,
+  "report_only": true
+}

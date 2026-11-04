@@ -1,13 +1,13 @@
-"""Optional rank-zero W&B telemetry; credentials stay in the environment."""
+"""Optional rank-zero local TensorBoard and W&B numeric telemetry."""
 import json
 
 
 class Tracking:
-    def __init__(self, run=None):
-        self.run = run
+    def __init__(self, run=None, tensorboard=None):
+        self.run, self.tensorboard = run, tensorboard
 
     def log_train(self, record):
-        if self.run is None:
+        if self.run is None and self.tensorboard is None:
             return
         values = {'train/step': record['step']}
         for key in ('loss', 'epoch', 'slot', 'sequence_tokens', 'supervised_tokens',
@@ -36,10 +36,13 @@ class Tracking:
         for key in names:
             if isinstance(record.get(key), (int, float)):
                 values['train/' + key] = record[key]
-        self.run.log(values)
+        if self.run is not None:
+            self.run.log(values)
+        if self.tensorboard is not None:
+            self.tensorboard.train(values, record)
 
     def log_validation(self, step, loss, scored, excluded, components=None):
-        if self.run is not None:
+        if self.run is not None or self.tensorboard is not None:
             values = {'train/step': step, 'validation/scored': scored,
                       'validation/excluded': excluded}
             if loss is not None:
@@ -47,19 +50,32 @@ class Tracking:
             if components:
                 values.update({'validation/' + key: value for key, value in components.items()
                                if isinstance(value, (int, float))})
-            self.run.log(values)
+            if self.run is not None:
+                self.run.log(values)
+            if self.tensorboard is not None:
+                self.tensorboard.validation(values)
 
     def finish(self, report):
         if self.run is not None:
             self.run.summary.update(report)
             self.run.finish()
+        if self.tensorboard is not None:
+            self.tensorboard.close()
 
 
 def start_tracking(config, output, rank, world_size):
     """Do not import the SDK on other ranks or without explicit configuration."""
     settings = config.get('wandb')
-    if rank != 0 or not settings or settings.get('mode') == 'disabled':
+    if rank != 0:
         return Tracking()
+    tensorboard = None
+    local = config.get('tensorboard', {})
+    if local.get('enabled', False):
+        from train.src.infrastructure.tensorboard import create_sink
+        tensorboard, directory = create_sink(local, output)
+        (output/'tensorboard_run.json').write_text(json.dumps({'log_dir':str(directory)},indent=2)+'\n')
+    if not settings or settings.get('mode') == 'disabled':
+        return Tracking(tensorboard=tensorboard)
     import wandb
     # Upload numeric hyperparameters, never QA, generated text, weights or arbitrary config keys.
     keys = ('training_method', 'agent_output_protocol', 'learning_rate', 'epochs',
@@ -86,4 +102,4 @@ def start_tracking(config, output, rank, world_size):
     (output / 'wandb_run.json').write_text(json.dumps(
         {'id': run.id, 'url': run.url, 'project': run.project, 'entity': run.entity}, indent=2) + '\n')
     print('W&B run: ' + str(run.url), flush=True)
-    return Tracking(run)
+    return Tracking(run, tensorboard=tensorboard)

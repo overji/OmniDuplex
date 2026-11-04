@@ -9,6 +9,7 @@ import urllib.request
 from benchmark.data.files import read_jsonl, write_json, append_jsonl, atomic_write_text, recover_jsonl_tail
 from benchmark.evaluation.timing import summarize, reference_windows
 from benchmark.evaluation.judge import prepare_rows, evaluate, fingerprint, summarize as content_summary
+from benchmark.data.agent_schema import adapt_sample, run_schema
 
 
 def predictions(directory):
@@ -21,8 +22,11 @@ def predictions(directory):
 
 def score_run(config, label):
     """Same AOI payload/rubric/validation; local Qwen transport disables thinking."""
-    root=Path(config['output']); run=root/'runs'/label; out=root/'judge'/label
-    samples=json.loads(Path(config['data']).read_text()); all_predictions=predictions(run)
+    root=Path(config['output']); run=Path(config.get('run_paths',{}).get(label,root/'runs'/label)); out=root/'judge'/label
+    samples=json.loads(Path(config['data']).read_text())
+    schema=config.get('run_schemas',{}).get(label,run_schema(run))
+    samples=[adapt_sample(sample,schema) for sample in samples]
+    all_predictions=predictions(run)
     rows, negatives=prepare_rows(samples, all_predictions)
     settings=config['judge']; system=Path(settings['system_prompt']).read_text()
     from train.src.infrastructure.judge import identity
@@ -31,6 +35,7 @@ def score_run(config, label):
                    timeout=settings['timeout'], retries=settings['retries'])
     binding=dict(version='omnipro_aoi_content_v1', judge=judge_identity,
                  data=fingerprint(samples), predictions=fingerprint(all_predictions), max_tokens=settings['max_tokens'])
+    if schema!='legacy' and any(s.get('mode')=='agent' for s in samples):binding['agent_call_schema']=schema
     out.mkdir(parents=True,exist_ok=True)
     path=out/'judge_config.json'
     if path.exists() and json.loads(path.read_text())!=binding:

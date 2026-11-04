@@ -65,10 +65,28 @@ def verify_profile(output, world):
             raise RuntimeError(f'GRPO profile did not complete one finite update on rank {rank}')
 
 
+
+def verified_sft_export(config):
+    """Explicit GRPO-only entry still requires a completed SFT and committed export."""
+    from train.scripts.benchmark_after_training import completed_training,external_weights,sha
+    b=read(config['benchmark_config']);checkpoint=completed_training(b)
+    model=external_weights(b['export_model']);marker=read(Path(b['output'])/'export_complete.json')
+    metadata=model/'full_training_model.json'
+    if (marker.get('model')!=str(model) or not metadata.is_file()
+            or marker.get('metadata_sha256')!=sha(metadata)):
+        raise ValueError('Final SFT export is not verified')
+    if Path(read(metadata)['source_checkpoint']).resolve()!=checkpoint.resolve():
+        raise ValueError('Export is not from the selected final SFT checkpoint')
+    for name in ('grpo_config','profile_config'):
+        if Path(read(config[name])['model_path']).resolve()!=model:
+            raise ValueError('GRPO/profile model differs from verified SFT export')
+    return model
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--check-only', action='store_true')
+    parser.add_argument('--grpo-only', action='store_true', help='Explicitly skip benchmark dependencies; require the completed SFT export')
     args = parser.parse_args()
     c = read(args.config)
     directory = Path(c['output']); directory.mkdir(parents=True, exist_ok=True)
@@ -77,12 +95,14 @@ def main():
     status_path, lease = directory/'status.json', directory/'gpu_lease.json'
     if read(status_path).get('stage') == 'complete':
         return
-    from benchmark_after_training import external_weights
+    from train.scripts.benchmark_after_training import external_weights
     for key in ('profile_output', 'grpo_output'):
         external_weights(c[key])
     if set(c['train_gpus']) & {read(c['judge_config'])['gpu']}:
         raise ValueError('Judge GPU overlaps training GPUs')
     counts = verify_split(c['prepared'], c['sft_prepared'])
+    if args.grpo_only:
+        verified_sft_export(c)
     if args.check_only:
         print(json.dumps(dict(status='validated', counts=counts, train_gpus=c['train_gpus'],
                               judge_gpu=read(c['judge_config'])['gpu'])))
@@ -122,13 +142,16 @@ def main():
     try:
         if read(lease) and not read(lease).get('released'):
             restore_lease(lease)
-        run([c['python'], str(ROOT/'train/scripts/benchmark_after_training.py'),
-             '--config', c['benchmark_config']], 'waiting_sft_then_realtime_benchmark')
-        b = read(c['benchmark_config'])
-        if read(Path(b['output'])/'after_training_status.json').get('status') != 'complete':
-            raise RuntimeError('Realtime benchmark did not finish successfully; GRPO not started')
-        # OmniPro also evaluates this final SFT; let all its inference and judge jobs finish.
-        wait_for(lambda: read(c['omnipro_status']).get('stage') == 'complete', 'waiting_for_omnipro')
+        if args.grpo_only:
+            mark('benchmarks_skipped', reason='Explicit --grpo-only request', model=str(verified_sft_export(c)))
+        else:
+            run([c['python'], str(ROOT/'train/scripts/benchmark_after_training.py'),
+                 '--config', c['benchmark_config']], 'waiting_sft_then_realtime_benchmark')
+            b = read(c['benchmark_config'])
+            if read(Path(b['output'])/'after_training_status.json').get('status') != 'complete':
+                raise RuntimeError('Realtime benchmark did not finish successfully; GRPO not started')
+            # OmniPro also evaluates this final SFT; let all its inference and judge jobs finish.
+            wait_for(lambda: read(c['omnipro_status']).get('stage') == 'complete', 'waiting_for_omnipro')
         acquire_lease(c, lease)
         gpu = read(c['judge_config'])['gpu']
         def gpu_free():
@@ -160,8 +183,11 @@ def main():
                         '--output', c['profile_output']], 'grpo_profile', env)
             verify_profile(c['profile_output'], len(c['train_gpus']))
             write(directory/'profile_complete.json', dict(output=c['profile_output']))
-        run(prefix+[c['grpo_config'], 'grpo', '--prepared', c['prepared'],
-                    '--output', c['grpo_output']], 'grpo_training', env)
+        grpo_command = prefix+[c['grpo_config'], 'grpo', '--prepared', c['prepared'],
+                               '--output', c['grpo_output']]
+        if c.get('grpo_max_steps'):
+            grpo_command += ['--max-steps', str(c['grpo_max_steps'])]
+        run(grpo_command, 'grpo_training', env)
         mark('complete')
     except BaseException as exc:
         mark('stopped' if isinstance(exc, InterruptedError) else 'failed', error=str(exc))

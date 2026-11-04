@@ -159,3 +159,35 @@ class OmniProExecutionOrderTests(unittest.TestCase):
         self.assertEqual(module.shuffled_order(27,2,20261031),(order,shards))
         self.assertNotEqual(order,list(range(27)))
         self.assertNotEqual(module.shuffled_order(27,2,20261032)[0],order)
+
+class FinalSchedulingTests(unittest.TestCase):
+    def test_shared_export_requires_marker_hash_and_exact_checkpoint(self):
+        import hashlib
+        from benchmark.runtime.omnipro_queue import shared_export_ready
+        with TemporaryDirectory() as directory:
+            root=Path(directory);model=root/'model';model.mkdir()
+            metadata=model/'full_training_model.json'
+            job=dict(model_path=str(model),training_output=str(root/'training'),
+                     export_ready_marker=str(root/'marker.json'),export_status_file=str(root/'status.json'))
+            metadata.write_text(json.dumps(dict(source_checkpoint=str(root/'training/checkpoint-final'))))
+            self.assertFalse(shared_export_ready(job))
+            marker=dict(model=str(model),metadata_sha256=hashlib.sha256(metadata.read_bytes()).hexdigest())
+            (root/'marker.json').write_text(json.dumps(marker));self.assertTrue(shared_export_ready(job))
+            metadata.write_text(json.dumps(dict(source_checkpoint=str(root/'other/checkpoint-final'))))
+            marker['metadata_sha256']=hashlib.sha256(metadata.read_bytes()).hexdigest()
+            (root/'marker.json').write_text(json.dumps(marker))
+            with self.assertRaisesRegex(RuntimeError,'different checkpoint'):shared_export_ready(job)
+            (root/'status.json').write_text(json.dumps(dict(status='failed')))
+            with self.assertRaisesRegex(RuntimeError,'producer failed'):shared_export_ready(job)
+
+    def test_final_only_resume_preserves_completed_and_incomplete_judge(self):
+        from benchmark.runtime.omnipro_queue import initial_stage_ready
+        with TemporaryDirectory() as directory:
+            root=Path(directory);jobs=[dict(label='base'),dict(label='old')]
+            self.assertFalse(initial_stage_ready(root,jobs))
+            for job,status in zip(jobs,('complete','incomplete')):
+                run=root/'runs'/job['label'];judge=root/'judge'/job['label']
+                run.mkdir(parents=True);judge.mkdir(parents=True)
+                (run/'omnipro_complete.json').write_text(json.dumps(dict(complete=True)))
+                (judge/'stage.json').write_text(json.dumps(dict(status=status)))
+            self.assertTrue(initial_stage_ready(root,jobs))
