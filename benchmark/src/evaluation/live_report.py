@@ -93,10 +93,11 @@ def render(config):
         first_later[name]=dict(totals)
         lines.append(f"| {name} | {percent(totals['first_tp']/totals['first_n'] if totals['first_n'] else None)} | {percent(totals['later_tp']/totals['later_n'] if totals['later_n'] else None)} |")
     if judges:
-        lines+=['','## Content judge — own scored windows, scale 0–2','', '| Model | Status | Scored / total | Failed | Matched mean | All-window mean |','|---|---|---:|---:|---:|---:|']
+        lines+=['','## Content judge — own completed QA; matched mean 0–2, scored-F1 percent','', '| Model | Status | Scored / total | Failed | Matched mean | scored-F1 (%) |','|---|---|---:|---:|---:|---:|']
         for name,j in judges.items():
             g=j.get('groups',{}).get('overall',{});fmt=lambda v:'N/A' if v is None else f'{v:.3f}'
-            lines.append(f"| {name} | {j.get('status','pending')} | {g.get('scored_windows',0)}/{g.get('windows',0)} | {g.get('failed_windows',0)} | {fmt(g.get('response_mean_matched'))} | {fmt(g.get('response_mean_all_windows'))} |")
+            sf=g.get('scored_f1')
+            lines.append(f"| {name} | {j.get('status','pending')} | {g.get('scored_windows',0)}/{g.get('windows',0)} | {g.get('failed_windows',0)} | {fmt(g.get('response_mean_matched'))} | {fmt(100*sf if sf is not None else None)} |")
         lines+=['','Content means are not paired across models. Failed judge rows remain failures, not zero scores.']
     output=Path(config['output']);output.parent.mkdir(parents=True,exist_ok=True)
     atomic_write_text(output,'\n'.join(lines)+'\n')

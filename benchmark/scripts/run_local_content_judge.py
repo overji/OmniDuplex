@@ -14,6 +14,7 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT))
 from benchmark.data.files import read_jsonl,write_json,atomic_write_text
 from benchmark.runtime.omnipro_queue import Queue
+from benchmark.evaluation.scored_f1 import judged_metrics, realtime_population
 
 
 def normalized_report(config):
@@ -22,8 +23,9 @@ def normalized_report(config):
     lines=['# AOI-Bench local content Judge','',
            'Scores are individually divided by 2 before averaging. Unmatched windows score zero; failed Judge requests remain missing.',
            'TP content means are conditional on each model\'s own timing matches.','',
-           '| Model | Group | Windows | Matched | Failed | TP response | All response | All task |',
-           '| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |']
+           'scored-F1 = 2 * normalized matched quality / (reference windows + all output events).','',
+           '| Model | Group | Windows | Matched | Failed | TP response | scored-F1 |',
+           '| --- | --- | ---: | ---: | ---: | ---: | ---: |']
     def mean(values):return sum(values)/len(values) if values else None
     def fmt(value):return 'N/A' if value is None else f'{100*value:.2f}%'
     for job in config['models']:
@@ -31,6 +33,11 @@ def normalized_report(config):
         if not (root/'judge'/label/'judge_metrics.json').exists():continue
         # Last attempt owns the terminal result when resuming a failed request.
         rows=list({(r['sample_index'],r['response_index']):r for r in read_jsonl(path,complete_only=True)}.values())
+        population=json.loads((root/'judge'/label/'judge_metrics.json').read_text()).get('groups',{})
+        run=Path(config.get('run_paths',{}).get(label,root/'runs'/label))
+        if config.get('data') and (run/'predictions.jsonl').exists():
+            samples=json.loads(Path(config['data']).read_text())
+            population=realtime_population(samples,[p for p in read_jsonl(run/'predictions.jsonl') if p.get('status')=='complete'])
         groups=defaultdict(list)
         matched[label]={(r['sample_index'],r['response_index']):r for r in rows if r['status']=='complete' and r['event_index'] is not None}
         for row in rows:
@@ -45,8 +52,9 @@ def normalized_report(config):
                 response_mean_matched=mean([r['response_score']/2 for r in tp_ok]) if len(tp_ok)==len(tp) else None,
                 response_mean_all=mean(response) if len(ok)==len(items) else None,
                 task_mean_all=mean(task) if len(ok)==len(items) else None)
+            value.update(judged_metrics(items,len(items),population.get(name,{}).get('prediction_count')))
             summary[label][name]=value
-            lines.append(f"| {label} | {name} | {len(items)} | {len(tp)} | {value['failed']} | {fmt(value['response_mean_matched'])} | {fmt(value['response_mean_all'])} | {fmt(value['task_mean_all'])} |")
+            lines.append(f"| {label} | {name} | {len(items)} | {len(tp)} | {value['failed']} | {fmt(value['response_mean_matched'])} | {fmt(value['scored_f1'])} |")
     common=set.intersection(*(set(r) for r in matched.values())) if len(matched)>1 else set()
     paired={label:mean([rows[k]['response_score']/2 for k in common]) for label,rows in matched.items()} if common else {}
     if common:

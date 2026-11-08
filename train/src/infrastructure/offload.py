@@ -26,7 +26,12 @@ def saved_on_cpu(budget_gib=128, *, keep_gib=0, reserve_gib=0):
     keep_budget = keep_gib * 2**30
     if keep_budget and torch.cuda.is_available():
         free, _ = torch.cuda.mem_get_info()
-        keep_budget = min(keep_budget, max(0, free - reserve_gib * 2**30))
+        # Driver-free memory excludes this process's reusable allocator cache.
+        # After the first QA that cache can be large; ignoring it silently
+        # pushes almost all subsequent activations onto the CPU.
+        reusable = max(0, torch.cuda.memory_reserved() - torch.cuda.memory_allocated())
+        keep_budget = min(keep_budget, max(0, free + reusable - reserve_gib * 2**30))
+    stats['gpu_keep_budget_bytes'] = keep_budget
     def pack(tensor):
         base = tensor
         while getattr(base, '_base', None) is not None:

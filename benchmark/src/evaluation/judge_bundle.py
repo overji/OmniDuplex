@@ -98,6 +98,20 @@ def build_result(bundle, identity, cache, interrupted=False):
             for name in ('overall', 'mode:'+row['mode'], 'ability:'+str(row['ability'])):
                 groups[name].append(row)
         summary[run['run_id']] = {name: means(values) for name, values in groups.items()}
+        from benchmark.evaluation.scored_f1 import judged_metrics
+        # Old portable bundles lack output counts: expose null, never relabel
+        # their content mean as scored-F1 or reconstruct counts from TP rows.
+        for name,values in groups.items():
+            summary[run['run_id']][name].update(judged_metrics(
+                values,len(values) if run['mode']=='realtime' else None,None))
+        for name,counts in run.get('scored_f1_population',{}).items():
+            selected=groups.get(name,[])
+            if run['mode']=='probe':
+                ids=set(counts['tp_probe_ids'])
+                selected=[r for r in selected if r.get('probe_id') in ids]
+                if {r['probe_id'] for r in selected}!=ids:selected=[dict(status='pending')]
+            summary[run['run_id']].setdefault(name,{}).update(judged_metrics(
+                selected,counts['reference_count'],counts['prediction_count']))
     totals = defaultdict(float)
     attempts = [a for r in cache.values() for a in r.get('usage_attempts', [])]
     for attempt in attempts:

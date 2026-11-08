@@ -222,10 +222,14 @@ def main():
     parser=argparse.ArgumentParser();parser.add_argument('--config',type=Path,required=True)
     sub=parser.add_subparsers(dest='command',required=True)
     for name in ('prepare','report'):sub.add_parser(name)
+    p=sub.add_parser('export-pass-only');p.add_argument('--output-dir',type=Path,required=True)
     p=sub.add_parser('run');p.add_argument('--gpus',nargs='+',help='Execution GPU subset; preserves existing audit shards')
     p=sub.add_parser('worker');p.add_argument('--rank',type=int,required=True)
     args=parser.parse_args();config=json.loads(args.config.read_text());config['config_path']=str(args.config.resolve())
     if config.get('report_only') is not True:raise ValueError('This entrypoint supports report-only audit, not automatic label changes')
     if args.command=='worker':worker(config,args.rank)
+    elif args.command=='export-pass-only':
+        from data_quality.filtering import export_pass_only
+        export_pass_only(config,args.output_dir)
     elif args.command=='run':run(config,args.gpus)
     else:globals()[args.command](config)

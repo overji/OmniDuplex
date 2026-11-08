@@ -69,3 +69,12 @@ def test_grpo_only_requires_verified_export_and_matching_training_model(tmp_path
         with pytest.raises(ValueError,match='model differs'):chain.verified_sft_export(config)
         marker.write_text('{}')
         with pytest.raises(ValueError,match='not verified'):chain.verified_sft_export(config)
+
+
+def test_multi_update_profile_requires_exact_number_on_every_rank(tmp_path):
+    for rank in range(2):
+        (tmp_path/f'memory_report.rank{rank}.json').write_text(json.dumps(dict(optimizer_steps=2,last_loss=.8)))
+    chain.verify_profile(tmp_path,2,optimizer_steps=2)
+    (tmp_path/'memory_report.rank1.json').write_text(json.dumps(dict(optimizer_steps=1,last_loss=.8)))
+    with pytest.raises(RuntimeError,match='2 finite updates'):
+        chain.verify_profile(tmp_path,2,optimizer_steps=2)

@@ -38,7 +38,7 @@ def run(args, config):
         if json.loads(Path(config['deepspeed_config']).read_text())['zero_optimization']['stage'] != 2:
             raise ValueError('Independent candidates require ZeRO-2: ZeRO-3 forward collectives would deadlock')
     if args.profile and config.get('reward_backend') != 'llm':
-        config['gradient_accumulation_steps'] = 1
+        config['gradient_accumulation_steps'] = config.get('profile_gradient_accumulation_steps', 1)
     exists = torch.tensor(int(args.output.exists()) if rank == 0 else 0, device=device)
     torch.distributed.broadcast(exists, src=0)
     if exists.item():
@@ -128,12 +128,21 @@ def run(args, config):
         from train.src.training.grpo_judged import run as run_judged
         return run_judged(engine, model, duplex, records, args, config, device, rank, world,
                           identity, tracking, started, epoch_start, cursor)
-    metrics = args.output / f'metrics.rank{rank}.jsonl'
+    # High-frequency telemetry can use local storage while weights stay external.
+    # This operational path is intentionally outside checkpoint/config identity.
+    metrics_dir = getattr(args, 'metrics_dir', None) or args.output
+    metrics_dir.mkdir(parents=True, exist_ok=True)
+    metrics = metrics_dir / f'metrics.rank{rank}.jsonl'
+    if metrics_dir.resolve() != args.output.resolve():
+        if metrics.exists():
+            raise ValueError('Use a fresh metrics directory for a resumed run')
+        # Preserve the established per-run discovery path for reports/tools.
+        (args.output / metrics.name).symlink_to(metrics.resolve())
     trajectories_path = args.output / f'trajectories.rank{rank}.jsonl'
     torch.cuda.reset_peak_memory_stats(device)
     count, zero_groups, exclusions, final_loss = 0, 0, 0, None
     last_epoch, last_cursor = epoch_start, cursor
-    limit = 1 if args.profile else args.max_steps
+    limit = config.get('profile_optimizer_steps', 1) if args.profile else args.max_steps
     gas = config['gradient_accumulation_steps']
     stop = bool(limit and engine.global_steps >= limit)
     for epoch in range(epoch_start, config['epochs']):

@@ -119,11 +119,13 @@ def evaluate(row, config, key, system, request=completion):
     return result
 
 
-def summarize(rows, counts, inference_count, manifest_count):
+def summarize(rows, counts, inference_count, manifest_count, population=None):
     groups = defaultdict(list, {'overall': [], 'mode:rtd': [], 'mode:pr': [], 'mode:agent': []})
     for row in rows:
         for name in ('overall', 'mode:'+row['mode'], 'ability:'+str(row['ability'])):
             groups[name].append(row)
+    for name in population or {}:
+        groups.setdefault(name, [])
     result = {}
     def mean(values):
         return sum(values)/len(values) if values else None
@@ -141,6 +143,14 @@ def summarize(rows, counts, inference_count, manifest_count):
             scored_task_mean=mean([r['task_score'] for r in ok]),
             scored_response_mean=mean([r['response_score'] for r in ok]),
             scored_call_mean=mean([r['call_score'] for r in agents_ok]))
+    from benchmark.evaluation.scored_f1 import judged_metrics
+    for name, counts_group in (population or {}).items():
+        ids=set(counts_group['tp_probe_ids'])
+        selected=[r for r in groups.get(name,[]) if r['probe_id'] in ids]
+        metrics=judged_metrics(selected,counts_group['reference_count'],counts_group['prediction_count'])
+        if {r['probe_id'] for r in selected}!=ids:
+            metrics=judged_metrics([dict(status='pending')],counts_group['reference_count'],counts_group['prediction_count'])
+        result.setdefault(name,{}).update(metrics)
     return dict(evaluation=VERSION, status='complete' if all(r['status']=='complete' for r in rows) else 'incomplete',
         scope='TP only; completion and means apply to this input snapshot, not the full inference run',
         manifest_probes=manifest_count, completed_inference_probes=inference_count,
@@ -152,11 +162,12 @@ def write_report(path, metrics):
     fmt = lambda value: 'N/A' if value is None else f'{value:.3f}'
     lines = ['# Probe TP content judge', '', 'Status: '+metrics['status'], '', metrics['scope'], '', metrics['note'], '',
         f"Inference snapshot: {metrics['completed_inference_probes']}/{metrics['manifest_probes']} probes; decisions: {metrics['decisions']}", '',
-        '| Group | Scored / TP | Response mean | Call mean | Task mean | Scored-only task mean |',
+        '| Group | Scored / TP | Response mean | Call mean | Task mean | scored-F1 (%) |',
         '| --- | ---: | ---: | ---: | ---: | ---: |']
     for name, group in metrics['groups'].items():
         lines.append(f"| {name} | {group['scored_tp']}/{group['tp_probes']} | " +
-            ' | '.join(fmt(group[k]) for k in ('response_mean_tp','call_mean_tp','task_mean_tp','scored_task_mean'))+' |')
+            ' | '.join(fmt(group[k]) for k in ('response_mean_tp','call_mean_tp','task_mean_tp'))+' | '+
+            ('N/A' if group.get('scored_f1') is None else f"{100*group['scored_f1']:.2f}")+' |')
     atomic_write_text(path, '\n'.join(lines)+'\n')
 
 
@@ -176,11 +187,15 @@ def execute(args):
         videos_dir = Path(source['videos_dir'])
     validate_manifest(samples, manifest, file_hash(args.data), videos_dir)
     prepared = []
+    populations = {}
     for run in args.runs:
         path = run/'probe_predictions.jsonl'
         if not path.is_file():
             raise FileNotFoundError(path)
-        rows, index, counts = prepare_rows(samples, manifest, read_jsonl(path, complete_only=True))
+        predictions = read_jsonl(path, complete_only=True)
+        rows, index, counts = prepare_rows(samples, manifest, predictions)
+        from benchmark.evaluation.scored_f1 import probe_population
+        populations[run] = probe_population(manifest,predictions)
         prepared.append((run, rows, index, counts))
     if args.dry_run:
         print(json.dumps(dict(dry_run=True, runs=[dict(run=str(run), completed_probes=len(index),
@@ -229,12 +244,14 @@ def execute(args):
                     result = future.result(); append_jsonl(history_path,result)
                     history.append(result); results.append(result)
                     done = {r['probe_id'] for r in results}
+                    from benchmark.evaluation.scored_f1 import probe_population
                     metrics = summarize(results+[dict(r,status='pending') for r in pending
-                        if r['probe_id'] not in done],counts,len(index),len(manifest))
+                        if r['probe_id'] not in done],counts,len(index),len(manifest),populations[run])
                     write_json(out/'judge_metrics.json',metrics)
                     print(f"{run.name}: {len(results)}/{len(rows)} ({result['status']})",flush=True)
             results.sort(key=lambda r:(r['sample_index'],r['response_index']))
-            metrics = summarize(results,counts,len(index),len(manifest))
+            from benchmark.evaluation.scored_f1 import probe_population
+            metrics = summarize(results,counts,len(index),len(manifest),populations[run])
             write_json(out/'judge_metrics.json',metrics); write_report(out/'judge_report.md',metrics)
             attempts = [attempt for r in history for attempt in r['usage_attempts']]
             tokens = defaultdict(float)

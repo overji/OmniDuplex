@@ -66,7 +66,9 @@ def score_run(config, label):
         futures=[pool.submit(evaluate,row,transport,'local',system,request) for row in pending]
         for future in as_completed(futures):
             row=future.result();append_jsonl(history,row);results.append(row)
-    metrics=content_summary(results,negatives,len(samples),sum(r['status']=='complete' for r in all_predictions))
+    from benchmark.evaluation.scored_f1 import realtime_population
+    population=realtime_population(samples,[r for r in all_predictions if r['status']=='complete'])
+    metrics=content_summary(results,negatives,len(samples),sum(r['status']=='complete' for r in all_predictions),population)
     write_json(out/'judge_metrics.json',metrics)
     return metrics['status']
 
@@ -120,13 +122,14 @@ def report(path):
     lines=['# OmniPro under AOI evaluation','',
         'Timing-only inclusive ±3s one-to-one windows; content scored separately using AOI 0–2 rubric. These are not original paper content-gated F1 scores.',
         f"Source QA: {len(samples)}. Paired valid QA across available models: {len(common)}. Prompt/duration mismatches: {len(excluded)}.",'',
-        '| Model | Complete / error / missing QA | Recall | Precision | F1 | TP content mean /2 | All-window mean /2 |',
+        '| Model | Complete / error / missing QA | Recall | Precision | F1 | TP content mean /2 | scored-F1 (%) |',
         '|---|---:|---:|---:|---:|---:|---:|']
     fmt=lambda v:'N/A' if v is None else f'{v:.3f}'
     for label,m in models.items():
         g=paired[label]['groups'].get('overall',{});j=judge.get(label,{}).get('groups',{}).get('overall',{})
         status=m['metrics']['inference_statuses'];num=lambda k:fmt(100*g[k]) if g.get(k) is not None else 'N/A'
-        lines.append(f"| {label} | {status.get('complete',0)} / {sum(v for k,v in status.items() if k!='complete')} / {m['metrics']['missing_qa']} | {num('window_hit_rate')} | {num('timing_precision')} | {num('timing_f1')} | {fmt(j.get('response_mean_matched'))} | {fmt(j.get('response_mean_all_windows'))} |")
+        sf=j.get('scored_f1')
+        lines.append(f"| {label} | {status.get('complete',0)} / {sum(v for k,v in status.items() if k!='complete')} / {m['metrics']['missing_qa']} | {num('window_hit_rate')} | {num('timing_precision')} | {num('timing_f1')} | {fmt(j.get('response_mean_matched'))} | {fmt(100*sf if sf is not None else None)} |")
     lines+=['','Content aggregates above use each model’s own completed matches; denominators differ. Consult judge_metrics.json for scored, failed and matched window counts. Timing comparisons use the same valid QA intersection.','']
     for prefix in ('task:','cognitive:','length:','mode:'):
         lines += ['## '+prefix[:-1],'','| Group | '+' | '.join(models)+' |','|---|'+'---:|'*len(models)]

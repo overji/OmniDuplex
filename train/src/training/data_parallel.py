@@ -72,6 +72,7 @@ def step(engine, record, config, device, world_size):
         if stats is not None:
             result.update(activation_cpu_saved_gib_max=stats['saved_bytes'] / 2**30,
                           activation_gpu_kept_gib=stats['kept_bytes'] / 2**30,
+                          activation_gpu_budget_gib=stats['gpu_keep_budget_bytes'] / 2**30,
                           parameter_offload_cache_hits=stats['parameter_cache_hits'])
     total = torch.tensor(local_value if eligible else 0., device=device, dtype=torch.float64)
     raw_metrics = getattr(engine.module, 'sft_loss_metrics', None)

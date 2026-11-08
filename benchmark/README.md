@@ -1433,3 +1433,7 @@ train/.venv/bin/python benchmark/scripts/watch_live_results.py \
 其他实验可复用同一配置格式：顶层 `output`、正数 `interval_seconds`、`reports`；每份报告包含 `title`、`data`、`output` 和 `models`。每个模型指定 `name`、`run`（含 predictions.jsonl 或 worker_*）、可选 `data`（验证完整参考数据一致）和 `judge`（judge_metrics.json）。`--once` 仅更新一次；在总入口旁创建同名 `.STOP` 文件可结束监控。每份 Markdown 同时输出可解析 JSON，监控健康状态在 `.status.json`。后续自动评测启动后无需手工执行报告命令。
 
 实时总入口 `latest_sft_live.md` 会直接列出基座与最新 SFT 的配对 Recall、Precision、F1、首次/后续召回及各分组 F1，并显示最新 SFT 相对基座的 `↑ / ↓ / →` 变化，单位为百分点（pp）。尚无共同成功数据时显示 N/A，不把缺失当成 0。变化始终基于同一批已完成 QA，不与历史模型全量成绩混算。
+
+### scored-F1 内容综合指标
+
+原 C_all 已替换为 **scored-F1**：`2Q/(N+M)`，其中 Q 为归一化匹配内容质量之和，N 为参考数，M 为全部输出数。额外开口会降分；漏答没有质量信用；C_TP 保留。JSON 输出 `scored_f1` 为 [0,1]，报告显示百分比。Probe 会计入负侧误回复。公式、失败/缺失策略及旧结果兼容见 [scored-F1 协议](docs/scored_f1.md)。

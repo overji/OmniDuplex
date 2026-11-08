@@ -23,6 +23,7 @@ def execute(args):
             judged = json.loads(path.read_text()) if path.exists() else {}
             score = judged.get("groups", {}).get("overall", {})
             row.update(judge_status=judged.get("status", "not_run"),
+                       scored_f1=score.get("scored_f1"),
                        response_mean_matched=score.get("response_mean_matched"),
                        response_mean_all_windows=score.get("response_mean_all_windows"),
                        call_mean_all_windows=score.get("call_mean_all_windows"))
@@ -41,13 +42,13 @@ def execute(args):
             f"{row['hits']} | {rate(row['hit_rate'])} | {rate(row['precision'])} | {rate(row['f1'])} |")
     if judge_dir:
         lines.extend(["", "Content scores (0–2; N/A includes incomplete judge runs):", "",
-            "| Model | Judge status | Matched response | All-window response | Agent call |",
-            "| --- | --- | ---: | ---: | ---: |"])
+            "| Model | Judge status | Matched response (0–2) | scored-F1 (%) |",
+            "| --- | --- | ---: | ---: |"])
         for row in rows:
             fmt = lambda x: "N/A" if x is None else f"{x:.3f}"
-            lines.append(f"| {row['model']} | {row['judge_status']} | " + " | ".join(
-                fmt(row[k]) for k in ("response_mean_matched", "response_mean_all_windows",
-                                      "call_mean_all_windows")) + " |")
+            sf=row.get('scored_f1')
+            lines.append(f"| {row['model']} | {row['judge_status']} | {fmt(row['response_mean_matched'])} | "
+                         + fmt(100*sf if sf is not None else None) + " |")
     lines.extend(["", "Subgroup metrics remain in each model's `metrics.json`."])
     args.output.with_suffix(".md").write_text("\n".join(lines) + "\n")
     print(args.output.with_suffix(".md"))

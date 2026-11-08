@@ -36,3 +36,20 @@
 - `worker_*/judgments.jsonl`：原始模型输出、重试、证据时间、音视频覆盖和耗时；同目录 `worker.log` 为运行日志。
 
 八个副本均正常退出、任务全部有终态记录且有效审查比例至少 90% 后，继续原有四卡（4–7）AOI-Bench 队列：**Baichuan-Omni-1.5 → HumanOmniV2 → OmniVinci**。复用已完成结果和既有分片；保留原来的失败项跳过设置。大量运行失败会停止自动衔接并保留报告；发现标注问题本身不阻止其他模型评测，因为本轮不修改数据。
+
+## 人工决定后的 pass-only 筛选
+
+2026-11-05 用户明确要求保留全部 response 通过的 QA。按“所有计分 response 均有完整且为 `pass` 的审查”执行整条 QA 筛选；`issue`、`uncertain`、运行失败和缺少审查都会移除整条 QA。Agent 范围仍是委托回复，保留 QA 中原有的工具返回和完成回复。保留记录的字段、视频 UUID、时间窗口、response 顺序和 QA 相对顺序均不改写。
+
+该条件没有额外叠加静态检查错误过滤：AOI-Bench 保留 **1,998 / 2,107 QA**，AOI-Dataset 保留 **18,315 / 19,210 QA**；其中仍有 3 / 37 条 QA 带静态错误，分别记录在 `retained_static_findings.json`。之前“全部 response 通过且无静态错误”的候选数 1,995 / 18,278 属于更严格口径。
+
+可先显式导出到一个新目录，再决定是否替换正式数据：
+
+```bash
+python -m data_quality --config data_quality/outputs/gemma4_aoi_20261103/config.json \
+  export-pass-only --output-dir data_quality/outputs/NEW_FILTER_EXPORT
+```
+
+该命令只导出候选数据和原始备份，不自动写入审查配置中的源文件。已获授权的本地正式替换位于 `/remote-home/yushengliao/speech/jimodels/datasets/AOI-Bench/all_qa.json` 和同级 `AOI-Dataset/all_qa.json`。本次导出、移除清单、备份、部署计划和校验记录在 `outputs/gemma4_pass_only_20261105/`；两个数据集目录另有 `quality_filter_manifest.json` 和 `quality_filter_index.json`。
+
+旧实验、Probe manifest 和训练 prepared 快照继续代表筛选前的数据版本。新数据的数组索引会改变，不能直接把旧预测按新索引重新评分；应使用原始快照或显式索引映射。原始视频均保留，数据集 metadata 中的 QA 数量、引用视频数量与校验和同步更新。

@@ -1,5 +1,7 @@
 # MiniCPM-o-4.5 全参数流式 SFT / GRPO
 
+当前筛选后 AOI-Dataset 已切换为 [2026-11-05 八卡普通 CE 运行](docs/plain_ce_filtered18315_dp8_20261105.md)，可复用配置为 [minicpmo_full_sft_plain_ce_dp8.json](configs/minicpmo_full_sft_plain_ce_dp8.json)。使用 0–7 卡，每卡 1 QA、累计 2、有效 batch 16；18,315 个源 QA 中有效 18,278 个，训练/验证为 14,812/3,466。必须使用筛选版重新准备的数据，不能复用筛选前缓存。八卡实卡 profile 通过后自动正式训练；损失仍为普通 CE。原四卡 profile 已停止，benchmark 队列在 SFT 完成后恢复。
+
 入口为 `python -m train`。支持全参 SFT 和全参 GRPO：训练 LLM、视觉/音频编码器及连接层，不加载 TTS。LoRA 训练已移除。历史 benchmark adapter 的推理加载保留在隔离的兼容模块，不是训练入口。
 
 ## 模型、数据和环境
@@ -415,3 +417,7 @@ train/.venv/bin/python -m train \
 
 当前全量运行的 1942 步训练、等待 Judge、八卡 profile 及自动分卡评测安排见
 [19,210 条数据实验说明](docs/plain_ce_full19210_20261103.md)。
+
+多步显存/主存预检：`profile_gradient_accumulation_steps` 与 `profile_optimizer_steps` 均默认 1，可在 profile 配置中显式提高，以覆盖缓存复用和真实梯度累计；正式训练的累计配置不受这两个 profile 参数影响。本轮八卡训练配置和运行路径见 [连续训练内存修复记录](docs/plain_ce_filtered18315_dp8_allocatorfix_20261105.md)。
+
+SFT 可通过 `--metrics-dir /本地新目录` 将数值 JSONL 日志与外部权重存储分开。输出目录保留同名软链接，checkpoint 仍写原外部存储。控制器可显式配置 `resume_checkpoint` 和 `metrics_dir`，恢复时校验分片/RNG/训练配置，训练入口进一步校验 identity 并恢复优化器与游标。实际恢复路径和 TensorBoard run 见 [step350 存储恢复记录](docs/plain_ce_resume350_storage_recovery_20261107.md)。

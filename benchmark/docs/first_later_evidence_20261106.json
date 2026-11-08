@@ -1,0 +1,3178 @@
+{
+  "note": "Retrospective comparison of the earlier 5k ordinary-CE SFT, NOT the currently training filtered18k checkpoint. Timing-only matching; no semantic correctness implied.",
+  "qa": 1998,
+  "groups": {
+    "all": {
+      "base": {
+        "qa": 1998,
+        "first_n": 1998,
+        "first_hit": 504,
+        "later_n": 2428,
+        "later_hit": 546,
+        "multi_qa": 947,
+        "multi_first_hit": 262,
+        "first_hit_multi_qa": 262,
+        "later_hit_given_first_hit": 211,
+        "later_n_given_first_hit": 592,
+        "first_hit_no_later_hit_qa": 122,
+        "no_later_hit_with_later_outputs": 68,
+        "no_later_hit_and_no_later_outputs": 54
+      },
+      "sft": {
+        "qa": 1998,
+        "first_n": 1998,
+        "first_hit": 830,
+        "later_n": 2428,
+        "later_hit": 476,
+        "multi_qa": 947,
+        "multi_first_hit": 353,
+        "first_hit_multi_qa": 353,
+        "later_hit_given_first_hit": 251,
+        "later_n_given_first_hit": 838,
+        "first_hit_no_later_hit_qa": 194,
+        "no_later_hit_with_later_outputs": 33,
+        "no_later_hit_and_no_later_outputs": 161
+      },
+      "both_first_hit": {
+        "qa": 154,
+        "later_n": 313,
+        "base_later_hit": 125,
+        "sft_later_hit": 110
+      }
+    },
+    "rtd": {
+      "base": {
+        "qa": 619,
+        "first_n": 619,
+        "first_hit": 147,
+        "later_n": 1889,
+        "later_hit": 408,
+        "multi_qa": 619,
+        "multi_first_hit": 147,
+        "first_hit_multi_qa": 147,
+        "later_hit_given_first_hit": 142,
+        "later_n_given_first_hit": 418,
+        "first_hit_no_later_hit_qa": 63,
+        "no_later_hit_with_later_outputs": 34,
+        "no_later_hit_and_no_later_outputs": 29
+      },
+      "sft": {
+        "qa": 619,
+        "first_n": 619,
+        "first_hit": 206,
+        "later_n": 1889,
+        "later_hit": 338,
+        "multi_qa": 619,
+        "multi_first_hit": 206,
+        "first_hit_multi_qa": 206,
+        "later_hit_given_first_hit": 183,
+        "later_n_given_first_hit": 619,
+        "first_hit_no_later_hit_qa": 108,
+        "no_later_hit_with_later_outputs": 22,
+        "no_later_hit_and_no_later_outputs": 86
+      },
+      "both_first_hit": {
+        "qa": 73,
+        "later_n": 199,
+        "base_later_hit": 74,
+        "sft_later_hit": 65
+      }
+    },
+    "pr": {
+      "base": {
+        "qa": 662,
+        "first_n": 662,
+        "first_hit": 265,
+        "later_n": 505,
+        "later_hit": 133,
+        "multi_qa": 299,
+        "multi_first_hit": 111,
+        "first_hit_multi_qa": 111,
+        "later_hit_given_first_hit": 68,
+        "later_n_given_first_hit": 169,
+        "first_hit_no_later_hit_qa": 56,
+        "no_later_hit_with_later_outputs": 33,
+        "no_later_hit_and_no_later_outputs": 23
+      },
+      "sft": {
+        "qa": 662,
+        "first_n": 662,
+        "first_hit": 303,
+        "later_n": 505,
+        "later_hit": 134,
+        "multi_qa": 299,
+        "multi_first_hit": 133,
+        "first_hit_multi_qa": 133,
+        "later_hit_given_first_hit": 67,
+        "later_n_given_first_hit": 202,
+        "first_hit_no_later_hit_qa": 73,
+        "no_later_hit_with_later_outputs": 11,
+        "no_later_hit_and_no_later_outputs": 62
+      },
+      "both_first_hit": {
+        "qa": 77,
+        "later_n": 109,
+        "base_later_hit": 50,
+        "sft_later_hit": 45
+      }
+    },
+    "agent": {
+      "base": {
+        "qa": 717,
+        "first_n": 717,
+        "first_hit": 92,
+        "later_n": 34,
+        "later_hit": 5,
+        "multi_qa": 29,
+        "multi_first_hit": 4,
+        "first_hit_multi_qa": 4,
+        "later_hit_given_first_hit": 1,
+        "later_n_given_first_hit": 5,
+        "first_hit_no_later_hit_qa": 3,
+        "no_later_hit_with_later_outputs": 1,
+        "no_later_hit_and_no_later_outputs": 2
+      },
+      "sft": {
+        "qa": 717,
+        "first_n": 717,
+        "first_hit": 321,
+        "later_n": 34,
+        "later_hit": 4,
+        "multi_qa": 29,
+        "multi_first_hit": 14,
+        "first_hit_multi_qa": 14,
+        "later_hit_given_first_hit": 1,
+        "later_n_given_first_hit": 17,
+        "first_hit_no_later_hit_qa": 13,
+        "no_later_hit_with_later_outputs": 0,
+        "no_later_hit_and_no_later_outputs": 13
+      },
+      "both_first_hit": {
+        "qa": 4,
+        "later_n": 5,
+        "base_later_hit": 1,
+        "sft_later_hit": 0
+      }
+    }
+  },
+  "examples": [
+    {
+      "old_index": 164,
+      "mode": "rtd",
+      "video": "2ad7f905-2a3c-5590-ba71-02db9f003732.mp4",
+      "question": "Keep me updated on what the musicians in the video are doing throughout their performance.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:01",
+          "end": "00:07",
+          "response": "The guitarist is singing and playing acoustic guitar, while the musician on the left stands holding a trumpet."
+        },
+        {
+          "response_index": 1,
+          "start": "00:11",
+          "end": "00:20",
+          "response": "The trumpet player has begun playing a solo into the microphone, while the guitarist stops singing to accompany on guitar."
+        }
+      ],
+      "base_observed_seconds": 60.005,
+      "sft_observed_seconds": 60.005,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 2.0,
+          "window_start_seconds": 1.0,
+          "window_end_seconds": 7.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 1,
+          "onset_seconds": 12.0,
+          "window_start_seconds": 11.0,
+          "window_end_seconds": 20.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 1.0,
+          "window_start_seconds": 1.0,
+          "window_end_seconds": 7.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 2.0,
+          "text": " Two musicians are performing. One is singing and playing an acoustic guitar, while the other holds a trumpet but does not play it yet.",
+          "last_text_seconds": 9.0
+        },
+        {
+          "onset_seconds": 12.0,
+          "text": " The musician with the trumpet begins playing.",
+          "last_text_seconds": 13.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 1.0,
+          "text": "The musicians are singing and playing their instruments, with the guitarist strumming chords on his acoustic guitar while delivering vocal lines.",
+          "response_text": "The musicians are singing and playing their instruments, with the guitarist strumming chords on his acoustic guitar while delivering vocal lines.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 158
+    },
+    {
+      "old_index": 182,
+      "mode": "rtd",
+      "video": "03afcfcc-6e79-5210-b8b8-4ee770e7a239.mp4",
+      "question": "Keep me updated on the running count of close-up shots of individual musicians or their instruments shown in the performance.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:04",
+          "end": "00:08",
+          "response": "That is the first close-up shot, focusing on the cellist."
+        },
+        {
+          "response_index": 1,
+          "start": "00:09",
+          "end": "00:16",
+          "response": "We are now at two close-up shots, showing the cello bridge and strings."
+        },
+        {
+          "response_index": 2,
+          "start": "00:17",
+          "end": "00:33",
+          "response": "That makes three close-up shots, focusing on the trumpet player."
+        },
+        {
+          "response_index": 3,
+          "start": "00:34",
+          "end": "00:36",
+          "response": "There have now been four close-up shots, cutting back to the cellist."
+        },
+        {
+          "response_index": 4,
+          "start": "00:37",
+          "end": "00:46",
+          "response": "That brings the total to five close-ups, switching to the trumpet player."
+        },
+        {
+          "response_index": 5,
+          "start": "00:47",
+          "end": "00:48",
+          "response": "That is six close-up shots, focusing on the trumpet player again."
+        },
+        {
+          "response_index": 6,
+          "start": "00:49",
+          "end": "01:00",
+          "response": "We have reached seven close-up shots, showing the cellist."
+        }
+      ],
+      "base_observed_seconds": 60.005,
+      "sft_observed_seconds": 60.005,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 6.0,
+          "window_start_seconds": 4.0,
+          "window_end_seconds": 8.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 11.0,
+          "window_start_seconds": 9.0,
+          "window_end_seconds": 16.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 3,
+          "onset_seconds": 20.0,
+          "window_start_seconds": 17.0,
+          "window_end_seconds": 33.0
+        },
+        {
+          "response_index": 4,
+          "event_index": 4,
+          "onset_seconds": 37.0,
+          "window_start_seconds": 37.0,
+          "window_end_seconds": 46.0
+        },
+        {
+          "response_index": 6,
+          "event_index": 5,
+          "onset_seconds": 49.0,
+          "window_start_seconds": 49.0,
+          "window_end_seconds": 60.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 6.0,
+          "window_start_seconds": 4.0,
+          "window_end_seconds": 8.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 1.0,
+          "text": " That is now the first close-up shot of an individual musician or their instrument.",
+          "last_text_seconds": 1.0
+        },
+        {
+          "onset_seconds": 6.0,
+          "text": " Second close-up shot of a musician playing an instrument.",
+          "last_text_seconds": 6.0
+        },
+        {
+          "onset_seconds": 11.0,
+          "text": " Third close-up shot of a musician playing an instrument.",
+          "last_text_seconds": 11.0
+        },
+        {
+          "onset_seconds": 20.0,
+          "text": " Fourth close-up shot of a musician playing an instrument.",
+          "last_text_seconds": 20.0
+        },
+        {
+          "onset_seconds": 37.0,
+          "text": " Fifth close-up shot of a musician playing an instrument.",
+          "last_text_seconds": 37.0
+        },
+        {
+          "onset_seconds": 49.0,
+          "text": " Sixth close-up shot of a musician playing an instrument.",
+          "last_text_seconds": 49.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 1.0,
+          "text": "The video has shown 1 close-up shot of the cellist playing.",
+          "response_text": "The video has shown 1 close-up shot of the cellist playing.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 6.0,
+          "text": "That makes a total of 2 individual musician shots, now featuring both musicians and their instruments.",
+          "response_text": "That makes a total of 2 individual musician shots, now featuring both musicians and their instruments.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 175
+    },
+    {
+      "old_index": 657,
+      "mode": "rtd",
+      "video": "A/videos/7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+      "question": "Keep me updated on any on-screen text or inscriptions shown in the video and what they say.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:10",
+          "end": "01:12",
+          "response": "An inscription on Tony Stark's floating arc reactor wreath reads 'PROOF THAT TONY STARK HAS A HEART'."
+        },
+        {
+          "response_index": 1,
+          "start": "01:41",
+          "end": "01:43",
+          "response": "An end credit appears stating 'Edited by Médéric Côté'."
+        },
+        {
+          "response_index": 2,
+          "start": "01:44",
+          "end": "01:47",
+          "response": "The credits update to 'music thierry cote' and 'From the original Avengers theme composed by Alan Silvestri'."
+        }
+      ],
+      "base_observed_seconds": 108.959,
+      "sft_observed_seconds": 108.959,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 71.0,
+          "window_start_seconds": 70.0,
+          "window_end_seconds": 72.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 102.0,
+          "window_start_seconds": 101.0,
+          "window_end_seconds": 103.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 3,
+          "onset_seconds": 107.0,
+          "window_start_seconds": 104.0,
+          "window_end_seconds": 107.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 71.0,
+          "window_start_seconds": 70.0,
+          "window_end_seconds": 72.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 66.0,
+          "text": " Text: 'Avengers Assemble'.",
+          "last_text_seconds": 67.0
+        },
+        {
+          "onset_seconds": 71.0,
+          "text": " Text: 'The only star that has a future is the one you start burning'.",
+          "last_text_seconds": 73.0
+        },
+        {
+          "onset_seconds": 102.0,
+          "text": " Text: 'Edited by M édéric Côté'.",
+          "last_text_seconds": 104.0
+        },
+        {
+          "onset_seconds": 107.0,
+          "text": " Text: 'music thierry cote'",
+          "last_text_seconds": 107.0
+        },
+        {
+          "onset_seconds": 108.959,
+          "text": " Text: 'From the original",
+          "last_text_seconds": 108.959
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 71.0,
+          "text": "The circular device in the floral wreath has inscribed text reading 'THOU SHALT NOT STEAL'.",
+          "response_text": "The circular device in the floral wreath has inscribed text reading 'THOU SHALT NOT STEAL'.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 631
+    },
+    {
+      "old_index": 686,
+      "mode": "rtd",
+      "video": "A/videos/5e3cfbca-d45e-582f-a0d5-0a080ae7b7e8.mp4",
+      "question": "Keep me updated on the camera's spatial position relative to the drummer during the drummer's dedicated performance shots.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:37",
+          "end": "00:39",
+          "response": "The camera is positioned directly above the drummer, filming from a top-down overhead perspective."
+        },
+        {
+          "response_index": 1,
+          "start": "01:00",
+          "end": "01:02",
+          "response": "The camera is positioned in front of the drummer at eye level, viewing through the cymbals."
+        },
+        {
+          "response_index": 2,
+          "start": "01:56",
+          "end": "01:57",
+          "response": "The camera has returned to a directly overhead position looking down at the drummer."
+        },
+        {
+          "response_index": 3,
+          "start": "02:30",
+          "end": "02:31",
+          "response": "The camera is positioned in front and slightly to the side of the drummer at eye level."
+        }
+      ],
+      "base_observed_seconds": 207.285,
+      "sft_observed_seconds": 207.285,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 39.0,
+          "window_start_seconds": 37.0,
+          "window_end_seconds": 39.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 5,
+          "onset_seconds": 117.0,
+          "window_start_seconds": 116.0,
+          "window_end_seconds": 117.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 39.0,
+          "window_start_seconds": 37.0,
+          "window_end_seconds": 39.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 31.0,
+          "text": " The camera is now positioned directly in front of the drummer.",
+          "last_text_seconds": 32.0
+        },
+        {
+          "onset_seconds": 39.0,
+          "text": " Camera is now behind the drummer, showing a top-down view of the drum set.",
+          "last_text_seconds": 41.0
+        },
+        {
+          "onset_seconds": 52.0,
+          "text": " Camera has returned to its original position facing the drummer from the front.",
+          "last_text_seconds": 54.0
+        },
+        {
+          "onset_seconds": 98.0,
+          "text": " The camera has once again switched back to being positioned behind the drummer.",
+          "last_text_seconds": 98.0
+        },
+        {
+          "onset_seconds": 111.0,
+          "text": " Camera is now positioned behind the drummer once more.",
+          "last_text_seconds": 111.0
+        },
+        {
+          "onset_seconds": 117.0,
+          "text": " The camera has returned to its original position facing the drummer from the front.",
+          "last_text_seconds": 117.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 39.0,
+          "text": "The camera has moved behind the drummer to capture a top-down view of his drum kit.",
+          "response_text": "The camera has moved behind the drummer to capture a top-down view of his drum kit.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 658
+    },
+    {
+      "old_index": 830,
+      "mode": "rtd",
+      "video": "A/videos/68172177-a125-5b08-a028-216a860e9ab6.mp4",
+      "question": "Keep me updated on what ingredients are being added to the lentil skillet.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:31",
+          "end": "01:33",
+          "response": "Grated ginger is being added into the pan."
+        },
+        {
+          "response_index": 1,
+          "start": "01:34",
+          "end": "01:37",
+          "response": "A whole green hot pepper and salt are being added."
+        },
+        {
+          "response_index": 2,
+          "start": "01:45",
+          "end": "01:47",
+          "response": "A mixed spice blend and sugar are being added to the lentils."
+        },
+        {
+          "response_index": 3,
+          "start": "01:48",
+          "end": "01:50",
+          "response": "Dark browning sauce is being drizzled into the skillet."
+        },
+        {
+          "response_index": 4,
+          "start": "01:53",
+          "end": "01:56",
+          "response": "Coconut milk is being poured into the pan."
+        },
+        {
+          "response_index": 5,
+          "start": "02:31",
+          "end": "02:34",
+          "response": "More coconut milk is being poured into the stew."
+        }
+      ],
+      "base_observed_seconds": 184.024,
+      "sft_observed_seconds": 184.024,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 92.0,
+          "window_start_seconds": 91.0,
+          "window_end_seconds": 93.0
+        },
+        {
+          "response_index": 4,
+          "event_index": 3,
+          "onset_seconds": 115.0,
+          "window_start_seconds": 113.0,
+          "window_end_seconds": 116.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 93.0,
+          "window_start_seconds": 91.0,
+          "window_end_seconds": 93.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 87.0,
+          "text": " Lentils are added to the skillet.",
+          "last_text_seconds": 88.0
+        },
+        {
+          "onset_seconds": 92.0,
+          "text": " Ginger is being added to the lentil skillet.",
+          "last_text_seconds": 94.0
+        },
+        {
+          "onset_seconds": 99.0,
+          "text": " Water is added to the lentil skillet.",
+          "last_text_seconds": 100.0
+        },
+        {
+          "onset_seconds": 115.0,
+          "text": " Coconut milk is added to the lentil skillet.",
+          "last_text_seconds": 116.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 90.0,
+          "text": "Pumpkin pieces are being added to the skillet with the lentils.",
+          "response_text": "Pumpkin pieces are being added to the skillet with the lentils.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 93.0,
+          "text": "Ginger paste has been stirred into the mixture, followed by chopped scallions and hot pepper.",
+          "response_text": "Ginger paste has been stirred into the mixture, followed by chopped scallions and hot pepper.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 98.0,
+          "text": "A generous amount of water is now poured from a glass jar into the pot.",
+          "response_text": "A generous amount of water is now poured from a glass jar into the pot.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 793
+    },
+    {
+      "old_index": 1143,
+      "mode": "rtd",
+      "video": "A/videos/66f46bf2-81ab-50a5-85c8-f633191d1190.mp4",
+      "question": "Keep me updated on the physical posture and positioning of the detained man in the red shirt.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:21",
+          "end": "00:29",
+          "response": "The detained man is lying prone on the asphalt roadway with the officer kneeling over him."
+        },
+        {
+          "response_index": 1,
+          "start": "00:44",
+          "end": "00:50",
+          "response": "The man has been assisted to a standing position and is now on his feet on the roadway."
+        },
+        {
+          "response_index": 2,
+          "start": "01:11",
+          "end": "01:21",
+          "response": "The man is standing stationary beside the rear passenger side of the police pickup truck while being patted down."
+        }
+      ],
+      "base_observed_seconds": 92.116,
+      "sft_observed_seconds": 92.116,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 21.0,
+          "window_start_seconds": 21.0,
+          "window_end_seconds": 29.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 1,
+          "onset_seconds": 49.0,
+          "window_start_seconds": 44.0,
+          "window_end_seconds": 50.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 25.0,
+          "window_start_seconds": 21.0,
+          "window_end_seconds": 29.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 21.0,
+          "text": " The man in the red shirt is lying prone on the pavement beside the concrete barrier.",
+          "last_text_seconds": 24.0
+        },
+        {
+          "onset_seconds": 49.0,
+          "text": " He's now standing and being escorted down the shoulder toward the road.",
+          "last_text_seconds": 52.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 25.0,
+          "text": "The man is lying face down on the asphalt shoulder beside the concrete barrier.",
+          "response_text": "The man is lying face down on the asphalt shoulder beside the concrete barrier.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1089
+    },
+    {
+      "old_index": 1444,
+      "mode": "rtd",
+      "video": "A/videos/cdd8256d-bba9-59f3-b827-608d82c90efb.mp4",
+      "question": "Keep me updated on each new item or merchandise the presenter presents to the camera.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:58",
+          "end": "01:03",
+          "response": "The presenter is now holding up a large Master Grade Nu Gundam Ver.Ka model kit box."
+        },
+        {
+          "response_index": 1,
+          "start": "01:52",
+          "end": "01:56",
+          "response": "She is now presenting an Entry Grade 1/144 Nu Gundam model kit box."
+        },
+        {
+          "response_index": 2,
+          "start": "02:04",
+          "end": "02:10",
+          "response": "The presenter is showing a spherical Rick Dom head storage compartment container and its packaging box."
+        },
+        {
+          "response_index": 3,
+          "start": "02:37",
+          "end": "02:44",
+          "response": "She is holding up two vintage Gundam art and reference books in plastic sleeves."
+        }
+      ],
+      "base_observed_seconds": 295.73,
+      "sft_observed_seconds": 295.73,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 59.0,
+          "window_start_seconds": 58.0,
+          "window_end_seconds": 63.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 3,
+          "onset_seconds": 116.0,
+          "window_start_seconds": 112.0,
+          "window_end_seconds": 116.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 4,
+          "onset_seconds": 128.0,
+          "window_start_seconds": 124.0,
+          "window_end_seconds": 130.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 58.0,
+          "window_start_seconds": 58.0,
+          "window_end_seconds": 63.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 51.0,
+          "text": " Item 1: Galaxy Toys bag",
+          "last_text_seconds": 53.0
+        },
+        {
+          "onset_seconds": 59.0,
+          "text": " Item 2: Gundam Ver. Ka box",
+          "last_text_seconds": 60.0
+        },
+        {
+          "onset_seconds": 66.0,
+          "text": " Item 3: White Gundam figure",
+          "last_text_seconds": 67.0
+        },
+        {
+          "onset_seconds": 116.0,
+          "text": " Item 4: Entry grade Gundam parts",
+          "last_text_seconds": 117.0
+        },
+        {
+          "onset_seconds": 128.0,
+          "text": " Item 5: Small black box with red plus symbol",
+          "last_text_seconds": 132.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 58.0,
+          "text": "The presenter is presenting a large box of Bandai 1/60 Gundam Ver.Ka kits to the camera.",
+          "response_text": "The presenter is presenting a large box of Bandai 1/60 Gundam Ver.Ka kits to the camera.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1375
+    },
+    {
+      "old_index": 1603,
+      "mode": "rtd",
+      "video": "A/videos/d660b66e-dc9a-5d5a-9005-febc64acebc9.mp4",
+      "question": "Keep track of how many times the person filming tells the officer not to touch him or his camera, updating me with each occurrence.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:02",
+          "end": "01:03",
+          "response": "That is the first time the person filming tells the officer not to touch his camera and not to touch him."
+        },
+        {
+          "response_index": 1,
+          "start": "01:04",
+          "end": "01:10",
+          "response": "The count is now at 2 as he repeats for the officer not to touch him."
+        },
+        {
+          "response_index": 2,
+          "start": "02:12",
+          "end": "02:18",
+          "response": "That brings the total to 3 times he has told the officer not to touch him."
+        }
+      ],
+      "base_observed_seconds": 176.985,
+      "sft_observed_seconds": 176.985,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 63.0,
+          "window_start_seconds": 62.0,
+          "window_end_seconds": 63.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 2,
+          "onset_seconds": 132.0,
+          "window_start_seconds": 132.0,
+          "window_end_seconds": 138.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 63.0,
+          "window_start_seconds": 62.0,
+          "window_end_seconds": 63.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 46.0,
+          "text": " That is the first time the person filming tells the officer not to touch him or his camera.",
+          "last_text_seconds": 47.0
+        },
+        {
+          "onset_seconds": 63.0,
+          "text": " That is the second time the person filming tells the officer not to touch him or his camera",
+          "last_text_seconds": 63.0
+        },
+        {
+          "onset_seconds": 132.0,
+          "text": "That is the third time the person filming tells the officer not to touch him or his camera",
+          "last_text_seconds": 132.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 63.0,
+          "text": "That is the first time he tells the officer not to touch him or his camera.",
+          "response_text": "That is the first time he tells the officer not to touch him or his camera.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1520
+    },
+    {
+      "old_index": 1666,
+      "mode": "rtd",
+      "video": "A/videos/f5d0dadf-5527-5369-8158-a3dd85520fc1.mp4",
+      "question": "Keep me updated on the position and movement of the blue and yellow armored character relative to the room.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:27",
+          "end": "00:29",
+          "response": "The blue and yellow character runs from the kitchen area past the red and white character."
+        },
+        {
+          "response_index": 1,
+          "start": "00:31",
+          "end": "00:33",
+          "response": "He sprints across the room along the wall next to the whiteboard."
+        },
+        {
+          "response_index": 2,
+          "start": "00:34",
+          "end": "00:36",
+          "response": "He leaps high into the air toward the ceiling."
+        },
+        {
+          "response_index": 3,
+          "start": "00:37",
+          "end": "00:39",
+          "response": "He lands on the floor and slides forward across the room."
+        }
+      ],
+      "base_observed_seconds": 73.774,
+      "sft_observed_seconds": 73.774,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 27.0,
+          "window_start_seconds": 27.0,
+          "window_end_seconds": 29.0
+        },
+        {
+          "response_index": 3,
+          "event_index": 1,
+          "onset_seconds": 39.0,
+          "window_start_seconds": 37.0,
+          "window_end_seconds": 39.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 29.0,
+          "window_start_seconds": 27.0,
+          "window_end_seconds": 29.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 27.0,
+          "text": " The blue and yellow character is moving rapidly through the room, running past walls and furniture.",
+          "last_text_seconds": 31.0
+        },
+        {
+          "onset_seconds": 39.0,
+          "text": " Blue and yellow character just entered a doorway leading to another hallway or room section.",
+          "last_text_seconds": 43.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 29.0,
+          "text": "The blue and yellow armored character is sprinting across the room from right to left.",
+          "response_text": "The blue and yellow armored character is sprinting across the room from right to left.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1580
+    },
+    {
+      "old_index": 1834,
+      "mode": "rtd",
+      "video": "A/videos/cab2718e-28fe-5f90-9649-a07170f43794.mp4",
+      "question": "Keep me updated on the number of Wizard Towers placed in the base layout.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:01",
+          "end": "01:07",
+          "response": "There is currently 1 Wizard Tower placed in the base layout."
+        },
+        {
+          "response_index": 1,
+          "start": "01:08",
+          "end": "01:13",
+          "response": "There are now 2 Wizard Towers placed in the base layout."
+        },
+        {
+          "response_index": 2,
+          "start": "01:14",
+          "end": "01:25",
+          "response": "There are now 3 Wizard Towers placed in the base layout."
+        }
+      ],
+      "base_observed_seconds": 459.104,
+      "sft_observed_seconds": 459.104,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 61.0,
+          "window_start_seconds": 61.0,
+          "window_end_seconds": 67.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 69.0,
+          "window_start_seconds": 68.0,
+          "window_end_seconds": 73.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 3,
+          "onset_seconds": 76.0,
+          "window_start_seconds": 74.0,
+          "window_end_seconds": 85.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 65.0,
+          "window_start_seconds": 61.0,
+          "window_end_seconds": 67.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 56.0,
+          "text": " Wizard towers placed: 0.",
+          "last_text_seconds": 57.0
+        },
+        {
+          "onset_seconds": 61.0,
+          "text": " Wizard towers placed: 1.",
+          "last_text_seconds": 62.0
+        },
+        {
+          "onset_seconds": 69.0,
+          "text": " Wizard towers placed: 2.",
+          "last_text_seconds": 70.0
+        },
+        {
+          "onset_seconds": 76.0,
+          "text": " Wizard towers placed: 3.",
+          "last_text_seconds": 77.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 65.0,
+          "text": "A total of 3 Wizard Towers have been placed so far.",
+          "response_text": "A total of 3 Wizard Towers have been placed so far.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1740
+    },
+    {
+      "old_index": 1991,
+      "mode": "rtd",
+      "video": "B/videos/1e283e4e-d98e-5ad0-901b-f18b9b29ddac.mp4",
+      "question": "Keep me updated on the number of people shown preparing, slicing, or packing BBQ meat on screen.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:43",
+          "end": "01:54",
+          "response": "There is currently one pitmaster visible slicing brisket at the table."
+        },
+        {
+          "response_index": 1,
+          "start": "01:55",
+          "end": "02:03",
+          "response": "There is one person shown slicing brisket on a metal tray."
+        },
+        {
+          "response_index": 2,
+          "start": "02:12",
+          "end": "02:17",
+          "response": "There are now two people visible under the tent packing the BBQ turn-in container."
+        }
+      ],
+      "base_observed_seconds": 151.375,
+      "sft_observed_seconds": 151.375,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 109.0,
+          "window_start_seconds": 103.0,
+          "window_end_seconds": 114.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 118.0,
+          "window_start_seconds": 115.0,
+          "window_end_seconds": 123.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 104.0,
+          "window_start_seconds": 103.0,
+          "window_end_seconds": 114.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 101.0,
+          "text": " That is the third person shown preparing or packing meat.",
+          "last_text_seconds": 105.0
+        },
+        {
+          "onset_seconds": 109.0,
+          "text": " A fourth person is now slicing brisket.",
+          "last_text_seconds": 109.0
+        },
+        {
+          "onset_seconds": 118.0,
+          "text": " Fifth person slicing meat.",
+          "last_text_seconds": 118.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 104.0,
+          "text": "There is currently 1 person slicing brisket on screen.",
+          "response_text": "There is currently 1 person slicing brisket on screen.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 107.0,
+          "text": "Now there are 2 people shown preparing and packing meat at their table.",
+          "response_text": "Now there are 2 people shown preparing and packing meat at their table.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1886
+    },
+    {
+      "old_index": 25,
+      "mode": "pr",
+      "video": "2800df63-1e2e-5138-b52c-a615e6aadedf.mp4",
+      "question": "Listen for moments when the masked pursuer in the video actually catches up to the runner — a scuffle with grunts, a hard impact, or footsteps stopping right at the hiding spot. Tell me each time that happens, and what you think is likely to happen next.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:25",
+          "end": "00:28",
+          "response": "I just heard a scuffle and a grunt — the runner shoved the masked pursuer back. That may buy a moment, but the pursuer could lunge again."
+        },
+        {
+          "response_index": 1,
+          "start": "01:18",
+          "end": "01:21",
+          "response": "That loud crash sounds like the runner struck the pursuer with a bin — it may slow them down, though I can't tell if it stops the chase."
+        },
+        {
+          "response_index": 2,
+          "start": "03:20",
+          "end": "03:22",
+          "response": "The footsteps stopped right at the stall and the audio just cut with a sting — the pursuer may have found the runner; whether they escape is unclear."
+        }
+      ],
+      "base_observed_seconds": 212.068,
+      "sft_observed_seconds": 212.068,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 25.0,
+          "window_start_seconds": 25.0,
+          "window_end_seconds": 28.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 3,
+          "onset_seconds": 78.0,
+          "window_start_seconds": 78.0,
+          "window_end_seconds": 81.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 26.0,
+          "window_start_seconds": 25.0,
+          "window_end_seconds": 28.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 25.0,
+          "text": " The masked pursuer has caught up to the runner.",
+          "last_text_seconds": 25.0
+        },
+        {
+          "onset_seconds": 44.0,
+          "text": " The masked pursuer is closing in again, near a gate.",
+          "last_text_seconds": 44.0
+        },
+        {
+          "onset_seconds": 59.0,
+          "text": " The masked pursuer has caught up and grabbed the runner through the gate.",
+          "last_text_seconds": 59.0
+        },
+        {
+          "onset_seconds": 78.0,
+          "text": " The masked pursuer catches up once more inside the parking garage.",
+          "last_text_seconds": 78.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 26.0,
+          "text": "The pursuer has caught up and tackled the runner; he will likely pin him down or attempt to stab his back.",
+          "response_text": "The pursuer has caught up and tackled the runner; he will likely pin him down or attempt to stab his back.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 24
+    },
+    {
+      "old_index": 286,
+      "mode": "pr",
+      "video": "045f1128-22ed-540b-9c28-7ca2ddd2fc6b.mp4",
+      "question": "Let me know whenever the presenter puts on or takes off the slow cooker lid.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:30",
+          "end": "01:34",
+          "response": "The presenter is placing the glass lid onto the slow cooker."
+        },
+        {
+          "response_index": 1,
+          "start": "01:37",
+          "end": "01:41",
+          "response": "The presenter is taking the lid off the slow cooker."
+        }
+      ],
+      "base_observed_seconds": 210.984,
+      "sft_observed_seconds": 210.984,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 92.0,
+          "window_start_seconds": 90.0,
+          "window_end_seconds": 94.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 97.0,
+          "window_start_seconds": 97.0,
+          "window_end_seconds": 101.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 91.0,
+          "window_start_seconds": 90.0,
+          "window_end_seconds": 94.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 31.0,
+          "text": " That part has already happened, 30 seconds ago.",
+          "last_text_seconds": 33.0
+        },
+        {
+          "onset_seconds": 92.0,
+          "text": " The lid is being placed on the slow cooker.",
+          "last_text_seconds": 93.0
+        },
+        {
+          "onset_seconds": 97.0,
+          "text": " The lid was removed from the slow cooker.",
+          "last_text_seconds": 98.0
+        },
+        {
+          "onset_seconds": 109.0,
+          "text": " The lid is being placed back on the slow cooker.",
+          "last_text_seconds": 110.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 91.0,
+          "text": "The presenter has placed the slow cooker lid on.",
+          "response_text": "The presenter has placed the slow cooker lid on.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 276
+    },
+    {
+      "old_index": 298,
+      "mode": "pr",
+      "video": "0aa46452-ceb5-5a86-a4e8-d6f4408f536c.mp4",
+      "question": "Let me know whenever someone sits inside the sports car.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:30",
+          "end": "00:36",
+          "response": "The friend wearing the pastel sweater is seated in the passenger seat of the sports car."
+        },
+        {
+          "response_index": 1,
+          "start": "01:38",
+          "end": "01:44",
+          "response": "The woman in the olive green jacket has sat down in the driver's seat of the sports car."
+        }
+      ],
+      "base_observed_seconds": 111.724,
+      "sft_observed_seconds": 111.724,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 31.0,
+          "window_start_seconds": 30.0,
+          "window_end_seconds": 36.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 100.0,
+          "window_start_seconds": 98.0,
+          "window_end_seconds": 104.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 31.0,
+          "window_start_seconds": 30.0,
+          "window_end_seconds": 36.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 31.0,
+          "text": " Someone is sitting in the sports car.",
+          "last_text_seconds": 32.0
+        },
+        {
+          "onset_seconds": 65.0,
+          "text": " The person has now exited the sports car.",
+          "last_text_seconds": 67.0
+        },
+        {
+          "onset_seconds": 100.0,
+          "text": " Someone is sitting inside the sports car again.",
+          "last_text_seconds": 101.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 31.0,
+          "text": "The woman in the yellow shorts is sitting inside the sports car.",
+          "response_text": "The woman in the yellow shorts is sitting inside the sports car.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 288
+    },
+    {
+      "old_index": 368,
+      "mode": "pr",
+      "video": "29ab6ebb-9ca5-5a31-a878-b34834266a94.mp4",
+      "question": "Let me know whenever Coach Boomer triggers a test hazard or mechanism on the evaluation platform.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:46",
+          "end": "00:50",
+          "response": "Coach Boomer has triggered a car drop onto Will Stronghold on the platform."
+        },
+        {
+          "response_index": 1,
+          "start": "00:57",
+          "end": "01:00",
+          "response": "Coach Boomer has activated a catapult trapdoor, launching Will into the air."
+        }
+      ],
+      "base_observed_seconds": 64.855,
+      "sft_observed_seconds": 64.855,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 46.0,
+          "window_start_seconds": 46.0,
+          "window_end_seconds": 50.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 58.0,
+          "window_start_seconds": 57.0,
+          "window_end_seconds": 60.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 46.0,
+          "window_start_seconds": 46.0,
+          "window_end_seconds": 50.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 14.0,
+          "text": " Coach Boomer triggered a test hazard or mechanism.",
+          "last_text_seconds": 16.0
+        },
+        {
+          "onset_seconds": 46.0,
+          "text": " Coach Boomer triggered a test hazard or mechanism.",
+          "last_text_seconds": 47.0
+        },
+        {
+          "onset_seconds": 58.0,
+          "text": " Coach Boomer triggered a test hazard or mechanism.",
+          "last_text_seconds": 60.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 46.0,
+          "text": "Coach Boomer has triggered the hazard alarm on his device.",
+          "response_text": "Coach Boomer has triggered the hazard alarm on his device.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 354
+    },
+    {
+      "old_index": 427,
+      "mode": "pr",
+      "video": "13f6c915-09dd-5303-995a-3b883dc52d95.mp4",
+      "question": "Let me know whenever a person enters the frame from the right side of the room.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:17",
+          "end": "00:20",
+          "response": "A man in a pink t-shirt and dark shorts has entered from the right side of the room."
+        },
+        {
+          "response_index": 1,
+          "start": "00:29",
+          "end": "00:32",
+          "response": "A woman wearing a red soccer jersey has entered from the right side of the room."
+        }
+      ],
+      "base_observed_seconds": 365.8,
+      "sft_observed_seconds": 365.8,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 19.0,
+          "window_start_seconds": 17.0,
+          "window_end_seconds": 20.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 1,
+          "onset_seconds": 32.0,
+          "window_start_seconds": 29.0,
+          "window_end_seconds": 32.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 19.0,
+          "window_start_seconds": 17.0,
+          "window_end_seconds": 20.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 19.0,
+          "text": " A person has entered the frame from the right side.",
+          "last_text_seconds": 20.0
+        },
+        {
+          "onset_seconds": 32.0,
+          "text": " Another person has entered the frame from the right side.",
+          "last_text_seconds": 34.0
+        },
+        {
+          "onset_seconds": 59.0,
+          "text": " A hand enters the frame from the left side.",
+          "last_text_seconds": 59.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 19.0,
+          "text": "A man has just entered the frame from the right side of the room.",
+          "response_text": "A man has just entered the frame from the right side of the room.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 408
+    },
+    {
+      "old_index": 458,
+      "mode": "pr",
+      "video": "25a6886f-f115-5f24-b14f-144de0ec4f61.mp4",
+      "question": "Let me know whenever a visual graphic or logo is superimposed over the person in the video.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:37",
+          "end": "00:39",
+          "response": "A cartoon paperclip graphic has appeared over the performer."
+        },
+        {
+          "response_index": 1,
+          "start": "01:14",
+          "end": "01:16",
+          "response": "A Superman shield logo has been superimposed over the performer."
+        }
+      ],
+      "base_observed_seconds": 136.8,
+      "sft_observed_seconds": 136.8,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 39.0,
+          "window_start_seconds": 37.0,
+          "window_end_seconds": 39.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 1,
+          "onset_seconds": 76.0,
+          "window_start_seconds": 74.0,
+          "window_end_seconds": 76.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 39.0,
+          "window_start_seconds": 37.0,
+          "window_end_seconds": 39.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 39.0,
+          "text": " That is a visual graphic/logotype superimposed over the person.",
+          "last_text_seconds": 39.0
+        },
+        {
+          "onset_seconds": 76.0,
+          "text": " A visual graphic/logotype has been superimposed over the person.",
+          "last_text_seconds": 76.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 39.0,
+          "text": "A paperclip graphic with googly eyes is superimposed over the man.",
+          "response_text": "A paperclip graphic with googly eyes is superimposed over the man.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 438
+    },
+    {
+      "old_index": 508,
+      "mode": "pr",
+      "video": "0f4bf090-9878-52e3-b7e5-68c9407c242f.mp4",
+      "question": "Remind me whenever there are at least 4 Gaster Blasters visible on screen at the same time.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:01",
+          "end": "01:04",
+          "response": "There are currently 7 Gaster Blasters visible on screen."
+        },
+        {
+          "response_index": 1,
+          "start": "01:35",
+          "end": "01:39",
+          "response": "There are now 4 Gaster Blasters visible on screen."
+        },
+        {
+          "response_index": 2,
+          "start": "01:45",
+          "end": "01:46",
+          "response": "There are 4 Gaster Blasters surrounding the battle box."
+        },
+        {
+          "response_index": 3,
+          "start": "02:38",
+          "end": "02:44",
+          "response": "There are currently 4 Gaster Blasters circling Sans."
+        }
+      ],
+      "base_observed_seconds": 183.224,
+      "sft_observed_seconds": 183.224,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 64.0,
+          "window_start_seconds": 61.0,
+          "window_end_seconds": 64.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 1,
+          "onset_seconds": 98.0,
+          "window_start_seconds": 95.0,
+          "window_end_seconds": 99.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 2,
+          "onset_seconds": 106.0,
+          "window_start_seconds": 105.0,
+          "window_end_seconds": 106.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 64.0,
+          "window_start_seconds": 61.0,
+          "window_end_seconds": 64.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 64.0,
+          "text": " It wrapped a moment ago: 4 Gastblasters are visible now.",
+          "last_text_seconds": 65.0
+        },
+        {
+          "onset_seconds": 98.0,
+          "text": " That's 4 Gastblasters again.",
+          "last_text_seconds": 98.0
+        },
+        {
+          "onset_seconds": 106.0,
+          "text": " Four Gastblasters are visible once more.",
+          "last_text_seconds": 106.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 64.0,
+          "text": "There are currently 4 Gaster Blasters visible on screen.",
+          "response_text": "There are currently 4 Gaster Blasters visible on screen.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 488
+    },
+    {
+      "old_index": 553,
+      "mode": "pr",
+      "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+      "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:33",
+          "end": "00:38",
+          "response": "All three band members are now visible on stage together."
+        },
+        {
+          "response_index": 1,
+          "start": "01:14",
+          "end": "01:20",
+          "response": "All three band members are currently visible on stage."
+        },
+        {
+          "response_index": 2,
+          "start": "01:47",
+          "end": "01:57",
+          "response": "All three band members are visible on the stage again."
+        },
+        {
+          "response_index": 3,
+          "start": "02:31",
+          "end": "02:36",
+          "response": "All three band members are visible on stage."
+        },
+        {
+          "response_index": 4,
+          "start": "02:44",
+          "end": "02:50",
+          "response": "All three band members are currently visible on stage."
+        },
+        {
+          "response_index": 5,
+          "start": "03:07",
+          "end": "03:11",
+          "response": "All three band members are visible on stage together."
+        },
+        {
+          "response_index": 6,
+          "start": "03:30",
+          "end": "03:35",
+          "response": "All three band members are currently visible on the stage."
+        },
+        {
+          "response_index": 7,
+          "start": "04:02",
+          "end": "04:10",
+          "response": "All three band members are visible on stage."
+        },
+        {
+          "response_index": 8,
+          "start": "04:14",
+          "end": "04:20",
+          "response": "All three band members are visible on stage in the paused video."
+        }
+      ],
+      "base_observed_seconds": 320.4,
+      "sft_observed_seconds": 320.4,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 35.0,
+          "window_start_seconds": 33.0,
+          "window_end_seconds": 38.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 1,
+          "onset_seconds": 111.0,
+          "window_start_seconds": 107.0,
+          "window_end_seconds": 117.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 36.0,
+          "window_start_seconds": 33.0,
+          "window_end_seconds": 38.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 35.0,
+          "text": " All three band members are now visible.",
+          "last_text_seconds": 35.0
+        },
+        {
+          "onset_seconds": 111.0,
+          "text": " All three band members are visible again.",
+          "last_text_seconds": 111.0
+        },
+        {
+          "onset_seconds": 123.0,
+          "text": " All three band members are visible again.",
+          "last_text_seconds": 123.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 36.0,
+          "text": "All three band members are now visible on stage.",
+          "response_text": "All three band members are now visible on stage.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 533
+    },
+    {
+      "old_index": 1100,
+      "mode": "pr",
+      "video": "A/videos/744197f2-6f0b-59e9-88b5-8af051c594b7.mp4",
+      "question": "Keep track of how many times chopped vegetables are added into the pan and let me know each time with the updated count.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:16",
+          "end": "00:20",
+          "response": "Chopped onions have been added to the pan, bringing the count of added vegetables to 1."
+        },
+        {
+          "response_index": 1,
+          "start": "00:42",
+          "end": "00:46",
+          "response": "Chopped tomatoes have been added, making it 2 additions of vegetables."
+        },
+        {
+          "response_index": 2,
+          "start": "01:28",
+          "end": "01:32",
+          "response": "Chopped bottle gourd has been added to the pan, bringing the total count of vegetable additions to 3."
+        }
+      ],
+      "base_observed_seconds": 123.814,
+      "sft_observed_seconds": 123.814,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 17.0,
+          "window_start_seconds": 16.0,
+          "window_end_seconds": 20.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 1,
+          "onset_seconds": 44.0,
+          "window_start_seconds": 42.0,
+          "window_end_seconds": 46.0
+        },
+        {
+          "response_index": 2,
+          "event_index": 2,
+          "onset_seconds": 88.0,
+          "window_start_seconds": 88.0,
+          "window_end_seconds": 92.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 17.0,
+          "window_start_seconds": 16.0,
+          "window_end_seconds": 20.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 17.0,
+          "text": " First addition of chopped vegetables added to pan.",
+          "last_text_seconds": 19.0
+        },
+        {
+          "onset_seconds": 44.0,
+          "text": " Second addition of chopped vegetables added to pan.",
+          "last_text_seconds": 46.0
+        },
+        {
+          "onset_seconds": 88.0,
+          "text": " Third addition of chopped vegetables added to pan.",
+          "last_text_seconds": 90.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 4.0,
+          "text": "The first batch of chopped vegetables has been added to the pan, bringing the count to 1.",
+          "response_text": "The first batch of chopped vegetables has been added to the pan, bringing the count to 1.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 17.0,
+          "text": "The second set of chopped onions and tomatoes has been stirred into the pan, making a total of 2 vegetable additions.",
+          "response_text": "The second set of chopped onions and tomatoes has been stirred into the pan, making a total of 2 vegetable additions.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 86.0,
+          "text": "The third portion of chopped green apples has been poured into the pot, raising the addition count to 3.",
+          "response_text": "The third portion of chopped green apples has been poured into the pot, raising the addition count to 3.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1051
+    },
+    {
+      "old_index": 1108,
+      "mode": "pr",
+      "video": "A/videos/8733dfa5-80d3-54c7-9c89-6bc21db914f6.mp4",
+      "question": "Let me know whenever footage shows a customer wearing yellow clothing at the jewelry store counter.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:05",
+          "end": "01:15",
+          "response": "A customer wearing a yellow saree is seated at the jewelry counter."
+        },
+        {
+          "response_index": 1,
+          "start": "01:43",
+          "end": "01:58",
+          "response": "The customer wearing the yellow saree is shown again at the counter trying on jewelry."
+        }
+      ],
+      "base_observed_seconds": 178.144,
+      "sft_observed_seconds": 178.144,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 66.0,
+          "window_start_seconds": 65.0,
+          "window_end_seconds": 75.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 117.0,
+          "window_start_seconds": 103.0,
+          "window_end_seconds": 118.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 66.0,
+          "window_start_seconds": 65.0,
+          "window_end_seconds": 75.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 31.0,
+          "text": " That part is done, no footage of customer wearing yellow clothing at the jewelry store counter.",
+          "last_text_seconds": 36.0
+        },
+        {
+          "onset_seconds": 66.0,
+          "text": " Customer in yellow clothing appears now.",
+          "last_text_seconds": 66.0
+        },
+        {
+          "onset_seconds": 117.0,
+          "text": " Customer in yellow clothing appears again.",
+          "last_text_seconds": 117.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 66.0,
+          "text": "A customer wearing a yellow outfit is seated at the jewelry counter.",
+          "response_text": "A customer wearing a yellow outfit is seated at the jewelry counter.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1058
+    },
+    {
+      "old_index": 1115,
+      "mode": "pr",
+      "video": "A/videos/3af4790b-74f5-540a-aab7-653061f6d784.mp4",
+      "question": "Let me know whenever on-screen text displays a size measurement in millimeters.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:04",
+          "end": "01:06",
+          "response": "The on-screen graphic shows a size range of 0.5 - 2.5 mm."
+        },
+        {
+          "response_index": 1,
+          "start": "01:25",
+          "end": "01:27",
+          "response": "The screen displays a size label of 1.0mm."
+        }
+      ],
+      "base_observed_seconds": 108.367,
+      "sft_observed_seconds": 108.367,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 65.0,
+          "window_start_seconds": 64.0,
+          "window_end_seconds": 66.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 1,
+          "onset_seconds": 87.0,
+          "window_start_seconds": 85.0,
+          "window_end_seconds": 87.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 64.0,
+          "window_start_seconds": 64.0,
+          "window_end_seconds": 66.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 65.0,
+          "text": " That text shows thrips are 0.5-2.5 millimeters.",
+          "last_text_seconds": 68.0
+        },
+        {
+          "onset_seconds": 87.0,
+          "text": " Size measurement appears again: 1.0mm.",
+          "last_text_seconds": 88.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 64.0,
+          "text": "The on-screen text indicates that thrips are less than 1 mm in size.",
+          "response_text": "The on-screen text indicates that thrips are less than 1 mm in size.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1065
+    },
+    {
+      "old_index": 1280,
+      "mode": "pr",
+      "video": "A/videos/b625491a-09ce-56f8-9241-13ae7267b0aa.mp4",
+      "question": "Let me know whenever a vehicle with 'Ground' text printed on it appears.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:16",
+          "end": "00:22",
+          "response": "A truck with 'FedEx Ground' text is parked in the driveway."
+        },
+        {
+          "response_index": 1,
+          "start": "00:52",
+          "end": "01:02",
+          "response": "A delivery truck with 'FedEx Ground' written on its side has appeared on the driveway."
+        }
+      ],
+      "base_observed_seconds": 71.773,
+      "sft_observed_seconds": 71.773,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 19.0,
+          "window_start_seconds": 16.0,
+          "window_end_seconds": 22.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 62.0,
+          "window_start_seconds": 52.0,
+          "window_end_seconds": 62.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 18.0,
+          "window_start_seconds": 16.0,
+          "window_end_seconds": 22.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 11.0,
+          "text": " That vehicle does not have 'Ground' text printed on it.",
+          "last_text_seconds": 13.0
+        },
+        {
+          "onset_seconds": 19.0,
+          "text": " A vehicle with 'Ground' text printed on it has appeared.",
+          "last_text_seconds": 20.0
+        },
+        {
+          "onset_seconds": 62.0,
+          "text": " Another vehicle with 'Ground' text printed on it has appeared.",
+          "last_text_seconds": 63.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 18.0,
+          "text": "A FedEx Ground truck has appeared on the driveway.",
+          "response_text": "A FedEx Ground truck has appeared on the driveway.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1218
+    },
+    {
+      "old_index": 1373,
+      "mode": "pr",
+      "video": "A/videos/f87ca388-fbd3-512c-87d4-233e16c4d61f.mp4",
+      "question": "Please alert me whenever anyone in the video roars playfully at the camera.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:37",
+          "end": "00:39",
+          "response": "The mother and her child are roaring playfully at the camera."
+        },
+        {
+          "response_index": 1,
+          "start": "00:43",
+          "end": "00:45",
+          "response": "The toddler is roaring at the camera again."
+        }
+      ],
+      "base_observed_seconds": 64.664,
+      "sft_observed_seconds": 64.664,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 39.0,
+          "window_start_seconds": 37.0,
+          "window_end_seconds": 39.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 1,
+          "onset_seconds": 45.0,
+          "window_start_seconds": 43.0,
+          "window_end_seconds": 45.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 38.0,
+          "window_start_seconds": 37.0,
+          "window_end_seconds": 39.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 39.0,
+          "text": " The child roars playfully at the camera.",
+          "last_text_seconds": 40.0
+        },
+        {
+          "onset_seconds": 45.0,
+          "text": " The child roars playfully again.",
+          "last_text_seconds": 46.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 38.0,
+          "text": "The young girl is roaring playfully at the camera.",
+          "response_text": "The young girl is roaring playfully at the camera.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1307
+    },
+    {
+      "old_index": 1461,
+      "mode": "pr",
+      "video": "A/videos/a9a10717-2be5-52ef-872e-40fb437c90ae.mp4",
+      "question": "Let me know whenever the daughters sound overjoyed or celebrate excitedly in the video.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:27",
+          "end": "01:31",
+          "response": "The daughters are overjoyed and celebrating their board game victory over their father."
+        },
+        {
+          "response_index": 1,
+          "start": "01:45",
+          "end": "01:50",
+          "response": "The daughters are thrilled as their father invites them in for a warm hug."
+        }
+      ],
+      "base_observed_seconds": 111.984,
+      "sft_observed_seconds": 111.984,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 3,
+          "onset_seconds": 87.0,
+          "window_start_seconds": 87.0,
+          "window_end_seconds": 91.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 4,
+          "onset_seconds": 106.0,
+          "window_start_seconds": 105.0,
+          "window_end_seconds": 110.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 89.0,
+          "window_start_seconds": 87.0,
+          "window_end_seconds": 91.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 14.0,
+          "text": " Daughters sound overjoyed.",
+          "last_text_seconds": 14.0
+        },
+        {
+          "onset_seconds": 19.0,
+          "text": " Daughters celebrate excitedly.",
+          "last_text_seconds": 19.0
+        },
+        {
+          "onset_seconds": 83.0,
+          "text": " Daughters sound overjoyed again.",
+          "last_text_seconds": 83.0
+        },
+        {
+          "onset_seconds": 87.0,
+          "text": " Daughters celebrate excitedly again.",
+          "last_text_seconds": 87.0
+        },
+        {
+          "onset_seconds": 106.0,
+          "text": " Daughters sound overjoyed once more.",
+          "last_text_seconds": 106.0
+        },
+        {
+          "onset_seconds": 111.0,
+          "text": " Daughters celebrate excitedly again.",
+          "last_text_seconds": 111.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 19.0,
+          "text": "The daughters sound overjoyed and celebrate excitedly as they receive money from their father.",
+          "response_text": "The daughters sound overjoyed and celebrate excitedly as they receive money from their father.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 89.0,
+          "text": "The daughter is celebrating joyfully on the terrace with her family, expressing delight at being allowed to play PUBG.",
+          "response_text": "The daughter is celebrating joyfully on the terrace with her family, expressing delight at being allowed to play PUBG.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1390
+    },
+    {
+      "old_index": 1583,
+      "mode": "pr",
+      "video": "A/videos/f4859b13-2d24-594a-91cc-7c564dfac7eb.mp4",
+      "question": "Let me know whenever the green helicopter is visible outside, and mention its position relative to the viewing platform.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:25",
+          "end": "00:30",
+          "response": "The green helicopter has appeared outside to the right of the balcony platform."
+        },
+        {
+          "response_index": 1,
+          "start": "01:08",
+          "end": "01:14",
+          "response": "The green helicopter is visible again, positioned to the left of the viewing deck."
+        }
+      ],
+      "base_observed_seconds": 131.79,
+      "sft_observed_seconds": 131.79,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 28.0,
+          "window_start_seconds": 25.0,
+          "window_end_seconds": 30.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 72.0,
+          "window_start_seconds": 68.0,
+          "window_end_seconds": 74.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 26.0,
+          "window_start_seconds": 25.0,
+          "window_end_seconds": 30.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 28.0,
+          "text": " Green helicopter visible outside the balcony, to the right of the viewing platform.",
+          "last_text_seconds": 28.0
+        },
+        {
+          "onset_seconds": 41.0,
+          "text": " Green helicopter visible outside again, still on the right side of the platform.",
+          "last_text_seconds": 41.0
+        },
+        {
+          "onset_seconds": 72.0,
+          "text": " Green helicopter visible once more near the deck railing, to the left of the player.",
+          "last_text_seconds": 72.0
+        },
+        {
+          "onset_seconds": 116.0,
+          "text": " Green helicopter visible outside the window, directly ahead of the gap room players.",
+          "last_text_seconds": 116.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 26.0,
+          "text": "The green helicopter is visible outside, flying across the sky to the right of the viewing platform.",
+          "response_text": "The green helicopter is visible outside, flying across the sky to the right of the viewing platform.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1503
+    },
+    {
+      "old_index": 1625,
+      "mode": "pr",
+      "video": "A/videos/ab77a465-0146-540d-9394-628c1e15688a.mp4",
+      "question": "Let me know whenever the person in the video fires a capsule containing Snapdragons at the tree.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "02:11",
+          "end": "02:14",
+          "response": "The person just fired the capsule containing two Snapdragons at the tree."
+        },
+        {
+          "response_index": 1,
+          "start": "02:21",
+          "end": "02:24",
+          "response": "The person just fired the capsule containing four Snapdragons at the tree."
+        },
+        {
+          "response_index": 2,
+          "start": "02:39",
+          "end": "02:42",
+          "response": "The person just fired the capsule containing caps and Snapdragons at the tree."
+        }
+      ],
+      "base_observed_seconds": 178.869,
+      "sft_observed_seconds": 178.869,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 2,
+          "onset_seconds": 132.0,
+          "window_start_seconds": 131.0,
+          "window_end_seconds": 134.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 4,
+          "onset_seconds": 142.0,
+          "window_start_seconds": 141.0,
+          "window_end_seconds": 144.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 133.0,
+          "window_start_seconds": 131.0,
+          "window_end_seconds": 134.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 56.0,
+          "text": " It is not yet happening, but the person in the video has assembled a capsule containing Snapdragons.",
+          "last_text_seconds": 57.0
+        },
+        {
+          "onset_seconds": 95.0,
+          "text": " That happened, a capsule containing Snapdragons was fired at the tree.",
+          "last_text_seconds": 95.0
+        },
+        {
+          "onset_seconds": 132.0,
+          "text": " Already happened, the person fired a capsule containing Snapdragons at the tree.",
+          "last_text_seconds": 132.0
+        },
+        {
+          "onset_seconds": 135.0,
+          "text": " It is happening now, the person fired a capsule containing Snapdragons at the tree.",
+          "last_text_seconds": 135.0
+        },
+        {
+          "onset_seconds": 142.0,
+          "text": " It already happened, a capsule containing Snapdragons was fired at the tree.",
+          "last_text_seconds": 142.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 133.0,
+          "text": "The person fired a capsule containing two Snapdragons at the tree.",
+          "response_text": "The person fired a capsule containing two Snapdragons at the tree.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1541
+    },
+    {
+      "old_index": 1630,
+      "mode": "pr",
+      "video": "A/videos/c889c12d-1e76-5989-b5b4-c0938c294c9a.mp4",
+      "question": "Let me know each time someone calls the bus driver to pick them up.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:28",
+          "end": "01:30",
+          "response": "The boy at the barn is calling the bus driver on his phone for a ride."
+        },
+        {
+          "response_index": 1,
+          "start": "02:00",
+          "end": "02:02",
+          "response": "The baby under the picnic blanket is calling the bus driver to pick them up."
+        },
+        {
+          "response_index": 2,
+          "start": "02:33",
+          "end": "02:35",
+          "response": "The baby under the beach umbrella is calling the bus driver for pickup."
+        }
+      ],
+      "base_observed_seconds": 176.286,
+      "sft_observed_seconds": 176.286,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 90.0,
+          "window_start_seconds": 88.0,
+          "window_end_seconds": 90.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 122.0,
+          "window_start_seconds": 120.0,
+          "window_end_seconds": 122.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 89.0,
+          "window_start_seconds": 88.0,
+          "window_end_seconds": 90.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 76.0,
+          "text": " It happened again, a child called the bus driver to pick them up.",
+          "last_text_seconds": 79.0
+        },
+        {
+          "onset_seconds": 90.0,
+          "text": " The baby called the bus driver to pick them up again.",
+          "last_text_seconds": 92.0
+        },
+        {
+          "onset_seconds": 122.0,
+          "text": " Notice that the baby called the bus driver to pick them up for the third time now.",
+          "last_text_seconds": 125.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 89.0,
+          "text": "The boy is calling the bus driver to pick them up.",
+          "response_text": "The boy is calling the bus driver to pick them up.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 115.0,
+          "text": "The girl is now asking for help from the bus driver on her phone.",
+          "response_text": "The girl is now asking for help from the bus driver on her phone.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        },
+        {
+          "onset_seconds": 146.0,
+          "text": "The children are calling out their names and waving at the approaching school bus, asking it to stop.",
+          "response_text": "The children are calling out their names and waving at the approaching school bus, asking it to stop.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1546
+    },
+    {
+      "old_index": 1710,
+      "mode": "pr",
+      "video": "A/videos/d7f3bc78-e75c-5d8f-9863-2ec2bd3d1f8d.mp4",
+      "question": "Let me know whenever the video switches to a split-screen view.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:22",
+          "end": "00:25",
+          "response": "The video has switched to a split-screen view showing both drummers."
+        },
+        {
+          "response_index": 1,
+          "start": "00:54",
+          "end": "00:57",
+          "response": "The video has transitioned back to a split-screen view."
+        }
+      ],
+      "base_observed_seconds": 60.005,
+      "sft_observed_seconds": 60.005,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 25.0,
+          "window_start_seconds": 22.0,
+          "window_end_seconds": 25.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 55.0,
+          "window_start_seconds": 54.0,
+          "window_end_seconds": 57.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 24.0,
+          "window_start_seconds": 22.0,
+          "window_end_seconds": 25.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 1.0,
+          "text": " That part is done, I will let you know.",
+          "last_text_seconds": 1.0
+        },
+        {
+          "onset_seconds": 25.0,
+          "text": " The video has switched to a split-screen view.",
+          "last_text_seconds": 25.0
+        },
+        {
+          "onset_seconds": 55.0,
+          "text": " The video has switched to a split-screen view again.",
+          "last_text_seconds": 55.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 24.0,
+          "text": "The video has switched to a split-screen view showing two drummers.",
+          "response_text": "The video has switched to a split-screen view showing two drummers.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1621
+    },
+    {
+      "old_index": 1770,
+      "mode": "pr",
+      "video": "A/videos/d83c8588-e712-553e-8bca-3d328b978818.mp4",
+      "question": "Let me know whenever a package of toilet paper appears on screen.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "00:32",
+          "end": "00:33",
+          "response": "A green and white package of toilet paper is visible in the center of the frame."
+        },
+        {
+          "response_index": 1,
+          "start": "01:01",
+          "end": "01:03",
+          "response": "The package of toilet paper has appeared on screen again in the center of the frame."
+        }
+      ],
+      "base_observed_seconds": 80.915,
+      "sft_observed_seconds": 80.915,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 33.0,
+          "window_start_seconds": 32.0,
+          "window_end_seconds": 33.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 63.0,
+          "window_start_seconds": 61.0,
+          "window_end_seconds": 63.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 33.0,
+          "window_start_seconds": 32.0,
+          "window_end_seconds": 33.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 21.0,
+          "text": " I will let you know when a package of toilet paper appears on screen.",
+          "last_text_seconds": 23.0
+        },
+        {
+          "onset_seconds": 33.0,
+          "text": " A package of toilet paper is now on screen.",
+          "last_text_seconds": 35.0
+        },
+        {
+          "onset_seconds": 63.0,
+          "text": " Another package of toilet paper has appeared on screen.",
+          "last_text_seconds": 65.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 33.0,
+          "text": "A package of toilet paper has appeared on screen.",
+          "response_text": "A package of toilet paper has appeared on screen.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1679
+    },
+    {
+      "old_index": 1824,
+      "mode": "pr",
+      "video": "A/videos/9d4fcc2c-ac12-5066-a28f-a8d155448e12.mp4",
+      "question": "Whenever Cristiano Ronaldo scores a goal, notify me and provide a likely explanation for why the scoring opportunity succeeded.",
+      "references": [
+        {
+          "response_index": 0,
+          "start": "01:41",
+          "end": "01:48",
+          "response": "Ronaldo has scored to make it 2-2, most likely because Giggs's precise pass caught Arsenal's backline out of position and allowed him space to shoot across the keeper."
+        },
+        {
+          "response_index": 1,
+          "start": "02:00",
+          "end": "02:07",
+          "response": "Ronaldo has scored again to put United 3-2 up, primarily because Rooney's through-ball pulled Almunia off his line to confront Giggs, leaving Ronaldo an unguarded net."
+        }
+      ],
+      "base_observed_seconds": 177.726,
+      "sft_observed_seconds": 177.726,
+      "base_matches": [
+        {
+          "response_index": 0,
+          "event_index": 1,
+          "onset_seconds": 102.0,
+          "window_start_seconds": 101.0,
+          "window_end_seconds": 108.0
+        },
+        {
+          "response_index": 1,
+          "event_index": 2,
+          "onset_seconds": 122.0,
+          "window_start_seconds": 120.0,
+          "window_end_seconds": 127.0
+        }
+      ],
+      "sft_matches": [
+        {
+          "response_index": 0,
+          "event_index": 0,
+          "onset_seconds": 102.0,
+          "window_start_seconds": 101.0,
+          "window_end_seconds": 108.0
+        }
+      ],
+      "base_events": [
+        {
+          "onset_seconds": 91.0,
+          "text": " Ronaldo scored. Likely explanation: He was open near the goal and received a cross.",
+          "last_text_seconds": 96.0
+        },
+        {
+          "onset_seconds": 102.0,
+          "text": " Ronaldo scores again. Likely explanation: He reacted quickly to a loose ball in the box.",
+          "last_text_seconds": 106.0
+        },
+        {
+          "onset_seconds": 122.0,
+          "text": " Ronaldo scores. Likely explanation: He capitalized on a defensive error and finished from close range.",
+          "last_text_seconds": 126.0
+        },
+        {
+          "onset_seconds": 146.0,
+          "text": " Ronaldo scores another. Likely explanation: He took advantage of space after a through ball, finishing calmly.",
+          "last_text_seconds": 147.0
+        },
+        {
+          "onset_seconds": 152.0,
+          "text": " Ronaldo scores again. Likely explanation: He scored scores again. Likely explanation: He scored again. Likely explanation: He scored again.",
+          "last_text_seconds": 155.0
+        }
+      ],
+      "sft_events": [
+        {
+          "onset_seconds": 102.0,
+          "text": "Cristiano Ronaldo scored a goal from close range, likely because the goalkeeper failed to catch his initial save and left an open rebound.",
+          "response_text": "Cristiano Ronaldo scored a goal from close range, likely because the goalkeeper failed to catch his initial save and left an open rebound.",
+          "agent_instruction": "",
+          "tool_calls": [],
+          "agent_attempted": false,
+          "task_text_status": "absent",
+          "task_text_format_valid": false,
+          "task_text_generation_complete": true,
+          "task_text_separator_count": 0,
+          "agent_parse_status": "absent",
+          "agent_call_onset_seconds": null,
+          "agent_call_complete_seconds": null
+        }
+      ],
+      "filtered_sample_index": 1731
+    }
+  ],
+  "sources": {
+    "benchmark/results/full_2110_dp6_20261021/realtime/minicpmo/predictions.jsonl": "dcc60af6455e2f45afb49df24225666057ab7944229407a1d2b4753586c63b50",
+    "benchmark/results/task_text_agent100_20261024_v2/continuation/realtime/minicpmo_task_text_agent_full/predictions.jsonl": "08dec034be07ae5c0ee60636830bda3ea2650ea4bae72aaff3e3e68c0f12a883",
+    "benchmark/results/minicpmo_plain_ce_dp8_aoi_20261101/suite/realtime/minicpmo/predictions.jsonl": "cd33a2cc561d67fcebf2d5101d442ca69afa7f15b4f0a20f27a459ab861c1575",
+    "data_quality/outputs/gemma4_pass_only_20261105/AOI-Bench/all_qa.original.json": "a9382251c48c6fa791cd0d24a5314fb8715056b861895919347061ac0457f537",
+    "data_quality/outputs/gemma4_pass_only_20261105/AOI-Bench/index_mapping.json": "729b1cec40d90d38ef708ba799ff95baba33494ca43a552635e19a98b713e4cb"
+  }
+}

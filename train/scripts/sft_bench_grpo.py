@@ -58,11 +58,11 @@ def verify_split(prepared, sft_prepared):
     return current['counts']
 
 
-def verify_profile(output, world):
+def verify_profile(output, world, optimizer_steps=1):
     for rank in range(world):
         report = read(Path(output) / f'memory_report.rank{rank}.json')
-        if report.get('optimizer_steps') != 1 or not math.isfinite(report.get('last_loss', float('nan'))):
-            raise RuntimeError(f'GRPO profile did not complete one finite update on rank {rank}')
+        if report.get('optimizer_steps') != optimizer_steps or not math.isfinite(report.get('last_loss', float('nan'))):
+            raise RuntimeError(f'Profile did not complete {optimizer_steps} finite updates on rank {rank}')
 
 
 

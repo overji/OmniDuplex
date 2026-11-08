@@ -36,6 +36,7 @@ def main():
         sub.add_argument('--max-steps', type=int, default=0)
         sub.add_argument('--sample-index', type=int, help='Profile a selected original sample index')
         sub.add_argument('--resume', type=Path, help='Full-training checkpoint directory')
+        sub.add_argument('--metrics-dir', type=Path, help='Store numeric JSONL telemetry separately from checkpoint storage')
         sub.add_argument('--local_rank', '--local-rank', type=int, default=-1)
     args = parser.parse_args()
     config = load_config(args.config)

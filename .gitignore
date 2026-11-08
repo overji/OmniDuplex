@@ -10,6 +10,7 @@ tmp/
 
 # Local archives; keep historical artifacts on disk, outside Git tracking.
 /legacy/
+/paper/
 
 # Node
 node_modules/

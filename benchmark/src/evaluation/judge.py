@@ -133,7 +133,7 @@ def evaluate_content(row, config, key, system, request=completion, *, matched=Tr
     return {**record, 'status': 'failed', 'response_score': None, 'call_score': None}
 
 
-def summarize(rows, negatives, total_samples, evaluated_samples):
+def summarize(rows, negatives, total_samples, evaluated_samples, population=None):
     groups = defaultdict(list)
     for row in rows:
         names = ['overall', 'mode:' + row['mode'], 'ability:' + str(row['ability'])]
@@ -158,6 +158,10 @@ def summarize(rows, negatives, total_samples, evaluated_samples):
             'call_mean_all_windows': mean([r['call_score'] for r in calls_ok]) if len(calls_ok) == len(calls) else None,
             'call_mean_matched': mean([r['call_score'] for r in calls_ok if r['event_index'] is not None])
                 if all(r['status'] == 'complete' for r in calls if r['event_index'] is not None) else None}
+    from benchmark.evaluation.scored_f1 import judged_metrics
+    for name, items in groups.items():
+        counts = (population or {}).get(name, {})
+        result[name].update(judged_metrics(items, len(items), counts.get('prediction_count')))
     return {'evaluation': VERSION, 'status': 'complete' if all(r['status'] == 'complete' for r in rows) else 'incomplete',
         'total_benchmark_samples': total_samples, 'evaluated_samples': evaluated_samples,
         'excluded_or_missing_samples': total_samples - evaluated_samples,
@@ -171,12 +175,13 @@ def summarize(rows, negatives, total_samples, evaluated_samples):
 def write_report(path, metrics):
     lines = ['# Content judge', '', 'Status: ' + metrics['status'], '',
         f"Completed inference samples: {metrics['evaluated_samples']}/{metrics['total_benchmark_samples']}", '', metrics['note'], '',
-        '| Group | Scored / windows | Matched response mean | All-window response mean | All-window call mean |',
-        '| --- | ---: | ---: | ---: | ---: |']
+        '| Group | Scored / windows | Matched response mean (0–2) | scored-F1 (%) |',
+        '| --- | ---: | ---: | ---: |']
     for name, group in metrics['groups'].items():
         fmt = lambda value: 'N/A' if value is None else f'{value:.3f}'
-        lines.append(f"| {name} | {group['scored_windows']}/{group['windows']} | " + ' | '.join(fmt(group[k]) for k in (
-            'response_mean_matched', 'response_mean_all_windows', 'call_mean_all_windows')) + ' |')
+        score=group.get('scored_f1')
+        lines.append(f"| {name} | {group['scored_windows']}/{group['windows']} | {fmt(group['response_mean_matched'])} | "
+                     + ('N/A' if score is None else f'{100*score:.2f}') + ' |')
     lines.extend(['', 'Negative Agent erroneous-call rate: ' + str(metrics['negative_agent']['error_rate'])])
     from benchmark.data.files import atomic_write_text
     atomic_write_text(path, '\n'.join(lines) + '\n')
@@ -235,7 +240,9 @@ def execute(args):
                     results.append(record)
                     print(f'{run.name}: {len(results)}/{len(rows)} ({record["status"]})', flush=True)
             results.sort(key=lambda r: (r['sample_index'], r['response_index']))
-            metrics = summarize(results, negatives, len(samples), sum(p.get('status') == 'complete' for p in predictions))
+            from benchmark.evaluation.scored_f1 import realtime_population
+            population=realtime_population(samples,[p for p in predictions if p.get('status')=='complete'])
+            metrics = summarize(results, negatives, len(samples), sum(p.get('status') == 'complete' for p in predictions), population)
             write_json(out / 'judge_metrics.json', metrics)
             write_report(out / 'judge_report.md', metrics)
             attempts = [a for r in history for a in r['usage_attempts']]

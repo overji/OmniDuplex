@@ -74,6 +74,8 @@ def export(sources, output):
             rows, _ = judge.prepare_rows(adapted, predictions)
             run['coverage'] = dict(completed_qa=len(predictions), expected_public_qa=config['public_qa'],
                                    reference_rows=len(rows))
+            from benchmark.evaluation.scored_f1 import realtime_population
+            run['scored_f1_population']=realtime_population(samples,predictions)
         elif run['mode'] == 'probe':
             records, identity = load_predictions(path(entry['predictions']))
             run['sources'].append(identity)
@@ -81,9 +83,11 @@ def export(sources, output):
             rows, _, counts = probe_judge.prepare_rows(samples, manifest, predictions)
             run['coverage'] = dict(completed_requests=len(predictions), manifest_requests=len(manifest),
                                    decisions=counts, tp_rows=len(rows))
+            from benchmark.evaluation.scored_f1 import probe_population
+            run['scored_f1_population']=probe_population(manifest,predictions)
         else:
             raise ValueError('Unknown evaluation mode')
-        if not rows:
+        if not rows and not run.get('scored_f1_population'):
             raise ValueError('Selected run has no judge rows: ' + run['run_id'])
         for row in sorted(rows, key=lambda r: (r['sample_index'], r['response_index'])):
             sample = samples[row['sample_index']]

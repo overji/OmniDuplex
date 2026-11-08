@@ -25,6 +25,9 @@ def load_config(path):
         raise ValueError('save_total_limit must be a nonnegative integer')
     if type(config.get('length_bucket_size', 0)) is not int or config.get('length_bucket_size', 0) < 0:
         raise ValueError('length_bucket_size must be a nonnegative integer')
+    for key in ('profile_optimizer_steps', 'profile_gradient_accumulation_steps'):
+        if key in config and (type(config[key]) is not int or config[key] < 1):
+            raise ValueError(f'{key} must be a positive integer')
     gpu_budget = config.get('sft_activation_gpu_budget_gib', 0)
     if isinstance(gpu_budget, bool) or not isinstance(gpu_budget, (int, float)) or not 0 <= gpu_budget < float('inf'):
         raise ValueError('sft_activation_gpu_budget_gib must be finite and nonnegative')

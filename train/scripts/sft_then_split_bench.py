@@ -41,7 +41,7 @@ def previous_ready(config):
                    for item in config['processes'])
 
 
-def validate(config):
+def validate(config, train_only=False):
     from train.src.infrastructure.config import load_config
     training = load_config(config['training_config'])
     for path, expected in config.get('input_hashes', {}).items():
@@ -54,10 +54,12 @@ def validate(config):
             stat = video.stat()
             if stat.st_size != row['size_bytes'] or stat.st_mtime_ns != row['mtime_ns']:
                 raise ValueError('Video changed after duration audit: ' + str(video))
-    aoi, omni = config['aoi_gpus'], config['omnipro_gpus']
-    if (len(set(config['train_gpus'])) != len(config['train_gpus']) or set(aoi) & set(omni)
-            or set(aoi) | set(omni) != set(config['train_gpus'])):
-        raise ValueError('Benchmark pools must partition the training GPUs')
+    if not config['train_gpus'] or len(set(config['train_gpus'])) != len(config['train_gpus']):
+        raise ValueError('Training GPUs must be nonempty and distinct')
+    if not train_only:
+        aoi, omni = config['aoi_gpus'], config['omnipro_gpus']
+        if set(aoi) & set(omni) or set(aoi) | set(omni) != set(config['train_gpus']):
+            raise ValueError('Benchmark pools must partition the training GPUs')
     if training['decision_loss_mode'] != 'plain_ce' or training['parallel_mode'] != 'data_parallel':
         raise ValueError('This comparison requires independent-QA ordinary CE SFT')
     prepared = Path(config['prepared'])
@@ -70,13 +72,29 @@ def validate(config):
     if steps != config['expected_steps']:
         raise ValueError('Expected training steps differ from the configured batch')
     for name in ('training_output', 'export_model'):
-        external_weights(config[name])
+        if name in config:external_weights(config[name])
     if config.get('profile_output'):
         external_weights(config['profile_output'])
+    if config.get('resume_checkpoint'):
+        checkpoint = external_weights(config['resume_checkpoint'])
+        required = [checkpoint / f'rng_rank{r}.pt' for r in range(len(config['train_gpus']))]
+        required += [checkpoint / 'state' / f'bf16_zero_pp_rank_{r}_mp_rank_00_optim_states.pt'
+                     for r in range(len(config['train_gpus']))]
+        required += [checkpoint / 'state/mp_rank_00_model_states.pt']
+        if not all(p.is_file() and p.stat().st_size for p in required):
+            raise ValueError('Resume checkpoint is incomplete')
+        if json.loads((checkpoint / 'training_config.json').read_text()) != training:
+            raise ValueError('Resume checkpoint training configuration differs')
     if config.get('runtime_root'):
         for relative in ('benchmark/scripts/watch_live_results.py', 'benchmark/src/evaluation/live_report.py'):
             if not (Path(config['runtime_root']) / relative).is_file():
                 raise ValueError('Frozen runtime is missing reporting component: ' + relative)
+    if config.get('continuation') is not None:
+        if (not isinstance(config['continuation'],list) or not config['continuation']
+                or any(not isinstance(arg,str) or not arg for arg in config['continuation'])
+                or not isinstance(config.get('continuation_cwd'),str)
+                or not Path(config['continuation_cwd']).is_dir()):
+            raise ValueError('Continuation requires argv and an existing working directory')
     external_weights(training['model_path'])
     return dict(global_batch_size=batch, expected_steps=steps, counts=manifest['counts'])
 
@@ -86,9 +104,11 @@ def main():
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--check-only', action='store_true')
     parser.add_argument('--omnipro-only', action='store_true')
+    parser.add_argument('--train-only', action='store_true', help='Profile and train on assigned GPUs, without taking benchmark GPUs')
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
-    verified = validate(config)
+    if args.train_only and args.omnipro_only:parser.error('Choose one execution mode')
+    verified = validate(config, train_only=args.train_only)
     if args.check_only:
         print(json.dumps(dict(status='validated', **verified)))
         return
@@ -119,14 +139,14 @@ def main():
         raise KeyboardInterrupt
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
-    def launch(argv, name, env):
+    def launch(argv, name, env, cwd=None):
         with (directory / f'{name}.log').open('ab') as log:
-            child = subprocess.Popen(argv, cwd=config['runtime_root'], env=env, stdin=subprocess.DEVNULL,
+            child = subprocess.Popen(argv, cwd=cwd or config['runtime_root'], env=env, stdin=subprocess.DEVNULL,
                 stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
         children.append(child)
         return child
     try:
-        if Path(config['training_output']).exists() or Path(config['export_model']).exists():
+        if Path(config['training_output']).exists() or (config.get('export_model') and Path(config['export_model']).exists()):
             raise ValueError('Use fresh training/export directories; never overwrite checkpoints')
         if config.get('wait_for_previous'):
             mark('waiting_for_previous_benchmarks_and_judge')
@@ -134,7 +154,7 @@ def main():
                 if (directory / 'STOP').exists():
                     raise KeyboardInterrupt
                 time.sleep(config['poll_seconds'])
-            validate(config)  # Recheck immutable inputs after a potentially long wait.
+            validate(config, train_only=args.train_only)  # Recheck immutable inputs after waiting.
         release_deadline = time.time() + config.get('gpu_release_timeout_seconds', 0)
         while True:
             used = subprocess.check_output(['nvidia-smi', '--query-gpu=index,memory.used',
@@ -158,7 +178,8 @@ def main():
             profile = launch([config['python'], '-m', 'torch.distributed.run', '--standalone',
                 f'--nproc_per_node={len(config["train_gpus"])}', '-m', 'train', '--config', config['profile_config'],
                 'profile', '--prepared', config['prepared'], '--output', config['profile_output']], 'profile', env)
-            mark('eight_gpu_profile', child_pid=profile.pid)
+            mark('sft_profile' if args.train_only else 'eight_gpu_profile', child_pid=profile.pid,
+                 world_size=len(config['train_gpus']))
             available_min = float('inf')
             while profile.poll() is None:
                 available = int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines()
@@ -171,9 +192,11 @@ def main():
                     raise KeyboardInterrupt
                 time.sleep(config['poll_seconds'])
             if profile.returncode:
-                raise RuntimeError('Eight-GPU memory/profile test failed; full training will not start')
+                raise RuntimeError('Memory/profile test failed; full training will not start')
             from train.scripts.sft_bench_grpo import verify_profile
-            verify_profile(config['profile_output'], len(config['train_gpus']))
+            profile_settings = json.loads(Path(config['profile_config']).read_text())
+            verify_profile(config['profile_output'], len(config['train_gpus']),
+                           profile_settings.get('profile_optimizer_steps', 1))
             for rank in range(len(config['train_gpus'])):
                 report = json.loads((Path(config['profile_output']) / f'memory_report.rank{rank}.json').read_text())
                 if report.get('excluded') or report.get('checkpoint_saved'):
@@ -181,14 +204,33 @@ def main():
             write_json(directory / 'profile_complete.json', dict(output=config['profile_output'],
                        minimum_host_available_gib=available_min))
             children.remove(profile)
-        child = launch([config['python'], '-m', 'torch.distributed.run', '--standalone',
+        train_argv = [config['python'], '-m', 'torch.distributed.run', '--standalone',
             f'--nproc_per_node={len(config["train_gpus"])}', '-m', 'train', '--config', config['training_config'],
-            'run', '--prepared', config['prepared'], '--output', config['training_output']], 'training', env)
+            'run', '--prepared', config['prepared'], '--output', config['training_output']]
+        if config.get('resume_checkpoint'):
+            train_argv += ['--resume', config['resume_checkpoint']]
+        if config.get('metrics_dir'):
+            train_argv += ['--metrics-dir', config['metrics_dir']]
+        child = launch(train_argv, 'training', env)
         mark('plain_ce_training', child_pid=child.pid, **verified)
         if child.wait():
             raise RuntimeError('Plain-CE SFT failed; benchmarks will not start')
         children.remove(child)
         run_config = Path(config['training_output']) / 'run_config.json'
+        if args.train_only:
+            checkpoint=completed_training(dict(training_output=config['training_output'],
+                training_run_sha256=hashlib.sha256(run_config.read_bytes()).hexdigest(),
+                expected_optimizer_steps=config['expected_steps']))
+            write_json(directory/'training_complete.json',dict(checkpoint=str(checkpoint),at=time.time(),**verified))
+            if config.get('continuation'):
+                clean_env=dict(os.environ,PYTHONUNBUFFERED='1')
+                clean_env.pop('PYTHONPATH',None);clean_env.pop('CUDA_VISIBLE_DEVICES',None)
+                continuation=launch(config['continuation'],'remaining_benchmarks',clean_env,config['continuation_cwd'])
+                mark('remaining_benchmarks',training_complete=True,checkpoint=str(checkpoint),child_pid=continuation.pid)
+                if continuation.wait():raise RuntimeError('Resumed benchmark queue failed after successful training')
+                children.remove(continuation)
+            mark('complete', checkpoint=str(checkpoint), **verified)
+            return
         benchmark_path = Path(config['aoi_config'])
         benchmark = json.loads(benchmark_path.read_text())
         benchmark['training_run_sha256'] = hashlib.sha256(run_config.read_bytes()).hexdigest()
