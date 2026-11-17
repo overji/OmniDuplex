@@ -55,7 +55,7 @@
     "timeout": 60,
     "retries": 2
   },
-  "reward_mode": "confusion_judge",
+  "reward_mode": "local_turn_judge",
   "grpo_horizon": "full_video",
   "grpo_candidate_parallel": true,
   "grpo_precheck_replay": false,
@@ -64,5 +64,7 @@
     "enabled": true,
     "log_dir": "train/tensorboard",
     "flush_seconds": 10
-  }
+  },
+  "grpo_advantage_mode": "local",
+  "grpo_loss_aggregation": "unit_weighted"
 }

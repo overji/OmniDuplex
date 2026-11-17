@@ -78,6 +78,15 @@ def run_sample(a, state, context):
             item['tool_calls'] = native_calls
         raw.append(item)
         if inserted_query and frame_time >= qtime:
+            if getattr(a, 'agent_output_protocol', 'text') == 'native' and sample.get('mode') == 'agent':
+                from benchmark.data.native_agent import joyai_event
+                # The official adapter may hide the underlying finish reason;
+                # do not turn its default 'stop' envelope into verified completion.
+                complete = False if body['choices'][0].get('finish_reason') == 'length' else None
+                event = joyai_event(raw_text, at, complete=complete)
+                if event is not None:
+                    events.append(event)
+                continue
             if getattr(a, 'agent_output_protocol', 'text') == 'task-text':
                 from benchmark.data.task_text import event
                 if '</response>' in raw_text:

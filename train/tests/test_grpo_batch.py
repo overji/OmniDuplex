@@ -1,3 +1,4 @@
+from train.tests.test_grpo_judge import legacy_config
 """Compare actual QA/candidate averaging with a differentiable CPU reference."""
 import unittest
 from unittest.mock import patch, MagicMock
@@ -89,7 +90,7 @@ class AccumulationTests(unittest.TestCase):
                 return [{0:dict(status='complete',response_score=s,call_score=None)} for s in scores]
         for count, depth in ((5,1),(6,1),(5,2),(6,2),(7,2),(8,4)):
             with self.subTest(count=count), tempfile.TemporaryDirectory() as directory, ExitStack() as stack:
-                config = load_config(ROOT / 'train/configs/minicpmo_full_grpo_judge.json')
+                config = legacy_config()
                 config.update(epochs=1, grpo_activation_offload=False, save_every_steps=0,
                               grpo_judge_pipeline_depth=depth)
                 records=[]

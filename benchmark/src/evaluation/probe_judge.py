@@ -143,31 +143,26 @@ def summarize(rows, counts, inference_count, manifest_count, population=None):
             scored_task_mean=mean([r['task_score'] for r in ok]),
             scored_response_mean=mean([r['response_score'] for r in ok]),
             scored_call_mean=mean([r['call_score'] for r in agents_ok]))
-    from benchmark.evaluation.scored_f1 import judged_metrics
-    for name, counts_group in (population or {}).items():
-        ids=set(counts_group['tp_probe_ids'])
-        selected=[r for r in groups.get(name,[]) if r['probe_id'] in ids]
-        metrics=judged_metrics(selected,counts_group['reference_count'],counts_group['prediction_count'])
-        if {r['probe_id'] for r in selected}!=ids:
-            metrics=judged_metrics([dict(status='pending')],counts_group['reference_count'],counts_group['prediction_count'])
-        result.setdefault(name,{}).update(metrics)
-    return dict(evaluation=VERSION, status='complete' if all(r['status']=='complete' for r in rows) else 'incomplete',
-        scope='TP only; completion and means apply to this input snapshot, not the full inference run',
+    from benchmark.evaluation.scored_pair import judged_pair_metrics, VERSION as PAIR_VERSION
+    for name in groups:
+        result[name].update(judged_pair_metrics(groups[name], (population or {}).get(name)))
+    return dict(evaluation=VERSION, content_metric=PAIR_VERSION, status='complete' if all(r['status']=='complete' for r in rows) else 'incomplete',
+        scope='TP-only Judge means; scored-Pair uses complete pre/post pairs in this input snapshot',
         manifest_probes=manifest_count, completed_inference_probes=inference_count,
         decisions=counts, groups=result,
-        note='TP-conditional content scores, not overall benchmark performance. Agent task score=(response+call)/2; missing/invalid calls score zero. No video or future tool results sent.')
+        note='Conditional means use post TP only. scored-Pair = correct-pair normalized quality / complete pairs. Agent task score=(response+call)/2; missing/invalid calls score zero. No video or future tool results sent.')
 
 
 def write_report(path, metrics):
     fmt = lambda value: 'N/A' if value is None else f'{value:.3f}'
     lines = ['# Probe TP content judge', '', 'Status: '+metrics['status'], '', metrics['scope'], '', metrics['note'], '',
         f"Inference snapshot: {metrics['completed_inference_probes']}/{metrics['manifest_probes']} probes; decisions: {metrics['decisions']}", '',
-        '| Group | Scored / TP | Response mean | Call mean | Task mean | scored-F1 (%) |',
+        '| Group | Scored / TP | Response mean | Call mean | Task mean | scored-Pair (%) |',
         '| --- | ---: | ---: | ---: | ---: | ---: |']
     for name, group in metrics['groups'].items():
         lines.append(f"| {name} | {group['scored_tp']}/{group['tp_probes']} | " +
             ' | '.join(fmt(group[k]) for k in ('response_mean_tp','call_mean_tp','task_mean_tp'))+' | '+
-            ('N/A' if group.get('scored_f1') is None else f"{100*group['scored_f1']:.2f}")+' |')
+            ('N/A' if group.get('scored_pair') is None else f"{100*group['scored_pair']:.2f}")+' |')
     atomic_write_text(path, '\n'.join(lines)+'\n')
 
 
@@ -194,7 +189,7 @@ def execute(args):
             raise FileNotFoundError(path)
         predictions = read_jsonl(path, complete_only=True)
         rows, index, counts = prepare_rows(samples, manifest, predictions)
-        from benchmark.evaluation.scored_f1 import probe_population
+        from benchmark.evaluation.scored_pair import probe_population
         populations[run] = probe_population(manifest,predictions)
         prepared.append((run, rows, index, counts))
     if args.dry_run:
@@ -244,13 +239,13 @@ def execute(args):
                     result = future.result(); append_jsonl(history_path,result)
                     history.append(result); results.append(result)
                     done = {r['probe_id'] for r in results}
-                    from benchmark.evaluation.scored_f1 import probe_population
+                    from benchmark.evaluation.scored_pair import probe_population
                     metrics = summarize(results+[dict(r,status='pending') for r in pending
                         if r['probe_id'] not in done],counts,len(index),len(manifest),populations[run])
                     write_json(out/'judge_metrics.json',metrics)
                     print(f"{run.name}: {len(results)}/{len(rows)} ({result['status']})",flush=True)
             results.sort(key=lambda r:(r['sample_index'],r['response_index']))
-            from benchmark.evaluation.scored_f1 import probe_population
+            from benchmark.evaluation.scored_pair import probe_population
             metrics = summarize(results,counts,len(index),len(manifest),populations[run])
             write_json(out/'judge_metrics.json',metrics); write_report(out/'judge_report.md',metrics)
             attempts = [attempt for r in history for attempt in r['usage_attempts']]

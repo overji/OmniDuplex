@@ -20,8 +20,14 @@ def candidate_ids(config, rank, world):
 
 def reward_view(trajectory):
     """Exclude token histories/embeddings; keep every field used by reward backends."""
-    return dict(events=trajectory['events'], chunks=[{k: c[k] for k in
-                ('new_response', 'idle_wait') if k in c} for c in trajectory['chunks']])
+    chunks = []
+    for chunk in trajectory['chunks']:
+        view = {key: chunk[key] for key in
+                ('new_response', 'idle_wait', 'reply_ids', 'turn_open_before') if key in chunk}
+        if 'reply_ids' in chunk:
+            view['action_reply_ids'] = [action['reply_id'] for action in chunk['actions']]
+        chunks.append(view)
+    return dict(events=trajectory['events'], chunks=chunks)
 
 
 def gather_candidates(trajectories, parallel, rank, world):

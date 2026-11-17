@@ -13,6 +13,9 @@ from benchmark.data.task_text import event
 class ConfusionRewardTests(unittest.TestCase):
     def setUp(self):
         self.config = load_config('train/configs/minicpmo_full_grpo_confusion_judge.json')
+        self.config['reward_mode'] = 'confusion_judge'
+        self.config.pop('grpo_advantage_mode', None)
+        self.config.pop('grpo_loss_aggregation', None)
         self.qa = sample()
         self.qa['responses'].append(dict(response='Green now.', window_start='00:05', window_end='00:05'))
 
@@ -95,7 +98,7 @@ class ConfusionRewardTests(unittest.TestCase):
             judged_reward(self.qa,self.roll([],n=4),{},self.config)
 
     def test_config_is_explicit_and_old_mode_remains(self):
-        self.assertNotIn('reward_mode',load_config('train/configs/minicpmo_full_grpo_judge.json'))
+        self.assertEqual(load_config('train/configs/minicpmo_full_grpo_judge.json')['reward_mode'], 'local_turn_judge')
         with TemporaryDirectory() as directory:
             p=Path(directory)/'config.json'
             for update in ({'grpo_horizon':'prefix'},{'reward_backend':'rules'},

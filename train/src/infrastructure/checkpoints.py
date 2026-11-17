@@ -65,15 +65,36 @@ def fingerprints(prepared, config):
         files[key] = hashlib.sha256(Path(config[key]).read_bytes()).hexdigest()
     from benchmark.data.agent_token import base_identity
     files['base_model'] = base_identity(config['model_path'])
+    if config.get('kl_beta', 0):
+        path = Path(config['kl_reference_model_path'])
+        files['kl_reference_model'] = base_identity(path)
+        files['kl_reference_metadata_sha256'] = hashlib.sha256((path / 'full_training_model.json').read_bytes()).hexdigest()
+        files['kl_objective'] = 'sampled_k3_reply_wait_balanced_v1'
     from train.src.infrastructure.tokens import load_training_tokenizer
     files['tokenizer'] = tokenizer_metadata(load_training_tokenizer(config))
-    if config.get('reward_backend') == 'llm':
+    if config.get('reward_backend') in ('llm', 'tp_full_credit'):
+        files['grpo_reward_backend'] = config['reward_backend']
+        files['grpo_replay_mode'] = config.get('grpo_replay_mode', 'native_kv')
         from train.src.infrastructure.judge import identity
-        files['judge'] = identity(config['judge'])
+        if config['reward_backend'] == 'tp_full_credit':
+            from train.src.infrastructure.judge import tp_full_credit_identity
+            files['judge'] = tp_full_credit_identity()
+        else:
+            files['judge'] = identity(config['judge'])
         source = Path(__file__).parents[1]
+        files['grpo_replay_code'] = {relative: hashlib.sha256((source/relative).read_bytes()).hexdigest()
+            for relative in ('models/graph.py', 'models/full_sequence_replay.py', 'models/cached_replay.py')}
+        if config.get('kl_beta', 0):
+            files['grpo_replay_code']['models/reference_kl.py'] = hashlib.sha256((source/'models/reference_kl.py').read_bytes()).hexdigest()
         files['grpo_reward_code'] = {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest()
                                     for p in (source / 'domain/rewards.py', source / 'domain/confusion_reward.py', source / 'domain/grpo.py', source / 'infrastructure/judge.py',
                                               source / 'training/grpo_judged.py', source / 'training/grpo_candidates.py', source / 'models/streaming.py')}
+        if config.get('reward_mode') == 'local_turn_judge':
+            files['grpo_objective'] = 'local_turn_ablation_v2'
+            files['grpo_advantage_mode'] = config.get('grpo_advantage_mode', 'local')
+            files['grpo_loss_aggregation'] = config.get('grpo_loss_aggregation', 'unit_weighted')
+            for relative in ('domain/local_reward.py', 'models/local_policy.py', 'models/graph.py'):
+                files['grpo_reward_code'][relative] = hashlib.sha256((source/relative).read_bytes()).hexdigest()
     return files
 
 

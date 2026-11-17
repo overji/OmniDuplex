@@ -83,11 +83,12 @@ def export(sources, output):
             rows, _, counts = probe_judge.prepare_rows(samples, manifest, predictions)
             run['coverage'] = dict(completed_requests=len(predictions), manifest_requests=len(manifest),
                                    decisions=counts, tp_rows=len(rows))
-            from benchmark.evaluation.scored_f1 import probe_population
-            run['scored_f1_population']=probe_population(manifest,predictions)
+            from benchmark.evaluation.scored_pair import probe_population
+            run['scored_pair_population']=probe_population(manifest,predictions)
+            run['content_metric']='scored_pair_v1'
         else:
             raise ValueError('Unknown evaluation mode')
-        if not rows and not run.get('scored_f1_population'):
+        if not rows and not (run.get('scored_f1_population') or run.get('scored_pair_population')):
             raise ValueError('Selected run has no judge rows: ' + run['run_id'])
         for row in sorted(rows, key=lambda r: (r['sample_index'], r['response_index'])):
             sample = samples[row['sample_index']]

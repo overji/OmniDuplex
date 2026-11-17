@@ -1,0 +1,2212 @@
+[
+  {
+    "gallery_sample_index": 0,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      17
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "21f105a0-63a0-5565-ae2b-2a77e628a368.mp4",
+    "question": "Keep me posted on how many red water buckets are in view around the well, updating me whenever that count changes.",
+    "response": {
+      "window_start": "01:57",
+      "trigger_time": "01:58",
+      "window_end": "02:02",
+      "response": "Three red water buckets are in view around the well.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The count depends entirely on seeing the red buckets at the well rim; no audio cue distinguishes them.",
+      "evidence": [
+        {
+          "time": "01:57",
+          "available_time": "01:57",
+          "fact": "Looking down at the circular well, three red buckets are clearly visible at the stone rim (left, center, right); people partly block the far side."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "bucket_left",
+          "bucket_center",
+          "bucket_right"
+        ],
+        "counting_basis": "Only red buckets clearly visible above the well rim at 01:57 are counted; any bucket fully hidden behind people on the far side is excluded.",
+        "deduplication_rule": "Each bucket is identified by its position/rope and counted once while visible; none has left and re-entered the frame yet."
+      }
+    },
+    "annotation": {
+      "fingerprint": "8f022727f2de1ce0b4340b0cefcfaaa17b29909dd43e3b4afcfd5ec302e38396",
+      "timeScore": 1,
+      "updatedAt": "2026-11-01T02:18:38.351Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 0,
+    "response_index": 1,
+    "current_benchmark_indices": [
+      17
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "21f105a0-63a0-5565-ae2b-2a77e628a368.mp4",
+    "question": "Keep me posted on how many red water buckets are in view around the well, updating me whenever that count changes.",
+    "response": {
+      "window_start": "02:03",
+      "trigger_time": "02:03",
+      "window_end": "02:03",
+      "response": "A fourth red bucket has come into view at the near edge, so four are visible now.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The change is a bucket entering the frame as the camera tilts; only vision reveals it.",
+      "evidence": [
+        {
+          "time": "02:03",
+          "available_time": "02:03",
+          "fact": "The camera angle lowers and a fourth red bucket resting at the near rim enters the frame, alongside the left, center and right rim buckets."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 4,
+        "target_ids": [
+          "bucket_left",
+          "bucket_center",
+          "bucket_right",
+          "bucket_near"
+        ],
+        "counting_basis": "Four red buckets are visible at 02:03 after the near-rim bucket re-enters the frame due to the camera tilt.",
+        "deduplication_rule": "The newly revealed near-rim bucket is a distinct physical bucket, not a re-appearance of one already in the set; the three rim buckets keep their identities, so no double counting."
+      }
+    },
+    "annotation": {
+      "fingerprint": "54c1c781b056f19a00374c7d904e68141293e500f3d90f7ca4fa71f6f0c426d5",
+      "timeScore": 1,
+      "updatedAt": "2026-11-01T02:18:46.085Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 2,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      19
+    ],
+    "ability": "object_counting",
+    "mode": "agent",
+    "video": "21f105a0-63a0-5565-ae2b-2a77e628a368.mp4",
+    "question": "Whenever three or more red buckets are clearly visible at this well, tell me the current count and check whether visitors are allowed to draw water there.",
+    "response": {
+      "trigger_time": "01:58",
+      "source_trigger_time": "01:58",
+      "window_start": "01:57",
+      "window_end": "02:03",
+      "response": "Three red buckets are clearly visible at the well; I'll check visitor rules.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The trigger is established by visible red buckets and the well signage; speech and music are not needed.",
+      "evidence": [
+        {
+          "time": "01:52",
+          "available_time": "01:53",
+          "fact": "A grey brick archway shows gold characters 大板井, identifying the well site."
+        },
+        {
+          "time": "01:56",
+          "available_time": "01:56",
+          "fact": "The camera reaches a large circular stone-lined well where people are gathered with containers."
+        },
+        {
+          "time": "01:57",
+          "available_time": "01:57",
+          "fact": "Three red buckets are clearly and simultaneously visible at the well: one on a rope over the opening, one on the left rim, and one on the right side."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "red_bucket_rope",
+          "red_bucket_left_rim",
+          "red_bucket_right_side"
+        ],
+        "counting_basis": "Only red plastic water buckets that are sufficiently unoccluded in the well area at 01:57 are counted; white jugs, red lanterns, stools, and partially occluded red buckets are excluded.",
+        "deduplication_rule": "Buckets are identified by position and rope/handle within the continuous well shot; a bucket leaving and re-entering frame is the same target, and the count is the current visible set, not cumulative appearances."
+      },
+      "trigger": {
+        "kind": "condition",
+        "satisfied": true,
+        "episode_id": "well-red-buckets-ge3-01",
+        "confirmed_time": "01:57",
+        "definition": "Three or more red buckets are clearly visible at this well.",
+        "conditions": [
+          {
+            "condition": "The scene is the well identified by the 大板井 archway.",
+            "satisfied": true,
+            "time": "01:53",
+            "evidence": "Archway sign visible at 01:52-01:53 and the circular well is visible by 01:56."
+          },
+          {
+            "condition": "At least three red buckets are simultaneously clearly visible in the well area.",
+            "satisfied": true,
+            "time": "01:57",
+            "evidence": "One bucket hangs on a rope, one rests on the left rim, and one is on the right side."
+          }
+        ]
+      },
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "arguments": "{\"instruction\":\"Search public visitor guidance for the 大板井 well in Jianshui to determine whether visitors may draw water and what container or queue rules apply.\",\"observed_context\":\"01:52-01:53: archway sign reads 大板井, identifying the well site. 01:56: the circular stone-lined well is visible. 01:57-01:58: three red buckets are clearly visible at the well, indicating active water drawing.\",\"user_goal\":\"Know whether visitors are allowed to draw water at this well when three or more red buckets are visible.\",\"constraints_and_authorization\":\"User authorized a read-only lookup. Do not purchase items or make reservations. Report uncertainty if official rules are not current.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"A web_search result summarizing visitor water-drawing permission and relevant rules, with source evidence and uncertainties.\",\"extracted_parameters\":[{\"name\":\"location\",\"value\":\"大板井 (Daban Well), Jianshui\",\"evidence_time\":\"01:53\",\"evidence\":\"Gold characters 大板井 on the archway identify the well site.\"},{\"name\":\"visible_red_bucket_count\",\"value\":\"3\",\"evidence_time\":\"01:57\",\"evidence\":\"Three red buckets are clearly visible at the well: one on a rope, one on the left rim, one on the right side.\"}]}"
+          }
+        }
+      ]
+    },
+    "annotation": {
+      "fingerprint": "a0ecc02975c64e4c8bef04912ab41b5d29bb3c3575ec21131e85370c5d2931e4",
+      "timeScore": 1,
+      "updatedAt": "2026-11-01T02:20:17.120Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 9,
+    "response_index": 1,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "05f69355-ce44-5726-a13c-ebcb2761adaf.mp4",
+    "question": "Keep me updated on the number of military off-road vehicles visible on screen as the convoy travels through the desert.",
+    "response": {
+      "window_start": "01:41",
+      "trigger_time": "01:41",
+      "window_end": "01:42",
+      "response": "There are now 3 vehicles visible approaching head-on.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The camera angle changes to a frontal shot showing 3 vehicles driving toward the viewer.",
+      "evidence": [
+        {
+          "time": "01:41",
+          "available_time": "01:41",
+          "fact": "A frontal perspective shows three military off-road vehicles approaching."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "front_vehicle_1",
+          "front_vehicle_2",
+          "front_vehicle_3"
+        ],
+        "counting_basis": "Three military off-road vehicles are visible driving toward the camera.",
+        "deduplication_rule": "Each visible vehicle in the frontal shot is counted."
+      }
+    },
+    "annotation": {
+      "fingerprint": "503a21bfe70bb6fb1a07a42092b4f0d6ef427cbac1a43a69042eeecfb51784ac",
+      "timeScore": 1,
+      "updatedAt": "2026-11-01T02:23:55.617Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 38,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      318
+    ],
+    "ability": "object_counting",
+    "mode": "agent",
+    "video": "1a6f4cb2-5f97-5640-97ca-b1aee6d61ceb.mp4",
+    "question": "Whenever a police officer appears on screen, count how many police officers are currently present and write a note recording the count and scene details.",
+    "response": {
+      "trigger_time": "01:00",
+      "source_trigger_time": "01:00",
+      "window_start": "01:00",
+      "window_end": "01:04",
+      "response": "I see one police officer present and will record a note about it.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "A police officer wearing a purple uniform and cap enters the frame near the balloon cart.",
+      "evidence": [
+        {
+          "time": "00:59",
+          "available_time": "01:00",
+          "fact": "A police officer character in a purple uniform and cap arrives to apprehend the balloon thief."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 1,
+        "target_ids": [
+          "police_officer_1"
+        ],
+        "counting_basis": "A single police officer in a purple uniform and police hat enters the fair scene next to the balloon cart.",
+        "deduplication_rule": "Verified distinct visual character in uniform; no other police officers are present."
+      },
+      "trigger": {
+        "kind": "condition",
+        "satisfied": true,
+        "episode_id": "police_officer_arrival_1",
+        "confirmed_time": "01:00",
+        "definition": "A police officer appears on screen.",
+        "conditions": [
+          {
+            "condition": "At least one police officer is visible on screen",
+            "satisfied": true,
+            "time": "01:00",
+            "evidence": "A police officer in uniform is visible standing next to the cart."
+          }
+        ]
+      },
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "arguments": "{\"instruction\":\"Record a note documenting that one police officer is currently on screen at the fair assisting with the balloon thief.\",\"observed_context\":\"At 01:00, exactly one police officer in a purple uniform and cap is visible on screen arresting the balloon thief.\",\"user_goal\":\"Count the police officers present and create a note with the count and details.\",\"constraints_and_authorization\":\"Use note_write to save the observation as requested by the user.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"Confirmation that the note has been written with title and content.\",\"extracted_parameters\":[{\"name\":\"officer_count\",\"value\":\"1\",\"evidence_time\":\"01:00\",\"evidence\":\"A police officer wearing a purple uniform and cap arrives on screen next to the cart.\"}]}"
+          }
+        }
+      ]
+    },
+    "annotation": {
+      "fingerprint": "da348bcc0bf2ba501b7f79c4efb615afb79e00bdbf653ec5fa6663fae839b294",
+      "timeScore": 0,
+      "updatedAt": "2026-11-01T02:35:32.963Z",
+      "contentScore": 1
+    }
+  },
+  {
+    "gallery_sample_index": 39,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      319
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "1a6f4cb2-5f97-5640-97ca-b1aee6d61ceb.mp4",
+    "question": "Keep me updated on the count of police officers currently visible on screen.",
+    "response": {
+      "window_start": "00:59",
+      "trigger_time": "00:59",
+      "window_end": "01:04",
+      "response": "There is now 1 police officer visible on screen.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "A police officer enters from the bottom of the screen with whistle sound effects.",
+      "evidence": [
+        {
+          "time": "00:59",
+          "available_time": "00:59",
+          "fact": "A police officer character in uniform enters the scene near the bottom center."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 1,
+        "target_ids": [
+          "police_officer_1"
+        ],
+        "counting_basis": "A single police officer arrives to apprehend the balloon thief.",
+        "deduplication_rule": "Track the unique police officer character present in the frame."
+      }
+    },
+    "annotation": {
+      "fingerprint": "188ee6988f95ca4a5cf8c566215b9d8d3eb4178f859baa010fc0bd732e24bcc0",
+      "timeScore": 0,
+      "updatedAt": "2026-11-01T02:35:50.362Z",
+      "contentScore": 1
+    }
+  },
+  {
+    "gallery_sample_index": 42,
+    "response_index": 1,
+    "current_benchmark_indices": [
+      350
+    ],
+    "ability": "action_counting",
+    "mode": "rtd",
+    "video": "2bd59897-cae1-5a17-bb25-4d7f11498426.mp4",
+    "question": "Track the total number of times a balloon accidentally deflates, keeping me updated each time it happens.",
+    "response": {
+      "window_start": "00:42",
+      "trigger_time": "00:42",
+      "window_end": "00:46",
+      "response": "A second balloon has now deflated, bringing the total to two.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "The blue balloon is seen and heard releasing all of its air and collapsing.",
+      "evidence": [
+        {
+          "time": "00:42",
+          "available_time": "00:42",
+          "fact": "Air rushes out of the blue balloon as it collapses and fully deflates."
+        }
+      ],
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:00",
+        "count": 2,
+        "occurrences": [
+          {
+            "id": "deflation_1",
+            "time": "00:23"
+          },
+          {
+            "id": "deflation_2",
+            "time": "00:42"
+          }
+        ],
+        "counting_basis": "Instances where an inflated balloon accidentally releases its air and deflates."
+      }
+    },
+    "annotation": {
+      "fingerprint": "15b2df4424ca8676a58fa04b6ac697d578955f1d884783355f24fbb6848f0eb3",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:25:25.226Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 44,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      377
+    ],
+    "ability": "object_counting",
+    "mode": "agent",
+    "video": "0aad6e6d-b27c-5913-8bce-1bd51c564550.mp4",
+    "question": "I'm gathering studio exhibition ideas. Whenever you see multiple wall clocks displayed in an indoor room, count how many clocks are currently on the wall and save a note with the count and display idea.",
+    "response": {
+      "trigger_time": "00:37",
+      "source_trigger_time": "00:37",
+      "window_start": "00:37",
+      "window_end": "00:39",
+      "response": "I see 4 wall clocks displayed together and will create a studio note.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Four circular wall clocks mounted in a row on the gallery wall are identified visually.",
+      "evidence": [
+        {
+          "time": "00:37",
+          "available_time": "00:37",
+          "fact": "A gallery room is shown with four identical round wall clocks mounted in a horizontal row on the back wall under an air conditioner."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 4,
+        "target_ids": [
+          "wall_clock_1",
+          "wall_clock_2",
+          "wall_clock_3",
+          "wall_clock_4"
+        ],
+        "counting_basis": "Four round wall clocks mounted side by side in a horizontal line on the white wall.",
+        "deduplication_rule": "Each clock occupies a distinct horizontal position along the wall surface from left to right."
+      },
+      "trigger": {
+        "kind": "condition",
+        "satisfied": true,
+        "episode_id": "ep_clocks_01",
+        "confirmed_time": "00:37",
+        "definition": "Multiple wall clocks are visible mounted together in an indoor room.",
+        "conditions": [
+          {
+            "condition": "Multiple wall clocks are mounted in the visible room",
+            "satisfied": true,
+            "time": "00:37",
+            "evidence": "Four circular wall clocks are mounted side-by-side on the gallery back wall."
+          }
+        ]
+      },
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "arguments": "{\"instruction\":\"Record a note about the gallery display showing 4 wall clocks mounted in a row.\",\"observed_context\":\"At 00:37, four round wall clocks are mounted horizontally in a row on the white wall in the gallery exhibition.\",\"user_goal\":\"Count the displayed wall clocks and save a studio note with the count and installation concept.\",\"constraints_and_authorization\":\"Use note_write to create a new note record.\",\"suggested_capabilities\":[\"note_write\"],\"expected_output\":\"Confirmation of the created note with title and content.\",\"extracted_parameters\":[{\"name\":\"clock_count\",\"value\":\"4\",\"evidence_time\":\"00:37\",\"evidence\":\"Four circular wall clocks visible in a horizontal row on the back wall.\"}]}"
+          }
+        }
+      ]
+    },
+    "annotation": {
+      "fingerprint": "0406ed68643e636e1925ddef9e495ca4b5211d9e58b791f640530a42b2fe97d3",
+      "timeScore": 1,
+      "updatedAt": "2026-11-09T01:26:10.191Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 46,
+    "response_index": 3,
+    "current_benchmark_indices": [
+      389
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "0f0710ea-8f07-5d3f-bc1b-47fcd82fd0b8.mp4",
+    "question": "Let me know whenever at least one dragon is visible on screen.",
+    "response": {
+      "window_start": "00:55",
+      "trigger_time": "00:55",
+      "window_end": "01:00",
+      "response": "There is one dragon visible soaring over Hogwarts Castle.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "A dragon enters the sky above the castle towers.",
+      "evidence": [
+        {
+          "time": "00:55",
+          "available_time": "00:55",
+          "fact": "A dragon flies into the upper frame over the towers and landscape of Hogwarts Castle."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep_dragon_4",
+        "confirmed_time": "00:55",
+        "reset_time": "00:50",
+        "definition": "At least one dragon is visible on screen.",
+        "previous_count": 0,
+        "count": 1,
+        "threshold": 1,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 1,
+        "target_ids": [
+          "dragon_4"
+        ],
+        "counting_basis": "A dragon gliding in the sky above Hogwarts Castle.",
+        "deduplication_rule": "Single dragon currently visible on screen."
+      }
+    },
+    "annotation": {
+      "fingerprint": "6f6c756ae7e669b79e548a63b0887a291811e4071177fe6230359be3fd40aa06",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:27:44.208Z",
+      "contentScore": 1
+    }
+  },
+  {
+    "gallery_sample_index": 51,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      424
+    ],
+    "ability": "action_counting",
+    "mode": "agent",
+    "video": "25a6886f-f115-5f24-b14f-144de0ec4f61.mp4",
+    "question": "Keep track of how many commercial brand names the rapper mentions starting from here. Once he reaches two brands, look up online when that second brand was founded and what it sells.",
+    "response": {
+      "trigger_time": "00:44",
+      "source_trigger_time": "00:44",
+      "window_start": "00:44",
+      "window_end": "00:47",
+      "response": "That's two brands mentioned; I'll search online for Old Navy's founding information.",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The rapper speaks the brand names Microsoft and Old Navy in the lyrics of his rap performance.",
+      "evidence": [
+        {
+          "time": "00:34",
+          "available_time": "00:34",
+          "fact": "The rapper mentions Microsoft in the lyric 'disgracing Microsoft'."
+        },
+        {
+          "time": "00:44",
+          "available_time": "00:44",
+          "fact": "The rapper mentions Old Navy in the lyric 'wearing some Old Navy jeans'."
+        }
+      ],
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:10",
+        "count": 2,
+        "occurrences": [
+          {
+            "id": "brand_1",
+            "time": "00:34"
+          },
+          {
+            "id": "brand_2",
+            "time": "00:44"
+          }
+        ],
+        "counting_basis": "commercial brand names mentioned in the rap lyrics"
+      },
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "brand_count_threshold_2",
+        "confirmed_time": "00:44",
+        "definition": "The rapper mentions two commercial brand names in the rap lyrics.",
+        "previous_count": 1,
+        "count": 2,
+        "threshold": 2,
+        "operator": "ge"
+      },
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "arguments": "{\"instruction\":\"Search the web for when Old Navy was founded and what products it sells after the rapper mentioned Microsoft and Old Navy in his lyrics.\",\"observed_context\":\"The rapper mentioned Microsoft at 00:34 and Old Navy at 00:44 ('wearing some Old Navy jeans'), reaching the user's target of two brand names.\",\"user_goal\":\"Determine when Old Navy was founded and what it sells.\",\"constraints_and_authorization\":\"Use public search only. Do not perform any write actions.\",\"suggested_capabilities\":[\"web_search\"],\"expected_output\":\"Founding year and company summary for Old Navy.\",\"extracted_parameters\":[{\"name\":\"second_brand\",\"value\":\"Old Navy\",\"evidence_time\":\"00:44\",\"evidence\":\"The rapper raps 'wearing some Old Navy jeans' at 00:44.\"},{\"name\":\"brand_count\",\"value\":\"2\",\"evidence_time\":\"00:44\",\"evidence\":\"Microsoft was mentioned at 00:34 and Old Navy was mentioned at 00:44.\"}]}"
+          }
+        }
+      ]
+    },
+    "annotation": {
+      "fingerprint": "196b398420a1971aa82eed5bf96c6726de9273ba9c230b6574e3d71cde7ebde3",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:29:05.554Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "00:33",
+      "trigger_time": "00:33",
+      "window_end": "00:38",
+      "response": "All three band members are now visible on stage together.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Detecting that all three band members are simultaneously visible requires inspecting the studio camera framing.",
+      "evidence": [
+        {
+          "time": "00:33",
+          "available_time": "00:33",
+          "fact": "The studio broadcast cuts to a wide shot showing the lead guitarist, bassist, and drummer all present on the stage."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-1",
+        "confirmed_time": "00:33",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 1,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "Wide angle studio shot captures the guitarist/singer on the left, bassist in the center, and drummer on the right.",
+        "deduplication_rule": "Each member occupies a distinct position and role on stage."
+      }
+    },
+    "annotation": {
+      "fingerprint": "d61ebfa535185e30ba8821639075398751c6ff4c8a218d90607fbda200706d47",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:00.018Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 1,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "01:14",
+      "trigger_time": "01:14",
+      "window_end": "01:20",
+      "response": "All three band members are currently visible on stage.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Verifying that all three members are present in the overhead wide shot requires visual observation.",
+      "evidence": [
+        {
+          "time": "01:14",
+          "available_time": "01:14",
+          "fact": "The camera angle switches to a high overhead wide view displaying the guitarist, bassist, and drummer on stage."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-2",
+        "confirmed_time": "01:14",
+        "reset_time": "00:39",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 1,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "High-angle perspective showing the singer, bassist, and drummer performing simultaneously.",
+        "deduplication_rule": "Identified by separate spatial locations across the stage floor."
+      }
+    },
+    "annotation": {
+      "fingerprint": "a829f09ecdbee1fd3316ce722446d577a6bc913f525863f2fd6d482409368c07",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:01.489Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 2,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "01:47",
+      "trigger_time": "01:47",
+      "window_end": "01:57",
+      "response": "All three band members are visible on the stage again.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Visual inspection confirms the camera has returned to a wide angle framing all three band members.",
+      "evidence": [
+        {
+          "time": "01:47",
+          "available_time": "01:47",
+          "fact": "The video cuts to a wide stage shot showing the guitarist, bassist, and drummer in frame."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-3",
+        "confirmed_time": "01:47",
+        "reset_time": "01:21",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 1,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "Full view of the stage framing the guitarist, bassist, and drummer.",
+        "deduplication_rule": "Distinct stage positions and instruments identify each member."
+      }
+    },
+    "annotation": {
+      "fingerprint": "888b2e8e235ab6702f3b34abff9bc9cb0e7e722f8716fb6421aef9b8c3f8f5de",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:04.277Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 3,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "02:31",
+      "trigger_time": "02:31",
+      "window_end": "02:36",
+      "response": "All three band members are visible on stage.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Visual inspection of the camera framing confirms all three musicians are visible simultaneously.",
+      "evidence": [
+        {
+          "time": "02:31",
+          "available_time": "02:31",
+          "fact": "The broadcast cuts to a wide shot showing the singer/guitarist in foreground left, the bassist in the center, and the drummer behind her kit."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-4",
+        "confirmed_time": "02:31",
+        "reset_time": "01:58",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 1,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "Angled wide stage shot capturing all three members.",
+        "deduplication_rule": "Spatial separation across the studio floor distinguishes each member."
+      }
+    },
+    "annotation": {
+      "fingerprint": "4279bda90744c316b0240f877e5caa3cb449024591c27e5f8c13d043dc0738a7",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:05.575Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 4,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "02:44",
+      "trigger_time": "02:44",
+      "window_end": "02:50",
+      "response": "All three band members are currently visible on stage.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Visual observation confirms the high overhead camera view captures all three performers.",
+      "evidence": [
+        {
+          "time": "02:44",
+          "available_time": "02:44",
+          "fact": "The video switches to an overhead wide shot revealing the guitarist, bassist, and drummer on the studio floor."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-5",
+        "confirmed_time": "02:44",
+        "reset_time": "02:37",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 1,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "Overhead perspective framing the three musicians across the stage.",
+        "deduplication_rule": "Each musician is clearly visible in an assigned stage zone."
+      }
+    },
+    "annotation": {
+      "fingerprint": "7d5bded0e082f6d4d975a4c9b8b7d9af85ee90f83d4a7e2e6a28acf060b82045",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:07.266Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 5,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "03:07",
+      "trigger_time": "03:07",
+      "window_end": "03:11",
+      "response": "All three band members are visible on stage together.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Visual framing in the video confirms all three band members are on screen.",
+      "evidence": [
+        {
+          "time": "03:07",
+          "available_time": "03:07",
+          "fact": "The camera transitions to a wide shot showing the singer at the microphone, the bassist dancing, and the drummer behind the kit."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-6",
+        "confirmed_time": "03:07",
+        "reset_time": "02:51",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 1,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "Stage-level wide angle capturing the singer, bassist, and drummer.",
+        "deduplication_rule": "Each member is visually separated by position and instrument."
+      }
+    },
+    "annotation": {
+      "fingerprint": "899468780210bff7baf5d812621934a61f8e1c9dc67f966605b154e202145ffa",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:08.787Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 6,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "03:30",
+      "trigger_time": "03:30",
+      "window_end": "03:35",
+      "response": "All three band members are currently visible on the stage.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Visual observation confirms the high wide shot captures all three band members simultaneously.",
+      "evidence": [
+        {
+          "time": "03:30",
+          "available_time": "03:30",
+          "fact": "An overhead wide shot shows the guitarist, bassist, and drummer performing together on stage."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-7",
+        "confirmed_time": "03:30",
+        "reset_time": "03:12",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 1,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "Wide overhead shot showing all three members during the song's climax.",
+        "deduplication_rule": "Distinct locations on stage track each performer."
+      }
+    },
+    "annotation": {
+      "fingerprint": "afe9aeff0aea6e69a6fc9f0db036ef452cf4d73ee7fc16da10893df80ebc44d4",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:10.050Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 7,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "04:02",
+      "trigger_time": "04:02",
+      "window_end": "04:10",
+      "response": "All three band members are visible on stage.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Visual monitoring confirms all three members are present in the final wide performance shot.",
+      "evidence": [
+        {
+          "time": "04:02",
+          "available_time": "04:02",
+          "fact": "The camera cuts to a wide shot of the stage as the band finishes their performance, showing the guitarist, bassist, and drummer."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-8",
+        "confirmed_time": "04:02",
+        "reset_time": "03:36",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 1,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "Stage-level wide shot showing the singer, bassist, and drummer completing the song.",
+        "deduplication_rule": "Individual positions across the stage identify each performer."
+      }
+    },
+    "annotation": {
+      "fingerprint": "0225244e29a0b35834aebafd4a90e7ceb63916fc786b05571b9ccb2b585ca096",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:11.334Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 62,
+    "response_index": 8,
+    "current_benchmark_indices": [
+      521
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "1cf2f331-b249-5d82-9b6c-fe05557def29.mp4",
+    "question": "Keep track of the band members on stage and alert me whenever all three members are visible simultaneously.",
+    "response": {
+      "window_start": "04:14",
+      "trigger_time": "04:14",
+      "window_end": "04:20",
+      "response": "All three band members are visible on stage in the paused video.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Visual inspection reveals that the reactor has paused the video on a wide shot of all three band members.",
+      "evidence": [
+        {
+          "time": "04:14",
+          "available_time": "04:14",
+          "fact": "The video returns from the outro graphic to a paused wide frame showing all three band members standing on the studio stage."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "ep-9",
+        "confirmed_time": "04:14",
+        "reset_time": "04:11",
+        "definition": "All three band members are visible on stage simultaneously",
+        "previous_count": 0,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "lead_guitarist",
+          "bassist",
+          "drummer"
+        ],
+        "counting_basis": "The paused frame on the main screen clearly displays all three musicians on the studio set.",
+        "deduplication_rule": "Each band member is located in her established position on stage."
+      }
+    },
+    "annotation": {
+      "fingerprint": "4b826d36cba6629c320e73f79da9f1ee5e0c70ab9d07103e2ba63f0c99a72504",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:32:12.623Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 63,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      562
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "video_1.mp4",
+    "question": "Keep me posted on how many red water buckets are in view around the well, updating me whenever that count changes.",
+    "response": {
+      "window_start": "01:57",
+      "trigger_time": "01:58",
+      "window_end": "02:02",
+      "response": "Three red water buckets are in view around the well.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The count depends entirely on seeing the red buckets at the well rim; no audio cue distinguishes them.",
+      "evidence": [
+        {
+          "time": "01:57",
+          "available_time": "01:57",
+          "fact": "Looking down at the circular well, three red buckets are clearly visible at the stone rim (left, center, right); people partly block the far side."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "bucket_left",
+          "bucket_center",
+          "bucket_right"
+        ],
+        "counting_basis": "Only red buckets clearly visible above the well rim at 01:57 are counted; any bucket fully hidden behind people on the far side is excluded.",
+        "deduplication_rule": "Each bucket is identified by its position/rope and counted once while visible; none has left and re-entered the frame yet."
+      }
+    },
+    "annotation": {
+      "fingerprint": "4fd25d7063a1fe45b4410620003c6286001f7c5d56811643b85bd12a8617af66",
+      "timeScore": 1,
+      "updatedAt": "2026-11-09T01:32:25.341Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 63,
+    "response_index": 1,
+    "current_benchmark_indices": [
+      562
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "video_1.mp4",
+    "question": "Keep me posted on how many red water buckets are in view around the well, updating me whenever that count changes.",
+    "response": {
+      "window_start": "02:03",
+      "trigger_time": "02:03",
+      "window_end": "02:03",
+      "response": "A fourth red bucket has come into view at the near edge, so four are visible now.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The change is a bucket entering the frame as the camera tilts; only vision reveals it.",
+      "evidence": [
+        {
+          "time": "02:03",
+          "available_time": "02:03",
+          "fact": "The camera angle lowers and a fourth red bucket resting at the near rim enters the frame, alongside the left, center and right rim buckets."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 4,
+        "target_ids": [
+          "bucket_left",
+          "bucket_center",
+          "bucket_right",
+          "bucket_near"
+        ],
+        "counting_basis": "Four red buckets are visible at 02:03 after the near-rim bucket re-enters the frame due to the camera tilt.",
+        "deduplication_rule": "The newly revealed near-rim bucket is a distinct physical bucket, not a re-appearance of one already in the set; the three rim buckets keep their identities, so no double counting."
+      }
+    },
+    "annotation": {
+      "fingerprint": "6bf94b72ac486e13e9c55d37b001759f868b36657cf9f3bfbe318be82bc7098d",
+      "timeScore": 1,
+      "updatedAt": "2026-11-09T01:32:27.705Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 63,
+    "response_index": 2,
+    "current_benchmark_indices": [
+      562
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "video_1.mp4",
+    "question": "Keep me posted on how many red water buckets are in view around the well, updating me whenever that count changes.",
+    "response": {
+      "window_start": "02:04",
+      "trigger_time": "02:05",
+      "window_end": "02:10",
+      "response": "The camera has moved on to the paved area; no red buckets are in view now.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The count drops to zero because the well leaves the frame; this is purely visual.",
+      "evidence": [
+        {
+          "time": "02:04",
+          "available_time": "02:04",
+          "fact": "The frame now shows the white-painted hopscotch court on stone slabs; the well and its red buckets are out of view."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 0,
+        "target_ids": [],
+        "counting_basis": "No red buckets are present in the frame from 02:04 onward as the camera has left the well.",
+        "deduplication_rule": "The current set is empty; the well buckets are out of frame and are not counted, and they do not reappear later in the video."
+      }
+    },
+    "annotation": {
+      "fingerprint": "30e5148cc8332f30393c96566d1444ae14c95a84c24f90b0b80e6e7bb6be1e04",
+      "timeScore": 1,
+      "updatedAt": "2026-11-09T01:32:29.064Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 67,
+    "response_index": 1,
+    "current_benchmark_indices": [
+      577
+    ],
+    "ability": "action_counting",
+    "mode": "pr",
+    "video": "3b5ed8b6-93e9-585f-93fe-1479a8e95570.mp4",
+    "question": "Count each time the saxophonist begins playing his instrument in the video, and notify me with the cumulative count whenever he starts playing.",
+    "response": {
+      "window_start": "00:47",
+      "trigger_time": "00:47",
+      "window_end": "00:50",
+      "response": "The saxophonist has started playing again, making it 2 times in total.",
+      "trigger_type": "visual+sound",
+      "trigger_type_reason": "After pausing to smile and gesture, the saxophonist places the mouthpiece back to his mouth and resumes playing.",
+      "evidence": [
+        {
+          "time": "00:46",
+          "available_time": "00:47",
+          "fact": "The saxophonist puts the saxophone back to his mouth and resumes playing."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "sax_play_2",
+        "confirmed_time": "00:47",
+        "definition": "Notify each time the saxophonist begins playing his saxophone with the cumulative count.",
+        "previous_count": 1,
+        "count": 2,
+        "threshold": 2,
+        "operator": "eq",
+        "reset_time": "00:35"
+      },
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:05",
+        "count": 2,
+        "occurrences": [
+          {
+            "id": "sax_play_1",
+            "time": "00:11"
+          },
+          {
+            "id": "sax_play_2",
+            "time": "00:47"
+          }
+        ],
+        "counting_basis": "Instances where the saxophonist brings the instrument to his mouth and commences playing."
+      }
+    },
+    "annotation": {
+      "fingerprint": "b20a69cea941270bce4ad439e2917004d6a59e77a51f02d15711ab41808bf5b4",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:33:21.449Z",
+      "contentScore": 1
+    }
+  },
+  {
+    "gallery_sample_index": 71,
+    "response_index": 2,
+    "current_benchmark_indices": [
+      599
+    ],
+    "ability": "action_counting",
+    "mode": "rtd",
+    "video": "6d5a85e1-1433-58f1-b40d-29debdb62480.mp4",
+    "question": "Keep track of how many times the narrator says the word \"protein\" or \"proteins\".",
+    "response": {
+      "window_start": "00:40",
+      "trigger_time": "00:40",
+      "window_end": "00:50",
+      "response": "The count is now at 3 mentions.",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The narrator says 'proteins' again.",
+      "evidence": [
+        {
+          "time": "00:40",
+          "available_time": "00:40",
+          "fact": "The narrator says 'proteins' when stating 'six other proteins'."
+        }
+      ],
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:00",
+        "count": 3,
+        "occurrences": [
+          {
+            "id": "mention_1",
+            "time": "00:21"
+          },
+          {
+            "id": "mention_2",
+            "time": "00:37"
+          },
+          {
+            "id": "mention_3",
+            "time": "00:40"
+          }
+        ],
+        "counting_basis": "Narrator spoke the word 'protein' or 'proteins'"
+      }
+    },
+    "annotation": {
+      "fingerprint": "281569014cde406cbf535ccf0f8a764588e15d26c423fff7d5d39d7d8e1278a8",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:34:14.853Z",
+      "contentScore": 1
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 5,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:13",
+      "trigger_time": "00:13",
+      "window_end": "00:13",
+      "response": "Now there are 2 people: Tony Stark and Steve Rogers.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:13",
+          "available_time": "00:13",
+          "fact": "Tony Stark and Steve Rogers are visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 2,
+        "target_ids": [
+          "T1",
+          "S1"
+        ],
+        "counting_basis": "Two distinct individuals are clearly visible in the frame.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "5a832da79eaa63a79fd25626d999ddfa135e9a8c8270de52ce06b21fd274fcb8",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:31.802Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 6,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:14",
+      "trigger_time": "00:14",
+      "window_end": "00:14",
+      "response": "Now there is 1 person, Tony Stark.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:14",
+          "available_time": "00:14",
+          "fact": "Tony Stark is visible; Steve Rogers is no longer visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 1,
+        "target_ids": [
+          "T1"
+        ],
+        "counting_basis": "A single distinct individual is visible.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "0a049164de6c4754a374b195b6c1353b90a01ad06b9f966d232535aece44b034",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:34.858Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 7,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:15",
+      "trigger_time": "00:15",
+      "window_end": "00:15",
+      "response": "Now there are 3 people: Black Panther, Okoye, and Shuri.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:15",
+          "available_time": "00:15",
+          "fact": "Black Panther, Okoye, and Shuri are visible; Tony Stark is no longer visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "BP1",
+          "O1",
+          "SH1"
+        ],
+        "counting_basis": "Three distinct individuals are clearly visible in the frame.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "cd3f96f5fff7b674095df13eff81d0f7de1e5d2ced9c298d328443913c41c94c",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:36.422Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 8,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:16",
+      "trigger_time": "00:16",
+      "window_end": "00:17",
+      "response": "There are many people visible in the battle scene.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:16",
+          "available_time": "00:16",
+          "fact": "A large group of people is visible in a battle scene; Black Panther, Okoye, and Shuri are no longer prominently visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 0,
+        "target_ids": [],
+        "counting_basis": "A large number of individuals are visible in a wide shot, making an exact count impractical.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "008f30c12126a86bce0c42912947cec59b5ed8d41f9a8eddcf0e650fffb7ff7b",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:37.898Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 9,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:18",
+      "trigger_time": "00:18",
+      "window_end": "00:18",
+      "response": "Now there are 2 people: Captain America and Black Widow.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:18",
+          "available_time": "00:18",
+          "fact": "Captain America and Black Widow are visible; the large group is no longer visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 2,
+        "target_ids": [
+          "S1",
+          "N1"
+        ],
+        "counting_basis": "Two distinct individuals are clearly visible in the frame.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "4f649f8f3aceb4c408cfd0539a67566422d2f0e38841f4d8357bbb4390e70e80",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:39.158Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 10,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:19",
+      "trigger_time": "00:19",
+      "window_end": "00:20",
+      "response": "Again, there are many people visible in the battle scene.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:19",
+          "available_time": "00:19",
+          "fact": "A large group of people is visible in a battle scene; Captain America and Black Widow are no longer prominently visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 0,
+        "target_ids": [],
+        "counting_basis": "A large number of individuals are visible in a wide shot, making an exact count impractical.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "03b8bf094318f7b1d6aa65d5fec098ed7c14258b9e530f892e647fdbe18ec822",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:40.433Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 11,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:21",
+      "trigger_time": "00:21",
+      "window_end": "00:21",
+      "response": "Now there are 3 people: Black Panther, Okoye, and Shuri.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:21",
+          "available_time": "00:21",
+          "fact": "Black Panther, Okoye, and Shuri are visible; the large group is no longer visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "BP1",
+          "O1",
+          "SH1"
+        ],
+        "counting_basis": "Three distinct individuals are clearly visible in the frame.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "b70f80d054d5c6e54e6b892e8533a402042f392ec3d9843d28e19d237bd94c0a",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:41.778Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 12,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:22",
+      "trigger_time": "00:22",
+      "window_end": "00:22",
+      "response": "Now there are 5 people: Black Widow, Thor, Hulk, Iron Man, and Captain America.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:22",
+          "available_time": "00:22",
+          "fact": "Black Widow, Thor, Hulk, Iron Man, and Captain America are visible; Black Panther, Okoye, and Shuri are no longer visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 5,
+        "target_ids": [
+          "N1",
+          "TH1",
+          "B1",
+          "T1",
+          "S1"
+        ],
+        "counting_basis": "Five distinct individuals are clearly visible in the frame.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "a280ebf6cf9b728c49622282858233e3cdc008813192eb56a8fa6a3fb45d3dd8",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:43.120Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 13,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:23",
+      "trigger_time": "00:23",
+      "window_end": "00:24",
+      "response": "There are many people visible in the battle scene.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:23",
+          "available_time": "00:23",
+          "fact": "A large group of people is visible in a battle scene; the previous 5 individuals are no longer prominently visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 0,
+        "target_ids": [],
+        "counting_basis": "A large number of individuals are visible in a wide shot, making an exact count impractical.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "83da17d9791a2e889b9dd467154282a95ab649fb7479798dec1f9157c7ce4fd8",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:51.265Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 14,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:25",
+      "trigger_time": "00:25",
+      "window_end": "00:27",
+      "response": "Now there is 1 person, Iron Man.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The number of visible people changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:25",
+          "available_time": "00:25",
+          "fact": "Iron Man is visible; the large group is no longer visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 1,
+        "target_ids": [
+          "T1"
+        ],
+        "counting_basis": "A single distinct individual is visible.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "170141216374fe5a951d1830be4406b00f2c67bf6641f95bc2c5ea585f64c3b3",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:52.366Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 72,
+    "response_index": 15,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "7e7fe8ec-a732-5981-ab30-a6a26d4236c9.mp4",
+    "question": "Keep me updated on the number of people in the video.",
+    "response": {
+      "window_start": "00:28",
+      "trigger_time": "00:28",
+      "window_end": "00:28",
+      "response": "Now there is 1 person, Doctor Strange.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The visible person changes and is confirmed visually.",
+      "evidence": [
+        {
+          "time": "00:28",
+          "available_time": "00:28",
+          "fact": "Doctor Strange is visible; Iron Man is no longer visible."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 1,
+        "target_ids": [
+          "DS1"
+        ],
+        "counting_basis": "A single distinct individual is visible.",
+        "deduplication_rule": "Identified individuals are tracked across cuts."
+      }
+    },
+    "annotation": {
+      "fingerprint": "6a1aec2afa37c916a83106992419e93d97bcdb3960c9d8d921598d0c717b842a",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T01:35:53.832Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 109,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      877
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "3ff845fd-b149-5d53-be4f-daa36a6ac06a.mp4",
+    "question": "Let me know whenever there are 3 or more drones on the ground simultaneously.",
+    "response": {
+      "window_start": "03:24",
+      "trigger_time": "03:24",
+      "window_end": "03:27",
+      "response": "There are currently 3 illuminated drones resting on the ground.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Three quadcopters equipped with illuminated propeller rings are visible sitting on the sand.",
+      "evidence": [
+        {
+          "time": "03:24",
+          "available_time": "03:24",
+          "fact": "Three separate quadcopters with glowing propeller rings are seen resting on the sand at the same time."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "drones_on_ground_1",
+        "confirmed_time": "03:24",
+        "definition": "3 or more drones on the ground simultaneously",
+        "previous_count": 2,
+        "count": 3,
+        "threshold": 3,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 3,
+        "target_ids": [
+          "drone_yellow_mid",
+          "drone_cyan_left",
+          "drone_cyan_back"
+        ],
+        "counting_basis": "Visible quadcopters with glowing LED propeller caps resting on the ground.",
+        "deduplication_rule": "Each distinct drone resting on the ground in the current camera frame is counted once."
+      }
+    },
+    "annotation": {
+      "fingerprint": "f626283e904c2bcf35a1bb1e75bc362de20ef110d6555d46b226a130919b4dc4",
+      "contentScore": 0,
+      "updatedAt": "2026-11-09T02:03:28.019Z",
+      "timeScore": 1
+    }
+  },
+  {
+    "gallery_sample_index": 115,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      932
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "8c1bf0f7-d226-57ac-aa5b-46a2b6065eb3.mp4",
+    "question": "Let me know whenever four or more people are visible inside the tent simultaneously.",
+    "response": {
+      "window_start": "00:42",
+      "trigger_time": "00:42",
+      "window_end": "00:45",
+      "response": "There are currently five people visible inside the tent.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The wide shot visually reveals five distinct individuals present inside the tent at the same time.",
+      "evidence": [
+        {
+          "time": "00:42",
+          "available_time": "00:42",
+          "fact": "A wide angle inside the tent shows Andrew Yang, Alex Wagner, and three crew or campaign members standing in the background."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "tent_people_count_1",
+        "confirmed_time": "00:42",
+        "definition": "four or more people visible inside the tent simultaneously",
+        "previous_count": 1,
+        "count": 5,
+        "threshold": 4,
+        "operator": "ge"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 5,
+        "target_ids": [
+          "alex_wagner",
+          "andrew_yang",
+          "tent_background_person_1",
+          "tent_background_person_2",
+          "tent_background_person_3"
+        ],
+        "counting_basis": "individuals concurrently visible within the tent interior during the wide shot",
+        "deduplication_rule": "each person occupies a distinct spatial position in the frame"
+      }
+    },
+    "annotation": {
+      "fingerprint": "a597b7f1cf48872dbc578cc372f1ddd22fe4cbe05d3ce9f8c720b71ed45ed778",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T02:06:31.050Z",
+      "contentScore": 1
+    }
+  },
+  {
+    "gallery_sample_index": 122,
+    "response_index": 2,
+    "current_benchmark_indices": [
+      996
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "4078cc0f-69d7-5800-829b-2743f3892878.mp4",
+    "question": "Keep me updated on the number of insect pins securing the grasshopper on the pad.",
+    "response": {
+      "window_start": "01:12",
+      "trigger_time": "01:12",
+      "window_end": "01:32",
+      "response": "A fourth pin has been added, so there are now 4 insect pins securing the specimen.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "A fourth pin is inserted at the posterior end.",
+      "evidence": [
+        {
+          "time": "01:12",
+          "available_time": "01:12",
+          "fact": "A fourth insect pin is anchored next to the third pin at the posterior end of the grasshopper."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 4,
+        "target_ids": [
+          "pin_1",
+          "pin_2",
+          "pin_3",
+          "pin_4"
+        ],
+        "counting_basis": "Insect pins inserted into the dissection pad holding the grasshopper specimen.",
+        "deduplication_rule": "Track existing pins by their position on the pad and only add newly placed pins."
+      }
+    },
+    "annotation": {
+      "fingerprint": "d99aaaf628c87626ea873001f6cf4b02e769a2c85e7d1a9e718a4edb4034a5ec",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T02:08:21.256Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 122,
+    "response_index": 3,
+    "current_benchmark_indices": [
+      996
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "4078cc0f-69d7-5800-829b-2743f3892878.mp4",
+    "question": "Keep me updated on the number of insect pins securing the grasshopper on the pad.",
+    "response": {
+      "window_start": "01:35",
+      "trigger_time": "01:35",
+      "window_end": "01:40",
+      "response": "Two more pins have been placed to open the body cavity, bringing the total to 6 insect pins.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Two additional pins are inserted to pin open the lateral body wall.",
+      "evidence": [
+        {
+          "time": "01:35",
+          "available_time": "01:35",
+          "fact": "Two insect pins are inserted on either side of the opened exoskeleton, increasing the pin count from 4 to 6."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 6,
+        "target_ids": [
+          "pin_1",
+          "pin_2",
+          "pin_3",
+          "pin_4",
+          "pin_5",
+          "pin_6"
+        ],
+        "counting_basis": "Insect pins inserted into the dissection pad holding the grasshopper specimen.",
+        "deduplication_rule": "Track existing pins by their position on the pad and only add newly placed pins."
+      }
+    },
+    "annotation": {
+      "fingerprint": "68ae5007b03206b1fac9b29aa3983be663eb4c89e390218cd402536357c3c7bb",
+      "timeScore": 1,
+      "updatedAt": "2026-11-09T02:08:32.263Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 128,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      1082
+    ],
+    "ability": "action_counting",
+    "mode": "agent",
+    "video": "7de34ae5-c1f5-566b-b6a8-6f0d07efbd79.mp4",
+    "question": "Keep track of how many times the commentators mention North Carolina. Once they have mentioned it twice, please add a task to my todo list to check Coleman Scott's wrestling recruits.",
+    "response": {
+      "trigger_time": "01:40",
+      "source_trigger_time": "01:40",
+      "window_start": "01:40",
+      "window_end": "01:43",
+      "response": "North Carolina was mentioned twice; adding a task to your todo list.",
+      "trigger_type": "speech",
+      "trigger_type_reason": "The trigger relies on hearing the commentator speak the phrase 'North Carolina' twice.",
+      "evidence": [
+        {
+          "time": "01:36",
+          "available_time": "01:37",
+          "fact": "The commentator states that McNeil is headed to North Carolina."
+        },
+        {
+          "time": "01:38",
+          "available_time": "01:40",
+          "fact": "The commentator repeats that McNeil is going to North Carolina next year for Coleman Scott."
+        }
+      ],
+      "details": {
+        "counting_mode": "cumulative",
+        "counting_start": "00:20",
+        "count": 2,
+        "occurrences": [
+          {
+            "id": "mention_1",
+            "time": "01:36"
+          },
+          {
+            "id": "mention_2",
+            "time": "01:38"
+          }
+        ],
+        "counting_basis": "Distinct commentator verbal mentions of North Carolina"
+      },
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "north_carolina_mentions_2",
+        "confirmed_time": "01:40",
+        "definition": "Commentators mention North Carolina at least two times after 00:20.",
+        "previous_count": 1,
+        "count": 2,
+        "threshold": 2,
+        "operator": "ge"
+      },
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "arguments": "{\"instruction\":\"Create a new todo item to check Coleman Scott's wrestling recruits at North Carolina.\",\"observed_context\":\"At 01:36 and 01:38, the commentators mentioned that Lachlan McNeil is going to North Carolina next year for coach Coleman Scott.\",\"user_goal\":\"Add a task to the user's todo list to check Coleman Scott's wrestling recruits.\",\"constraints_and_authorization\":\"User requested adding a task to their personal todo list.\",\"suggested_capabilities\":[\"todo_create\"],\"expected_output\":\"Confirmation of the created todo item.\",\"extracted_parameters\":[{\"name\":\"coach_and_school\",\"value\":\"Coleman Scott North Carolina\",\"evidence_time\":\"01:40\",\"evidence\":\"Commentator stated McNeil is going to North Carolina next year for Coleman Scott.\"}]}"
+          }
+        }
+      ]
+    },
+    "annotation": {
+      "fingerprint": "c5509e6f8763e0fefdc14700c19ca070b5e678facbf3558bd6ea68cf66732531",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T02:10:23.889Z",
+      "contentScore": 1
+    }
+  },
+  {
+    "gallery_sample_index": 132,
+    "response_index": 5,
+    "current_benchmark_indices": [
+      1118
+    ],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "670f3c6b-bb8a-532e-b4a5-f21587bbe411.mp4",
+    "question": "Keep me updated on the number of ducklings visible on screen.",
+    "response": {
+      "window_start": "01:34",
+      "trigger_time": "01:34",
+      "window_end": "01:39",
+      "response": "There are now 5 ducklings visible on screen.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "All five ducklings reappear lined up together next to Mother Duck by the pond.",
+      "evidence": [
+        {
+          "time": "01:34",
+          "available_time": "01:34",
+          "fact": "Five ducklings return and stand in a row beside Mother Duck."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 5,
+        "target_ids": [
+          "duckling_1",
+          "duckling_2",
+          "duckling_3",
+          "duckling_4",
+          "duckling_5"
+        ],
+        "counting_basis": "Visible small yellow ducklings on screen",
+        "deduplication_rule": "Count each unique duckling visible in the current scene frame"
+      }
+    },
+    "annotation": {
+      "fingerprint": "0f8fc6573c87a398c251a81971ad0bb191f37dac74c50e5dad47ccebbb4ae230",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T02:12:04.774Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 138,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      1136
+    ],
+    "ability": "object_counting",
+    "mode": "pr",
+    "video": "877bf354-c0a5-5e4f-83c3-250a1f1fe9b3.mp4",
+    "question": "Let me know whenever only one performer is visible on screen.",
+    "response": {
+      "window_start": "05:00",
+      "trigger_time": "05:00",
+      "window_end": "05:05",
+      "response": "There is currently only one performer visible on screen.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Visual inspection of the frame confirms that only a single performer is shown on the screen, playing an instrument and singing alone.",
+      "evidence": [
+        {
+          "time": "05:00",
+          "available_time": "05:00",
+          "fact": "The scene cuts to a solo Marakwet performer standing on a rural road playing a handheld box instrument, with no other people present in the frame."
+        }
+      ],
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "episode_1",
+        "confirmed_time": "05:00",
+        "definition": "Notify me whenever only one performer is visible on screen.",
+        "previous_count": 10,
+        "count": 1,
+        "threshold": 1,
+        "operator": "eq"
+      },
+      "details": {
+        "counting_mode": "current",
+        "count": 1,
+        "target_ids": [
+          "solo_marakwet_performer"
+        ],
+        "counting_basis": "Visible people actively performing in the camera frame",
+        "deduplication_rule": "Count each unique individual currently present in the visual frame"
+      }
+    },
+    "annotation": {
+      "fingerprint": "ec4d7721d1e30634231ff3346722e4c8f14dbdf0e8423022eb35e9a4e22b2e24",
+      "timeScore": 0,
+      "updatedAt": "2026-11-09T02:14:00.654Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 155,
+    "response_index": 1,
+    "current_benchmark_indices": [],
+    "ability": "object_counting",
+    "mode": "rtd",
+    "video": "e4c78d7f-b416-52d4-b8f0-5788beb09434.mp4",
+    "question": "Keep me updated on the number of aircraft visible in the lower video panel as the footage changes.",
+    "response": {
+      "window_start": "01:17",
+      "trigger_time": "01:17",
+      "window_end": "01:20",
+      "response": "There are now 2 aircraft visible in the lower panel, showing the nose of an Il-76 in the foreground and the Su-57 behind it.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "The lower panel cuts to an angle showing two distinct aircraft simultaneously.",
+      "evidence": [
+        {
+          "time": "01:17",
+          "available_time": "01:17",
+          "fact": "The lower video panel switches to a shot showing the nose of an Il-76 transport plane in the foreground with the Su-57 visible behind it."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 2,
+        "target_ids": [
+          "il_76",
+          "su_57"
+        ],
+        "counting_basis": "Distinct aircraft currently visible in the lower frame.",
+        "deduplication_rule": "Count each unique aircraft present in the frame."
+      }
+    },
+    "annotation": {
+      "fingerprint": "41f8c67d7ac0642a311f6a3faa35104f6f523fb31c31d5b4113607cffb99d7af",
+      "timeScore": 1,
+      "updatedAt": "2026-11-09T02:41:21.989Z",
+      "contentScore": 0
+    }
+  },
+  {
+    "gallery_sample_index": 186,
+    "response_index": 0,
+    "current_benchmark_indices": [
+      1687
+    ],
+    "ability": "object_counting",
+    "mode": "agent",
+    "video": "d85e932f-0a74-5ffe-a5be-d7a232cc56a9.mp4",
+    "question": "Whenever you see 4 or more live parrots in the kitchen at the same time, create a todo for me to clean the parrot perches by tomorrow at 6 PM.",
+    "response": {
+      "trigger_time": "00:33",
+      "source_trigger_time": "00:33",
+      "window_start": "00:33",
+      "window_end": "00:38",
+      "response": "I see four parrots in the kitchen; creating a todo to clean perches.",
+      "trigger_type": "visual",
+      "trigger_type_reason": "Four distinct live parrots become simultaneously visible across the kitchen counter and perches.",
+      "evidence": [
+        {
+          "time": "00:33",
+          "available_time": "00:33",
+          "fact": "Four live parrots are visible at once: a macaw on the tall perch on the left, an African grey parrot on the lower left counter, a green conure on Marlene's shoulder, and a conure on the stand to Tracy's right."
+        }
+      ],
+      "details": {
+        "counting_mode": "current",
+        "count": 4,
+        "target_ids": [
+          "macaw_left_perch",
+          "african_grey_counter",
+          "green_conure_marlene_shoulder",
+          "conure_tracy_perch"
+        ],
+        "counting_basis": "Simultaneous visual appearance of four live parrots across distinct locations in the kitchen frame.",
+        "deduplication_rule": "Each parrot occupies a separate physical location and distinct plumage pattern in the wide shot."
+      },
+      "trigger": {
+        "kind": "count",
+        "satisfied": true,
+        "episode_id": "episode_1",
+        "confirmed_time": "00:33",
+        "definition": "4 or more live parrots simultaneously visible in the kitchen",
+        "previous_count": 0,
+        "count": 4,
+        "threshold": 4,
+        "operator": "ge"
+      },
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "type": "function",
+          "function": {
+            "name": "agent_call",
+            "arguments": "{\"instruction\":\"Create a new todo item titled 'Clean parrot perches' assigned to the user with a deadline of tomorrow at 6:00 PM.\",\"observed_context\":\"At 00:33, four live parrots are visible simultaneously in the kitchen: a macaw on the left stand, an African grey parrot on the left counter, Brando on Marlene's shoulder, and Leo on the perch beside Tracy.\",\"user_goal\":\"Create a task on the user's todo list to clean the parrot perches by tomorrow at 6 PM.\",\"constraints_and_authorization\":\"User explicitly requested creating this todo item whenever 4 or more live parrots appear together.\",\"suggested_capabilities\":[\"todo_create\"],\"expected_output\":\"Confirmation of the created todo item including title, owner, and deadline.\",\"extracted_parameters\":[{\"name\":\"parrot_count\",\"value\":\"4\",\"evidence_time\":\"00:33\",\"evidence\":\"Four distinct live parrots are shown in the kitchen scene.\"}]}"
+          }
+        }
+      ]
+    },
+    "annotation": {
+      "fingerprint": "9ddcfe297deb79ddf6370298693fdcd022e8a3c361fa65c5c1e270656823db68",
+      "timeScore": 1,
+      "updatedAt": "2026-11-09T02:51:23.927Z",
+      "contentScore": 0
+    }
+  }
+]

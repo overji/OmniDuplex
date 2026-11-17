@@ -55,7 +55,7 @@
     "timeout": 60,
     "retries": 2
   },
-  "reward_mode": "confusion_judge",
+  "reward_mode": "local_turn_judge",
   "grpo_horizon": "full_video",
   "tensorboard": {
     "enabled": true,

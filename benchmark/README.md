@@ -1297,7 +1297,9 @@ CPU 单测已验证顺序、GPU 分组、独立输出路径和输入过滤；真
 
 ## Agent 纯文本协议试验
 
-新增显式 `--agent-output-protocol task-text`，模型输出 `回复<|task_start|>instruction`，不输出 JSON。仅支持 MiniCPM、Gander 和 JoyAI；旧协议及训练格式保持原样。三模型各 100 条插队试验、完整提示词、状态和自动续跑说明见 [试验说明](docs/task_text_agent100_20261024.md)。
+JoyAI / Gander 的新 realtime 运行默认使用 `--agent-output-protocol native`：JoyAI 输出原生 response/delegation 标记，Gander 使用原生 speaking/tool-call 动作，并将实际输出转为统一的 `task_start(instruction)` 供评测。RTD、PR 和 Probe 不受此 Agent 适配影响；旧结果保留，原生协议须使用新的结果目录。完整格式、Gander schema 与官方协议的区别及时间配对规则见 [原生 Agent 协议](docs/native_agent_protocol.md)。
+
+显式 `--agent-output-protocol task-text` 仍支持 MiniCPM、Gander 和 JoyAI，模型输出 `回复<|task_start|>instruction`，不输出 JSON。既有队列显式配置继续生效。三模型各 100 条历史试验、完整提示词、状态和自动续跑说明见 [试验说明](docs/task_text_agent100_20261024.md)。
 ## 单文件移交 LLM Judge
 
 本地 Qwen27B 的四实例内容评分也可直接复用 OmniPro 的服务配置，对 AOI-Bench
@@ -1434,6 +1436,24 @@ train/.venv/bin/python benchmark/scripts/watch_live_results.py \
 
 实时总入口 `latest_sft_live.md` 会直接列出基座与最新 SFT 的配对 Recall、Precision、F1、首次/后续召回及各分组 F1，并显示最新 SFT 相对基座的 `↑ / ↓ / →` 变化，单位为百分点（pp）。尚无共同成功数据时显示 N/A，不把缺失当成 0。变化始终基于同一批已完成 QA，不与历史模型全量成绩混算。
 
-### scored-F1 内容综合指标
+### scored-F1（Realtime）与 scored-Pair（Probe）
 
-原 C_all 已替换为 **scored-F1**：`2Q/(N+M)`，其中 Q 为归一化匹配内容质量之和，N 为参考数，M 为全部输出数。额外开口会降分；漏答没有质量信用；C_TP 保留。JSON 输出 `scored_f1` 为 [0,1]，报告显示百分比。Probe 会计入负侧误回复。公式、失败/缺失策略及旧结果兼容见 [scored-F1 协议](docs/scored_f1.md)。
+Realtime 的原 C_all 已替换为 **scored-F1**：`2Q/(N+M)`，其中 Q 为归一化匹配内容质量之和，N 为参考数，M 为全部输出数。额外开口会降分；漏答没有质量信用；C_TP 保留。JSON 输出 `scored_f1` 为 [0,1]，报告显示百分比。Probe 使用 **scored-Pair**：`Σ[pre=NO 且 post=YES] × q_post / 完整配对数`；任一侧错误，该对得 0。JSON 为 `scored_pair`，不再输出 Probe scored-F1。详见 [scored-F1 协议](docs/scored_f1.md)和 [scored-Pair 协议](docs/scored_pair.md)。
+
+## Omni-InteractScope 泛化实验（准备入口）
+
+仅比较 MiniCPM-o-4.5 基座与当前全量 SFT 最终 checkpoint，采用 AOI realtime 一对一 onset 匹配，
+保留官方时间窗口，文本 Judge 使用 Qwen3.8-27B。工具名称任务独立计分；不测视频 Judge 指标，
+不接入 Omni-DuplexEval。`external prepare` 只下载/校验数据并准备命令，不启动推理或 Judge。
+完整下载、905 个平台视频的来源与官方导入、覆盖范围、显式 GPU 分配及计分说明见
+[Omni-InteractScope 指引](docs/interactscope_aoi.md)。
+
+```bash
+python -m benchmark external prepare \
+  --config benchmark/configs/interactscope_aoi.json \
+  --output-dir benchmark/results/interactscope_aoi_prepared --download
+
+python -m benchmark external run \
+  --config benchmark/results/interactscope_aoi_prepared/experiment.json \
+  --model all --dry-run
+```

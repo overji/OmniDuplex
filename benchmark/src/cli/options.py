@@ -8,10 +8,11 @@ from benchmark.config.defaults import DEFAULTS, PROBE_ADAPTER_DEFAULTS
 def _configure_common(parser, model, *, local_model=True):
     parser.add_argument('--agent-call-schema', choices=('task-start', 'legacy'), default='task-start',
                         help='Benchmark call schema; legacy preserves the original agent_call contract')
-    protocols = (('text', 'structured', 'agent-token', 'task-text') if model == 'minicpmo'
-                 else ('text', 'structured', 'task-text') if model in ('joyai', 'livestar', 'moss_vl') else ('text', 'structured'))
-    parser.add_argument("--agent-output-protocol", choices=protocols, default=argparse.SUPPRESS,
-                        help="Optional structured Agent output; default preserves existing text protocol")
+    protocols = (('text', 'structured', 'task-text', 'native') if model == 'joyai'
+                 else ('text', 'structured', 'agent-token', 'task-text') if model == 'minicpmo'
+                 else ('text', 'structured', 'task-text') if model in ('livestar', 'moss_vl') else ('text', 'structured'))
+    parser.add_argument("--agent-output-protocol", choices=protocols, default='native' if model=='joyai' else argparse.SUPPRESS,
+                        help="Agent protocol; JoyAI/Gander new runs default to native")
     defaults = DEFAULTS[model]
     parser.add_argument("--data", type=Path, default=defaults["data"])
     parser.add_argument("--videos-dir", type=Path, default=defaults["videos_dir"])
@@ -57,9 +58,9 @@ def configure_gander(parser):
     configure_minicpmo(parser)
     for action in parser._actions:
         if action.dest == 'agent_output_protocol':
-            action.choices = ('text', 'task-text')
+            action.choices = ('text', 'task-text', 'native')
             action.help = 'Gander keeps its native tool-call action grammar; generic JSON/agent-token modes are incompatible'
-    parser.set_defaults(output_dir=DEFAULTS['minicpmo']['output_dir'].parent / 'gander',
+    parser.set_defaults(agent_output_protocol='native', output_dir=DEFAULTS['minicpmo']['output_dir'].parent / 'gander',
                         max_speak_tokens=11)
     parser.add_argument('--base-model-path', type=Path, required=True,
                         help='Frozen MiniCPM-o-4.5 base checkpoint used by released Gander Thinker')
@@ -293,3 +294,29 @@ def configure_omnipro(parser):
     for name in ('report', 'queue'):
         sub = commands.add_parser(name)
         sub.add_argument('--config', type=Path, required=True)
+
+
+def configure_external(parser):
+    commands = parser.add_subparsers(dest='external_command', required=True)
+    prepare = commands.add_parser('prepare', help='Prepare external AOI data and commands without inference')
+    prepare.add_argument('--config', type=Path, required=True)
+    prepare.add_argument('--output-dir', type=Path, required=True)
+    prepare.add_argument('--download', action='store_true', help='Download pinned hosted data and official code without proxy')
+    prepare.add_argument('--public-videos', type=Path, help='Import an existing public-video archive using the official checksum-verified importer')
+    prepare.add_argument('--skip-media-sha256', action='store_true', help='Explicitly accept reacquired videos using decoding instead of original byte size/SHA256')
+    acquire = commands.add_parser('acquire', help='Foreground platform-video download/crop without SHA256 verification')
+    acquire.add_argument('--config', type=Path, required=True)
+    acquire.add_argument('--cookies', type=Path, help='Optional user-supplied Netscape cookie file; never stored in reports')
+    acquire.add_argument('--sources', nargs='+', choices=('bilibili','douyin','xiaohongshu'))
+    acquire.add_argument('--browser-request', type=Path, help='Use a copied GET request only to seed a normal Douyin browser session')
+    acquire.add_argument('--browser-python', type=Path, help='Isolated Python with Playwright installed')
+    acquire.add_argument('--max-items',type=int,default=0,help='Browser smoke limit; 0 continues all pending Douyin videos')
+    run = commands.add_parser('run', help='Explicit foreground inference or text-only Judge')
+    run.add_argument('--config', type=Path, required=True)
+    run.add_argument('--model', required=True, help='Configured model label, or all')
+    run.add_argument('--gpus', nargs='+', help='Physical GPU IDs, required for inference; no default allocation')
+    run.add_argument('--stage', choices=('inference', 'judge'), default='inference')
+    run.add_argument('--judge-base-url', nargs='+', help='One or more local Qwen27B endpoints; round-robin across replicas')
+    run.add_argument('--dry-run', action='store_true', help='Read-only readiness and command check; no export or inference')
+    report = commands.add_parser('report', help='Refresh JSON/Markdown from existing results')
+    report.add_argument('--config', type=Path, required=True)

@@ -38,6 +38,16 @@ def load_config(path):
             config[k] != 1 for k in ('decision_weight', 'content_weight', 'call_weight'))):
         raise ValueError('plain_ce requires full_sft and unit decision/content/call weights')
     replay_segments = config.get('grpo_replay_checkpoint_segments', 0)
+    replay_mode = config.get('grpo_replay_mode', 'native_kv')
+    if replay_mode not in ('native_kv', 'full_sequence'):
+        raise ValueError('Invalid grpo_replay_mode')
+    if replay_mode == 'full_sequence' and (method != 'full_grpo'
+            or replay_segments or config.get('grpo_replay_checkpoint_feeds', False)):
+        raise ValueError('full_sequence requires full_grpo without native KV checkpoint options')
+    if type(config.get('grpo_vision_checkpointing', False)) is not bool:
+        raise ValueError('grpo_vision_checkpointing must be a boolean')
+    if type(config.get('grpo_replay_checkpoint_feeds', False)) is not bool:
+        raise ValueError('grpo_replay_checkpoint_feeds must be a boolean')
     if type(replay_segments) is not int or replay_segments < 0:
         raise ValueError('grpo_replay_checkpoint_segments must be a nonnegative integer')
     if config.get('grpo_evaluation') is not None:
@@ -118,31 +128,54 @@ def load_config(path):
     if type(depth) is not int or depth < 1 or depth > config['gradient_accumulation_steps']:
         raise ValueError('Judge pipeline depth must be between 1 and gradient_accumulation_steps')
     if config.get('grpo_candidate_parallel') or depth > 1 or config.get('grpo_precheck_replay') is False:
-        if method != 'full_grpo' or config.get('reward_backend') != 'llm':
+        if method != 'full_grpo' or config.get('reward_backend') not in ('llm', 'tp_full_credit'):
             raise ValueError('GRPO optimizations require LLM-judged full_grpo')
     if config.get('grpo_candidate_parallel'):
         if json.loads(Path(config['deepspeed_config']).read_text())['zero_optimization']['stage'] != 2:
             raise ValueError('Candidate parallel requires ZeRO-2')
     if method == 'full_grpo':
-        if type(config.get('group_size', 4)) is not int or config.get('group_size', 4) < 2 or config.get('kl_beta', 0) != 0:
-            raise ValueError('GRPO requires group_size >= 2 and kl_beta=0 in this implementation')
+        import math
+        beta = config.get('kl_beta', 0)
+        if type(config.get('group_size', 4)) is not int or config.get('group_size', 4) < 2:
+            raise ValueError('GRPO requires group_size >= 2')
+        if isinstance(beta, bool) or not isinstance(beta, (int, float)) or not math.isfinite(beta) or beta < 0:
+            raise ValueError('kl_beta must be finite and nonnegative')
+        if beta:
+            if config.get('kl_reference_device', 'cpu') not in ('cpu', 'cuda_offload'):
+                raise ValueError('kl_reference_device must be cpu or cuda_offload')
+            if config.get('reward_backend') not in ('llm', 'tp_full_credit') or config.get('reward_mode') != 'local_turn_judge':
+                raise ValueError('KL currently requires the judged local-turn GRPO path')
+            ref = config.get('kl_reference_model_path')
+            if not isinstance(ref, str) or not ref.strip():
+                raise ValueError('Nonzero kl_beta requires kl_reference_model_path')
+            path = Path(ref).expanduser()
+            config['kl_reference_model_path'] = str(path if path.is_absolute() else ROOT / path)
         if config.get('temperature', 1.) != 1.:
             raise ValueError('Native two-stage GRPO replay currently requires temperature=1')
         if not 0 < config.get('clip_epsilon', .2) < 1 or config.get('replay_logprob_tolerance', .15) <= 0:
             raise ValueError('Invalid GRPO clip or replay tolerance')
     backend = config.get('reward_backend', 'rules')
-    if backend not in ('rules', 'llm'):
+    if backend not in ('rules', 'llm', 'tp_full_credit'):
         raise ValueError('Unknown reward_backend')
     reward_mode = config.get('reward_mode', 'legacy')
-    if reward_mode not in ('legacy', 'confusion_judge'):
+    if reward_mode not in ('legacy', 'confusion_judge', 'local_turn_judge'):
         raise ValueError('Invalid reward_mode')
+    if backend == 'tp_full_credit' and reward_mode not in ('confusion_judge', 'local_turn_judge'):
+        raise ValueError('tp_full_credit requires confusion_judge or local_turn_judge')
+    if reward_mode == 'local_turn_judge':
+        if config.setdefault('grpo_advantage_mode', 'local') not in ('local', 'group_relative'):
+            raise ValueError('Invalid grpo_advantage_mode')
+        if config.setdefault('grpo_loss_aggregation', 'unit_weighted') not in ('token_mean', 'unit_weighted'):
+            raise ValueError('Invalid grpo_loss_aggregation')
+    elif any(key in config for key in ('grpo_advantage_mode', 'grpo_loss_aggregation')):
+        raise ValueError('GRPO advantage/aggregation selectors require local_turn_judge')
     if config.get('grpo_horizon', 'prefix') not in ('prefix', 'full_video'):
         raise ValueError('Invalid grpo_horizon')
-    if config.get('grpo_horizon') == 'full_video' and (method != 'full_grpo' or backend != 'llm'):
+    if config.get('grpo_horizon') == 'full_video' and (method != 'full_grpo' or backend not in ('llm', 'tp_full_credit')):
         raise ValueError('Full-video GRPO requires the judged training path')
-    if reward_mode == 'confusion_judge' and (method != 'full_grpo' or backend != 'llm'
+    if reward_mode in ('confusion_judge', 'local_turn_judge') and (method != 'full_grpo' or backend not in ('llm', 'tp_full_credit')
                                             or config.get('grpo_horizon') != 'full_video'):
-        raise ValueError('Confusion reward requires full-video LLM-judged GRPO')
+        raise ValueError('Confusion/local reward requires full-video LLM-judged GRPO')
     if backend == 'llm':
         import math
         from urllib.parse import urlparse
@@ -164,7 +197,9 @@ def load_config(path):
             judge[key] = str(path if path.is_absolute() else ROOT / path)
         if 'api_key' in judge:
             raise ValueError('Keep credentials in api_key_env, never in config')
-        reward_keys = (('tp', 'fn', 'fp', 'tn', 'invalid_call_penalty') if reward_mode == 'confusion_judge' else
+    if backend in ('llm', 'tp_full_credit'):
+        import math
+        reward_keys = (('tp', 'fn', 'fp', 'tn', 'invalid_call_penalty') if reward_mode in ('confusion_judge', 'local_turn_judge') else
                        ('timing', 'content', 'agent_timing', 'agent_content', 'agent_call', 'silence', 'invalid_call_penalty'))
         for key in reward_keys:
             value = config['reward_weights'][key]

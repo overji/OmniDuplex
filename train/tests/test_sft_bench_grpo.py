@@ -10,6 +10,43 @@ chain = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(chain)
 
 
+def test_no_judge_backend_needs_no_service_configuration(tmp_path):
+    path=tmp_path/'grpo.json';path.write_text(json.dumps({'reward_backend':'tp_full_credit'}))
+    config=dict(grpo_config=str(path),profile_config=str(path))
+    assert chain.needs_judge_service(config) is False
+    other=tmp_path/'profile.json';other.write_text(json.dumps({'reward_backend':'llm'}))
+    with pytest.raises(ValueError,match='backends differ'):
+        chain.needs_judge_service(dict(config,profile_config=str(other)))
+    assert chain.needs_judge_service(dict(grpo_config=str(other),profile_config=str(other))) is True
+
+
+@pytest.mark.parametrize('check_only',[True,False])
+def test_no_judge_controller_skips_service_gpu_checks_and_leases(tmp_path,monkeypatch,check_only):
+    from types import SimpleNamespace
+    scoring=tmp_path/'scoring.json';scoring.write_text(json.dumps({'reward_backend':'tp_full_credit'}))
+    env=tmp_path/'empty.env';env.write_text('')
+    config=dict(output=str(tmp_path/'controller'),grpo_config=str(scoring),profile_config=str(scoring),
+        profile_output=str(tmp_path/'profile'),grpo_output=str(tmp_path/'grpo'),
+        prepared=str(tmp_path/'prepared'),sft_prepared=str(tmp_path/'prepared'),
+        train_gpus=[4,5,6,7],python='/usr/bin/python',env_file=str(env),poll_seconds=1)
+    path=tmp_path/'chain.json';path.write_text(json.dumps(config))
+    monkeypatch.setattr('sys.argv',['chain','--config',str(path),'--grpo-only']+(['--check-only'] if check_only else []))
+    commands=[]
+    def popen(argv,**kwargs):
+        commands.append(argv)
+        return SimpleNamespace(pid=123456,returncode=0,poll=lambda:0)
+    with patch.object(chain,'verify_split',return_value={'train':2,'validation':1}), \
+         patch.object(chain,'verified_sft_export',return_value=tmp_path/'model'), \
+         patch.object(chain,'verify_profile'), \
+         patch.object(chain,'acquire_lease',side_effect=AssertionError('No Judge lease')), \
+         patch.object(chain.subprocess,'check_output',side_effect=AssertionError('No Judge GPU query')), \
+         patch.object(chain.subprocess,'Popen',side_effect=popen):
+        chain.main()
+    assert len(commands)==(0 if check_only else 2)
+    assert not any('serve_grpo_judge.py' in ' '.join(cmd) for cmd in commands)
+    assert not (tmp_path/'controller/gpu_lease.json').exists()
+
+
 def test_profile_requires_actual_finite_update(tmp_path):
     for rank in range(4):
         (tmp_path/f'memory_report.rank{rank}.json').write_text(json.dumps(dict(optimizer_steps=1,last_loss=.3)))

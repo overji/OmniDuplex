@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reaggregate existing predictions/Judge JSONL as scored-F1, without API or GPU."""
+"""Reaggregate existing predictions/Judge JSONL as scored-F1 (Realtime) or scored-Pair (Probe), without API or GPU."""
 import argparse
 import hashlib
 import json
@@ -11,7 +11,8 @@ sys.path.insert(0,str(ROOT))
 from benchmark.data.files import read_jsonl,write_json
 from benchmark.data.agent_schema import adapt_sample,run_schema
 from benchmark.evaluation import judge,probe_judge
-from benchmark.evaluation.scored_f1 import realtime_population,probe_population,VERSION
+from benchmark.evaluation.scored_f1 import realtime_population, VERSION
+from benchmark.evaluation.scored_pair import probe_population, VERSION as PAIR_VERSION
 
 
 def main():
@@ -54,8 +55,9 @@ def main():
         result=judge.summarize(results,negatives,len(samples),sum(p.get('status')=='complete' for p in predictions),population)
     else:result=probe_judge.summarize(results,counts,len(index),len(manifest),population)
     paths=[args.data,source,args.judgments]+([args.manifest] if args.manifest else [])
-    result.update(content_metric=VERSION,source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
+    result.update(content_metric=VERSION if args.mode=='realtime' else PAIR_VERSION,source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths})
     write_json(args.output,result)
-    print(json.dumps(dict(output=str(args.output),scored_f1=result['groups'].get('overall',{}).get('scored_f1'))))
+    metric = 'scored_f1' if args.mode == 'realtime' else 'scored_pair'
+    print(json.dumps(dict(output=str(args.output), **{metric:result['groups'].get('overall',{}).get(metric)})))
 
 if __name__=='__main__':main()

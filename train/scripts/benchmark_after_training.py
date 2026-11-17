@@ -92,6 +92,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--prepare-only', action='store_true', help='Validate data and DP plans without loading models')
+    parser.add_argument('--export-only', action='store_true', help='Export the verified final model without starting inference')
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
     directory = Path(config['output']); directory.mkdir(parents=True, exist_ok=True)
@@ -133,6 +134,9 @@ def main():
         exported = json.loads(marker.read_text())
         if exported['model'] != str(model) or exported['metadata_sha256'] != sha(model / 'full_training_model.json'):
             raise ValueError('Export identity changed')
+        if args.export_only:
+            mark('exported')
+            return
         mark('benchmark_running')
         with (directory / 'suite.log').open('ab') as log:
             subprocess.run(suite, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)

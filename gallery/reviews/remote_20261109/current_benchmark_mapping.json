@@ -1,0 +1,1624 @@
+[
+  {
+    "sampleIndex": 0,
+    "currentIndices": [
+      17
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 1,
+    "currentIndices": [
+      18
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 2,
+    "currentIndices": [
+      19
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 3,
+    "currentIndices": [
+      55
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 4,
+    "currentIndices": [
+      74
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 5,
+    "currentIndices": [
+      75
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 6,
+    "currentIndices": [
+      76
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 7,
+    "currentIndices": [
+      77
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 8,
+    "currentIndices": [
+      82
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 9,
+    "currentIndices": [],
+    "annotationPassed": false,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 10,
+    "currentIndices": [
+      98
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 11,
+    "currentIndices": [
+      99
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 12,
+    "currentIndices": [
+      115
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 13,
+    "currentIndices": [
+      116
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 14,
+    "currentIndices": [
+      117
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 15,
+    "currentIndices": [
+      118
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 16,
+    "currentIndices": [
+      130
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 17,
+    "currentIndices": [
+      131
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 18,
+    "currentIndices": [
+      134
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 19,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 20,
+    "currentIndices": [
+      171
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 21,
+    "currentIndices": [
+      185
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 22,
+    "currentIndices": [
+      201
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 23,
+    "currentIndices": [
+      202
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 24,
+    "currentIndices": [
+      214
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 25,
+    "currentIndices": [
+      215
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 26,
+    "currentIndices": [
+      219
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 27,
+    "currentIndices": [
+      220
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 28,
+    "currentIndices": [
+      248
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 29,
+    "currentIndices": [
+      249
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 30,
+    "currentIndices": [
+      257
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 31,
+    "currentIndices": [
+      263
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 32,
+    "currentIndices": [
+      264
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 33,
+    "currentIndices": [
+      269
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 34,
+    "currentIndices": [
+      308
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 35,
+    "currentIndices": [
+      309
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 36,
+    "currentIndices": [
+      311
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 37,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 38,
+    "currentIndices": [
+      318
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 39,
+    "currentIndices": [
+      319
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 40,
+    "currentIndices": [
+      345
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 41,
+    "currentIndices": [
+      346
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 42,
+    "currentIndices": [
+      350
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 43,
+    "currentIndices": [
+      353
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 44,
+    "currentIndices": [
+      377
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 45,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 46,
+    "currentIndices": [
+      389
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 47,
+    "currentIndices": [
+      392
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 48,
+    "currentIndices": [
+      413
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 49,
+    "currentIndices": [
+      414
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 50,
+    "currentIndices": [
+      415
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 51,
+    "currentIndices": [
+      424
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 52,
+    "currentIndices": [
+      425
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 53,
+    "currentIndices": [
+      464
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 54,
+    "currentIndices": [
+      474
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 55,
+    "currentIndices": [
+      475
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 56,
+    "currentIndices": [
+      476
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 57,
+    "currentIndices": [
+      496
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 58,
+    "currentIndices": [
+      497
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 59,
+    "currentIndices": [
+      504
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 60,
+    "currentIndices": [
+      505
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 61,
+    "currentIndices": [
+      518
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 62,
+    "currentIndices": [
+      521
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 63,
+    "currentIndices": [
+      562
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 64,
+    "currentIndices": [
+      563
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 65,
+    "currentIndices": [
+      564
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 66,
+    "currentIndices": [
+      576
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 67,
+    "currentIndices": [
+      577
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 68,
+    "currentIndices": [
+      590
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 69,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 70,
+    "currentIndices": [
+      598
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 71,
+    "currentIndices": [
+      599
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 72,
+    "currentIndices": [],
+    "annotationPassed": false,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 73,
+    "currentIndices": [
+      624
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 74,
+    "currentIndices": [
+      625
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 75,
+    "currentIndices": [
+      633
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 76,
+    "currentIndices": [
+      634
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 77,
+    "currentIndices": [
+      657
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 78,
+    "currentIndices": [
+      658
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 79,
+    "currentIndices": [
+      673
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 80,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 81,
+    "currentIndices": [
+      686
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 82,
+    "currentIndices": [
+      687
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 83,
+    "currentIndices": [
+      703
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 84,
+    "currentIndices": [
+      704
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 85,
+    "currentIndices": [
+      711
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 86,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 87,
+    "currentIndices": [
+      735
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 88,
+    "currentIndices": [
+      736
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 89,
+    "currentIndices": [
+      739
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 90,
+    "currentIndices": [
+      740
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 91,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 92,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 93,
+    "currentIndices": [
+      762
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 94,
+    "currentIndices": [
+      763
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 95,
+    "currentIndices": [
+      773
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 96,
+    "currentIndices": [
+      774
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 97,
+    "currentIndices": [
+      778
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 98,
+    "currentIndices": [
+      786
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 99,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 100,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 101,
+    "currentIndices": [
+      819
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 102,
+    "currentIndices": [
+      820
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 103,
+    "currentIndices": [
+      823
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 104,
+    "currentIndices": [
+      824
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 105,
+    "currentIndices": [
+      827
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 106,
+    "currentIndices": [
+      853
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 107,
+    "currentIndices": [
+      854
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 108,
+    "currentIndices": [
+      876
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 109,
+    "currentIndices": [
+      877
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 110,
+    "currentIndices": [
+      884
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 111,
+    "currentIndices": [
+      894
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 112,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 113,
+    "currentIndices": [
+      902
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 114,
+    "currentIndices": [
+      931
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 115,
+    "currentIndices": [
+      932
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 116,
+    "currentIndices": [
+      959
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 117,
+    "currentIndices": [
+      960
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 118,
+    "currentIndices": [
+      986
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 119,
+    "currentIndices": [
+      990
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 120,
+    "currentIndices": [
+      991
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 121,
+    "currentIndices": [
+      993
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 122,
+    "currentIndices": [
+      996
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 123,
+    "currentIndices": [
+      1029
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 124,
+    "currentIndices": [
+      1064
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 125,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 126,
+    "currentIndices": [
+      1075
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 127,
+    "currentIndices": [
+      1076
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 128,
+    "currentIndices": [
+      1082
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 129,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 130,
+    "currentIndices": [
+      1089
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 131,
+    "currentIndices": [
+      1102
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 132,
+    "currentIndices": [
+      1118
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 133,
+    "currentIndices": [
+      1122
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 134,
+    "currentIndices": [
+      1123
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 135,
+    "currentIndices": [
+      1133
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 136,
+    "currentIndices": [
+      1134
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 137,
+    "currentIndices": [
+      1135
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 138,
+    "currentIndices": [
+      1136
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 139,
+    "currentIndices": [
+      1147
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 140,
+    "currentIndices": [
+      1158
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 141,
+    "currentIndices": [
+      1173
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 142,
+    "currentIndices": [
+      1186
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 143,
+    "currentIndices": [
+      1220
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 144,
+    "currentIndices": [
+      1221
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 145,
+    "currentIndices": [
+      1227
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 146,
+    "currentIndices": [
+      1228
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 147,
+    "currentIndices": [
+      1259
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 148,
+    "currentIndices": [
+      1260
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 149,
+    "currentIndices": [
+      1313
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 150,
+    "currentIndices": [
+      1338
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 151,
+    "currentIndices": [
+      1339
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 152,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 153,
+    "currentIndices": [
+      1362
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 154,
+    "currentIndices": [
+      1363
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 155,
+    "currentIndices": [],
+    "annotationPassed": false,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 156,
+    "currentIndices": [
+      1389
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 157,
+    "currentIndices": [
+      1390
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 158,
+    "currentIndices": [
+      1391
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 159,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 160,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 161,
+    "currentIndices": [
+      1436
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 162,
+    "currentIndices": [
+      1437
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 163,
+    "currentIndices": [
+      1465
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 164,
+    "currentIndices": [
+      1466
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 165,
+    "currentIndices": [
+      1473
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 166,
+    "currentIndices": [
+      1491
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 167,
+    "currentIndices": [
+      1492
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 168,
+    "currentIndices": [
+      1519
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 169,
+    "currentIndices": [
+      1520
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 170,
+    "currentIndices": [
+      1528
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 171,
+    "currentIndices": [
+      1529
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 172,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 173,
+    "currentIndices": [
+      1564
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 174,
+    "currentIndices": [
+      1565
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 175,
+    "currentIndices": [
+      1572
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 176,
+    "currentIndices": [
+      1590
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 177,
+    "currentIndices": [
+      1604
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 178,
+    "currentIndices": [
+      1612
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 179,
+    "currentIndices": [
+      1613
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 180,
+    "currentIndices": [
+      1620
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 181,
+    "currentIndices": [
+      1621
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 182,
+    "currentIndices": [
+      1638
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 183,
+    "currentIndices": [
+      1639
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 184,
+    "currentIndices": [
+      1655
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 185,
+    "currentIndices": [
+      1684
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 186,
+    "currentIndices": [
+      1687
+    ],
+    "annotationPassed": false,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 187,
+    "currentIndices": [
+      1688
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 188,
+    "currentIndices": [
+      1704
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 189,
+    "currentIndices": [
+      1707
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 190,
+    "currentIndices": [
+      1708
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 191,
+    "currentIndices": [
+      1723
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 192,
+    "currentIndices": [
+      1742
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 193,
+    "currentIndices": [
+      1743
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 194,
+    "currentIndices": [
+      1759
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 195,
+    "currentIndices": [
+      1808
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 196,
+    "currentIndices": [
+      1818
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 197,
+    "currentIndices": [
+      1848
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 198,
+    "currentIndices": [
+      1849
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 199,
+    "currentIndices": [
+      1850
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 200,
+    "currentIndices": [
+      1851
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 201,
+    "currentIndices": [
+      1855
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 202,
+    "currentIndices": [
+      1856
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 203,
+    "currentIndices": [
+      1895
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 204,
+    "currentIndices": [],
+    "annotationPassed": true,
+    "responseExact": false
+  },
+  {
+    "sampleIndex": 205,
+    "currentIndices": [
+      1922
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 206,
+    "currentIndices": [
+      1923
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  },
+  {
+    "sampleIndex": 207,
+    "currentIndices": [
+      1959
+    ],
+    "annotationPassed": true,
+    "responseExact": true
+  }
+]

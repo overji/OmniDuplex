@@ -1,0 +1,16 @@
+{
+  "status": "ready",
+  "qa": 208,
+  "videos": 127,
+  "abilities": {
+    "object_counting": 92,
+    "action_counting": 116
+  },
+  "modes": {
+    "rtd": 72,
+    "pr": 62,
+    "agent": 74
+  },
+  "file": "AOI-Bench/counting/all_qa.json",
+  "range_checks": 127
+}

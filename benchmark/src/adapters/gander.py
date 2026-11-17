@@ -22,6 +22,8 @@ def run_config(args, prompt):
         str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
         for p in sorted(root.rglob('*.py'))}, sort_keys=True).encode()).hexdigest()
     name = 'agent_task_start_gander.txt' if getattr(args, 'agent_call_schema', 'legacy') == 'task-start' else 'gander_agent.txt'
+    if getattr(args, 'agent_output_protocol', 'text') == 'native':
+        name = 'agent_native_gander.txt'
     config['native_agent_prompt_sha256'] = hashlib.sha256((CONFIGS / 'prompts' / name).read_bytes()).hexdigest()
     config['native_tool_event_protocol'] = 'structured_metadata_v2'
     return config
@@ -94,6 +96,11 @@ def load(args):
 
 
 def run_sample(args, state, context):
+    if (getattr(args, 'agent_output_protocol', 'text') == 'native'
+            and context.sample.get('mode') == 'agent'):
+        from benchmark.data.native_agent import tools
+        state.model.tools = tools(context.sample)
+        return minicpmo.run_sample(args, state, context)
     state.model.tools = ([] if getattr(args, 'agent_output_protocol', 'text') == 'task-text'
                          else available_function_schemas(context.sample))
     if context.sample.get('mode') == 'agent':

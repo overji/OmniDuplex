@@ -98,6 +98,9 @@ def silence_score(sample, chunks):
 
 def judged_reward(sample, trajectory, judgments, config):
     """Semantic scores are validated 0..2 values; unmatched windows remain zero."""
+    if config.get('reward_mode') == 'local_turn_judge':
+        from train.src.domain.local_reward import local_reward
+        return local_reward(sample, trajectory, judgments, config)
     from train.src.domain.agent import training_sample
     from benchmark.evaluation.judge import SCORES
     sample = training_sample(sample)

@@ -134,7 +134,8 @@ def run_sample(args, state, context):
         duration = metadata["duration"]
         stop = min(duration, args.max_seconds) if args.max_seconds else duration
         question_time = seconds(sample["question_time"])
-        model.force_listen_count = int(question_time)
+        model.force_listen_count = (math.ceil(question_time) if sample.get('split_query_boundary')
+                                    else int(question_time))
         sample_prompt = context.build_prompt()
         model.prepare(prefix_system_prompt=sample_prompt)
         events = []
@@ -147,7 +148,14 @@ def run_sample(args, state, context):
             from benchmark.data.task_text import TaskTextStream
             token_stream = TaskTextStream(model.tokenizer)
         active_event = None
-        question_sent = False
+        native_events = None
+        if (getattr(args, 'agent_output_protocol', 'text') == 'native'
+                and sample.get('mode') == 'agent'):
+            from benchmark.data.native_agent import NativeAgentEvents
+            native_events = NativeAgentEvents()
+        # External query-free assistance has standing needs in its system
+        # context, not a synthetic user question at t=0.
+        question_sent = bool(sample.get('query_free', False))
         print(f"START sample={sample_index} task={sample['task']} duration={stop:.3f}s question={question_time}s", flush=True)
         with context.open_raw(".chunks.jsonl") as raw:
             def record_result(result, clock, kind, prefill_seconds):
@@ -157,6 +165,10 @@ def run_sample(args, state, context):
                          **{key: value for key, value in result.items() if key != "audio_waveform"}}
                 raw.write(json.dumps(entry, ensure_ascii=False, default=str) + "\n")
                 raw.flush()
+                if native_events is not None:
+                    if question_sent:
+                        events.extend(native_events.feed(result, clock))
+                    return
                 if token_stream is not None:
                     if question_sent:
                         event = token_stream.feed(result['generated_ids'], clock,
@@ -186,9 +198,10 @@ def run_sample(args, state, context):
                     print(f"RESPONSE sample={sample_index} at={active_event['onset_seconds']:.3f}s {active_event['text'][:180]}", flush=True)
                     active_event = None
 
-            for chunk_index in range(math.ceil(stop)):
-                start = float(chunk_index)
-                end = min(start + 1, stop)
+            boundaries = [float(i) for i in range(math.ceil(stop))] + [stop]
+            if sample.get('split_query_boundary') and 0 < question_time < stop:
+                boundaries = sorted(set(boundaries + [question_time]))
+            for chunk_index, (start, end) in enumerate(zip(boundaries, boundaries[1:])):
                 if not question_sent and start >= question_time:
                     question_sent = True
                     prefill = model.streaming_prefill(text_list=[user_request(sample)])
@@ -218,6 +231,8 @@ def run_sample(args, state, context):
                 record_result(result, end, "video_audio", prefill_seconds)
                 if (chunk_index + 1) % 30 == 0:
                     print(f"PROGRESS sample={sample_index} video={end:.0f}/{stop:.0f}s wall={time.perf_counter()-started:.1f}s", flush=True)
+        if native_events is not None:
+            events.extend(native_events.finish())
         if token_stream is not None:
             pending = token_stream.finish(complete=False)
             if pending is not None:

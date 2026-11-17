@@ -125,26 +125,26 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 train/.venv/bin/torchrun --standalone --nproc_per_n
 
 组内奖励标准化得到优势，采用clip=0.2的策略损失，`kl_beta=0`，不加载冻结参考模型。组内奖励相同时整组跳过、不推进优化步。采样后按原生feed边界做可微KV回放，先后验证无梯度和带梯度log-prob；最大误差超过0.15会报错，避免使用不一致的概率更新。默认启用激活CPU卸载，保存张量预算128 GiB，额外CPU优化器、媒体缓存等不计入该预算。
 
-输出额外包含 `trajectories.rankN.jsonl`（采样动作、事件、奖励），metrics含奖励方差、零方差跳过、回放误差及策略比值。GRPO目前没有独立验证集rollout指标循环；训练奖励不等于held-out benchmark成绩。profile只验证选中QA的一组候选，可能因零方差而没有实际优化更新；看metrics确认。完整模型使用同一个export命令导出。
+输出额外包含 `trajectories.rankN.jsonl`（采样动作、事件、奖励），metrics含奖励方差、零方差跳过、回放误差及策略比值。可通过 `grpo_evaluation` 配置固定验证集时间评测。profile只验证选中QA的一组候选；
+局部模式仅跳过局部信号全零的组，历史模式保留零方差跳过。实际更新数看metrics确认。完整模型使用同一个export命令导出。
 
 ## 语义Judge GRPO：独立沉默奖励与QA batch=4
 
-新配置 [minicpmo_full_grpo_judge.json](configs/minicpmo_full_grpo_judge.json) 显式设置 `reward_backend=llm`；旧GRPO配置及其字符相似度奖励不变。新配置指向当前SFT完成后的HF导出，要求存在 `full_training_model.json`，不能误用原始基座或直接传ZeRO checkpoint。当前SFT、训练后Realtime任务和6–7卡benchmark队列不变；本次没有启动Judge或GRPO。
+当前三个 LLM GRPO 模板均使用 `reward_mode=local_turn_judge`，要求完整视频 rollout 和本地 Judge。
+其中 [minicpmo_full_grpo_confusion_judge_dp4.json](configs/minicpmo_full_grpo_confusion_judge_dp4.json)
+包含四卡候选并行设置。`model_path` 需要指向实际采用的 SFT HF 导出，并存在
+`full_training_model.json`。本次修改仅更新代码与模板，启动命令仍需显式执行。
 
 Judge输入为问题、当前参考回复/证据文本/上下文、available工具定义及候选回复/调用，不输入视频和音频，也不传后续工具返回和完成回复。沿用benchmark的0/0.5/1/1.5/2五档语义标准，归一化到0–1；**仅评分一对一时间命中的回复**。未命中窗口贡献0，按全部参考窗口数归一化；Agent缺失/非法调用的调用分为0，不用文本相似度兜底。
 
-独立沉默分 `S=2*quiet_negative_seconds/negative_seconds-1`：从问题输入后的第一个合法整数输出秒，到实际rollout终点，排除所有参考闭区间窗口；负时间秒中没有**新发起回复**即视为正确等待。原生控制token和turn状态用于记录新开口；合法回答的跨秒续说不扣分，无负时间秒时S=0。
+局部 reward、advantage、归因及聚合公式见 [逐轮局部奖励说明](docs/grpo_local_reward.md)。
+正确回复和 FP 分别获得本轮有正负方向的更新；FN 归给窗口内等待，窗口被续说占满时归给整条占用回复。
+正确等待的整体权重为0.1。各回复内部平均、FN窗口内部平均，事件部分再按参考窗口数归一化。
+全沉默候选即使总分相同，也会接受局部 FN 梯度。
 
-| 任务 | 奖励 |
-| --- | --- |
-| RTD / PR | `0.4*T + 0.4*C + 0.2*S - 0.1*非法调用次数` |
-| Agent | `0.3*T + 0.3*C + 0.2*A + 0.2*S - 0.1*非法调用次数` |
-
-T为时间F1，C为归一化语义内容分，A为归一化instruction调用分。完全沉默通常只能获得0.2分，不能获得时间/内容/调用分；同组相同的沉默分会在优势标准化时抵消，不能靠常量加分解决零方差。文本Judge仍依赖参考标注，无法独立核实未提供的音视频事实，尾部漏标可能产生假负奖励。
-
-**batch含义：** 每条QA顺序采样4条候选，收集4个评分成功且奖励非零方差的QA组，再完成一次优化器更新，即QA batch=4、16条候选轨迹。四卡共同处理同一逻辑QA，不是独立QA DP，不再乘4得到QA batch=16。失败/零方差/不可行QA不占有效累积；epoch尾部不足4组用零损失图补齐边界，按实际组数归一化，不重复训练/丢弃有效QA。候选均在同一次权重更新前采样，保证on-policy回放。
-
-学习率1e-6、2 epochs、clip=.2、KL=0、300秒/32768 tokens和每秒20-token预算保持；checkpoint每50次更新保存并保留最新1份，所有权重必须在 `~/jimodels` 之外。新配置的profile不会强制将累积改成1，默认选4条较短QA；可能因零方差/排除导致不足4个有效组，实际数量看日志。
+QA batch、候选数、梯度累计、学习率、原生每秒20-token预算和保存周期沿用各模板设置。
+新模式要求重新 prepare，并使用新的外部输出目录；旧模式优化器状态无法直接续入。
+profile 的实际有效 QA 数和更新数以日志为准。
 
 ### 服务准备与后续启动
 
@@ -174,7 +174,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 train/.venv/bin/torchrun --standalone --nproc_per_n
   --output /remote-home/yushengliao/speech/jimodels/training_outputs/OmniDuplex/grpo_judge_smoke --max-steps 1
 ```
 
-正式运行去掉 `--max-steps 1` 并使用新的外部输出目录。支持复制配置加入已有 `wandb` 配置块。metrics/W&B记录时间/内容/调用/沉默分、实际QA/候选数、padding、累计全静默比例、零方差组比例、Judge请求/缓存/失败/重试、梯度范数（引擎可提供时）和回放差异。`step_wall_seconds` 包含收集轨迹、Judge及反向耗时，`backward_wall_seconds`单列更新阶段；只看反向耗时会严重低估GRPO成本。GRPO暂没有独立验证集rollout循环，奖励上升不能替代benchmark。
+正式运行去掉 `--max-steps 1` 并使用新的外部输出目录。支持复制配置加入已有 `wandb` 配置块。metrics/W&B记录时间/内容/调用/沉默分、实际QA/候选数、padding、累计全静默比例、零方差组比例、Judge请求/缓存/失败/重试、梯度范数（引擎可提供时）和回放差异。`step_wall_seconds` 包含收集轨迹、Judge及反向耗时，`backward_wall_seconds`单列更新阶段；只看反向耗时会严重低估GRPO成本。固定验证集 rollout 由 `grpo_evaluation` 配置控制。
 
 ## 独立QA数据并行与加速
 
@@ -295,9 +295,10 @@ train/.venv/bin/python -m train --config train/configs/minicpmo_full_sft_dp.json
 ### GRPO：显式 TP/FP/FN/TN 奖励
 
 使用 [`configs/minicpmo_full_grpo_confusion_judge.json`](configs/minicpmo_full_grpo_confusion_judge.json)
-显式启用 `reward_mode=confusion_judge`，沿用本地 LLM Judge 服务配置和 GRPO 命令。
+当前模板启用 `reward_mode=local_turn_judge`，逐轮方案见 [局部奖励说明](docs/grpo_local_reward.md)。
+以下公式描述保留兼容的历史 `reward_mode=confusion_judge`，可以显式配置进行消融。
 先将 `model_path` 配置为实际采用普通文本 Agent 协议的 SFT 导出，再重新 prepare，
-使用新的外部输出目录训练；旧 judged-GRPO 配置不改变。
+使用新的外部输出目录训练。
 
 TP由一对一窗口匹配确定，再用Judge质量转换为−1到+1；FN每次扣1，FP每次扣0.5，
 三项按参考窗口数归一化。真正等待的TN项按负侧秒数归一化，限制在±0.1；
@@ -306,6 +307,10 @@ TP由一对一窗口匹配确定，再用Judge质量转换为−1到+1；FN每�
 全部公式、分项日志与局限见 [奖励说明](docs/grpo_confusion_reward.md)。
 
 ## SFT → Realtime benchmark → GRPO 自动衔接
+
+临时不使用 LLM Judge 时，可选择 [`configs/minicpmo_full_grpo_tp_full_credit_dp4.json`](configs/minicpmo_full_grpo_tp_full_credit_dp4.json)，或将 GRPO 配置的 `reward_backend` 显式设为 `tp_full_credit`。时间匹配的 TP 合成评分为满分，Agent 的 response/call 都记2分；FP/FN/TN 和非法调用格式惩罚保持。无需 Judge 服务、API 或额外 GPU。使用相同的 `profile/grpo` CLI；自动衔接脚本也会跳过 Judge 启动和占卡预约。此配置不自动启动实验，具体语义与兼容规则见[临时 TP 满分模式](docs/grpo_local_reward.md#临时-tp-满分模式无-llm-judge)。
+
+局部 GRPO 可选冻结 SFT 参考 KL：设置非零 `kl_beta` 与 `kl_reference_model_path`，示例见 [`configs/minicpmo_full_grpo_tp_full_credit_kl_dp4.json`](configs/minicpmo_full_grpo_tp_full_credit_kl_dp4.json)。每个 rank 在 CPU 加载一份参考模型并回放采样轨迹，耗时及内存开销很大；先在空闲资源上运行 profile。β 默认仍为 0，示例 0.01 仅用于实验。公式、聚合和当前验证范围见[可选冻结参考 KL](docs/grpo_local_reward.md#可选冻结参考-kl)。
 
 `train/scripts/sft_bench_grpo.py --config <chain.json>` 按操作配置顺序执行：验证 SFT 正常保存最终 checkpoint，导出到仓库外，运行已有 realtime DP suite，再启动本地 Judge、GRPO profile 和正式 GRPO。`--check-only` 只检查配置和视频级数据划分，不加载模型。配置显式指定 benchmark 配置、GRPO/profile 配置、prepared、外部权重目录、GPU、Judge、待完成的 OmniPro 状态和现有队列 transition 路径。
 
@@ -421,3 +426,30 @@ train/.venv/bin/python -m train \
 多步显存/主存预检：`profile_gradient_accumulation_steps` 与 `profile_optimizer_steps` 均默认 1，可在 profile 配置中显式提高，以覆盖缓存复用和真实梯度累计；正式训练的累计配置不受这两个 profile 参数影响。本轮八卡训练配置和运行路径见 [连续训练内存修复记录](docs/plain_ce_filtered18315_dp8_allocatorfix_20261105.md)。
 
 SFT 可通过 `--metrics-dir /本地新目录` 将数值 JSONL 日志与外部权重存储分开。输出目录保留同名软链接，checkpoint 仍写原外部存储。控制器可显式配置 `resume_checkpoint` 和 `metrics_dir`，恢复时校验分片/RNG/训练配置，训练入口进一步校验 identity 并恢复优化器与游标。实际恢复路径和 TensorBoard run 见 [step350 存储恢复记录](docs/plain_ce_resume350_storage_recovery_20261107.md)。
+
+2026-11-10 已为当前 1,852 步全量 SFT 接入新的分卡评测等待器，配置位于
+`train/outputs/full18315_final_split_bench_20261110/chain.json`：训练完整结束并导出
+`checkpoint-final` 后，0–3 卡评测冻结的 1,941 条 AOI-Bench，4–7 卡评测 2,700 条
+OmniPro，仅运行 Realtime。后续保留四实例 Qwen3.8-27B 内容 Judge，结果汇总至
+`benchmark/results/latest_full18315_sft_live.md`。旧 MOSS/Probe 队列不再自动恢复。
+
+评测前现已插入诊断阶段：两套数据分别固定随机抽取 50 条 QA，每条按 seed
+42–49 生成 8 条完整视频轨迹，共 800 条。两组均完成后才评测其余 QA；正式结果
+固定复用第 0 条轨迹（seed 42），不按分数挑选。原有采样、提示词和时间协议保持
+一致。配置为同目录 `rollout_aoi.json`、`rollout_omnipro.json`，轨迹保存在各结果目录的
+`diagnostic_rollouts/rollouts.jsonl`，逐秒原始输出留在各 `rollout_XX/worker_*/` 中。
+这些是评测诊断数据，不进入 GRPO 训练。断点恢复及文件说明见
+[多次 rollout 诊断](../benchmark/docs/diagnostic_rollouts.md)。
+
+已有训练可由 [sft_then_split_bench.py](scripts/sft_then_split_bench.py) 的
+`--benchmarks-only --config <JSON>` 模式等待并评测，不重新启动训练；配置中的
+`training_processes` 保存各 PID 和 `/proc` 启动标识，防止 PID 复用导致错误等待。
+该模式仍检查输入哈希、所有 rank 的最终更新数以及完整模型、优化器和 RNG 文件，
+不接受提前停止或不完整的 checkpoint。先加 `--check-only` 可只做配置校验。
+
+## GRPO 消融实验
+
+普通 GRPO、仅局部 advantage、仅修改聚合与完整方案共用 `local_turn_judge` 评分器，
+通过 `grpo_advantage_mode` 和 `grpo_loss_aggregation` 两个开关选择。三个新增四卡模板、
+共享数据准备、运行命令和采样预算说明见 [四组对照指引](docs/grpo_ablations.md)。
+正式对照按相同 QA、epoch 和每题候选数对齐，额外报告实际更新数及跳过率。

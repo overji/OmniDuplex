@@ -82,6 +82,14 @@ def verified_sft_export(config):
             raise ValueError('GRPO/profile model differs from verified SFT export')
     return model
 
+def needs_judge_service(config):
+    """Keep no-Judge pilots independent of service configs and GPU leases."""
+    backend = read(config['grpo_config']).get('reward_backend', 'llm')
+    if backend != read(config['profile_config']).get('reward_backend', 'llm'):
+        raise ValueError('GRPO and profile reward backends differ')
+    return backend != 'tp_full_credit'
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
@@ -98,14 +106,15 @@ def main():
     from train.scripts.benchmark_after_training import external_weights
     for key in ('profile_output', 'grpo_output'):
         external_weights(c[key])
-    if set(c['train_gpus']) & {read(c['judge_config'])['gpu']}:
+    use_judge = needs_judge_service(c)
+    if use_judge and set(c['train_gpus']) & {read(c['judge_config'])['gpu']}:
         raise ValueError('Judge GPU overlaps training GPUs')
     counts = verify_split(c['prepared'], c['sft_prepared'])
     if args.grpo_only:
         verified_sft_export(c)
     if args.check_only:
         print(json.dumps(dict(status='validated', counts=counts, train_gpus=c['train_gpus'],
-                              judge_gpu=read(c['judge_config'])['gpu'])))
+                              judge_gpu=read(c['judge_config'])['gpu'] if use_judge else None)))
         return
     children = []
     def mark(stage, **extra):
@@ -152,25 +161,28 @@ def main():
                 raise RuntimeError('Realtime benchmark did not finish successfully; GRPO not started')
             # OmniPro also evaluates this final SFT; let all its inference and judge jobs finish.
             wait_for(lambda: read(c['omnipro_status']).get('stage') == 'complete', 'waiting_for_omnipro')
-        acquire_lease(c, lease)
-        gpu = read(c['judge_config'])['gpu']
-        def gpu_free():
-            used = subprocess.check_output(['nvidia-smi', f'--id={gpu}', '--query-gpu=memory.used',
-                                            '--format=csv,noheader,nounits'], text=True)
-            return int(used.strip()) <= read(c['judge_config'])['max_occupied_memory_mib']
-        wait_for(gpu_free, 'waiting_for_judge_gpu_existing_worker')
-        judge = start([c['python'], str(ROOT/'train/scripts/serve_grpo_judge.py'),
-                       '--config', c['judge_config'], '--start'], 'judge')
-        deadline = time.time()+c['judge_startup_timeout_seconds']
-        def ready():
-            if judge.poll() is not None or time.time() > deadline:
-                raise RuntimeError('Judge exited or startup timed out')
-            try:
-                with urllib.request.urlopen(c['judge_health_url'], timeout=5) as response:
-                    return response.status == 200
-            except OSError:
-                return False
-        wait_for(ready, 'starting_judge')
+        if use_judge:
+            acquire_lease(c, lease)
+            gpu = read(c['judge_config'])['gpu']
+            def gpu_free():
+                used = subprocess.check_output(['nvidia-smi', f'--id={gpu}', '--query-gpu=memory.used',
+                                                '--format=csv,noheader,nounits'], text=True)
+                return int(used.strip()) <= read(c['judge_config'])['max_occupied_memory_mib']
+            wait_for(gpu_free, 'waiting_for_judge_gpu_existing_worker')
+            judge = start([c['python'], str(ROOT/'train/scripts/serve_grpo_judge.py'),
+                           '--config', c['judge_config'], '--start'], 'judge')
+            deadline = time.time()+c['judge_startup_timeout_seconds']
+            def ready():
+                if judge.poll() is not None or time.time() > deadline:
+                    raise RuntimeError('Judge exited or startup timed out')
+                try:
+                    with urllib.request.urlopen(c['judge_health_url'], timeout=5) as response:
+                        return response.status == 200
+                except OSError:
+                    return False
+            wait_for(ready, 'starting_judge')
+        else:
+            mark('judge_disabled', reward_backend='tp_full_credit')
         env = {**os.environ, 'CUDA_VISIBLE_DEVICES': ','.join(map(str, c['train_gpus'])),
                'PYTHONPATH': str(ROOT), 'CUDA_DEVICE_ORDER': 'PCI_BUS_ID', 'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1'}
         # Read secrets only into the subprocess environment, never into config/status/logs.

@@ -42,6 +42,7 @@ def confusion_reward(sample, trajectory, judgments, config):
         parsed.append((item, valid_call))
         invalid += bool(item['attempted'] and not valid_call)
     tp_sum = content = calls = 0.
+    full_credit = config.get('reward_backend') == 'tp_full_credit'
     for match in matched['matches']:
         item = judgments.get(match['response_index'])
         if not item or item.get('status') != 'complete':
@@ -52,14 +53,14 @@ def confusion_reward(sample, trajectory, judgments, config):
                 raise ValueError('Invalid judge ' + key)
             return value / 2
         response, valid_call = parsed[match['event_index']]
-        qr = score('response_score')
-        if not response['response'].strip():
+        qr = 1. if full_credit else score('response_score')
+        if not full_credit and not response['response'].strip():
             qr = 0.
         content += qr / n
         q = qr
         if sample['mode'] == 'agent':
-            qa = score('call_score')
-            if not valid_call:
+            qa = 1. if full_credit else score('call_score')
+            if not full_credit and not valid_call:
                 qa = 0.
             calls += qa / n
             q = (qr + qa) / 2

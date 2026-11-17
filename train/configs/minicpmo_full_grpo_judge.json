@@ -38,12 +38,10 @@
   "save_total_limit": 1,
   "save_profile_checkpoint": false,
   "reward_weights": {
-    "timing": 0.4,
-    "content": 0.4,
-    "agent_timing": 0.3,
-    "agent_content": 0.3,
-    "agent_call": 0.2,
-    "silence": 0.2,
+    "tp": 1.0,
+    "fn": 1.0,
+    "fp": 0.5,
+    "tn": 0.1,
     "invalid_call_penalty": 0.1
   },
   "judge": {
@@ -56,5 +54,7 @@
     "concurrency": 8,
     "timeout": 60,
     "retries": 2
-  }
+  },
+  "reward_mode": "local_turn_judge",
+  "grpo_horizon": "full_video"
 }

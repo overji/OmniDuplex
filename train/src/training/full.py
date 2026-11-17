@@ -20,9 +20,15 @@ def run(args, config):
     """组织ZeRO全参SFT/GRPO。各rank处理同一逻辑QA，保持条件媒体模块的collective顺序；只在完整优化器边界保存/停止。"""
     from train.src.domain.agent import validate_prepared
     validate_prepared(json.loads((args.prepared / 'manifest.json').read_text()), config)
-    if config.get('reward_backend') == 'llm':
+    scored_grpo = config.get('reward_backend') in ('llm', 'tp_full_credit')
+    if scored_grpo:
         forbidden = Path.home() / 'jimodels'
-        for path in (args.output, Path(config['model_path']), Path(config['judge']['model_path'])):
+        paths = [args.output, Path(config['model_path'])]
+        if config.get('kl_beta', 0):
+            paths.append(Path(config['kl_reference_model_path']))
+        if config.get('reward_backend') == 'llm':
+            paths.append(Path(config['judge']['model_path']))
+        for path in paths:
             if path.resolve() == forbidden or forbidden in path.resolve().parents:
                 raise ValueError('Model weights/checkpoints must be physically outside ~/jimodels')
         if config.get('require_sft_checkpoint', True) and not (Path(config['model_path']) / 'full_training_model.json').is_file():
@@ -37,7 +43,7 @@ def run(args, config):
         candidate_ids(config, rank, world)
         if json.loads(Path(config['deepspeed_config']).read_text())['zero_optimization']['stage'] != 2:
             raise ValueError('Independent candidates require ZeRO-2: ZeRO-3 forward collectives would deadlock')
-    if args.profile and config.get('reward_backend') != 'llm':
+    if args.profile and not scored_grpo:
         config['gradient_accumulation_steps'] = config.get('profile_gradient_accumulation_steps', 1)
     exists = torch.tensor(int(args.output.exists()) if rank == 0 else 0, device=device)
     torch.distributed.broadcast(exists, src=0)
@@ -72,7 +78,7 @@ def run(args, config):
                 raise ValueError('Requested profile QA is absent from prepared train split')
             records = [by_index[i] for i in requested]
         else:
-            size = config['gradient_accumulation_steps'] if config.get('reward_backend') == 'llm' else (world if independent else 1)
+            size = config['gradient_accumulation_steps'] if scored_grpo else (world if independent else 1)
             records = sorted(records, key=lambda r: max(t['onset_seconds'] for t in r['targets']))[:size]
         validation = []
     if not records:
@@ -124,10 +130,24 @@ def run(args, config):
             write_json(args.output / 'resume_state.json', dict(checkpoint=str(args.resume),
                 optimizer_steps=engine.global_steps, epoch=epoch_start, cursor=cursor,
                 restored_optimizer=True, restored_rng=True))
-    if config.get('reward_backend') == 'llm':
+    if scored_grpo:
+        reference = None
+        reference_error = None
+        if config.get('kl_beta', 0):
+            from train.src.infrastructure.distributed import rng_state
+            before_reference = rng_state()
+            try:
+                from train.src.models.reference_kl import FrozenReference
+                reference = FrozenReference(config, duplex, device)
+            except Exception as exc:
+                reference_error = exc
+            finally:
+                restore_rng(before_reference)
+            if not all_true(reference_error is None, device):
+                raise RuntimeError(f'Could not load frozen KL reference on a rank: {reference_error!r}')
         from train.src.training.grpo_judged import run as run_judged
         return run_judged(engine, model, duplex, records, args, config, device, rank, world,
-                          identity, tracking, started, epoch_start, cursor)
+                          identity, tracking, started, epoch_start, cursor, reference)
     # High-frequency telemetry can use local storage while weights stay external.
     # This operational path is intentionally outside checkpoint/config identity.
     metrics_dir = getattr(args, 'metrics_dir', None) or args.output

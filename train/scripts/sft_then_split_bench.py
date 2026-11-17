@@ -58,8 +58,11 @@ def validate(config, train_only=False):
         raise ValueError('Training GPUs must be nonempty and distinct')
     if not train_only:
         aoi, omni = config['aoi_gpus'], config['omnipro_gpus']
-        if set(aoi) & set(omni) or set(aoi) | set(omni) != set(config['train_gpus']):
-            raise ValueError('Benchmark pools must partition the training GPUs')
+        pool = config.get('benchmark_gpus', config['train_gpus'])
+        if not pool or len(set(pool)) != len(pool):
+            raise ValueError('Benchmark GPUs must be nonempty and distinct')
+        if set(aoi) & set(omni) or set(aoi) | set(omni) != set(pool):
+            raise ValueError('Benchmark pools must partition the configured benchmark GPUs')
     if training['decision_loss_mode'] != 'plain_ce' or training['parallel_mode'] != 'data_parallel':
         raise ValueError('This comparison requires independent-QA ordinary CE SFT')
     prepared = Path(config['prepared'])
@@ -89,6 +92,16 @@ def validate(config, train_only=False):
         for relative in ('benchmark/scripts/watch_live_results.py', 'benchmark/src/evaluation/live_report.py'):
             if not (Path(config['runtime_root']) / relative).is_file():
                 raise ValueError('Frozen runtime is missing reporting component: ' + relative)
+    if config.get('rollout_configs'):
+        from benchmark.runtime.rollout_stage import parse_parallel
+        if len(config['rollout_configs']) != 2:
+            raise ValueError('Provide one diagnostic rollout configuration per dataset')
+        for path, pool in zip(config['rollout_configs'], (config['aoi_gpus'], config['omnipro_gpus'])):
+            stage = json.loads(Path(path).read_text())
+            args, controls = parse_parallel(stage['full_command'])
+            if (list(map(str, controls['gpus'])) != list(map(str, pool))
+                    or args.model_path.resolve() != Path(config['export_model']).resolve()):
+                raise ValueError('Diagnostic model/GPU pool differs from the full evaluation')
     if config.get('continuation') is not None:
         if (not isinstance(config['continuation'],list) or not config['continuation']
                 or any(not isinstance(arg,str) or not arg for arg in config['continuation'])
@@ -99,15 +112,27 @@ def validate(config, train_only=False):
     return dict(global_batch_size=batch, expected_steps=steps, counts=manifest['counts'])
 
 
+def training_processes_alive(config):
+    """Wait for the recorded run only; a reused PID must not block evaluation."""
+    from benchmark.scripts.watch_benchmark_queue import process
+    return any((current := process(item['pid'])) and current['start'] == item['start']
+               for item in config['training_processes'])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--check-only', action='store_true')
     parser.add_argument('--omnipro-only', action='store_true')
     parser.add_argument('--train-only', action='store_true', help='Profile and train on assigned GPUs, without taking benchmark GPUs')
+    parser.add_argument('--benchmarks-only', action='store_true',
+                        help='Wait for an existing training run, then evaluate its complete final checkpoint')
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
-    if args.train_only and args.omnipro_only:parser.error('Choose one execution mode')
+    if sum((args.train_only, args.omnipro_only, args.benchmarks_only)) > 1:
+        parser.error('Choose one execution mode')
+    if args.benchmarks_only and 'training_processes' not in config:
+        parser.error('benchmarks-only requires recorded training process identities')
     verified = validate(config, train_only=args.train_only)
     if args.check_only:
         print(json.dumps(dict(status='validated', **verified)))
@@ -146,76 +171,87 @@ def main():
         children.append(child)
         return child
     try:
-        if Path(config['training_output']).exists() or (config.get('export_model') and Path(config['export_model']).exists()):
-            raise ValueError('Use fresh training/export directories; never overwrite checkpoints')
-        if config.get('wait_for_previous'):
-            mark('waiting_for_previous_benchmarks_and_judge')
-            while not previous_ready(config['wait_for_previous']):
+        if args.benchmarks_only:
+            mark('waiting_for_training', training_processes=config['training_processes'])
+            while training_processes_alive(config):
                 if (directory / 'STOP').exists():
                     raise KeyboardInterrupt
                 time.sleep(config['poll_seconds'])
-            validate(config, train_only=args.train_only)  # Recheck immutable inputs after waiting.
-        release_deadline = time.time() + config.get('gpu_release_timeout_seconds', 0)
-        while True:
-            used = subprocess.check_output(['nvidia-smi', '--query-gpu=index,memory.used',
-                                           '--format=csv,noheader,nounits'], text=True).splitlines()
-            occupied = any(line.split(',')[0].strip() in config['train_gpus']
-                           and int(line.split(',')[1]) > 2048 for line in used)
-            if not occupied:
-                break
-            if time.time() >= release_deadline:
-                raise RuntimeError('Training GPUs are occupied; refusing overlap')
-            mark('waiting_for_gpu_release')
-            if (directory / 'STOP').exists():
-                raise KeyboardInterrupt
-            time.sleep(config['poll_seconds'])
-        env = dict(os.environ, PYTHONPATH=config['runtime_root'], CUDA_DEVICE_ORDER='PCI_BUS_ID',
-                   CUDA_VISIBLE_DEVICES=','.join(config['train_gpus']), PYTHONUNBUFFERED='1',
-                   HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
-        if config.get('profile_config'):
-            if Path(config['profile_output']).exists():
-                raise ValueError('Use a fresh profile output directory')
-            profile = launch([config['python'], '-m', 'torch.distributed.run', '--standalone',
-                f'--nproc_per_node={len(config["train_gpus"])}', '-m', 'train', '--config', config['profile_config'],
-                'profile', '--prepared', config['prepared'], '--output', config['profile_output']], 'profile', env)
-            mark('sft_profile' if args.train_only else 'eight_gpu_profile', child_pid=profile.pid,
-                 world_size=len(config['train_gpus']))
-            available_min = float('inf')
-            while profile.poll() is None:
-                available = int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines()
-                                     if line.startswith('MemAvailable:'))) / 2**20
-                available_min = min(available_min, available)
-                write_json(directory / 'profile_memory.json', dict(minimum_host_available_gib=available_min, at=time.time()))
-                if available < config['min_host_available_gib']:
-                    raise RuntimeError('Profile host memory reserve exhausted; no automatic parameter changes')
+            validate(config)  # Frozen data/runtime identities must still match.
+            env = dict(os.environ, PYTHONPATH=config['runtime_root'],
+                       CUDA_DEVICE_ORDER='PCI_BUS_ID', PYTHONUNBUFFERED='1',
+                       HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
+        else:
+            if Path(config['training_output']).exists() or (config.get('export_model') and Path(config['export_model']).exists()):
+                raise ValueError('Use fresh training/export directories; never overwrite checkpoints')
+            if config.get('wait_for_previous'):
+                mark('waiting_for_previous_benchmarks_and_judge')
+                while not previous_ready(config['wait_for_previous']):
+                    if (directory / 'STOP').exists():
+                        raise KeyboardInterrupt
+                    time.sleep(config['poll_seconds'])
+                validate(config, train_only=args.train_only)  # Recheck immutable inputs after waiting.
+            release_deadline = time.time() + config.get('gpu_release_timeout_seconds', 0)
+            while True:
+                used = subprocess.check_output(['nvidia-smi', '--query-gpu=index,memory.used',
+                                               '--format=csv,noheader,nounits'], text=True).splitlines()
+                occupied = any(line.split(',')[0].strip() in config['train_gpus']
+                               and int(line.split(',')[1]) > 2048 for line in used)
+                if not occupied:
+                    break
+                if time.time() >= release_deadline:
+                    raise RuntimeError('Training GPUs are occupied; refusing overlap')
+                mark('waiting_for_gpu_release')
                 if (directory / 'STOP').exists():
                     raise KeyboardInterrupt
                 time.sleep(config['poll_seconds'])
-            if profile.returncode:
-                raise RuntimeError('Memory/profile test failed; full training will not start')
-            from train.scripts.sft_bench_grpo import verify_profile
-            profile_settings = json.loads(Path(config['profile_config']).read_text())
-            verify_profile(config['profile_output'], len(config['train_gpus']),
-                           profile_settings.get('profile_optimizer_steps', 1))
-            for rank in range(len(config['train_gpus'])):
-                report = json.loads((Path(config['profile_output']) / f'memory_report.rank{rank}.json').read_text())
-                if report.get('excluded') or report.get('checkpoint_saved'):
-                    raise RuntimeError('Profile excluded a selected QA or unexpectedly saved weights')
-            write_json(directory / 'profile_complete.json', dict(output=config['profile_output'],
-                       minimum_host_available_gib=available_min))
-            children.remove(profile)
-        train_argv = [config['python'], '-m', 'torch.distributed.run', '--standalone',
-            f'--nproc_per_node={len(config["train_gpus"])}', '-m', 'train', '--config', config['training_config'],
-            'run', '--prepared', config['prepared'], '--output', config['training_output']]
-        if config.get('resume_checkpoint'):
-            train_argv += ['--resume', config['resume_checkpoint']]
-        if config.get('metrics_dir'):
-            train_argv += ['--metrics-dir', config['metrics_dir']]
-        child = launch(train_argv, 'training', env)
-        mark('plain_ce_training', child_pid=child.pid, **verified)
-        if child.wait():
-            raise RuntimeError('Plain-CE SFT failed; benchmarks will not start')
-        children.remove(child)
+            env = dict(os.environ, PYTHONPATH=config['runtime_root'], CUDA_DEVICE_ORDER='PCI_BUS_ID',
+                       CUDA_VISIBLE_DEVICES=','.join(config['train_gpus']), PYTHONUNBUFFERED='1',
+                       HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
+            if config.get('profile_config'):
+                if Path(config['profile_output']).exists():
+                    raise ValueError('Use a fresh profile output directory')
+                profile = launch([config['python'], '-m', 'torch.distributed.run', '--standalone',
+                    f'--nproc_per_node={len(config["train_gpus"])}', '-m', 'train', '--config', config['profile_config'],
+                    'profile', '--prepared', config['prepared'], '--output', config['profile_output']], 'profile', env)
+                mark('sft_profile' if args.train_only else 'eight_gpu_profile', child_pid=profile.pid,
+                     world_size=len(config['train_gpus']))
+                available_min = float('inf')
+                while profile.poll() is None:
+                    available = int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines()
+                                         if line.startswith('MemAvailable:'))) / 2**20
+                    available_min = min(available_min, available)
+                    write_json(directory / 'profile_memory.json', dict(minimum_host_available_gib=available_min, at=time.time()))
+                    if available < config['min_host_available_gib']:
+                        raise RuntimeError('Profile host memory reserve exhausted; no automatic parameter changes')
+                    if (directory / 'STOP').exists():
+                        raise KeyboardInterrupt
+                    time.sleep(config['poll_seconds'])
+                if profile.returncode:
+                    raise RuntimeError('Memory/profile test failed; full training will not start')
+                from train.scripts.sft_bench_grpo import verify_profile
+                profile_settings = json.loads(Path(config['profile_config']).read_text())
+                verify_profile(config['profile_output'], len(config['train_gpus']),
+                               profile_settings.get('profile_optimizer_steps', 1))
+                for rank in range(len(config['train_gpus'])):
+                    report = json.loads((Path(config['profile_output']) / f'memory_report.rank{rank}.json').read_text())
+                    if report.get('excluded') or report.get('checkpoint_saved'):
+                        raise RuntimeError('Profile excluded a selected QA or unexpectedly saved weights')
+                write_json(directory / 'profile_complete.json', dict(output=config['profile_output'],
+                           minimum_host_available_gib=available_min))
+                children.remove(profile)
+            train_argv = [config['python'], '-m', 'torch.distributed.run', '--standalone',
+                f'--nproc_per_node={len(config["train_gpus"])}', '-m', 'train', '--config', config['training_config'],
+                'run', '--prepared', config['prepared'], '--output', config['training_output']]
+            if config.get('resume_checkpoint'):
+                train_argv += ['--resume', config['resume_checkpoint']]
+            if config.get('metrics_dir'):
+                train_argv += ['--metrics-dir', config['metrics_dir']]
+            child = launch(train_argv, 'training', env)
+            mark('plain_ce_training', child_pid=child.pid, **verified)
+            if child.wait():
+                raise RuntimeError('Plain-CE SFT failed; benchmarks will not start')
+            children.remove(child)
         run_config = Path(config['training_output']) / 'run_config.json'
         if args.train_only:
             checkpoint=completed_training(dict(training_output=config['training_output'],
@@ -237,6 +273,28 @@ def main():
         write_json(benchmark_path, benchmark)
         completed_training(benchmark)  # requires final reports and all eight checkpoint shards
         env['CUDA_VISIBLE_DEVICES'] = ''
+        if config.get('rollout_configs'):
+            # Export once, then finish BOTH diagnostic sets before either full run.
+            exporter = launch([config['python'], str(ROOT / 'train/scripts/benchmark_after_training.py'),
+                               '--config', str(benchmark_path), '--export-only'], 'diagnostic_export', env)
+            mark('exporting_for_rollouts', child_pid=exporter.pid)
+            if exporter.wait():
+                raise RuntimeError('Final export failed; diagnostic rollouts will not start')
+            children.remove(exporter)
+            rollouts = [launch([benchmark['benchmark_python'],
+                        str(ROOT / 'benchmark/scripts/rollout_before_full.py'), '--config', path],
+                        f'diagnostic_rollouts_{i}', env) for i, path in enumerate(config['rollout_configs'])]
+            mark('diagnostic_rollouts_running', child_pids=[p.pid for p in rollouts])
+            while any(p.poll() is None for p in rollouts):
+                if any(p.poll() not in (None, 0) for p in rollouts):
+                    raise RuntimeError('Diagnostic rollouts failed; full benchmarks will not start')
+                if (directory / 'STOP').exists():
+                    raise KeyboardInterrupt
+                time.sleep(config['poll_seconds'])
+            if any(p.returncode for p in rollouts):
+                raise RuntimeError('Diagnostic rollouts failed; full benchmarks will not start')
+            for child in rollouts:
+                children.remove(child)
         aoi = launch([config['python'], str(ROOT / 'train/scripts/benchmark_after_training.py'),
                       '--config', str(benchmark_path)], 'aoi_export_and_benchmark', env)
         mark('exporting_for_benchmarks', aoi_pid=aoi.pid)

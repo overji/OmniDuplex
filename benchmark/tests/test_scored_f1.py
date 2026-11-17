@@ -1,6 +1,6 @@
 """Scored-F1 must penalize excess output without changing existing matching."""
 import pytest
-from benchmark.evaluation.scored_f1 import scored_metrics,normalized_quality,judged_metrics,probe_population
+from benchmark.evaluation.scored_f1 import scored_metrics,normalized_quality,judged_metrics
 from benchmark.evaluation.judge import summarize
 
 
@@ -32,25 +32,6 @@ def test_realtime_summary_counts_unmatched_output_and_failed_judge():
     assert metrics['groups']['overall']['scored_f1']==.5
     row['status']='failed';row['response_score']=None
     assert summarize([row],[],1,1,population)['groups']['overall']['scored_f1'] is None
-
-
-def test_probe_pre_false_reply_and_invalid_are_penalized_missing_pairs_excluded():
-    from benchmark.probe.output import PROTOCOL
-    def pair(pid):
-        return [dict(pair_id=pid,probe_id=pid+':'+side,side=side,mode='pr',ability='grounding') for side in ['pre','post']]
-    manifest=pair('a')+pair('b')
-    def pred(pid,text):return dict(probe_id=pid,status='complete',output_protocol=PROTOCOL,raw_response=text,task_text_generation_complete=True)
-    negative=pred('a:pre','<silent>');positive=pred('a:post','The event happened.')
-    p=probe_population(manifest,[negative,positive,pred('b:post','The event happened.')])['overall']
-    assert p['reference_count']==1 and p['prediction_count']==1
-    assert scored_metrics(1,p['reference_count'],p['prediction_count'])['scored_f1']==1
-    p=probe_population(manifest,[pred('a:pre','Too early.'),positive])['overall']
-    assert p['prediction_count']==2
-    assert scored_metrics(1,1,2)['scored_f1']==pytest.approx(2/3)
-    # Legacy unparseable decisions are incorrect output attempts, not silence.
-    invalid=dict(probe_id='a:pre',status='complete',output_protocol='yes_no_v1',raw_response='maybe')
-    yes=dict(probe_id='a:post',status='complete',output_protocol='yes_no_v1',raw_response='YES')
-    assert probe_population(manifest,[invalid,yes])['overall']['prediction_count']==2
 
 
 def test_portable_bundle_preserves_denominators_and_agent_quality():
@@ -88,10 +69,3 @@ def test_offline_recompute_uses_real_output_count_without_touching_sources(tmp_p
     assert result.returncode==0,result.stderr
     assert json.loads(output.read_text())['groups']['overall']['scored_f1']==.5
     assert before==[p.read_bytes() for p in [data,source,judgments]]
-
-
-def test_all_silent_portable_probe_has_zero_score_without_judge_requests():
-    from benchmark.evaluation.judge_bundle import build_result
-    b=dict(bundle_id='test',runs=[dict(run_id='silent',mode='probe',scored_f1_population={
-        'overall':dict(reference_count=3,prediction_count=0,tp_probe_ids=[])})],tasks=[])
-    assert build_result(b,{},{})['summary']['silent']['overall']['scored_f1']==0

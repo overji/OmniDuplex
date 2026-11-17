@@ -27,7 +27,7 @@ def broadcast(packet, rank):
     return values[0]
 
 
-def update_batch(engine, groups, config, device):
+def update_batch(engine, groups, config, device, reference=None):
     """Average over actual QA groups and candidates, including partial tail batches.
 
     DeepSpeed divides backward losses by GAS. Undo that once, then divide by
@@ -38,14 +38,43 @@ def update_batch(engine, groups, config, device):
     if not 0 < count <= gas or engine.micro_steps % gas:
         raise ValueError('GRPO update requires a clean accumulation boundary and 1..GAS groups')
     loss_mean, errors, ratios = 0., [], []
+    local_losses = {}
+    kl_stats = {}
+    probes = []
+    master = getattr(getattr(engine, 'optimizer', None), 'single_partition_of_fp32_groups', [])
+    if isinstance(master, (list, tuple)):
+        for parameter in master:
+            if isinstance(parameter, torch.Tensor) and parameter.numel():
+                flat = parameter.detach().view(-1)
+                stride = max(1, flat.numel() // 4096)
+                probes.append((flat, stride, flat[::stride].clone()))
+    local = config.get('reward_mode') == 'local_turn_judge'
+    group_relative = not local or config.get('grpo_advantage_mode', 'local') == 'group_relative'
     stats = dict(valid_qa=count, global_batch_size=count, configured_qa_batch_size=gas,
                  candidate_trajectories=sum(len(g['trajectories']) for g in groups), padding_slots=gas-count)
     for slot in range(gas):
         padding = slot >= count
         group = groups[0] if padding else groups[slot]
         trajectories = group['trajectories'][:1] if padding else group['trajectories']
-        for trajectory, advantage in zip(trajectories, [0.] if padding else group['advantages']):
-            trajectory = dict(trajectory, advantage=float(advantage))
+        for candidate, trajectory in enumerate(trajectories):
+            if local:
+                trajectory = dict(trajectory, local_credit=group['local_credits'][candidate])
+            if group_relative:
+                advantage = 0. if padding else group['advantages'][candidate]
+                trajectory = dict(trajectory, advantage=float(advantage))
+            if config.get('kl_beta', 0):
+                reference_scores, reference_error = None, None
+                try:
+                    if reference is None:
+                        raise ValueError('KL reference model not loaded')
+                    reference_scores = reference.score(group['record'], group['clip'], trajectory, config)
+                except Exception as exc:
+                    import traceback
+                    traceback.print_exc()
+                    reference_error = exc
+                if not all_true(reference_error is None, device):
+                    raise RuntimeError(f'Frozen reference scoring failed on a rank: {reference_error!r}')
+                trajectory = dict(trajectory, reference_log_probs=reference_scores)
             context = (saved_on_cpu(config.get('grpo_activation_cpu_budget_gib', 128))
                        if config.get('grpo_activation_offload', False) else nullcontext())
             with context as offload:
@@ -57,15 +86,23 @@ def update_batch(engine, groups, config, device):
                 okay = (loss is not None and bool(torch.isfinite(loss).item())
                         and info['replay_max_logprob_error'] <= config['replay_logprob_tolerance'])
                 if not all_true(okay, device):
+                    print(json.dumps(dict(stage='gradient_replay_failed',
+                        sample_index=group['record'].get('sample_index'), diagnostics=info)), flush=True)
                     raise RuntimeError('Nonfinite GRPO loss or gradient-enabled replay mismatch')
                 scale = 0. if padding else gas / (count * len(trajectories))
                 engine.backward(loss * scale)
             if offload is not None:
                 stats['activation_cpu_saved_gib_max'] = max(stats.get('activation_cpu_saved_gib_max', 0.), offload['saved_bytes'] / 2**30)
+                stats['activation_cpu_saved_4d_gib_max'] = max(stats.get('activation_cpu_saved_4d_gib_max', 0.), offload['saved_4d_bytes'] / 2**30)
             if not padding:
                 loss_mean += loss.item() / (count * len(trajectories))
                 errors.append(float(info['replay_max_logprob_error']))
                 ratios.append(float(info['ratio_mean']))
+                for key, value in info.items():
+                    if key.startswith('local_loss_'):
+                        local_losses[key] = local_losses.get(key, 0.) + value/(count*len(trajectories))
+                    if key in ('kl_surrogate', 'kl_contribution'):
+                        kl_stats[key] = kl_stats.get(key, 0.) + value/(count*len(trajectories))
         engine.step()
     if engine.micro_steps % gas:
         raise RuntimeError('GRPO update ended inside an accumulation boundary')
@@ -81,7 +118,20 @@ def update_batch(engine, groups, config, device):
         torch.distributed.all_reduce(maximum, op=torch.distributed.ReduceOp.MAX)
         max_error = maximum.item()
         stats['candidate_trajectories'] *= world
+        for key in sorted(local_losses):
+            value = torch.tensor(local_losses[key], device=device, dtype=torch.float64)
+            torch.distributed.all_reduce(value)
+            local_losses[key] = (value/world).item()
+        for key in sorted(kl_stats):
+            value = torch.tensor(kl_stats[key], device=device, dtype=torch.float64)
+            torch.distributed.all_reduce(value)
+            kl_stats[key] = (value/world).item()
     stats.update(loss=loss_mean, ratio_mean=ratio_mean, replay_max_logprob_error=max_error)
+    if probes:
+        stats['optimizer_parameter_max_delta'] = max(
+            float((flat[::stride]-before).abs().max()) for flat, stride, before in probes)
+    stats.update(local_losses)
+    stats.update(kl_stats)
     get_norm = getattr(engine, 'get_global_grad_norm', None)
     norm = get_norm() if get_norm else None
     if norm is not None:
@@ -90,12 +140,16 @@ def update_batch(engine, groups, config, device):
 
 
 def run(engine, model, duplex, records, args, config, device, rank, world,
-        identity, tracking, started, epoch_start=0, cursor=0):
-    """No service is launched here. Rank zero requires an already-running judge."""
+        identity, tracking, started, epoch_start=0, cursor=0, reference=None):
+    """Select rank-zero scoring; TP-full-credit requires no external service."""
     judge, packet = None, None
     if rank == 0:
         try:
-            judge = Judge(config['judge'])
+            if config.get('reward_backend') == 'tp_full_credit':
+                from train.src.infrastructure.judge import TPFullCredit
+                judge = TPFullCredit()
+            else:
+                judge = Judge(config['judge'])
             judge.ready()
             packet = {'ok': True}
         except Exception as exc:
@@ -113,6 +167,20 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
     limit = 1 if args.profile else args.max_steps
     stop = bool(limit and engine.global_steps >= limit)
     exclusions = zero_groups = updates = qa_total = scored_groups = sampled_total = silent_total = 0
+    local_zero_groups = 0
+    sampled_qa_groups = rollout_attempts = completed_rollouts = judge_failed_groups = 0
+    sampling_wall_seconds = 0.
+    local = config.get('reward_mode') == 'local_turn_judge'
+    advantage_mode = config.get('grpo_advantage_mode', 'local' if local else 'group_relative')
+    aggregation = config.get('grpo_loss_aggregation', 'unit_weighted' if local else 'token_mean')
+    def budget_stats():
+        return dict(grpo_advantage_mode=advantage_mode, grpo_loss_aggregation=aggregation,
+            group_relative_advantage=int(advantage_mode == 'group_relative'),
+            unit_weighted_aggregation=int(aggregation == 'unit_weighted'),
+            sampled_qa_groups=sampled_qa_groups, rollout_attempts=rollout_attempts,
+            completed_rollouts=completed_rollouts, judge_failed_groups=judge_failed_groups,
+            scored_qa_groups=scored_groups, sampling_wall_seconds=sampling_wall_seconds,
+            update_skip_rate=(zero_groups+local_zero_groups)/max(1,scored_groups))
     batch_started = time.perf_counter()
     last_epoch, last_cursor, final_loss = epoch_start, cursor, None
     torch.cuda.reset_peak_memory_stats(device)
@@ -122,7 +190,7 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
         if pipeline.queue:
             raise RuntimeError('Cannot update the policy with pending judge/rollout groups')
         began = time.perf_counter()
-        result = update_batch(engine, pending, config, device)
+        result = update_batch(engine, pending, config, device, reference)
         for key in ('rollout_wall_seconds', 'precheck_wall_seconds', 'gather_wall_seconds', 'judge_wait_wall_seconds'):
             value = torch.tensor(sum(g.get(key, 0.) for g in pending), device=device, dtype=torch.float64)
             if parallel:
@@ -136,7 +204,11 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
             if not all(key in r for r in rewards):
                 continue
             result['reward_' + key] = sum(r[key] for r in rewards) / len(rewards)
-        result.update(zero_variance_groups=zero_groups, excluded_groups=exclusions,
+        for key in ('local_idle_fn', 'local_blocked_fn', 'local_unassigned_fn', 'local_reply_units',
+                    'local_wait_decisions', 'local_wait_opportunities', 'local_positive_units', 'local_negative_units'):
+            if all(key in r for r in rewards):
+                result[key] = sum(r[key] for r in rewards)/len(rewards)
+        result.update(zero_variance_groups=zero_groups, local_zero_signal_groups=local_zero_groups, excluded_groups=exclusions,
                       all_silent_fraction=silent_total/max(1, sampled_total),
                       zero_variance_group_rate=zero_groups/max(1, scored_groups),
                       epoch=epoch, slot=next_cursor-1, step=engine.global_steps, optimizer_boundary=True,
@@ -144,6 +216,7 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
                       step_wall_seconds=time.perf_counter()-batch_started, elapsed_seconds=time.time()-started,
                       learning_rate=config['learning_rate'],
                       sampled_action_tokens=sum(len(c['actions']) for g in pending for t in g['trajectories'] for c in t['chunks']))
+        result.update(budget_stats(), updates_this_run=updates+1)
         if parallel:
             tokens = torch.tensor(result['sampled_action_tokens'], device=device, dtype=torch.long)
             torch.distributed.all_reduce(tokens)
@@ -172,8 +245,10 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
     def log_skip(epoch, slot, **extra):
         row = dict(epoch=epoch, slot=slot, step=engine.global_steps, skipped=True,
                    zero_variance_groups=zero_groups, excluded_groups=exclusions,
+                   local_zero_signal_groups=local_zero_groups,
                    zero_variance_group_rate=zero_groups/max(1, scored_groups),
                    all_silent_fraction=silent_total/max(1, sampled_total), **extra)
+        row.update(budget_stats(), updates_this_run=updates)
         append_jsonl(metrics, row)
         if rank == 0:
             stats = judge.snapshot()
@@ -182,29 +257,49 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
             tracking.log_train(row)
 
     def accept(pending):
-        nonlocal exclusions, sampled_total, silent_total, scored_groups, zero_groups
+        nonlocal exclusions, sampled_total, silent_total, scored_groups, zero_groups, local_zero_groups, judge_failed_groups
         waiting = time.perf_counter()
         group, packet = pipeline.pop()
         packet = broadcast(packet, rank)
         group['judge_wait_wall_seconds'] = time.perf_counter() - waiting
         if not packet['ok']:
             exclusions += 1
+            judge_failed_groups += 1
             log_skip(group['epoch'], group['slot'], judge_failed=True, error_type=packet['error_type'])
             return group['slot']
         rewards = packet['rewards']
         sampled_total += packet['action_candidates']
         silent_total += packet['silent']
         scored_groups += 1
-        adv, zero = advantages([r['total'] for r in rewards])
+        local = config.get('reward_mode') == 'local_turn_judge'
+        group_relative = not local or config.get('grpo_advantage_mode', 'local') == 'group_relative'
+        if not group_relative:
+            token_mean = config.get('grpo_loss_aggregation', 'unit_weighted') == 'token_mean'
+            zero = not any(unit['advantage'] != 0 and (token_mean or unit['weight'] > 0)
+                           for reward in rewards for unit in reward['local_credit']['units'])
+        else:
+            adv, zero = advantages([r['total'] for r in rewards])
         for candidate, trajectory in zip(candidates, group['trajectories']):
+            used = {'advantage_mode': config.get('grpo_advantage_mode', 'group_relative' if not local else 'local'),
+                    'loss_aggregation': config.get('grpo_loss_aggregation', 'token_mean' if not local else 'unit_weighted')}
+            if group_relative:
+                used['trajectory_advantage'] = float(adv[candidate])
             append_jsonl(paths, dict(epoch=group['epoch'], slot=group['slot'],
                 sample_index=group['record']['sample_index'], candidate=candidate,
-                **trajectory, reward=rewards[candidate]))
+                **trajectory, reward=rewards[candidate], optimization=used))
         if zero:
-            zero_groups += 1
-            log_skip(group['epoch'], group['slot'], zero_variance=True, rewards=[r['total'] for r in rewards])
+            if not group_relative:
+                local_zero_groups += 1
+            else:
+                zero_groups += 1
+            log_skip(group['epoch'], group['slot'], zero_variance=group_relative,
+                     local_zero_signal=not group_relative, rewards=[r['total'] for r in rewards])
         else:
-            group.update(rewards=rewards, advantages=[float(adv[i]) for i in candidates])
+            group['rewards'] = rewards
+            if local:
+                group['local_credits'] = [rewards[i]['local_credit'] for i in candidates]
+            if group_relative:
+                group['advantages'] = [float(adv[i]) for i in candidates]
             pending.append(group)
         return group['slot']
 
@@ -222,21 +317,32 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
             order = epoch_slots(len(records), config['seed'], epoch, 1, 0, 1)
             pending = []
             for slot in range(cursor if epoch == epoch_start else 0, len(order)):
+                sampled_qa_groups += 1
                 record = records[order[slot]]
                 engine.eval()
                 trajectories, failure = [], None
                 sampling_started = time.perf_counter()
                 precheck_seconds = 0.
+                attempts = 0
                 try:
                     clip = Clip(record, config, None if config.get('grpo_horizon') == 'full_video' else config['max_prefix_seconds'])
                     if any(seconds(ref['window_end']) > clip.horizon for _, ref in reference_windows(record['sample'])):
                         raise TrajectoryError('reference_window_exceeds_video_duration')
                     for candidate in candidates:
                         seed = config['seed'] + epoch*10000000 + slot*config['group_size'] + candidate
+                        attempts += 1
                         trajectories.append(rollout(model, duplex, record, clip, config, seed))
                     rollout_seconds = time.perf_counter() - sampling_started
                 except TrajectoryError as exc:
                     failure = str(exc)
+                counts = torch.tensor([attempts, len(trajectories)], device=device, dtype=torch.long)
+                elapsed = torch.tensor(time.perf_counter()-sampling_started, device=device, dtype=torch.float64)
+                if parallel:
+                    torch.distributed.all_reduce(counts)
+                    torch.distributed.all_reduce(elapsed, op=torch.distributed.ReduceOp.MAX)
+                rollout_attempts += int(counts[0])
+                completed_rollouts += int(counts[1])
+                sampling_wall_seconds += elapsed.item()
                 # Independent candidates may fail on only one rank. Synchronize
                 # eligibility BEFORE any replay checks, keeping collective order.
                 if not all_true(failure is None, device):
@@ -254,6 +360,11 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
                         with torch.no_grad():
                             for trajectory in trajectories:
                                 _, error = engine(record, clip, trajectory)
+                                diagnostics = getattr(getattr(engine, 'module', engine), 'last_replay_diagnostics', {})
+                                if isinstance(diagnostics, dict) and diagnostics:
+                                    append_jsonl(args.output / f'replay_diagnostics.rank{rank}.jsonl',
+                                        dict(stage='precheck', sample_index=record['sample_index'],
+                                             seed=trajectory.get('seed'), **diagnostics))
                                 valid_replay &= bool(torch.isfinite(error).item()) and error.item() <= config['replay_logprob_tolerance']
                     except TrajectoryError:
                         valid_replay = False
@@ -296,9 +407,11 @@ def run(engine, model, duplex, records, args, config, device, rank, world,
         save(engine, args.output / 'checkpoint-final', last_epoch, last_cursor, identity, config, duplex, rank)
     report = dict(optimizer_steps=engine.global_steps, updates_this_run=updates, valid_qa_this_run=qa_total,
                   excluded=exclusions, zero_variance_groups=zero_groups, last_loss=final_loss,
+                  local_zero_signal_groups=local_zero_groups, reward_mode=config.get('reward_mode', 'legacy'),
                   checkpoint_saved=checkpoint_saved, world_size=world, training_method='full_grpo',
-                  reward_backend='llm', elapsed_seconds=time.time()-started,
+                  reward_backend=config.get('reward_backend', 'llm'), elapsed_seconds=time.time()-started,
                   training_peak_allocated_gib=torch.cuda.max_memory_allocated(device)/2**30)
+    report.update(budget_stats())
     write_json(args.output / f'memory_report.rank{rank}.json', report)
     if rank == 0:
         tracking.finish(report)

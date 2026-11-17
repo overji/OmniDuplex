@@ -230,7 +230,11 @@ def rollout(model, duplex, record, clip, config, seed):
     duplex.force_listen_count = math.ceil(clip.question_time)
     native_decode = duplex.decoder.decode
     actions = []
+    reply_id, next_reply_id = None, 0
+    terminators = set(getattr(duplex, 'chunk_terminator_token_ids',
+                             [duplex.listen_token_id, duplex.chunk_eos_token_id]))
     def decode(logits, **kwargs):
+        nonlocal reply_id, next_reply_id
         # law 是实际回灌 token 的 log-prob 分布，已处理原生 EOS 抽样和
         # 未结束回复中的 listen→speak 映射；不能直接用未经处理的 logits softmax。
         law = action_log_probs(logits, duplex.decoder.forbidden_token_ids,
@@ -242,13 +246,21 @@ def rollout(model, duplex, record, clip, config, seed):
             torch.distributed.broadcast(token, src=0)
         # before 和 actions 在每秒生成前重置；闭包记录该 token 的秒内位置、
         # 采样前 turn 状态和旧策略概率，训练时据此计算 new/old 概率比。
-        actions.append(dict(offset=len(duplex.total_ids) - before, turn_open=not duplex.current_turn_ended,
-                            old_log_prob=law[token.item()].item()))
+        turn_open = not duplex.current_turn_ended
+        if not turn_open:
+            reply_id = None
+            if token.item() not in terminators:
+                reply_id = next_reply_id
+                next_reply_id += 1
+        actions.append(dict(offset=len(duplex.total_ids) - before, turn_open=turn_open,
+                            reply_id=reply_id, old_log_prob=law[token.item()].item()))
         return token
     duplex.decoder.decode = decode
     chunks, events = [], []
     # 解析器跨秒保留文本/分隔符状态；一条回复可由多个 chunk 组成。
     parser, sent = TaskTextStream(duplex.tokenizer), False
+    parser_reply_id = None
+    local_credit = config.get('reward_mode') == 'local_turn_judge'
     try:
         with clip.preprocessing_cache(duplex.processor):
             for i, inputs in enumerate(clip.chunks):
@@ -265,6 +277,7 @@ def rollout(model, duplex, record, clip, config, seed):
                 actions = []
                 # 必须保存生成前的状态，才能区分真正空闲等待和未结束回复的续说。
                 turn_open_before = not duplex.current_turn_ended
+                previous_reply_id = reply_id if turn_open_before else None
                 # 与 action_log_probs 的分布假设一致：不额外改温度、截断、
                 # 重复惩罚或 listen 缩放，否则采样概率与训练回放可能不一致。
                 result = duplex.streaming_generate(max_new_speak_tokens_per_chunk=config['max_speak_tokens_per_chunk'],
@@ -273,12 +286,13 @@ def rollout(model, duplex, record, clip, config, seed):
                 ids = list(duplex.total_ids[before:])
                 # ids 包括采样和原生强制插入的 token，actions 只含采样动作。
                 # 从原生动作识别新开口，续说不算；空开口也不能因无正文事件而漏计。
-                terminators = set(getattr(duplex, 'chunk_terminator_token_ids',
-                                          [duplex.listen_token_id, duplex.chunk_eos_token_id]))
                 new_response = new_response_started(ids, actions, terminators)
                 # 没有新开口不等于空闲：续说时 new_response=False，但 idle_wait
                 # 仍为 False。普通沉默分看前者，混淆矩阵 TN 奖励要求后者。
+                owners = {a['reply_id'] for a in actions if a['reply_id'] is not None}
+                occupied = owners | ({previous_reply_id} if previous_reply_id is not None else set())
                 chunks.append(dict(ids=ids, actions=actions, new_response=new_response,
+                    reply_ids=sorted(occupied), turn_open_before=turn_open_before,
                     idle_wait=bool(result['is_listen'] and not turn_open_before and not new_response)))
                 if duplex.decoder.get_cache_length() > config['max_sequence_tokens']:
                     # 不截断后继续评分，避免只覆盖部分参考窗口却获得完整轨迹奖励。
@@ -286,12 +300,33 @@ def rollout(model, duplex, record, clip, config, seed):
                 if sent:
                     # 仅问题输入后解析回复事件；listen/回复结束会触发解析收尾，
                     # interrupted 则保留原生打断语义。时间使用输出秒 i+1。
-                    event = parser.feed(ids, i + 1, ended=result['end_of_turn'] or result['is_listen'], interrupted=result.get('is_interrupt', False))
-                    if event:
-                        events.append(event)
+                    if not local_credit:
+                        event = parser.feed(ids, i+1, ended=result['end_of_turn'] or result['is_listen'],
+                                            interrupted=result.get('is_interrupt', False))
+                        if event:
+                            events.append(event)
+                        continue
+                    action_owners = {a['offset']: a['reply_id'] for a in actions}
+                    for offset, token_id in enumerate(ids):
+                        if parser.onset is None and token_id not in parser.special:
+                            parser_reply_id = action_owners.get(offset)
+                        # Native decoding can end and begin another utterance in
+                        # the same second. Respect its actual turn terminators.
+                        ended = token_id in duplex.turn_terminator_token_ids or token_id == duplex.listen_token_id
+                        event = parser.feed([token_id], i+1, ended=ended)
+                        if event:
+                            event['reply_id'] = parser_reply_id
+                            events.append(event)
+                    if result.get('is_interrupt', False):
+                        event = parser.finish(complete=False, clock=i+1)
+                        if event:
+                            event['reply_id'] = parser_reply_id
+                            events.append(event)
         # 视频结束仍有未完成文本时，保留未完成事件，不能静默丢掉尝试。
         pending = parser.finish(complete=False)
         if pending:
+            if local_credit:
+                pending['reply_id'] = parser_reply_id
             events.append(pending)
         return dict(chunks=chunks, events=events, seed=seed)
     finally:

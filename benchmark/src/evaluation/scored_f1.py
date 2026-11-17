@@ -1,6 +1,5 @@
 """Content-weighted one-to-one F1, independent of model/transport dependencies."""
 import math
-from collections import defaultdict
 
 VERSION = 'scored_f1_v1'
 
@@ -51,28 +50,4 @@ def realtime_population(samples,predictions):
             g=groups.setdefault(name,dict(reference_count=0,prediction_count=0))
             g['reference_count']+=len(reference_windows(sample))
             g['prediction_count']+=len(prediction['events'])
-    return groups
-
-
-def probe_population(manifest,predictions):
-    """Use complete pairs; count YES on either side and invalid outputs as attempts.
-
-    This lets pre-side false responses reduce scored-F1. Incomplete inference
-    pairs are coverage, not zeros. Invalid outputs get no quality credit.
-    """
-    from benchmark.probe.metrics import record_output
-    index={p['probe_id']:p for p in predictions if p.get('status')=='complete'}
-    pairs=defaultdict(list)
-    for row in manifest:pairs[row['pair_id']].append(row)
-    groups={}
-    for rows in pairs.values():
-        if len(rows)!=2 or not all(r['probe_id'] in index for r in rows):continue
-        first=rows[0]
-        for name in ('overall','mode:'+first['mode'],'ability:'+first['ability']):
-            group=groups.setdefault(name,dict(reference_count=0,prediction_count=0,tp_probe_ids=[]))
-            group['reference_count']+=1
-            for row in rows:
-                decision=record_output(index[row['probe_id']],row)['decision']
-                group['prediction_count']+=int(decision in ('YES',None))
-                if row['side']=='post' and decision=='YES':group['tp_probe_ids'].append(row['probe_id'])
     return groups

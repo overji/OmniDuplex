@@ -1,0 +1,70 @@
+{
+  "benchmark": "interactscope",
+  "dataset_repo": "Darden7/Omni-InteractScope",
+  "dataset_revision": "b3939d4e9bcb2653301ea5757a64e7d5653912f5",
+  "download_endpoint": "https://hf-mirror.com",
+  "download_root": "/remote-home/yushengliao/speech/jimodels/datasets/Omni-InteractScope",
+  "dataset_root": "/remote-home/yushengliao/speech/jimodels/datasets/Omni-InteractScope/data/Omni-InteractScope",
+  "official_repo": "https://github.com/YinsongYan/Omni-InteractScope.git",
+  "official_code": "/remote-home/yushengliao/speech/jimodels/datasets/Omni-InteractScope/official_code",
+  "official_code_revision": "b571e6e42aebaf4dd0c57171dcc72f251c20fd4f",
+  "download_workers": 2,
+  "media_workers": 4,
+  "training_metadata": "/remote-home/yushengliao/speech/jimodels/datasets/AOI-Dataset/video_metadata.json",
+  "python": "/root/jimodels/OmniDuplex/benchmark/.venv/bin/python",
+  "train_python": "/root/jimodels/OmniDuplex/train/.venv/bin/python",
+  "system_prompt": "/root/jimodels/OmniDuplex/benchmark/configs/prompts/interactscope.txt",
+  "report_interval_seconds": 15,
+  "max_occupied_memory_mib": 2048,
+  "inference": {
+    "seed": 42,
+    "max_samples": 0,
+    "max_seconds": 0,
+    "decode_mode": "sampling",
+    "max_speak_tokens": 20,
+    "sliding_window_mode": "off",
+    "unused_tts_device": "cpu",
+    "cpu_threads": 4
+  },
+  "models": [
+    {
+      "label": "base",
+      "model_path": "/remote-home/yushengliao/speech/jimodels/openmodels/MiniCPM-o-4.5"
+    },
+    {
+      "label": "sft",
+      "model_path": "/remote-home/yushengliao/speech/jimodels/training_outputs/OmniDuplex/full_sft_plain_ce_dp8_filtered18315_bs16_resume350_20261107_export",
+      "training_output": "/remote-home/yushengliao/speech/jimodels/training_outputs/OmniDuplex/full_sft_plain_ce_dp8_filtered18315_bs16_resume350_20261107",
+      "training_run_sha256": "afa40b66398181f6787747730ddd95bad13b71768e71a9860b0cd295b2d78419",
+      "expected_optimizer_steps": 1852
+    }
+  ],
+  "judge": {
+    "model": "Qwen3.8-27B",
+    "system_prompt": "/root/jimodels/OmniDuplex/benchmark/configs/prompts/judge.txt",
+    "max_tokens": 512,
+    "concurrency": 8,
+    "timeout": 60,
+    "retries": 2
+  },
+  "download_timeout_seconds": 60,
+  "metadata_timeout_seconds": 30,
+  "download_attempts": 3,
+  "public_acquisition": {
+    "workers": 2,
+    "socket_timeout": 20,
+    "retries": 1,
+    "ffmpeg_threads": 2,
+    "preset": "veryfast",
+    "crf": 18,
+    "duration_tolerance_seconds": 0.3,
+    "item_timeout_seconds": 3600,
+    "work_dir": "/remote-home/yushengliao/speech/jimodels/datasets/Omni-InteractScope/public_acquisition/work",
+    "copy_full_source": true,
+    "full_source_copy_tolerance_seconds": 0.02,
+    "browser_python": "/tmp/omniduplex-douyin-browser/bin/python",
+    "browser_cache": "/tmp/omniduplex-douyin-browser-cache",
+    "browser_navigation_timeout_seconds": 45,
+    "browser_metadata_timeout_seconds": 20
+  }
+}

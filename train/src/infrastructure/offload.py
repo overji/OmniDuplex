@@ -21,7 +21,7 @@ def copy_strided(tensor, device):
 @contextmanager
 def saved_on_cpu(budget_gib=128, *, keep_gib=0, reserve_gib=0):
     cache = {}
-    stats = dict(saved_bytes=0, kept_bytes=0, parameter_cache_hits=0)
+    stats = dict(saved_bytes=0, kept_bytes=0, parameter_cache_hits=0, saved_4d_bytes=0)
     budget = budget_gib * 2**30
     keep_budget = keep_gib * 2**30
     if keep_budget and torch.cuda.is_available():
@@ -54,6 +54,8 @@ def saved_on_cpu(budget_gib=128, *, keep_gib=0, reserve_gib=0):
             raise RuntimeError('Saved activations exceed CPU budget; explicitly increase the SFT/GRPO activation CPU budget or reduce memory use')
         value = copy_strided(tensor, 'cpu')
         stats['saved_bytes'] += size
+        if tensor.ndim == 4:
+            stats['saved_4d_bytes'] += size
         if key is not None:
             cache[key] = value
         return tensor.device, value

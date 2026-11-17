@@ -34,6 +34,11 @@ class ExportTests(unittest.TestCase):
             self.assertEqual(len(result['tasks']),3)
             self.assertEqual(sum(t['api_required'] for t in result['tasks']),2)
             self.assertEqual(result['runs'][1]['coverage']['decisions'],{'TN':1,'TP':1})
+            self.assertNotIn('scored_f1_population',result['runs'][1])
+            self.assertEqual(result['runs'][1]['content_metric'],'scored_pair_v1')
+            self.assertEqual(result['runs'][1]['scored_pair_population']['overall'],dict(
+                pair_count=1,correct_pair_count=1,correct_post_probe_ids=[manifest[1]['probe_id']]))
+            self.assertIn('scored_f1_population',result['runs'][0])
             self.assertNotIn('FUTURE EVIDENCE',json.dumps(result['tasks'][2]))
             before=hashlib.sha256(output.read_bytes()).hexdigest()
             export(sources,output);self.assertEqual(hashlib.sha256(output.read_bytes()).hexdigest(),before)

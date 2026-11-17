@@ -33,6 +33,13 @@ class Tracking:
         from train.src.domain.loss_metrics import COMPONENTS, CONTRIBUTIONS
         names = [key for name in COMPONENTS for key in ('loss_' + name, name + '_tokens', name + '_qa')]
         names += ['loss_' + name + '_contribution' for name in CONTRIBUTIONS]
+        names += ['local_loss_' + name for name in ('reply', 'fp', 'fn', 'blocked_fn', 'wait', 'control', 'token_mean')]
+        names += ['kl_surrogate', 'kl_contribution']
+        names += ['local_' + name for name in ('idle_fn', 'blocked_fn', 'unassigned_fn', 'reply_units',
+                  'wait_decisions', 'wait_opportunities', 'positive_units', 'negative_units', 'zero_signal_groups')]
+        names += ['group_relative_advantage', 'unit_weighted_aggregation', 'sampled_qa_groups',
+                  'rollout_attempts', 'completed_rollouts', 'judge_failed_groups', 'scored_qa_groups',
+                  'sampling_wall_seconds', 'update_skip_rate', 'updates_this_run']
         for key in names:
             if isinstance(record.get(key), (int, float)):
                 values['train/' + key] = record[key]
@@ -85,6 +92,7 @@ def start_tracking(config, output, rank, world_size):
             'gate_weight', 'structure_weight', 'silent_weight', 'onset_weight', 'sft_activation_offload',
             'sft_activation_cpu_budget_gib', 'sft_activation_gpu_budget_gib', 'parallel_mode',
             'reward_backend', 'reward_mode', 'reward_weights', 'grpo_horizon',
+            'grpo_advantage_mode', 'grpo_loss_aggregation',
             'grpo_candidate_parallel', 'grpo_precheck_replay', 'grpo_judge_pipeline_depth', 'group_size', 'clip_epsilon', 'kl_beta', 'temperature')
     hyperparameters = {k: config[k] for k in keys if k in config}
     hyperparameters['world_size'] = world_size

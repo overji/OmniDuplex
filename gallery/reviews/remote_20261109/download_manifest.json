@@ -1,0 +1,35 @@
+{
+  "downloaded_at": "2026-11-09T03:00:49.571396+00:00",
+  "files": [
+    {
+      "remote": "/www/wwwroot/data_annotation_duplex/gallery/annotations/A/AOI-Bench/counting/all_qa.json.annotations.json",
+      "local": "gallery/reviews/remote_20261109/annotations/A/AOI-Bench/counting/all_qa.json.annotations.json",
+      "bytes": 109719,
+      "sha256": "d76d0247df4bf939a0d392bfe34f4e57c3f5d6658ac6b73b32705a24f3d56c8d"
+    },
+    {
+      "remote": "/www/wwwroot/data_annotation_duplex/gallery/annotations/A/qwen3.8_omni_flash_44/all_qa.json.annotations.json",
+      "local": "gallery/reviews/remote_20261109/annotations/A/qwen3.8_omni_flash_44/all_qa.json.annotations.json",
+      "bytes": 3876,
+      "sha256": "07b1f48680e313544509ee15d3ac81cdda65002fdd596454fd79dfd977d6a5ef"
+    },
+    {
+      "remote": "/www/wwwroot/data_annotation_duplex/gallery/annotations/A/omni-duplex/gemini31-pro/all_qa.json.annotations.json",
+      "local": "gallery/reviews/remote_20261109/annotations/A/omni-duplex/gemini31-pro/all_qa.json.annotations.json",
+      "bytes": 5290,
+      "sha256": "3a3edd179eaa8f7d128c0785b57820249b3c8067f9df61ad0302f39cfc19ddff"
+    },
+    {
+      "remote": "/www/wwwroot/data_annotation_duplex/gallery/annotations/A/omni-duplex/GroupA_40qa_1014/all_qa.json.annotations.json",
+      "local": "gallery/reviews/remote_20261109/annotations/A/omni-duplex/GroupA_40qa_1014/all_qa.json.annotations.json",
+      "bytes": 23979,
+      "sha256": "3553d409117585d9cabe208bde2afe164d98a040771896fcc9597c10341040ed"
+    },
+    {
+      "remote": "/www/wwwroot/data_annotation_duplex/gallery/annotations/A/omni-duplex/gemini37-flash/all_qa.json.annotations.json",
+      "local": "gallery/reviews/remote_20261109/annotations/A/omni-duplex/gemini37-flash/all_qa.json.annotations.json",
+      "bytes": 5290,
+      "sha256": "06d12e3041135fd968a7643eb96b3f8e59ee88b344ee8991b31e7e87aa2097db"
+    }
+  ]
+}

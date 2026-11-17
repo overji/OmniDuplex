@@ -29,9 +29,20 @@ def trajectory(text='The lamp has turned red.', clock=2):
                 chunks=[dict(new_response=second == clock) for second in range(1, 7)])
 
 
+def legacy_config():
+    """Pin the historical reward contract even when the runnable template advances."""
+    config = load_config(ROOT / 'train/configs/minicpmo_full_grpo_judge.json')
+    config.pop('grpo_advantage_mode', None)
+    config.pop('grpo_loss_aggregation', None)
+    config.update(reward_mode='legacy', grpo_horizon='prefix', reward_weights=dict(
+        timing=.4, content=.4, agent_timing=.3, agent_content=.3, agent_call=.2,
+        silence=.2, invalid_call_penalty=.1))
+    return config
+
+
 class RewardTests(unittest.TestCase):
     def setUp(self):
-        self.config = load_config(ROOT / 'train/configs/minicpmo_full_grpo_judge.json')
+        self.config = legacy_config()
 
     def test_semantic_score_not_character_overlap_and_unmatched_windows_zero(self):
         qa, t = sample(), trajectory('A paraphrase with different wording')

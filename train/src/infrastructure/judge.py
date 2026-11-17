@@ -15,6 +15,43 @@ from benchmark.evaluation.judge import prepare_rows, validate_answer
 VERSION = 'grpo-reference-judge-silence-v1'
 
 
+def tp_full_credit_identity():
+    """A separate resume identity; this backend never measures semantic quality."""
+    return dict(version='tp-full-credit-v1', backend='tp_full_credit',
+                response_score=2, agent_call_score=2, uses_llm=False)
+
+
+class TPFullCredit:
+    """Temporary timing ablation: matched replies receive synthetic 2/2 scores.
+
+    No settings, model files, cache, HTTP client or Judge GPU are required.
+    Timing matching and all downstream FP/FN/TN/format penalties remain shared.
+    """
+    def __init__(self):
+        self.identity = tp_full_credit_identity()
+        self.stats = dict(requests=0, score_requests=0, cache_hits=0, failures=0, retries=0)
+
+    def ready(self):
+        return None
+
+    def snapshot(self):
+        return dict(self.stats)
+
+    def score_group(self, sample, trajectories):
+        from benchmark.evaluation.timing import match_windows, reference_windows
+        from train.src.domain.agent import training_sample
+        sample = training_sample(sample)
+        results = []
+        for trajectory in trajectories:
+            matched = match_windows(sample, trajectory['events'])
+            hits = {m['response_index'] for m in matched['matches']}
+            self.stats['score_requests'] += len(hits)
+            results.append({ri: dict(status='complete', response_score=2 if ri in hits else 0,
+                call_score=(2 if ri in hits else 0) if sample['mode']=='agent' else None)
+                for ri, _ in reference_windows(sample)})
+        return results
+
+
 class JudgeFailure(RuntimeError):
     pass
 

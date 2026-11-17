@@ -1,3 +1,4 @@
+from train.tests.test_grpo_judge import legacy_config
 """CPU checks: candidate ownership, judge overlap, on-policy boundaries and gradients."""
 import json
 from datetime import timedelta
@@ -126,7 +127,7 @@ def distributed_worker(rank, world, rendezvous, output):
             t=trajectory();t['target']=float(seed%4)
             for c in t['chunks']:c['actions']=[]
             return t
-        config=load_config(ROOT/'train/configs/minicpmo_full_grpo_judge.json')
+        config=legacy_config()
         config.update(epochs=1,grpo_candidate_parallel=True,grpo_judge_pipeline_depth=2,
                       grpo_precheck_replay=True,grpo_activation_offload=False,save_every_steps=0)
         with ExitStack() as stack:

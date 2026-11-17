@@ -1,3 +1,5 @@
+> 历史 `confusion_judge` 模式说明。当前 LLM GRPO 模板已切换为 [逐轮局部奖励](grpo_local_reward.md)。
+
 # LLM-judged TP/FP/FN/TN trajectory reward
 
 Opt in with `train/configs/minicpmo_full_grpo_confusion_judge.json`.

@@ -30,6 +30,12 @@ class SampleContext:
     def build_prompt(self, native_protocol=""):
         native_protocol = native_protocol or self.native_protocol
         self.system_prompt = build_system_prompt(self.base_prompt, self.sample, native_protocol)
+        if self.sample.get('source_dataset') == 'Omni-InteractScope':
+            from benchmark.data.interactscope import build_prompt
+            self.system_prompt = build_prompt(self.sample)
+        if self.agent_output_protocol == 'native' and self.sample.get('mode') == 'agent':
+            from benchmark.data.native_agent import build_prompt
+            self.system_prompt = build_prompt(self.sample, self.task_text_model)
         if self.agent_output_protocol == 'task-text' and self.sample.get('mode') == 'agent':
             from benchmark.data.task_text import build_prompt
             self.system_prompt = build_prompt(self.sample, self.task_text_model)
@@ -73,6 +79,9 @@ def run(args, adapter, *, assignment=None):
     config = adapter.run_config(args, base_prompt)
     config["agent_input_protocol"] = input_protocol(args)
     config['agent_call_schema'] = getattr(args, 'agent_call_schema', 'legacy')
+    if getattr(args, 'agent_output_protocol', 'text') == 'native':
+        from benchmark.data.native_agent import VERSION
+        config.update(agent_output_protocol='native', native_agent_protocol_version=VERSION)
     config_path = args.output_dir / "run_config.json"
     strict = getattr(adapter, "STRICT_CONFIG", False)
     if (args.output_dir / "predictions.jsonl").exists():
@@ -110,6 +119,7 @@ def run(args, adapter, *, assignment=None):
             "id", "task", "video", "question", "question_time", "available_tools",
             "frontend_context", "sample_type", "mode", "ability",
             "_agent_call_schema",
+            "source_dataset", "query_free", "split_query_boundary",
         ) if key in sample}
         context = SampleContext(index, model_sample, base_prompt, args.output_dir,
                                 started=time.perf_counter(),
